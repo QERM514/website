@@ -1,11 +1,13 @@
 ---
-title: "QERM 514 - Analysis of Ecological and Environmental Data"
+title: "QERM 514<br>Analysis of Ecological and Environmental Data"
 output:
   html_document:
     toc: true
     toc_float: true
     toc_depth: 3
 ---
+
+
 
 <br>
 
