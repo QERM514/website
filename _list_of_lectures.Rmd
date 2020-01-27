@@ -15,8 +15,8 @@ intro <- list(
              "Types of environmental data",
              "Data transformations"),
   pdf = "",
-  rmd = c("lectures/week_01/lec_00_class_overview.Rmd", "lectures/week_01/lec_01_intro_to_ts.Rmd"),
-  html = c("lectures/week_01/lec_00_class_overview.html", "lectures/week_01/lec_01_intro_to_ts.html"),
+  rmd = c("lectures/week_01/lec_01_class_overview.Rmd"),
+  html = c("lectures/week_01/lec_01_class_overview.html"),
   background = c(""),
   youtube = ""
 )
