@@ -1,0 +1,103 @@
+---
+title: "Homework assignments"
+output: html_document
+---
+
+```{r child = "_timeline.Rmd", include=FALSE}
+```
+
+```{r child = "_list_of_hw.Rmd", include=FALSE}
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Students will use **R Markdown** to complete their homework assignments, which will allow you to easily save and execute **R** code, and combine the output with additional text and equations into a single pdf file. Each home assignment will have it's own **R Markdown** template for students to fill out and submit. We will use **RStudio** as an IDE for working with **R** and authoring **R Markdown** documents. Those students who are unfamiliar with **R Markdown** should read through [this introduction](http://rmarkdown.rstudio.com/lesson-1.html).
+
+```{r week_hw, include = FALSE}
+## empty list for labs
+week_hw <- vector("list", 8)
+names(week_hw) <- paste0("L", seq(8))
+## hw topics
+week_hw$L1 <- markdown
+```
+
+```{r hw_topics, include = FALSE}
+hw_topics <- lapply(week_hw, function(x) { if(is.list(x)) {c(x$hw_topics)} else {""} })
+## topics formatted for html
+hw_topics_html <- sapply(lapply(hw_topics, paste, "<br>", collapse = ""), c)
+names(hw_topics_html) <- NULL
+```
+
+```{r hw_links, include = FALSE}
+# hw_links <- lapply(week_hw, function(x) {if(is.list(x)) {x$homework} else {""} })
+# ## topics formatted for html
+# hw_links_html <- sapply(lapply(hw_links, paste, "<br>", collapse = ""), c)
+# names(hw_links_html) <- NULL
+
+hw_links <- lapply(week_hw, function(x) { if(is.list(x)) {c(x$homework)} else {""} })
+hw_links_html <- sapply(lapply(hw_links, function(x) {
+  if(length(x)>1) {
+    tmp1 <- paste0("[", as.character(fontawesome::fa("file-alt", height = 20, fill = "#eb6864")), " (", 1:length(x), ")](")
+    } else {
+      tmp1 <- paste0("[", as.character(fontawesome::fa("file-alt", height = 20, fill = "#eb6864")), "](")
+      }
+  tmp2 <- ")"
+  tmp <- paste0(tmp1, x, tmp2)
+  tmp[x==""] <- ""
+  tmp <- paste(tmp, collapse="<br>"); tmp}), c)
+
+```
+
+```{r data_links, include = FALSE}
+data_links <- lapply(week_hw, function(x) { if(is.list(x)) {x$data} else {""} })
+## topics formatted for html
+data_links_html <- sapply(lapply(data_links, function(x) {
+  tmp1 <- paste("[",x,"](")
+  tmp2 <- rep(")",length(x))
+  tmp1[x==""] <- ""
+  tmp2[x==""] <- ""
+  tmp <- paste0(tmp1, x, tmp2)
+  tmp <- paste(tmp, collapse = "<br>")
+  tmp}), c)
+names(data_links_html) <- NULL
+```
+
+```{r key_links, include = FALSE}
+key_links <- lapply(week_hw, function(x) { if(is.list(x)) {c(x$key)} else {""} })
+key_links_html <- sapply(lapply(key_links, function(x) {
+  if(length(x)>1) {
+    tmp1 <- paste0("[", as.character(fontawesome::fa("key", height = 20, fill = "#eb6864")), " (", 1:length(x), ")](")
+    } else {
+      tmp1 <- paste0("[", as.character(fontawesome::fa("key", height = 20, fill = "#eb6864")), "](")
+      }
+  tmp2 <- ")"
+  tmp <- paste(tmp1, x, tmp2)
+  tmp[x==""] <- ""
+  tmp <- paste(tmp, collapse = " ")
+  tmp}), c)
+names(key_links_html) <- NULL
+```
+
+```{r generate_table, echo=FALSE}
+## data frame with dates & topics
+syl_txt <- data.frame(
+  date = sub("0(\\d)", "\\1", format(fri[1:8], "%d %B")),
+  hw_topics = hw_topics_html,
+  hw_links = hw_links_html,
+  data_links = data_links_html,
+  key_links = key_links_html
+)
+colnames(syl_txt) <- c("Date", "Topic(s)", "Assignment", "Data", "Answer key")
+rownames(syl_txt) <- NULL
+
+## generate table
+kable(syl_txt, format = "html", caption = " ",
+      align = "clccc", escape = FALSE) %>%
+  kable_styling(bootstrap_options = "striped",
+                full_width = FALSE,
+                position = "left") %>%
+  column_spec(1, width = "8em") 
+```
+

@@ -1,0 +1,56 @@
+---
+title: "2019 List of Lectures"
+output: html_document
+---
+
+```{r include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+intro <- list(
+  title = "Introduction",
+  topics = c("Course overview",
+             "Questions in environmental science",
+             "Types of environmental data",
+             "Data transformations"),
+  pdf = "",
+  rmd = c("lectures/week_01/lec_00_class_overview.Rmd", "lectures/week_01/lec_01_intro_to_ts.Rmd"),
+  html = c("lectures/week_01/lec_00_class_overview.html", "lectures/week_01/lec_01_intro_to_ts.html"),
+  background = c(""),
+  youtube = ""
+)
+
+no_class <- list(
+  title = "Holiday",
+  topics = "<b>Memorial Day - no class</b>",
+  pdf = "",
+  rmd = "",
+  html = "",
+  background = "",
+  youtube = ""
+)
+
+project_plan <- list(
+  title = "Project plan",
+  topics = "<b>Project plan due by 11:59 PM</b>",
+  pdf = "",
+  rmd = "",
+  html = "",
+  background = "",
+  youtube = ""
+)
+
+present <- list(
+  title = "Presentations",
+  topics = "Presentations of class projects",
+  pdf = "",
+  rmd = "",
+  html = "",
+  background = "",
+  youtube = ""
+)
+```
+
+
+

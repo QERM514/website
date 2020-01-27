@@ -1,0 +1,110 @@
+---
+title: "Computer Labs"
+output: html_document
+---
+
+```{r child = "_timeline.Rmd", include=FALSE}
+```
+
+```{r child = "_list_of_labs.Rmd", include=FALSE}
+```
+
+```{r include=FALSE}
+library(kableExtra)
+```
+
+```{r week_labs, include = FALSE}
+## empty list for labs
+week_labs <- vector("list", 10)
+names(week_labs) <- paste0("L", seq(10))
+## lab topics
+week_labs$L1 <- markdown
+
+week_labs$L9 <- present_prep
+
+week_labs$L10 <- presentlab
+```
+
+```{r topics, include = FALSE}
+lab_topics <- lapply(week_labs, function(x) { if(is.list(x)) {x$topics} else {""} })
+## topics formatted for html
+lab_topics_html <- sapply(lapply(lab_topics, paste, "<br>", collapse = ""), c)
+names(lab_topics_html) <- NULL
+```
+
+```{r lec_links, include = FALSE}
+handout_links <- lapply(week_labs, function(x) { if(is.list(x)) {c(x$html)} else {""} })
+handout_links_html <- sapply(lapply(handout_links, function(x) {
+  if(length(x)>1) {
+    tmp1 <- paste0("[", as.character(fontawesome::fa("file-alt", height = 20, fill = "#eb6864")), " (", 1:length(x), ")](")
+    } else {
+      tmp1 <- paste0("[", as.character(fontawesome::fa("file-alt", height = 20, fill = "#eb6864")), "](")
+      }
+  tmp2 <- ")"
+  tmp <- paste0(tmp1, x, tmp2)
+  tmp[x==""] <- ""
+  tmp <- paste(tmp, collapse="<br>"); tmp}), c)
+
+source_links <- lapply(week_labs, function(x) { if(is.list(x)) {c(x$rmd)} else {""} })
+source_links_html <- sapply(lapply(source_links, function(x) {
+  if(length(x)>1) {
+    tmp1 <- paste0("[", as.character(fontawesome::fa("file-code", height = 20, fill = "#eb6864")), " (", 1:length(x), ")](")
+    } else {
+      tmp1 <- paste0("[", as.character(fontawesome::fa("file-code", height = 20, fill = "#eb6864")), "](")
+      }
+  tmp2 <- ")"
+  tmp <- paste(tmp1, x, tmp2)
+  tmp[x==""] <- ""
+  tmp <- paste(tmp, collapse = "<br>")
+  tmp}), c)
+```
+
+```{r zoom_links, include = FALSE}
+zoom_links <- lapply(week_labs, function(x) { if(is.list(x)) {x$zoom} else {""} })
+## topics formatted for html
+zoom_links_html <- sapply(lapply(zoom_links, function(x) {
+  tmp1 <- "[zoom]("
+  tmp2 <- ")"
+  tmp <- paste0(tmp1,x,tmp2)
+  tmp[x==""] <- ""
+  tmp <- paste(tmp, collapse="<br>")
+  tmp}), c)
+names(zoom_links_html) <- NULL
+```
+
+```{r data_links, include = FALSE}
+data_links <- lapply(week_labs, function(x) {if(is.list(x)) {x$data} else {""} })
+## topics formatted for html
+data_links_html <- sapply(lapply(data_links, function(x) {
+  tmp1 <- paste0("[", x, "](")
+  tmp2 <- rep(")", length(x))
+  tmp1[x==""] <- ""
+  tmp2[x==""] <- ""
+  tmp <- paste0(tmp1, x, tmp2)
+  tmp <- paste(tmp, collapse="<br>")
+  tmp}), c)
+names(data_links_html) <- NULL
+```
+
+```{r generate_table, echo=FALSE}
+## data frame with dates & topics
+syl_txt <- data.frame(
+  date = sub("0(\\d)", "\\1", format(fri, "%d %B")),
+  lab_topics = lab_topics_html,
+  lab_links = handout_links_html,
+  source_links = source_links_html,
+  # zoom_links = zoom_links_html,
+  data_links = data_links_html
+)
+colnames(syl_txt) <- c("Date", "Topic(s)", "Handout", "Source code", "Data")
+rownames(syl_txt) <- NULL
+
+## generate table
+kable(syl_txt, format = "html", caption = " ",
+      align = "clccc", escape = FALSE) %>%
+  kable_styling(bootstrap_options = "striped",
+                full_width = FALSE,
+                position = "left") %>%
+  column_spec(1, width = "8em") 
+```
+

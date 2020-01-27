@@ -1,0 +1,14 @@
+---
+title: "References"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Textbooks
+
+**We will use these as references for the class.**
+
+Lynn Eyur. 2019. Super awesome models.

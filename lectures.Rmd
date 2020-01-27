@@ -1,0 +1,104 @@
+---
+title: "Lecture information"
+output: html_document
+---
+
+```{r child = "_timeline.Rmd", include=FALSE}
+```
+
+```{r child = "_list_of_lectures.Rmd", include=FALSE}
+```
+
+```{r week_lecs, include = FALSE}
+## empty list for lecs
+week_lecs <- vector("list", 30)
+names(week_lecs) <- paste0("L", seq(30))
+## lecture topics
+week_lecs$L1 <- intro
+
+week_lecs$L15 <- project_plan
+
+week_lecs$L25 <- no_class
+
+
+week_lecs$L28 <- present
+week_lecs$L29 <- present
+week_lecs$L30 <- present
+```
+
+```{r lecture_topics, include = FALSE}
+lec_topics <- lapply(week_lecs, function(x) { if(is.list(x)) {x$topics} else {""} })
+## topics formatted for html
+lec_topics_html <- sapply(lapply(lec_topics, paste, "<br>", collapse = ""), c)
+names(lec_topics_html) <- NULL
+```
+
+```{r lec_links, include = FALSE}
+slide_links <- lapply(week_lecs, function(x) { if(is.list(x)) {c(x$html)} else {""} })
+slide_links_html <- sapply(lapply(slide_links, function(x) {
+  if(length(x)>1) {
+    tmp1 <- paste0("[", as.character(fontawesome::fa("file-alt", height = 20, fill = "#eb6864")), " (", 1:length(x), ")](")
+    } else {
+      tmp1 <- paste0("[", as.character(fontawesome::fa("file-alt", height = 20, fill = "#eb6864")), "](")
+      }
+  tmp2 <- ")"
+  tmp <- paste0(tmp1, x, tmp2)
+  tmp[x==""] <- ""
+  tmp <- paste(tmp, collapse = "<br>")
+  tmp}), c)
+
+source_links <- lapply(week_lecs, function(x) { if(is.list(x)) {c(x$rmd)} else {""} })
+source_links_html <- sapply(lapply(source_links, function(x) {
+  if(length(x)>1) {
+    tmp1 <- paste0("[", as.character(fontawesome::fa("file-code", height = 20, fill = "#eb6864")), " (", 1:length(x), ")](")
+    } else {
+      tmp1 <- paste0("[", as.character(fontawesome::fa("file-code", height = 20, fill = "#eb6864")), "](")
+      }
+  tmp2 <- ")"
+  tmp <- paste0(tmp1,x,tmp2)
+  tmp[x==""] <- ""
+  tmp <- paste(tmp, collapse = "<br>")
+  tmp}), c)
+```
+
+```{r youtube_links, include = FALSE}
+youtube_links <- lapply(week_lecs, function(x) { if(is.list(x)) {x$youtube} else {""} })
+## topics formatted for html
+youtube_links_html <- sapply(lapply(youtube_links, function(x) {
+  tmp1 <- "[YouTube]("; tmp2 <- ")"
+  tmp <- paste0(tmp1, x, tmp2)
+  tmp[x==""] <- ""
+  tmp <- paste(tmp, collapse = "<br>")
+  tmp}), c)
+names(youtube_links_html) <- NULL
+```
+
+```{r background_links, include = FALSE}
+background_links <- lapply(week_lecs, function(x) { if(is.list(x)) {x$background} else {""} })
+## topics formatted for html
+background_links_html <- sapply(lapply(background_links, paste, "<br>", collapse = ""), c)
+names(background_links_html) <- NULL
+```
+
+```{r generate_table, echo=FALSE}
+## data frame with dates & topics
+syl_txt <- data.frame(
+  date = qtr,
+  lec_topics = lec_topics_html,
+  lec_links = slide_links_html,
+  rmd_links = source_links_html,
+  #youtube_links = youtube_links_html,
+  background_links = background_links_html
+)
+colnames(syl_txt) <- c("Date", "Topic(s)", "Slide deck", "Source code", "Background")
+rownames(syl_txt) <- NULL
+
+## generate table
+kableExtra::kable(syl_txt, format = "html", caption = " ",
+                  align = "clccc", escape = FALSE) %>%
+  kable_styling(bootstrap_options = "striped",
+                full_width = FALSE,
+                position = "left") %>%
+  column_spec(1, width = "8em") 
+```
+

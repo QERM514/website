@@ -1,0 +1,55 @@
+---
+title: "2019 List of Lectures"
+output: html_document
+---
+
+```{r include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r}
+## review of matrix math
+matrixlab <- list(
+  title = "Matrix math in R",
+  topics = c("Matrices & matrix algebra","(review on your own)"),
+  pdf = "labs/week_01/basic-matrix-math.pdf",
+  rmd = "",
+  html = "",
+  youtube = "",
+  data = ""
+  )
+
+## overview of R Markdown
+markdown <- list(
+  title = "R Markdown",
+  topics = c("Authoring reports with R Markdown"),
+  pdf = c("labs/week_01/rmarkdown.pdf"),
+  rmd = c("labs/week_01/rmarkdown.Rmd"),
+  html = c("http://rmarkdown.rstudio.com/lesson-1.html"),
+  youtube = "",
+  data = ""
+  )
+
+## preparations for project presentation
+present_prep <- list(
+  title = "Presentation preparation",
+  topics = c("Troubleshooting project analyses", "Final preparation for presentations"),
+  pdf = "",
+  rmd = "",
+  html = "",
+  youtube = "",
+  data = ""
+  )
+
+## project presentations
+presentlab <- list(
+  title = "Presentations",
+  topics = "Presentations of class projects",
+  pdf = "",
+  rmd = "",
+  html = "",
+  youtube = "",
+  data = ""
+  )
+```
+

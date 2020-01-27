@@ -1,0 +1,26 @@
+---
+title: ""
+output: html_document
+---
+
+```{r child = "_syllabus.Rmd", include=FALSE, eval = FALSE}
+```
+
+```{r generate_syllabus, eval = FALSE, echo=FALSE}
+## data frame with dates & topics
+syl_txt <- data.frame(
+  date = qtr,
+  lec_topics = lec_topics_html,
+  lab_topics = lab_topics_html,
+  hw_topics = hw_topics_html
+)
+colnames(syl_txt) <- c("Date", "Lecture topic(s)", "Lab topic(s)", "Homework")
+## generate table
+kable(syl_txt, format = "html", caption = " ", escape = FALSE) %>%
+  kable_styling(bootstrap_options = "striped",
+                full_width = F,
+                position = "left") %>%
+  column_spec(1, width = "8em") %>%
+  column_spec(2, width = "27em")
+```
+

@@ -1,0 +1,20 @@
+---
+title: "Syllabus"
+output: html_document
+---
+
+```{r generate_dates, include=FALSE}
+## first day of class
+start_date <- as.Date("2020-03-30")
+## all mon
+mon <- seq.Date(from = start_date, by = 7, length.out = 10)
+## all wed
+wed <- mon + 2
+## all fri
+fri <- wed + 2
+## all qtr
+qtr <- sort(c(mon, wed, fri))
+qtr <- sub("0(\\d)", "\\1", format(qtr, "%d %B"))
+```
+
+

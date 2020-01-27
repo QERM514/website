@@ -1,0 +1,81 @@
+---
+title: "Course overview"
+subtitle: "Analysis of Ecological and Environmental Data<br>QERM 514"
+author: "Mark Scheuerell"
+date: "30 March 2020"
+output:
+  ioslides_presentation:
+    css: lecture_slides.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## What is this course about?
+
+
+## Learning objectives
+
+By the end of the quarter, students should be able to:
+
+* Identify an appropriate statistical model based on the data and specific question
+
+* Understand the assumptions behind a chosen statistical model
+
+* Use **R** to fit GLMs and GLMMs to data
+
+* Evaluate data support for various models and select the most parsimonious model among them
+
+* Use **R Markdown** to combine text, equations, code, tables, and figures into reports
+
+
+## Who am I?
+
+
+
+## Grading {.smaller}
+
+* __Weekly homework__ (70% of total)
+    - Assigned Friday at the end of computer lab
+    - Due by 11:59 PM the following Friday
+
+* __Final project__ (30% of total)
+    - Must involve some form of time series model(s)
+    - Due by 11:59 PM PST on March 15
+
+
+## Expectations for final project {.smaller}
+
+* Research paper or thesis chapter that you can turn into a peer-reviewed publication
+
+* Ideally a solo effort, but you can work in pairs
+
+* Focus on applied time series analysis (univariate or multivariate)  
+    
+* Short format similar to “Report” in _Ecology_ or “Rapid Communication” in _CJFAS_
+    - Max of 20 pages, inclusive of refs, tables, figs, etc
+    - 12-pt font, double-spaced throughout
+
+
+## Don't have time series data? {.smaller}
+
+* [RAM Legacy](http://ramlegacy.marinebiodiversity.ca/)
+
+* [RAM’s Stock-Recruitment Database](http://www.mscs.dal.ca/~myers/welcome.html)
+
+* [Global Population Dynamics Database](http://www3.imperial.ac.uk/cpb/databases/gpdd)
+
+* [NOAA NWFSC Salmon Population Summary](https://www.webapps.nwfsc.noaa.gov/apex/f?p=261:home:0)
+
+* SAFS
+    - Alaska Salmon Program
+    - Lake Washington plankton
+
+
+## {.flexbox .vcenter .bigger}
+
+<font size="10">
+[__Course topics__](https://nwfsc-timeseries.github.io/atsa/asyllabus.html) 
+</font>
+

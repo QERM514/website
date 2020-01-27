@@ -1,0 +1,51 @@
+---
+title: "Final Project"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+Each student will produce and report on a thoughtful and thorough analysis of a dataset. You should start with a research question that relates to your interests. You then should obtain a data set, analyze it (with full consideration of issues including checking your assumptions, model selection, parameter estimation, and prediction), and report on your findings.
+
+You’ll deliver a final presentation and produce a final report, each of which should include an Introduction, Methods, Results, and Discussion. Your attention to detail should be at the level expected for a conference presentation or a paper you would submit for publication (even if the question and depth of introduction and discussion are not). When thinking about your project, remember our class themes: moving from a question to a model or models, and moving from a model or model(s) to inference. I want to clearly see your thought process.
+
+There will be 3 components to your project: a project plan, a presentation, and a final report. All three of these elements will contribute a total of 30% toward your final grade.
+
+## 1. Plan
+
+#### Project plans are due by 11:59 PM on May 1 and constitute 3% of your final grade.
+
+Write a 1-page description of your project idea that includes 
+
+1. the question(s) of interest;  
+2. the data you will use; and  
+3. your general approach to analyzing the data.  
+
+Things to consider:
+
+* What sort of model do you expect to build?  
+* Will it be linear or otherwise?  
+* Might there be random effects?  
+* How will you go about developing one or more models, analyzing them, and making inference?
+
+## 2. Presentation
+
+#### Presentations will be during week of June 1-5 and make up 9% of your final grade.
+
+Each student will be expected to present their project to the class. The instructor will randomly assign each student to a time slot for their presentation, either during class on June 1, June 3, or June 5, or during lab on June 5. You will have 10 minutes for your presentation, and there will be 2 minutes for questions. I will be quite strict with time. To minimize time lost switching between computers, students will need to email their presentation to the instructor no later than 8:00 AM on the day they are scheduled to deliver it. All presenters will use the instructor's computer.
+
+Your presentation should include
+
+* a *brief* introduction of your question and why you chose it;  
+* a *synopsis* of the models and assumptions;  
+* the results of your analsysis; and
+* a discussion of the implications and possible next steps.
+
+## 3. Report
+
+#### Reports are due by 11:59 PM on June 7 and constitute 18% of your final grade.
+
+Please use the RMarkdown report template for your final report, which will facilitate proper formatting of text, equations, code, figures, references, etc. Your report is restricted to 2000 words (independent of code chunks) plus no more than 2 tables and 2 figures. If you don’t need 2000 words to cover your topic, you should not feel obligated to use them. Clear and succinct writing is an important skill, and you should practice it at every opportunity. Please bear in mind that your report should detail a fully reproducible workflow of your analysis. As such, please provide a copy of any necessary data file(s). However, I’ll only consult this as a last resort if there seems to be an error or I can’t work out what you did. All the relevant information should be in your written report.
