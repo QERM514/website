@@ -32,6 +32,7 @@ Who are you?
 What is this course about? 
 </font>
 
+
 ## Two major goals in ecology:
 
 <font size="6">
@@ -53,7 +54,7 @@ Pattern $\overset{?}{\Rightarrow}$ Process
 ## {.flexbox .vcenter}
 
 <font size="10">
-Data $\overset{?}{=}$ Process
+Data $\overset{?}{\Rightarrow}$ Process
 </font>
 
 
@@ -116,7 +117,7 @@ Our challenge is to separate the signal from the noise
 
 ### Measurements $\rightarrow$ size/growth
 
-### Resites $\rightarrow$ survival/movement
+### Resights $\rightarrow$ survival/movement
 
 
 ## General approach
@@ -135,10 +136,29 @@ Our challenge is to separate the signal from the noise
 | $\text{size}_i = \beta_0 + \beta_1 \text{age}_i + \beta_2 \text{temperature}_i + \epsilon_i ~ ~$ | multiple regression |
 
 
+## Linear models for size of fish
+
+[R code for simple models]
+
+
 ## General approach
 
 ### Question $\rightarrow$ Data $\rightarrow$ Model $\rightarrow$ <u>Inference</u> $\rightarrow$ Prediction
 
+
+## Linear models for size of fish
+
+[choose *best* model]
+
+
+## General approach
+
+### Question $\rightarrow$ Data $\rightarrow$ Model $\rightarrow$ Inference $\rightarrow$ <u>Prediction</u>
+
+
+## Linear models for size of fish
+
+[R code for prediction]
 
 
 ## Learning objectives
