@@ -32,7 +32,8 @@ Who are you?
 What is this course about? 
 </font>
 
-## Two major goals in ecology: {.build}
+
+## Two major goals in ecology:
 
 <font size="6">
 1. Infer process from pattern   
@@ -53,7 +54,7 @@ Pattern $\overset{?}{\Rightarrow}$ Process
 ## {.flexbox .vcenter}
 
 <font size="10">
-Data $\overset{?}{=}$ Process
+Data $\overset{?}{\Rightarrow}$ Process
 </font>
 
 
@@ -77,9 +78,87 @@ text(1.9, 45, adj = c(0.5, 0.5), "Process", col = "white", cex = 1.5)
 text(1.9, 95, adj = c(0.5, 0.5), "Noise", col = "black", cex = 1.5)
 ```
 
-## The signal and the noise
+## {.flexbox .vcenter}
 
-This course is about separating the signal(s) from the noise 
+<font size="10">
+Our challenge is to separate the signal from the noise 
+</font>
+
+
+## General approach
+
+### Question $\rightarrow$ Data $\rightarrow$ Model $\rightarrow$ Inference $\rightarrow$ Prediction
+
+
+## General approach
+
+### <u>Question</u> $\rightarrow$ Data $\rightarrow$ Model $\rightarrow$ Inference $\rightarrow$ Prediction
+
+
+## Common questions in ecology
+
+### Reproduction?
+
+### Growth? 
+
+### Survival?
+
+### Movement?
+
+
+## General approach
+
+### Question $\rightarrow$ <u>Data</u> $\rightarrow$ Model $\rightarrow$ Inference $\rightarrow$ Prediction
+
+
+## Ecological data
+
+### Counts $\rightarrow$ density/biomass
+
+### Measurements $\rightarrow$ size/growth
+
+### Resights $\rightarrow$ survival/movement
+
+
+## General approach
+
+### Question $\rightarrow$ Data $\rightarrow$ <u>Model</u> $\rightarrow$ Inference $\rightarrow$ Prediction
+
+
+## Linear models for size of fish
+
+| Model | Description |
+|:------|:-----------:|
+|$\text{size}_i = \beta_0 + \epsilon_i$ | global mean |
+| $\text{size}_i = \beta_0 + \beta_1 \text{species}_i + \epsilon_i$ | 1-way ANOVA |
+| $\text{size}_i = \beta_0 + \beta_1 \text{species}_i + \beta_2 \text{site}_i + \epsilon_i$ | 2-way ANOVA |
+| $\text{size}_i = \beta_0 + \beta_1 \text{age}_i + \epsilon_i$ | simple linear regression |
+| $\text{size}_i = \beta_0 + \beta_1 \text{age}_i + \beta_2 \text{temperature}_i + \epsilon_i ~ ~$ | multiple regression |
+
+
+## Linear models for size of fish
+
+[R code for simple models]
+
+
+## General approach
+
+### Question $\rightarrow$ Data $\rightarrow$ Model $\rightarrow$ <u>Inference</u> $\rightarrow$ Prediction
+
+
+## Linear models for size of fish
+
+[choose *best* model]
+
+
+## General approach
+
+### Question $\rightarrow$ Data $\rightarrow$ Model $\rightarrow$ Inference $\rightarrow$ <u>Prediction</u>
+
+
+## Linear models for size of fish
+
+[R code for prediction]
 
 
 ## Learning objectives

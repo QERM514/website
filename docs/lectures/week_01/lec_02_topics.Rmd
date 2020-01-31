@@ -1,5 +1,5 @@
 ---
-title: "Course overview"
+title: "[title]"
 subtitle: "Analysis of Ecological and Environmental Data<br>QERM 514"
 author: "Mark Scheuerell"
 date: "1 April 2020"
