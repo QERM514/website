@@ -125,12 +125,12 @@ Our challenge is to separate the signal from the noise
 ### Question $\rightarrow$ Data $\rightarrow$ <u>Model</u> $\rightarrow$ Inference $\rightarrow$ Prediction
 
 
-## 2 questions to ask:
+## Two questions to ask:
 
 1. Based on the data, what is the distributional form of the random processes?
 
 ```{r error_dist_ex, fig.height = 4, fig.width = 7, fig.align = 'center'}
-par(mfrow = c(1, 2), mai = c(0.5, 0.5, 0.5, 0), omi = rep(0, 4), bg = NA)
+par(mfrow = c(1, 2), mai = c(0.5, 0.5, 0.5, 0.1), omi = rep(0, 4), bg = NA)
 
 hist(rnorm(1e5), breaks = 50,
      yaxt = "n", xlab = expression(epsilon), main = "Normal")
@@ -140,11 +140,31 @@ hist(rnbinom(1e5, 5, 0.3), breaks = 50,
 ```
 
 
-## 2 questions to ask:
+## Two questions to ask:
 
 1. Based on the data, what is the distributional form of the random processes?
 
 2. How many random processes are there?
+
+$$
+y = f(\text{species}, \text{population}, \text{time}) \\
+$$
+
+
+## Two questions to ask:
+
+1. Based on the data, what is the distributional form of the random processes?
+
+2. How many random processes are there?
+
+$$
+y = f(\text{species}, \text{population}, \text{time}) \\
+\Downarrow \\
+y_{s,p,t} = \alpha_s + \beta_p + \delta_t + \epsilon_{s,p,t} \\
+\beta_p \sim \text{N}(\mu_{\beta},\sigma_{\beta}) \\
+\delta_t \sim \text{N}(\mu_{\delta},\sigma_{\delta}) \\
+\epsilon_{s,p,t} \sim \text{N}(0,\sigma_{\epsilon})
+$$
 
 
 ## Forms of linear models
