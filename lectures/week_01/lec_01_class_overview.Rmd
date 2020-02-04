@@ -520,7 +520,8 @@ L10_length <- log(runif(nn, 100, 400), 10)
 L10_mass <- -5.3 + 3.1 * L10_length + rnorm(nn, 0, 0.2)
 
 par(mai = c(1, 1, 0.1, 0.1), omi = rep(0, 4), bg = NA)
-plot(10^(L10_length), 10^(L10_mass), ylab = "Mass (g)", xlab = "Length (mm)", pch = 16, log = "xy")
+plot(10^(L10_length), 10^(L10_mass), pch = 16, log = "xy",
+     ylab = "Mass (g)", xlab = "Length (mm)", cex.lab = 1.5)
 ```
 
 
@@ -620,7 +621,8 @@ For example, what is the expected mass of a 250 mm fish?
 fit_mass <- predict(m2)
 
 par(mai = c(1, 1, 0.1, 0.1), omi = rep(0, 4), bg = NA)
-plot(10^(L10_length), 10^(L10_mass), ylab = "Mass (g)", xlab = "Length (mm)", pch = 16, log = "xy")
+plot(10^(L10_length), 10^(L10_mass), pch = 16, log = "xy",
+     ylab = "Mass (g)", xlab = "Length (mm)", cex.lab = 1.5)
 lines(10^(L10_length), 10^(fit_mass))
 ```
 
@@ -633,7 +635,33 @@ Alternatively, we can use the `predict()` function in **R**
 ## prediction on the log10 scale
 L10_mass_pred <- predict(m2, data.frame(L10_length = log(250, 10)))
 ## prediction in normal space
-10^L10_mass_pred
+round(10^L10_mass_pred, 1)
 ```
 
+
+## Uncertainty in our prediction?
+
+```{r predict_int, fig.align = 'center', fig.height = 5, fig.width = 5, warning = FALSE}
+fit_mass_2 <- predict(m2, interval = "prediction")
+
+par(mai = c(1, 1, 0.1, 0.1), omi = rep(0, 4), bg = NA)
+plot(10^(L10_length), 10^(L10_mass), pch = 16, log = "xy",
+     ylab = "Mass (g)", xlab = "Length (mm)", cex.lab = 1.5)
+lines(10^(L10_length), 10^(fit_mass_2[,"fit"]))
+lines(10^(L10_length), 10^(fit_mass_2[,"upr"]), col = "blue")
+lines(10^(L10_length), 10^(fit_mass_2[,"lwr"]), col = "blue")
+```
+
+
+## Uncertainty in our prediction?
+
+More formally, we can use the `predict()` function in **R**
+
+```{r, echo = TRUE}
+## prediction on the log10 scale
+L10_mass_pred <- predict(m2, data.frame(L10_length = log(250, 10)),
+                         interval = "prediction")
+## prediction in normal space
+round(10^L10_mass_pred, 1)
+```
 
