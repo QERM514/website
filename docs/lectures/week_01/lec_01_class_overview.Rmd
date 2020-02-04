@@ -67,7 +67,7 @@ Data = Process + Noise
 
 ## Ecological data often have lots of noise
 
-```{r}
+```{r info_noise_barchart}
 dat <- matrix(c(20, 80, 90, 10), 2, 2)
 par(mai = c(0.5, 1, 0.5, 0.5))
 bp <- barplot(dat, las = 1, col = c("blue", "gray"), border = NA, axes = FALSE,
@@ -125,15 +125,235 @@ Our challenge is to separate the signal from the noise
 ### Question $\rightarrow$ Data $\rightarrow$ <u>Model</u> $\rightarrow$ Inference $\rightarrow$ Prediction
 
 
+## A simple starting point
+
+### Data = (Deterministic part) + (Stochastic part)
+
+
+## Two questions to ask:
+
+1. What is the distributional form of the random processes?
+
+```{r error_dist_ex, fig.height = 4, fig.width = 7, fig.align = 'center'}
+par(mfrow = c(1, 2), mai = c(0.5, 0.5, 0.5, 0.1), omi = rep(0, 4), bg = NA)
+
+hist(rnorm(1e5), breaks = 50,
+     yaxt = "n", xlab = expression(epsilon), main = "Normal")
+
+hist(rnbinom(1e5, 5, 0.3), breaks = 50,
+     yaxt = "n", xlab = expression(epsilon), main = "Negative binomial")
+```
+
+
+## Two questions to ask:
+
+1. What is the distributional form of the random processes?
+
+2. How many random processes are there?
+
+$$
+\text{abundance} = f(\text{species}, \text{population}, \text{time}) \\
+$$
+
+
+## Forms of linear models
+
+| Errors | Single random process | Multiple random processes |
+|:-------|:--------------:|:------------------:|
+| Normal | Linear Model (LM) | Linear Mixed Model (LMM) |
+| Non-normal | Generalized Linear Model (GLM) | Generalized Linear Mixed Model (GLMM) |
+
+
+## Forms of linear models
+ 
+```{r model_diagram, fig.height = 5, fig.width = 7, fig.align = 'center'}
+par(mai = rep(0, 4), omi = rep(0, 4), bg = NA)
+
+## order: GLM, LM, GLMM, LMM
+xx <- c(1, 2, 2, 3) * 10
+yy <- c(2, 1, 3, 2) * 10
+
+plot(c(7, 33), c(7, 33), type = "n", xlim = c(7, 33), ylim = c(7, 33),
+     xaxt = "n", yaxt = "n", xlab = "", ylab = "",
+     bty = "n")
+symbols(xx, yy, circle = rep(2, 4), inches = 0.5, add = TRUE,
+        lwd = 2, bg = "white")
+text(xx, yy, c("GLM", "LM", "GLMM", "LMM"), cex = 1.5)
+## from LM to GLM
+arrows(xx[2]-2, yy[2]+2, xx[1]+2, yy[1]-2, length = 0.2)
+text(15, 14, "multiple forms of errors", pos = 2)
+## from LM to LMM
+arrows(xx[2]+2, yy[2]+2, xx[4]-2, yy[4]-2, length = 0.2)
+text(25, 14, "multiple random processes", pos = 4)
+## from GLM to GLMM
+arrows(xx[1]+2, yy[1]+2, xx[3]-2, yy[3]-2, length = 0.2)
+text(15, 26, "multiple random processes", pos = 2)
+## from LMM to GLMM
+arrows(xx[4]-2, yy[4]+2, xx[3]+2, yy[3]-2, length = 0.2)
+text(25, 26, "multiple forms of errors", pos = 4)
+```
+
+
+## Forms of linear models
+ 
+```{r model_diagram_lm, fig.height = 5, fig.width = 7, fig.align = 'center'}
+par(mai = rep(0, 4), omi = rep(0, 4), bg = NA)
+
+## order: GLM, LM, GLMM, LMM
+xx <- c(1, 2, 2, 3) * 10
+yy <- c(2, 1, 3, 2) * 10
+
+plot(c(7, 33), c(7, 33), type = "n", xlim = c(7, 33), ylim = c(7, 33),
+     xaxt = "n", yaxt = "n", xlab = "", ylab = "",
+     bty = "n")
+symbols(xx, yy, circle = rep(2, 4), inches = 0.5, add = TRUE,
+        lwd = 2, fg = c("black", "blue", "black", "black"), bg = "white")
+text(xx, yy, c("GLM", "LM", "GLMM", "LMM"), cex = 1.5,
+     col = c("black", "blue", "black", "black"))
+## from LM to GLM
+arrows(xx[2]-2, yy[2]+2, xx[1]+2, yy[1]-2, length = 0.2)
+text(15, 14, "multiple forms of errors", pos = 2)
+## from LM to LMM
+arrows(xx[2]+2, yy[2]+2, xx[4]-2, yy[4]-2, length = 0.2)
+text(25, 14, "multiple random processes", pos = 4)
+## from GLM to GLMM
+arrows(xx[1]+2, yy[1]+2, xx[3]-2, yy[3]-2, length = 0.2)
+text(15, 26, "multiple random processes", pos = 2)
+## from LMM to GLMM
+arrows(xx[4]-2, yy[4]+2, xx[3]+2, yy[3]-2, length = 0.2)
+text(25, 26, "multiple forms of errors", pos = 4)
+```
+
+
 ## Linear models for size of fish
 
 | Model | Description |
 |:------|:-----------:|
-|$\text{size}_i = \beta_0 + \epsilon_i$ | global mean |
 | $\text{size}_i = \beta_0 + \beta_1 \text{species}_i + \epsilon_i$ | 1-way ANOVA |
 | $\text{size}_i = \beta_0 + \beta_1 \text{species}_i + \beta_2 \text{site}_i + \epsilon_i$ | 2-way ANOVA |
 | $\text{size}_i = \beta_0 + \beta_1 \text{age}_i + \epsilon_i$ | simple linear regression |
 | $\text{size}_i = \beta_0 + \beta_1 \text{age}_i + \beta_2 \text{temperature}_i + \epsilon_i ~ ~$ | multiple regression |
+
+
+## An aside on notation
+
+These models are equivalent
+
+$$
+y_i = \beta_0 + \beta_1 x_i + \epsilon_i \\
+\epsilon_i \sim \text{N}(0,\sigma) \\
+\Downarrow \\
+y_i \sim \text{N}(\mu_i,\sigma) \\
+\mu_i = \beta_0 + \beta_1 x_i
+$$
+
+
+
+
+## Forms of linear models
+ 
+```{r model_diagram_glm, fig.height = 5, fig.width = 7, fig.align = 'center'}
+par(mai = rep(0, 4), omi = rep(0, 4), bg = NA)
+
+## order: GLM, LM, GLMM, LMM
+xx <- c(1, 2, 2, 3) * 10
+yy <- c(2, 1, 3, 2) * 10
+
+plot(c(7, 33), c(7, 33), type = "n", xlim = c(7, 33), ylim = c(7, 33),
+     xaxt = "n", yaxt = "n", xlab = "", ylab = "",
+     bty = "n")
+symbols(xx, yy, circle = rep(2, 4), inches = 0.5, add = TRUE,
+        lwd = 2, fg = c("blue", "black", "black", "black"), bg = "white")
+text(xx, yy, c("GLM", "LM", "GLMM", "LMM"), cex = 1.5,
+     col = c("blue", "black", "black", "black"))
+## from LM to GLM
+arrows(xx[2]-2, yy[2]+2, xx[1]+2, yy[1]-2, length = 0.2)
+text(15, 14, "multiple forms of errors", pos = 2)
+## from LM to LMM
+arrows(xx[2]+2, yy[2]+2, xx[4]-2, yy[4]-2, length = 0.2)
+text(25, 14, "multiple random processes", pos = 4)
+## from GLM to GLMM
+arrows(xx[1]+2, yy[1]+2, xx[3]-2, yy[3]-2, length = 0.2)
+text(15, 26, "multiple random processes", pos = 2)
+## from LMM to GLMM
+arrows(xx[4]-2, yy[4]+2, xx[3]+2, yy[3]-2, length = 0.2)
+text(25, 26, "multiple forms of errors", pos = 4)
+```
+
+
+## General linear models (GLMs)
+
+*Three important components*
+
+1. Distributional form for errors
+
+2. Link function
+
+3. Linear model
+
+
+## Examples of GLMs
+
+
+$$
+y_i \sim \text{N}(\mu_i,\sigma) \\
+\mu_i = \beta_0 + \beta_1 x_i
+$$
+
+
+## 2 columns
+
+<div class="row">
+  <div class="column left">
+    BLAH
+  </div>
+  <div class="column right">
+    BLAH 2
+  </div>
+</div>
+
+
+## Forms of linear models
+ 
+```{r model_diagram_lmm, fig.height = 5, fig.width = 7, fig.align = 'center'}
+par(mai = rep(0, 4), omi = rep(0, 4), bg = NA)
+
+## order: GLM, LM, GLMM, LMM
+xx <- c(1, 2, 2, 3) * 10
+yy <- c(2, 1, 3, 2) * 10
+
+plot(c(7, 33), c(7, 33), type = "n", xlim = c(7, 33), ylim = c(7, 33),
+     xaxt = "n", yaxt = "n", xlab = "", ylab = "",
+     bty = "n")
+symbols(xx, yy, circle = rep(2, 4), inches = 0.5, add = TRUE,
+        lwd = 2, fg = c("black", "black", "blue", "black"), bg = "white")
+text(xx, yy, c("GLM", "LM", "GLMM", "LMM"), cex = 1.5,
+     col = c("black", "black", "blue", "black"))
+## from LM to GLM
+arrows(xx[2]-2, yy[2]+2, xx[1]+2, yy[1]-2, length = 0.2)
+text(15, 14, "multiple forms of errors", pos = 2)
+## from LM to LMM
+arrows(xx[2]+2, yy[2]+2, xx[4]-2, yy[4]-2, length = 0.2)
+text(25, 14, "multiple random processes", pos = 4)
+## from GLM to GLMM
+arrows(xx[1]+2, yy[1]+2, xx[3]-2, yy[3]-2, length = 0.2)
+text(15, 26, "multiple random processes", pos = 2)
+## from LMM to GLMM
+arrows(xx[4]-2, yy[4]+2, xx[3]+2, yy[3]-2, length = 0.2)
+text(25, 26, "multiple forms of errors", pos = 4)
+```
+
+
+## Linear mixed model (LMM)
+
+$$
+\text{abundance} = f(\text{species}, \text{population}, \text{time}) \\
+\Downarrow \\
+y_{s,p,t} = \alpha_s + \beta_p + \delta_t + \epsilon_{s,p,t} \\
+\beta_p \sim \text{N}(\mu_{\beta},\sigma_{\beta}) \\
+\delta_t \sim \text{N}(\mu_{\delta},\sigma_{\delta}) \\
+\epsilon_{s,p,t} \sim \text{N}(0,\sigma_{\epsilon})
+$$
 
 
 ## Linear models for size of fish
