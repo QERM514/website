@@ -530,21 +530,17 @@ $\text{log}_{10}(mass_i) = \alpha + \beta ~ \text{log}_{10}(length_i) + \epsilon
 ### Question $\rightarrow$ Data $\rightarrow$ Model $\rightarrow$ <u>Inference</u> $\rightarrow$ Prediction
 
 
-## Model 1 {.smaller}
+## Model 1 in R {.smaller}
 
-`m1 <- lm(L10_mass ~ 1)`
-
-```{r}
+```{r, echo = TRUE}
 m1 <- lm(L10_mass ~ 1)
 summary(m1)
 ```
 
 
-## Model 2 {.smaller}
+## Model 2 in R {.smaller}
 
-`m2 <- lm(L10_mass ~ L10_length)`
-
-```{r}
+```{r, echo = TRUE}
 m2 <- lm(L10_mass ~ L10_length)
 summary(m2)
 ```
@@ -569,9 +565,7 @@ The model with the **lowest** AIC is considered the "best"
 
 In **R** we can use the `AIC()` function
 
-`AIC(m1, m2)`
-
-```{r}
+```{r, echo = TRUE}
 AIC(m1, m2)
 ```
 
@@ -580,13 +574,11 @@ AIC(m1, m2)
 
 In **R** we can use the `AIC()` function
 
-`AIC(m1, m2)`
-
-```{r}
+```{r, echo = TRUE}
 AIC(m1, m2)
 ```
 
-Model 2 has the lowest AIC
+Model 2 has the lowest AIC and is therefore the most parsimonious
 
 
 ## General approach
@@ -594,12 +586,37 @@ Model 2 has the lowest AIC
 ### Question $\rightarrow$ Data $\rightarrow$ Model $\rightarrow$ Inference $\rightarrow$ <u>Prediction</u>
 
 
-## Linear models for size of fish
+## Prediction of novel outcomes
 
-[R code for prediction]
+Once we have a (reasonable) model, we can do some prediction
+
+For example, what is the expected mass of a 250 mm fish?
 
 
-## Learning objectives
+## Prediction of novel outcomes
+
+```{r lpredict, fig.align = 'center', fig.height = 5, fig.width = 5}
+fit_mass <- predict(m2)
+
+par(mai = c(1, 1, 0.1, 0.1), omi = rep(0, 4), bg = NA)
+plot(10^(L10_length), 10^(L10_mass), ylab = "Mass (g)", xlab = "Length (mm)", pch = 16, log = "xy")
+lines(10^(L10_length), 10^(fit_mass))
+```
+
+
+## Prediction of novel outcomes
+
+Alternatively, we can use the `predict()` function in **R**
+
+```{r, echo = TRUE}
+## prediction on the log10 scale
+L10_mass_pred <- predict(m2, data.frame(L10_length = log(250, 10)))
+## prediction in normal space
+10^L10_mass_pred
+```
+
+
+## Learning objectives for the course
 
 By the end of the quarter, students should be able to:
 
@@ -612,18 +629,6 @@ By the end of the quarter, students should be able to:
 * Evaluate data support for various models and select the most parsimonious model among them
 
 * Use **R Markdown** to combine text, equations, code, tables, and figures into reports
-
-
-## Grading {.smaller}
-
-* __Weekly homework__ (70% of total)
-    - Assigned Friday at the end of computer lab
-    - Due by 11:59 PM the following Friday
-
-* __Final project__ (30% of total)
-    - Analysis
-    - Presentation (last week of class)
-    - Report (due by 11:59 PM PST on June 7)
 
 
 ## {.flexbox .vcenter .bigger}
