@@ -532,25 +532,61 @@ $\text{log}_{10}(mass_i) = \alpha + \beta ~ \text{log}_{10}(length_i) + \epsilon
 
 ## Model 1 {.smaller}
 
-`lm(L10_mass ~ 1)`
+`m1 <- lm(L10_mass ~ 1)`
 
 ```{r}
-summary(lm(L10_mass ~ 1))
+m1 <- lm(L10_mass ~ 1)
+summary(m1)
 ```
 
 
 ## Model 2 {.smaller}
 
-`lm(L10_mass ~ L10_length)`
+`m2 <- lm(L10_mass ~ L10_length)`
 
 ```{r}
-summary(lm(L10_mass ~ L10_length))
+m2 <- lm(L10_mass ~ L10_length)
+summary(m2)
 ```
 
 
-## Linear models for size of fish
+## Which model should we choose?
 
-[choose *best* model]
+We can an *information criterion* to select the one with the most *data support*
+
+For example, Akaike's Information Criterion (AIC)
+
+$$
+\text{AIC} = -2 \text{LL} + 2 p
+$$
+
+where $\text{NLL}$ is the log-likelihood and $p$ is the number of *fitted* parameters
+
+The model with the **lowest** AIC is considered the "best"
+
+
+## Model selection
+
+In **R** we can use the `AIC()` function
+
+`AIC(m1, m2)`
+
+```{r}
+AIC(m1, m2)
+```
+
+
+## Model selection
+
+In **R** we can use the `AIC()` function
+
+`AIC(m1, m2)`
+
+```{r}
+AIC(m1, m2)
+```
+
+Model 2 has the lowest AIC
 
 
 ## General approach
