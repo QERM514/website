@@ -10,10 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 intro <- list(
   title = "Introduction",
-  topics = c("Course overview",
-             "Questions in environmental science",
-             "Types of environmental data",
-             "Data transformations"),
+  topics = c("Course overview"),
   pdf = "",
   rmd = c("lectures/week_01/lec_01_class_overview.Rmd"),
   html = c("lectures/week_01/lec_01_class_overview.html"),
