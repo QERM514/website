@@ -132,7 +132,7 @@ Our challenge is to separate the signal from the noise
 
 ## Two questions to ask:
 
-1. Based on the data, what is the distributional form of the random processes?
+1. What is the distributional form of the random processes?
 
 ```{r error_dist_ex, fig.height = 4, fig.width = 7, fig.align = 'center'}
 par(mfrow = c(1, 2), mai = c(0.5, 0.5, 0.5, 0.1), omi = rep(0, 4), bg = NA)
@@ -299,6 +299,18 @@ $$
 y_i \sim \text{N}(\mu_i,\sigma) \\
 \mu_i = \beta_0 + \beta_1 x_i
 $$
+
+
+## 2 columns
+
+<div class="row">
+  <div class="column left">
+    BLAH
+  </div>
+  <div class="column right">
+    BLAH 2
+  </div>
+</div>
 
 
 ## Forms of linear models
