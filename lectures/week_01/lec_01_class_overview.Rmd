@@ -229,10 +229,10 @@ text(25, 26, "multiple forms of errors", pos = 4)
 
 | Model | Description |
 |:------|:-----------:|
-| $\text{size}_i = \beta_0 + \beta_1 \text{species}_i + \epsilon_i$ | 1-way ANOVA |
-| $\text{size}_i = \beta_0 + \beta_1 \text{species}_i + \beta_2 \text{site}_i + \epsilon_i$ | 2-way ANOVA |
-| $\text{size}_i = \beta_0 + \beta_1 \text{age}_i + \epsilon_i$ | simple linear regression |
-| $\text{size}_i = \beta_0 + \beta_1 \text{age}_i + \beta_2 \text{temperature}_i + \epsilon_i ~ ~$ | multiple regression |
+| $\text{size}_i = \alpha + \beta \text{species}_i + \epsilon_i$ | 1-way ANOVA |
+| $\text{size}_i = \alpha + \beta \text{species}_i + \beta_2 \text{site}_i + \epsilon_i$ | 2-way ANOVA |
+| $\text{size}_i = \alpha + \beta \text{age}_i + \epsilon_i$ | simple linear regression |
+| $\text{size}_i = \alpha + \beta \text{age}_i + \beta_2 \text{temperature}_i + \epsilon_i ~ ~$ | multiple regression |
 
 
 ## Forms of linear models
@@ -279,26 +279,26 @@ text(25, 26, "multiple forms of errors", pos = 4)
 
 ## Example of a GLM
 
-Counts of trees per unit area
+Counts of trees per unit area $y_i$
 
 $$
 \begin{aligned}
 \text{data distribution:} & ~~~ y_i \sim \text{Poisson}(\lambda_i) \\ \\
 \text{link function:} & ~~~ \text{log}(\lambda_i) = \mu_i \\ \\
-\text{linear model:} & ~~~ \mu_i = \beta_0 + \beta_1 x_i
+\text{linear model:} & ~~~ \mu_i = \alpha + \beta x_i
 \end{aligned}
 $$
 
 
 ## Example of a GLM
 
-Survival of fish from eggs to adulthood 
+Survival of fish from eggs to adulthood $s_i$
 
 $$
 \begin{aligned}
-\text{data distribution:} & ~~~ y_i \sim \text{Binomial}(N_i, p_i) \\ \\
-\text{link function:} & ~~~ \text{logit}(p_i) = \text{log}\left(\frac{p_i}{1-p_i}\right) = \mu_i \\ \\
-\text{linear model:} & ~~~ \mu_i = \beta_0 + \beta_1 x_i
+\text{data distribution:} & ~~~ y_i \sim \text{Binomial}(N_i, s_i) \\ \\
+\text{link function:} & ~~~ \text{logit}(s_i) = \text{log}\left(\frac{s_i}{1-s_i}\right) = \mu_i \\ \\
+\text{linear model:} & ~~~ \mu_i = \alpha + \beta x_i
 \end{aligned}
 $$
 
@@ -306,47 +306,47 @@ $$
 ## Writing an LM as a GLM
 
 $$
-y_i = \beta_0 + \beta_1 x_i + \epsilon_i ~ \text{with} ~ \epsilon_i \sim \text{N}(0,\sigma)
+y_i = \alpha + \beta x_i + \epsilon_i ~ \text{with} ~ \epsilon_i \sim \text{N}(0,\sigma)
 $$
 
 
 ## Writing an LM as a GLM
 
 $$
-y_i = \beta_0 + \beta_1 x_i + \epsilon_i ~ \text{with} ~ \epsilon_i \sim \text{N}(0,\sigma) \\
+y_i = \alpha + \beta x_i + \epsilon_i ~ \text{with} ~ \epsilon_i \sim \text{N}(0,\sigma) \\
 \Downarrow \\
 y_i = \mu_i + \epsilon_i~ \text{with} ~ \epsilon_i \sim \text{N}(0,\sigma) \\
-\mu_i = \beta_0 + \beta_1 x_i
+\mu_i = \alpha + \beta x_i
 $$
 
 
 ## Writing an LM as a GLM
 
 $$
-y_i = \beta_0 + \beta_1 x_i + \epsilon_i ~ \text{with} ~ \epsilon_i \sim \text{N}(0,\sigma) \\
+y_i = \alpha + \beta x_i + \epsilon_i ~ \text{with} ~ \epsilon_i \sim \text{N}(0,\sigma) \\
 \Downarrow \\
 y_i = \mu_i + \epsilon_i~ \text{with} ~ \epsilon_i \sim \text{N}(0,\sigma) \\
-\mu_i = \beta_0 + \beta_1 x_i \\
+\mu_i = \alpha + \beta x_i \\
 \Downarrow \\
 y_i = \epsilon_i ~ \text{with} ~  \epsilon_i \sim \text{N}(\mu,\sigma) \\
-\mu_i = \beta_0 + \beta_1 x_i
+\mu_i = \alpha + \beta x_i
 $$
 
 
 ## Writing an LM as a GLM
 
 $$
-y_i = \beta_0 + \beta_1 x_i + \epsilon_i ~ \text{with} ~ \epsilon_i \sim \text{N}(0,\sigma) \\
+y_i = \alpha + \beta x_i + \epsilon_i ~ \text{with} ~ \epsilon_i \sim \text{N}(0,\sigma) \\
 \Downarrow \\
 y_i = \mu_i + \epsilon_i~ \text{with} ~ \epsilon_i \sim \text{N}(0,\sigma) \\
-\mu_i = \beta_0 + \beta_1 x_i \\
+\mu_i = \alpha + \beta x_i \\
 \Downarrow \\
 y_i = \epsilon_i ~ \text{with} ~  \epsilon_i \sim \text{N}(\mu,\sigma) \\
-\mu_i = \beta_0 + \beta_1 x_i \\
+\mu_i = \alpha + \beta x_i \\
 \Downarrow \\
 y_i \sim \text{N}(\mu_i,\sigma) \\
 1(\mu_i) = \mu_i \\
-\mu_i = \beta_0 + \beta_1 x_i
+\mu_i = \alpha + \beta x_i
 $$
 
 
@@ -410,7 +410,7 @@ sampled from a population
 Fish mass as a function of its length and *specific* location
 
 $$
-y_{i,j} = \underbrace{\beta_0 + \beta_1 x_{i,j} + \delta_{j}}_{\text{fixed}} + \underbrace{\epsilon_{i,j}}_{\text{random}} 
+y_{i,j} = \underbrace{\alpha + \beta x_{i,j} + \delta_{j}}_{\text{fixed}} + \underbrace{\epsilon_{i,j}}_{\text{random}} 
 $$
 
 $y_i$ is the log(mass) for fish *i* in location $j$
@@ -427,7 +427,7 @@ $\epsilon_{i,j} \sim \text{N}(0,\sigma_\epsilon)$
 Fish mass as a function of its length and *general* location
 
 $$
-y_{i,j} = \underbrace{\beta_0 + \beta_1 x_{i,j}}_{\text{fixed}} + \underbrace{\delta_{j} + \epsilon_{i,j}}_{\text{random}} 
+y_{i,j} = \underbrace{\alpha + \beta x_{i,j}}_{\text{fixed}} + \underbrace{\delta_{j} + \epsilon_{i,j}}_{\text{random}} 
 $$
 
 $y_i$ is the log(mass) for fish *i* in location $j$
@@ -470,16 +470,19 @@ text(25, 26, "multiple forms of errors", pos = 4)
 ```
 
 
-## Linear mixed model (LMM)
+## General linear mixed model
+
+Survival of fish $s_{i,j}$ as a function of length $x_{i,j}$ in location $j$
 
 $$
-\text{abundance} = f(\text{species}, \text{population}, \text{time}) \\
-\Downarrow \\
-y_{s,p,t} = \alpha_s + \beta_p + \delta_t + \epsilon_{s,p,t} \\
-\beta_p \sim \text{N}(\mu_{\beta},\sigma_{\beta}) \\
-\delta_t \sim \text{N}(\mu_{\delta},\sigma_{\delta}) \\
-\epsilon_{s,p,t} \sim \text{N}(0,\sigma_{\epsilon})
+\begin{aligned}
+\text{data distribution:} & ~~~ y_{i,j} \sim \text{Binomial}(N_{i,j}, s_{i,j}) \\ \\
+\text{link function:} & ~~~ \text{logit}(s_{i,j}) = \text{log}\left(\frac{s_{i,j}}{1-s_{i,j}}\right) = \mu_{i,j} \\ \\
+\text{linear model:} & ~~~ \mu_{i,j} = \alpha + \underline{\beta_j} x_{i,j} \\
+& ~~~ \beta_j \sim \text{N}(0, \sigma)
+\end{aligned}
 $$
+
 
 
 ## Linear models for size of fish
