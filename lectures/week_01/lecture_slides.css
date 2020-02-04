@@ -7,18 +7,18 @@
   box-sizing: border-box;
 }
 
-/* Create two unequal columns that floats next to each other */
+/* Create two unequal columns that float next to each other */
 .column {
   float: left;
   padding: 10px;
 }
 
 .left {
-  width: 25%;
+  width: 35%;
 }
 
 .right {
-  width: 75%;
+  width: 65%;
 }
 
 /* Clear floats after the columns */
