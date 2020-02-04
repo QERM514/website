@@ -235,21 +235,6 @@ text(25, 26, "multiple forms of errors", pos = 4)
 | $\text{size}_i = \beta_0 + \beta_1 \text{age}_i + \beta_2 \text{temperature}_i + \epsilon_i ~ ~$ | multiple regression |
 
 
-## An aside on notation
-
-These models are equivalent
-
-$$
-y_i = \beta_0 + \beta_1 x_i + \epsilon_i \\
-\epsilon_i \sim \text{N}(0,\sigma) \\
-\Downarrow \\
-y_i \sim \text{N}(\mu_i,\sigma) \\
-\mu_i = \beta_0 + \beta_1 x_i
-$$
-
-
-
-
 ## Forms of linear models
  
 ```{r model_diagram_glm, fig.height = 5, fig.width = 7, fig.align = 'center'}
@@ -285,7 +270,7 @@ text(25, 26, "multiple forms of errors", pos = 4)
 
 *Three important components*
 
-1. Distributional form for errors
+1. Distribution of the data
 
 2. Link function
 
@@ -294,8 +279,71 @@ text(25, 26, "multiple forms of errors", pos = 4)
 
 ## Examples of GLMs
 
+Model for counts of organisms per unit area
 
 $$
+y_i \sim \text{Poisson}(\lambda) \\
+\text{log}(\lambda) = \beta_0 + \beta_1 x_i
+$$
+
+
+## Writing an LM as a GLM
+
+$$
+y_i = \beta_0 + \beta_1 x_i + \epsilon_i ~ \text{with} ~ \epsilon_i \sim \text{N}(0,\sigma)
+$$
+
+
+## Writing an LM as a GLM
+
+$$
+y_i = \beta_0 + \beta_1 x_i + \epsilon_i ~ \text{with} ~ \epsilon_i \sim \text{N}(0,\sigma) \\
+\Downarrow \\
+y_i = \mu_i + \epsilon_i~ \text{with} ~ \epsilon_i \sim \text{N}(0,\sigma) \\
+\mu_i = \beta_0 + \beta_1 x_i
+$$
+
+
+## Writing an LM as a GLM
+
+$$
+y_i = \beta_0 + \beta_1 x_i + \epsilon_i ~ \text{with} ~ \epsilon_i \sim \text{N}(0,\sigma) \\
+\Downarrow \\
+y_i = \mu_i + \epsilon_i~ \text{with} ~ \epsilon_i \sim \text{N}(0,\sigma) \\
+\mu_i = \beta_0 + \beta_1 x_i \\
+\Downarrow \\
+y_i = \epsilon_i ~ \text{with} ~  \epsilon_i \sim \text{N}(\mu,\sigma) \\
+\mu_i = \beta_0 + \beta_1 x_i
+$$
+
+
+## Writing an LM as a GLM
+
+$$
+y_i = \beta_0 + \beta_1 x_i + \epsilon_i ~ \text{with} ~ \epsilon_i \sim \text{N}(0,\sigma) \\
+\Downarrow \\
+y_i = \mu_i + \epsilon_i~ \text{with} ~ \epsilon_i \sim \text{N}(0,\sigma) \\
+\mu_i = \beta_0 + \beta_1 x_i \\
+\Downarrow \\
+y_i = \epsilon_i ~ \text{with} ~  \epsilon_i \sim \text{N}(\mu,\sigma) \\
+\mu_i = \beta_0 + \beta_1 x_i \\
+\Downarrow \\
+y_i \sim \text{N}(\mu_i,\sigma) \\
+\mu_i = \beta_0 + \beta_1 x_i
+$$
+
+
+## Writing an LM as a GLM
+
+$$
+y_i = \beta_0 + \beta_1 x_i + \epsilon_i ~ \text{with} ~ \epsilon_i \sim \text{N}(0,\sigma) \\
+\Downarrow \\
+y_i = \mu_i + \epsilon_i~ \text{with} ~ \epsilon_i \sim \text{N}(0,\sigma) \\
+\mu_i = \beta_0 + \beta_1 x_i \\
+\Downarrow \\
+y_i = \epsilon_i ~ \text{with} ~  \epsilon_i \sim \text{N}(\mu,\sigma) \\
+\mu_i = \beta_0 + \beta_1 x_i \\
+\Downarrow \\
 y_i \sim \text{N}(\mu_i,\sigma) \\
 \mu_i = \beta_0 + \beta_1 x_i
 $$
@@ -305,13 +353,14 @@ $$
 
 <div class="row">
   <div class="column left">
+<font size="7">
     BLAH
+    </font>
   </div>
   <div class="column right">
     BLAH 2
   </div>
 </div>
-
 
 ## Forms of linear models
  
