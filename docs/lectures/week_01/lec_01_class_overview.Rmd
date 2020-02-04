@@ -29,8 +29,29 @@ Who are you?
 ## {.flexbox .vcenter .bigger}
 
 <font size="10">
+[__Course information__](https://qerm514.github.io/website)
+</font>
+
+## {.flexbox .vcenter .bigger}
+
+<font size="10">
 What is this course about? 
 </font>
+
+
+## Learning objectives for the course
+
+By the end of the quarter, students should be able to:
+
+* Identify an appropriate statistical model based on the data and specific question
+
+* Understand the assumptions behind a chosen statistical model
+
+* Use **R** to fit GLMs and GLMMs to data
+
+* Evaluate data support for various models and select the most parsimonious model among them
+
+* Use **R Markdown** to combine text, equations, code, tables, and figures into reports
 
 
 ## Two major goals in ecology:
@@ -229,25 +250,10 @@ text(25, 26, "multiple forms of errors", pos = 4)
 
 | Model | Description |
 |:------|:-----------:|
-| $\text{size}_i = \beta_0 + \beta_1 \text{species}_i + \epsilon_i$ | 1-way ANOVA |
-| $\text{size}_i = \beta_0 + \beta_1 \text{species}_i + \beta_2 \text{site}_i + \epsilon_i$ | 2-way ANOVA |
-| $\text{size}_i = \beta_0 + \beta_1 \text{age}_i + \epsilon_i$ | simple linear regression |
-| $\text{size}_i = \beta_0 + \beta_1 \text{age}_i + \beta_2 \text{temperature}_i + \epsilon_i ~ ~$ | multiple regression |
-
-
-## An aside on notation
-
-These models are equivalent
-
-$$
-y_i = \beta_0 + \beta_1 x_i + \epsilon_i \\
-\epsilon_i \sim \text{N}(0,\sigma) \\
-\Downarrow \\
-y_i \sim \text{N}(\mu_i,\sigma) \\
-\mu_i = \beta_0 + \beta_1 x_i
-$$
-
-
+| $\text{size}_i = \alpha + \beta \text{species}_i + \epsilon_i$ | 1-way ANOVA |
+| $\text{size}_i = \alpha + \beta \text{species}_i + \beta_2 \text{site}_i + \epsilon_i$ | 2-way ANOVA |
+| $\text{size}_i = \alpha + \beta \text{age}_i + \epsilon_i$ | simple linear regression |
+| $\text{size}_i = \alpha + \beta \text{age}_i + \beta_2 \text{temperature}_i + \epsilon_i ~ ~$ | multiple regression |
 
 
 ## Forms of linear models
@@ -281,41 +287,182 @@ text(25, 26, "multiple forms of errors", pos = 4)
 ```
 
 
-## General linear models (GLMs)
+## Generalized linear models (GLMs)
 
 *Three important components*
 
-1. Distributional form for errors
+1. Distribution of the data
 
 2. Link function
 
 3. Linear model
 
 
-## Examples of GLMs
+## Example of a GLM
 
+Counts of trees per unit area $y_i$
 
 $$
+\begin{aligned}
+\text{data distribution:} & ~~~ y_i \sim \text{Poisson}(\lambda_i) \\ \\
+\text{link function:} & ~~~ \text{log}(\lambda_i) = \mu_i \\ \\
+\text{linear model:} & ~~~ \mu_i = \alpha + \beta x_i
+\end{aligned}
+$$
+
+
+## Example of a GLM
+
+Survival of fish from eggs to adulthood $s_i$
+
+$$
+\begin{aligned}
+\text{data distribution:} & ~~~ y_i \sim \text{Binomial}(N_i, s_i) \\ \\
+\text{link function:} & ~~~ \text{logit}(s_i) = \text{log}\left(\frac{s_i}{1-s_i}\right) = \mu_i \\ \\
+\text{linear model:} & ~~~ \mu_i = \alpha + \beta x_i
+\end{aligned}
+$$
+
+
+## Writing an LM as a GLM
+
+$$
+y_i = \alpha + \beta x_i + \epsilon_i ~ \text{with} ~ \epsilon_i \sim \text{N}(0,\sigma)
+$$
+
+
+## Writing an LM as a GLM
+
+$$
+y_i = \alpha + \beta x_i + \epsilon_i ~ \text{with} ~ \epsilon_i \sim \text{N}(0,\sigma) \\
+\Downarrow \\
+y_i = \mu_i + \epsilon_i~ \text{with} ~ \epsilon_i \sim \text{N}(0,\sigma) \\
+\mu_i = \alpha + \beta x_i
+$$
+
+
+## Writing an LM as a GLM
+
+$$
+y_i = \alpha + \beta x_i + \epsilon_i ~ \text{with} ~ \epsilon_i \sim \text{N}(0,\sigma) \\
+\Downarrow \\
+y_i = \mu_i + \epsilon_i~ \text{with} ~ \epsilon_i \sim \text{N}(0,\sigma) \\
+\mu_i = \alpha + \beta x_i \\
+\Downarrow \\
+y_i = \epsilon_i ~ \text{with} ~  \epsilon_i \sim \text{N}(\mu,\sigma) \\
+\mu_i = \alpha + \beta x_i
+$$
+
+
+## Writing an LM as a GLM
+
+$$
+y_i = \alpha + \beta x_i + \epsilon_i ~ \text{with} ~ \epsilon_i \sim \text{N}(0,\sigma) \\
+\Downarrow \\
+y_i = \mu_i + \epsilon_i~ \text{with} ~ \epsilon_i \sim \text{N}(0,\sigma) \\
+\mu_i = \alpha + \beta x_i \\
+\Downarrow \\
+y_i = \epsilon_i ~ \text{with} ~  \epsilon_i \sim \text{N}(\mu,\sigma) \\
+\mu_i = \alpha + \beta x_i \\
+\Downarrow \\
 y_i \sim \text{N}(\mu_i,\sigma) \\
-\mu_i = \beta_0 + \beta_1 x_i
+1(\mu_i) = \mu_i \\
+\mu_i = \alpha + \beta x_i
 $$
-
-
-## 2 columns
-
-<div class="row">
-  <div class="column left">
-    BLAH
-  </div>
-  <div class="column right">
-    BLAH 2
-  </div>
-</div>
 
 
 ## Forms of linear models
  
 ```{r model_diagram_lmm, fig.height = 5, fig.width = 7, fig.align = 'center'}
+par(mai = rep(0, 4), omi = rep(0, 4), bg = NA)
+
+## order: GLM, LM, GLMM, LMM
+xx <- c(1, 2, 2, 3) * 10
+yy <- c(2, 1, 3, 2) * 10
+
+plot(c(7, 33), c(7, 33), type = "n", xlim = c(7, 33), ylim = c(7, 33),
+     xaxt = "n", yaxt = "n", xlab = "", ylab = "",
+     bty = "n")
+symbols(xx, yy, circle = rep(2, 4), inches = 0.5, add = TRUE,
+        lwd = 2, fg = c("black", "black", "black", "blue"), bg = "white")
+text(xx, yy, c("GLM", "LM", "GLMM", "LMM"), cex = 1.5,
+     col = c("black", "black", "black", "blue"))
+## from LM to GLM
+arrows(xx[2]-2, yy[2]+2, xx[1]+2, yy[1]-2, length = 0.2)
+text(15, 14, "multiple forms of errors", pos = 2)
+## from LM to LMM
+arrows(xx[2]+2, yy[2]+2, xx[4]-2, yy[4]-2, length = 0.2)
+text(25, 14, "multiple random processes", pos = 4)
+## from GLM to GLMM
+arrows(xx[1]+2, yy[1]+2, xx[3]-2, yy[3]-2, length = 0.2)
+text(15, 26, "multiple random processes", pos = 2)
+## from LMM to GLMM
+arrows(xx[4]-2, yy[4]+2, xx[3]+2, yy[3]-2, length = 0.2)
+text(25, 26, "multiple forms of errors", pos = 4)
+```
+
+
+## Why use linear mixed models?
+
+* Ecological data are often messy, complex, and incomplete
+
+* Data are often grouped by location, species, etc
+
+* May have multiple samples from the same individual
+
+* Often small sample sizes for some locations, species, etc
+
+
+## Some terminology
+
+**fixed factor** = *qualitative* predictor (e.g. sex)
+
+**fixed effect** = *quantitative* change ("slope")
+
+**random factor** = *qualitative* predictor whose levels are randomly
+sampled from a population (eg, age)
+
+**random effect** = *quantitative* change whose levels are randomly
+sampled from a population
+
+
+## A linear model (ANCOVA)
+
+Fish mass as a function of its length and *specific* location
+
+$$
+y_{i,j} = \underbrace{\alpha + \beta x_{i,j} + \delta_{j}}_{\text{fixed}} + \underbrace{\epsilon_{i,j}}_{\text{random}} 
+$$
+
+$y_i$ is the log(mass) for fish *i* in location $j$
+
+$x_i$ is the log(length) for fish *i* in location $j$
+
+$\delta_j$ is the mean log(mass) of fish in location $j$
+
+$\epsilon_{i,j} \sim \text{N}(0,\sigma_\epsilon)$
+
+
+## A linear mixed model
+
+Fish mass as a function of its length and *general* location
+
+$$
+y_{i,j} = \underbrace{\alpha + \beta x_{i,j}}_{\text{fixed}} + \underbrace{\delta_{j} + \epsilon_{i,j}}_{\text{random}} 
+$$
+
+$y_i$ is the log(mass) for fish *i* in location $j$
+
+$x_i$ is the log(length) for fish *i* in location $j$
+
+$\delta_j$ is the mean log(mass) of fish in location $j$
+
+$\epsilon_{i,j} \sim \text{N}(0,\sigma_\epsilon) ~ \text{and} ~ \delta_{j} \sim \text{N}(0,\sigma_\delta)$
+
+
+## Forms of linear models
+ 
+```{r model_diagram_glmm, fig.height = 5, fig.width = 7, fig.align = 'center'}
 par(mai = rep(0, 4), omi = rep(0, 4), bg = NA)
 
 ## order: GLM, LM, GLMM, LMM
@@ -344,21 +491,60 @@ text(25, 26, "multiple forms of errors", pos = 4)
 ```
 
 
-## Linear mixed model (LMM)
+## Generalized linear mixed model
+
+Survival of fish $s_{i,j}$ as a function of length $x_{i,j}$ in location $j$
 
 $$
-\text{abundance} = f(\text{species}, \text{population}, \text{time}) \\
-\Downarrow \\
-y_{s,p,t} = \alpha_s + \beta_p + \delta_t + \epsilon_{s,p,t} \\
-\beta_p \sim \text{N}(\mu_{\beta},\sigma_{\beta}) \\
-\delta_t \sim \text{N}(\mu_{\delta},\sigma_{\delta}) \\
-\epsilon_{s,p,t} \sim \text{N}(0,\sigma_{\epsilon})
+\begin{aligned}
+\text{data distribution:} & ~~~ y_{i,j} \sim \text{Binomial}(N_{i,j}, s_{i,j}) \\ \\
+\text{link function:} & ~~~ \text{logit}(s_{i,j}) = \text{log}\left(\frac{s_{i,j}}{1-s_{i,j}}\right) = \mu_{i,j} \\ \\
+\text{linear model:} & ~~~ \mu_{i,j} = \alpha + \underline{\beta_j} x_{i,j} \\
+& ~~~ \beta_j \sim \text{N}(0, \sigma)
+\end{aligned}
 $$
+
+
+## General approach
+
+### Question $\rightarrow$ Data $\rightarrow$ <u>Model</u> $\rightarrow$ Inference $\rightarrow$ Prediction
 
 
 ## Linear models for size of fish
 
-[R code for simple models]
+```{r lw_regr, fig.align = 'center', fig.height = 5, fig.width = 5}
+## simulated data
+set.seed(123)
+nn <- 35
+L10_length <- log(runif(nn, 100, 400), 10)
+L10_mass <- -5.3 + 3.1 * L10_length + rnorm(nn, 0, 0.2)
+
+par(mai = c(1, 1, 0.1, 0.1), omi = rep(0, 4), bg = NA)
+plot(10^(L10_length), 10^(L10_mass), pch = 16, log = "xy",
+     ylab = "Mass (g)", xlab = "Length (mm)", cex.lab = 1.5)
+```
+
+
+## Linear models for size of fish
+
+Two simple choices:
+
+$\text{log}_{10}(mass_i) = \alpha + \epsilon_i$
+
+$\text{log}_{10}(mass_i) = \alpha + \beta ~ \text{log}_{10}(length_i) + \epsilon_i$
+
+
+## Linear models for size of fish
+
+In **R**, we fit these with `lm()`
+
+$\text{log}_{10}(mass_i) = \alpha + \epsilon_i$
+
+`lm(L10_mass ~ 1)` 
+
+$\text{log}_{10}(mass_i) = \alpha + \beta ~ \text{log}_{10}(length_i) + \epsilon_i$
+
+`lm(L10_mass ~ L10_length)` 
 
 
 ## General approach
@@ -366,9 +552,55 @@ $$
 ### Question $\rightarrow$ Data $\rightarrow$ Model $\rightarrow$ <u>Inference</u> $\rightarrow$ Prediction
 
 
-## Linear models for size of fish
+## Model 1 in R {.smaller}
 
-[choose *best* model]
+```{r, echo = TRUE}
+m1 <- lm(L10_mass ~ 1)
+summary(m1)
+```
+
+
+## Model 2 in R {.smaller}
+
+```{r, echo = TRUE}
+m2 <- lm(L10_mass ~ L10_length)
+summary(m2)
+```
+
+
+## Which model should we choose?
+
+We can an *information criterion* to select the one with the most *data support*
+
+For example, Akaike's Information Criterion (AIC)
+
+$$
+\text{AIC} = -2 \text{LL} + 2 p
+$$
+
+where $\text{NLL}$ is the log-likelihood and $p$ is the number of *fitted* parameters
+
+The model with the **lowest** AIC is considered the "best"
+
+
+## Model selection
+
+In **R** we can use the `AIC()` function
+
+```{r, echo = TRUE}
+AIC(m1, m2)
+```
+
+
+## Model selection
+
+In **R** we can use the `AIC()` function
+
+```{r, echo = TRUE}
+AIC(m1, m2)
+```
+
+Model 2 has the lowest AIC and is therefore the most parsimonious
 
 
 ## General approach
@@ -376,41 +608,60 @@ $$
 ### Question $\rightarrow$ Data $\rightarrow$ Model $\rightarrow$ Inference $\rightarrow$ <u>Prediction</u>
 
 
-## Linear models for size of fish
+## Prediction of novel outcomes
 
-[R code for prediction]
+Once we have a (reasonable) model, we can do some prediction
 
-
-## Learning objectives
-
-By the end of the quarter, students should be able to:
-
-* Identify an appropriate statistical model based on the data and specific question
-
-* Understand the assumptions behind a chosen statistical model
-
-* Use **R** to fit GLMs and GLMMs to data
-
-* Evaluate data support for various models and select the most parsimonious model among them
-
-* Use **R Markdown** to combine text, equations, code, tables, and figures into reports
+For example, what is the expected mass of a 250 mm fish?
 
 
-## Grading {.smaller}
+## Prediction of novel outcomes
 
-* __Weekly homework__ (70% of total)
-    - Assigned Friday at the end of computer lab
-    - Due by 11:59 PM the following Friday
+```{r lpredict, fig.align = 'center', fig.height = 5, fig.width = 5}
+fit_mass <- predict(m2)
 
-* __Final project__ (30% of total)
-    - Analysis
-    - Presentation (last week of class)
-    - Report (due by 11:59 PM PST on June 7)
+par(mai = c(1, 1, 0.1, 0.1), omi = rep(0, 4), bg = NA)
+plot(10^(L10_length), 10^(L10_mass), pch = 16, log = "xy",
+     ylab = "Mass (g)", xlab = "Length (mm)", cex.lab = 1.5)
+lines(10^(L10_length), 10^(fit_mass))
+```
 
 
-## {.flexbox .vcenter .bigger}
+## Prediction of novel outcomes
 
-<font size="10">
-[__Course website__](https://qerm514.github.io/website)
-</font>
+Alternatively, we can use the `predict()` function in **R**
+
+```{r, echo = TRUE}
+## prediction on the log10 scale
+L10_mass_pred <- predict(m2, data.frame(L10_length = log(250, 10)))
+## prediction in normal space
+round(10^L10_mass_pred, 1)
+```
+
+
+## Uncertainty in our prediction?
+
+```{r predict_int, fig.align = 'center', fig.height = 5, fig.width = 5, warning = FALSE}
+fit_mass_2 <- predict(m2, interval = "prediction")
+
+par(mai = c(1, 1, 0.1, 0.1), omi = rep(0, 4), bg = NA)
+plot(10^(L10_length), 10^(L10_mass), pch = 16, log = "xy",
+     ylab = "Mass (g)", xlab = "Length (mm)", cex.lab = 1.5)
+lines(10^(L10_length), 10^(fit_mass_2[,"fit"]))
+lines(10^(L10_length), 10^(fit_mass_2[,"upr"]), col = "blue")
+lines(10^(L10_length), 10^(fit_mass_2[,"lwr"]), col = "blue")
+```
+
+
+## Uncertainty in our prediction?
+
+More formally, we can use the `predict()` function in **R**
+
+```{r, echo = TRUE}
+## prediction on the log10 scale
+L10_mass_pred <- predict(m2, data.frame(L10_length = log(250, 10)),
+                         interval = "prediction")
+## prediction in normal space
+round(10^L10_mass_pred, 1)
+```
 
