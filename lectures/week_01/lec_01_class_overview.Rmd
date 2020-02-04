@@ -345,6 +345,7 @@ y_i = \epsilon_i ~ \text{with} ~  \epsilon_i \sim \text{N}(\mu,\sigma) \\
 \mu_i = \beta_0 + \beta_1 x_i \\
 \Downarrow \\
 y_i \sim \text{N}(\mu_i,\sigma) \\
+1(\mu_i) = \mu_i \\
 \mu_i = \beta_0 + \beta_1 x_i
 $$
 
@@ -378,6 +379,51 @@ text(15, 26, "multiple random processes", pos = 2)
 arrows(xx[4]-2, yy[4]+2, xx[3]+2, yy[3]-2, length = 0.2)
 text(25, 26, "multiple forms of errors", pos = 4)
 ```
+
+
+## Why use linear mixed models?
+
+* Ecological data are often messy, complex, and incomplete
+
+* Data are often grouped by location, species, etc
+
+* May have multiple samples from the same individual
+
+* Often small sample sizes for some locations, species, etc
+
+
+## A linear model (ANCOVA)
+
+Fish mass as a function of its length and *specific* location
+
+$$
+y_{i,j} = \underbrace{\beta_0 + \beta_1 x_{i,j} + \delta_{j}}_{\text{fixed}} + \underbrace{\epsilon_{i,j}}_{\text{random}} 
+$$
+
+$y_i$ is the log(mass) for fish *i* in location $j$
+
+$x_i$ is the log(length) for fish *i* in location $j$
+
+$\delta_j$ is the mean log(mass) of fish in location $j$
+
+$\epsilon_{i,j} \sim \text{N}(0,\sigma_\epsilon)$
+
+
+## A linear mixed model
+
+Fish mass as a function of its length and *general* location
+
+$$
+y_{i,j} = \underbrace{\beta_0 + \beta_1 x_{i,j}}_{\text{fixed}} + \underbrace{\delta_{j} + \epsilon_{i,j}}_{\text{random}} 
+$$
+
+$y_i$ is the log(mass) for fish *i* in location $j$
+
+$x_i$ is the log(length) for fish *i* in location $j$
+
+$\delta_j$ is the mean log(mass) of fish in location $j$
+
+$\epsilon_{i,j} \sim \text{N}(0,\sigma_\epsilon) ~ \text{and} ~ \delta_{j} \sim \text{N}(0,\sigma_\delta)$
 
 
 ## Forms of linear models
