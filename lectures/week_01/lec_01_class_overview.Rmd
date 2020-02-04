@@ -392,6 +392,19 @@ text(25, 26, "multiple forms of errors", pos = 4)
 * Often small sample sizes for some locations, species, etc
 
 
+## Some terminology
+
+**fixed factor** = *qualitative* predictor (e.g. sex)
+
+**fixed effect** = *quantitative* change ("slope")
+
+**random factor** = *qualitative* predictor whose levels are randomly
+sampled from a population (eg, age)
+
+**random effect** = *quantitative* change whose levels are randomly
+sampled from a population
+
+
 ## A linear model (ANCOVA)
 
 Fish mass as a function of its length and *specific* location
