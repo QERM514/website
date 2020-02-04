@@ -29,8 +29,29 @@ Who are you?
 ## {.flexbox .vcenter .bigger}
 
 <font size="10">
+[__Course information__](https://qerm514.github.io/website)
+</font>
+
+## {.flexbox .vcenter .bigger}
+
+<font size="10">
 What is this course about? 
 </font>
+
+
+## Learning objectives for the course
+
+By the end of the quarter, students should be able to:
+
+* Identify an appropriate statistical model based on the data and specific question
+
+* Understand the assumptions behind a chosen statistical model
+
+* Use **R** to fit GLMs and GLMMs to data
+
+* Evaluate data support for various models and select the most parsimonious model among them
+
+* Use **R Markdown** to combine text, equations, code, tables, and figures into reports
 
 
 ## Two major goals in ecology:
@@ -615,25 +636,4 @@ L10_mass_pred <- predict(m2, data.frame(L10_length = log(250, 10)))
 10^L10_mass_pred
 ```
 
-
-## Learning objectives for the course
-
-By the end of the quarter, students should be able to:
-
-* Identify an appropriate statistical model based on the data and specific question
-
-* Understand the assumptions behind a chosen statistical model
-
-* Use **R** to fit GLMs and GLMMs to data
-
-* Evaluate data support for various models and select the most parsimonious model among them
-
-* Use **R Markdown** to combine text, equations, code, tables, and figures into reports
-
-
-## {.flexbox .vcenter .bigger}
-
-<font size="10">
-[__Course website__](https://qerm514.github.io/website)
-</font>
 
