@@ -1,5 +1,5 @@
 ---
-title: "[title]"
+title: "Introduction to linear models"
 subtitle: "Analysis of Ecological and Environmental Data<br>QERM 514"
 author: "Mark Scheuerell"
 date: "1 April 2020"
@@ -12,4 +12,9 @@ output:
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
-## Topics for today
+## Goals for today
+
+* Identify whether a model is linear in the predictors
+
+* Distinguish between models with fixed *factors* vs fixed *effects*
+
