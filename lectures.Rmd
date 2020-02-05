@@ -15,6 +15,7 @@ week_lecs <- vector("list", 30)
 names(week_lecs) <- paste0("L", seq(30))
 ## lecture topics
 week_lecs$L1 <- intro
+week_lecs$L2 <- linear_models
 
 week_lecs$L15 <- project_plan
 
