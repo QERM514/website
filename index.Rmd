@@ -111,7 +111,7 @@ Students who expect to miss class or assignments as a consequence of their relig
 
 # Academic integrity
 
-Faculty and students at the University of Washington are expected to maintain the highest standards of academic conduct, professional honesty, and personal integrity (see the [University of Washington Student Conduct Code](https://www.washington.edu/cssc/for-students/academic-misconduct/)). Plagiarism, cheating, and other academic misconduct are serious violations of the Student Conduct Code. The whole basis for this course is the notion of "open science": creating a *transparent* and *reproducible* description of your workflow. Thus, I have no reason to believe that anyone will violate the Student Conduct Code, but *I will have no choice* but to refer any suspected violation(s) to the College of the Environment for a Student Conduct Process hearing. Students who have been guilty of a violation will receive zero points for the assignment in question.
+Faculty and students at the University of Washington are expected to maintain the highest standards of academic conduct, professional honesty, and personal integrity (see the [University of Washington Student Conduct Code](https://www.washington.edu/cssc/for-students/academic-misconduct/)). Plagiarism, cheating, and other academic misconduct are serious violations of the Student Conduct Code. I have no reason to believe that anyone will violate the Student Conduct Code, but *I will have no choice* but to refer any suspected violation(s) to the College of the Environment for a Student Conduct Process hearing. Students who have been guilty of a violation will receive zero points for the assignment in question.
 
 <br>
 
@@ -134,6 +134,12 @@ I am dedicated to providing a welcoming and supportive environment for all peopl
 # Safety
 
 If you feel unsafe or at-risk in any way while taking any course, contact [SafeCampus](https://www.washington.edu/safecampus/), 206-685-7233 anytime&ndash;no matter where you work or study&ndash;to anonymously discuss safety and well-being concerns for yourself or others. SafeCampus can provide individualized support, discuss short- and long-term solutions, and connect you with additional resources when requested. For a broader range of resources and assistance see the [Husky Health & Well-Being website](https://wellbeing.uw.edu/).
+
+<br>
+
+# Food Pantry
+
+No student should ever have to choose between buying food or textbooks. The UW Food Pantry helps mitigate the social and academic effects of campus food insecurity. They aim to lessen the financial burden of purchasing food by providing students access to shelf-stable groceries, seasonal fresh produce, and hygiene products at **no cost**. Students can expect to receive 4 to 5 days' worth of supplemental food support when they visit the Pantry, located on the north side of Poplar Hall at the corner of NE 41<sup>st</sup> St and Brooklyn Ave NE. Visit the [Any Hungry Husky website](https://uw.edu/anyhungryhusky) for additional information, including operating hours and additional food support resources.
 
 
 ```{r child = "_syllabus.Rmd", include=FALSE, eval = FALSE}
