@@ -14,16 +14,43 @@ output: html_document
 week_lecs <- vector("list", 30)
 names(week_lecs) <- paste0("L", seq(30))
 ## lecture topics
+## week 1
 week_lecs$L1 <- intro
 week_lecs$L2 <- software
 week_lecs$L3 <- data_types
-week_lecs$L4 <- linear_models
-
+## week 2
+week_lecs$L4 <- linear_models_1
+week_lecs$L5 <- linear_models_2
+week_lecs$L6 <- inference
+## week 3
+week_lecs$L7 <- 
+week_lecs$L8 <- 
+week_lecs$L9 <- 
+## week 4
+week_lecs$L10 <- 
+week_lecs$L11 <- 
+week_lecs$L12 <- 
+## week 5
+week_lecs$L13 <- 
+week_lecs$L14 <- 
 week_lecs$L15 <- project_plan
-
-week_lecs$L25 <- no_class
-
-
+## week 6
+week_lecs$L16 <- 
+week_lecs$L17 <- 
+week_lecs$L18 <- 
+## week 7
+week_lecs$L19 <- 
+week_lecs$L20 <- 
+week_lecs$L21 <- 
+## week 8
+week_lecs$L22 <- 
+week_lecs$L23 <- 
+week_lecs$L24 <- 
+## week 9
+week_lecs$L25 <- holiday
+week_lecs$L26 <- 
+week_lecs$L27 <- 
+## week 10
 week_lecs$L28 <- present
 week_lecs$L29 <- present
 week_lecs$L30 <- present

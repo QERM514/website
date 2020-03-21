@@ -38,17 +38,37 @@ data_types <- list(
   youtube = ""
 )
 
-linear_models <- list(
+linear_models_1 <- list(
   title = "Linear models",
-  topics = c("Regression", "ANOVA", "ANCOVA", "Matrix representation of models"),
+  topics = c("Regression", "ANOVA", "ANCOVA"),
   pdf = "",
-  rmd = c("lectures/week_01/lec_02_intro_linear_models.Rmd"),
-  html = c("lectures/week_01/lec_02_intro_linear_models.html"),
+  rmd = c("lectures/week_02/lec_04_intro_to_linear_models.Rmd"),
+  html = c("lectures/week_02/lec_04_intro_to_linear_models.html"),
+  background = c("lectures/week_02/suppl_var_cov.html"),
+  youtube = ""
+)
+
+linear_models_2 <- list(
+  title = "Linear models",
+  topics = c("Models in matrix form", "Least squares"),
+  pdf = "",
+  rmd = c("lectures/week_02/lec_05_intro_to_linear_models.Rmd"),
+  html = c("lectures/week_02/lec_05_intro_to_linear_models.html"),
+  background = c(""),
+  youtube = ""
+)
+
+inference <- list(
+  title = "Inference",
+  topics = c("Variance partitioning", "F-tests for nested models", "Permutation tests"),
+  pdf = "",
+  rmd = c("lectures/week_02/lec_06_inference_from_linear_models.Rmd"),
+  html = c("lectures/week_02/lec_06_inference_from_linear_models.html"),
   background = c("lectures/week_01/suppl_var_cov.html"),
   youtube = ""
 )
 
-no_class <- list(
+holiday <- list(
   title = "Holiday",
   topics = "<b>Memorial Day - no class</b>",
   pdf = "",
