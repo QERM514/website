@@ -18,6 +18,26 @@ intro <- list(
   youtube = ""
 )
 
+software <- list(
+  title = "Overview of required software",
+  topics = c("R", "RStudio", "R Markdown"),
+  pdf = "",
+  rmd = c("lectures/week_01/lec_02_software.Rmd"),
+  html = c("lectures/week_01/lec_02_software.html"),
+  background = c(""),
+  youtube = ""
+)
+
+data_types <- list(
+  title = "Ecological data and distributions",
+  topics = c("Detections", "Counts", "Survival"),
+  pdf = "",
+  rmd = c("lectures/week_01/lec_03_data_types.Rmd"),
+  html = c("lectures/week_01/lec_03_data_types.html"),
+  background = c(""),
+  youtube = ""
+)
+
 linear_models <- list(
   title = "Linear models",
   topics = c("Regression", "ANOVA", "ANCOVA", "Matrix representation of models"),
