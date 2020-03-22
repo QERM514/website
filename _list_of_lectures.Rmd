@@ -172,7 +172,7 @@ guest_lec_01 <- list(
   title = "Guest lecture",
   topics = c("Dr. Staci Amburgey"),
   pdf = "",
-  rmd = "lectures/week_06/lec_17_guest_lec_amburgey.Rmd",
+  rmd = "",
   html = "lectures/week_06/lec_17_guest_lec_amburgey.html",
   background = "",
   youtube = ""
@@ -252,8 +252,8 @@ holiday <- list(
   title = "<b>Memorial Day - No class</b>",
   topics = "",
   pdf = "",
-  rmd = "lectures/week_09/lec_25_holiday.Rmd",
-  html = "lectures/week_09/lec_25_holiday.html",
+  rmd = "",
+  html = "",
   background = "",
   youtube = ""
 )
