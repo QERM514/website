@@ -19,9 +19,14 @@ week_labs <- vector("list", 10)
 names(week_labs) <- paste0("L", seq(10))
 ## lab topics
 week_labs$L1 <- markdown
-
+week_labs$L2 <- fitting_LMs
+week_labs$L3 <- diagnostics_and_errors
+week_labs$L4 <- design_matrices
+week_labs$L5 <- model_selection
+week_labs$L6 <- mixed_models
+week_labs$L7 <- fitting_glms
+week_labs$L8 <- fitting_glmms
 week_labs$L9 <- present_prep
-
 week_labs$L10 <- presentlab
 ```
 
@@ -86,6 +91,13 @@ data_links_html <- sapply(lapply(data_links, function(x) {
 names(data_links_html) <- NULL
 ```
 
+```{r background_links, include = FALSE}
+background_links <- lapply(week_labs, function(x) { if(is.list(x)) {x$background} else {""} })
+## topics formatted for html
+background_links_html <- sapply(lapply(background_links, paste, "<br>", collapse = ""), c)
+names(background_links_html) <- NULL
+```
+
 ```{r generate_table, echo=FALSE}
 ## data frame with dates & topics
 syl_txt <- data.frame(
@@ -94,14 +106,15 @@ syl_txt <- data.frame(
   lab_links = handout_links_html,
   source_links = source_links_html,
   # zoom_links = zoom_links_html,
-  data_links = data_links_html
+  data_links = data_links_html,
+  background_links = background_links_html
 )
-colnames(syl_txt) <- c("Date", "Topic(s)", "Handout", "Source code", "Data")
+colnames(syl_txt) <- c("Date", "Topic(s)", "Handout(s)", "Source code", "Data", "Reference(s)")
 rownames(syl_txt) <- NULL
 
 ## generate table
 kable(syl_txt, format = "html", caption = " ",
-      align = "clccc", escape = FALSE) %>%
+      align = "clcccl", escape = FALSE) %>%
   kable_styling(bootstrap_options = "striped",
                 full_width = FALSE,
                 position = "left") %>%
