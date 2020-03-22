@@ -1,7 +1,7 @@
 ---
-title: "Guest lecture - Dr. Staci Amburgey"
+title: "Guest lecture"
 subtitle: "Analysis of Ecological and Environmental Data<br>QERM 514"
-author: "Mark Scheuerell"
+author: "Dr. Staci Amburgey"
 date: "6 May 2020"
 output:
   ioslides_presentation:
@@ -12,7 +12,5 @@ output:
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
-
-## Goals for today
 
 
