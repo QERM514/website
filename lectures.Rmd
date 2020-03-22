@@ -23,33 +23,33 @@ week_lecs$L4 <- linear_models_1
 week_lecs$L5 <- linear_models_2
 week_lecs$L6 <- inference
 ## week 3
-week_lecs$L7 <- 
-week_lecs$L8 <- 
-week_lecs$L9 <- 
+week_lecs$L7 <- diagnostics
+week_lecs$L8 <- non_IID_errors
+week_lecs$L9 <- transformations
 ## week 4
-week_lecs$L10 <- 
-week_lecs$L11 <- 
-week_lecs$L12 <- 
+week_lecs$L10 <- design_matrices_1
+week_lecs$L11 <- design_matrices_2
+week_lecs$L12 <- max_likelihood
 ## week 5
-week_lecs$L13 <- 
-week_lecs$L14 <- 
-week_lecs$L15 <- project_plan
+week_lecs$L13 <- model_selection_1
+week_lecs$L14 <- model_selection_2
+week_lecs$L15 <- mixed_models_1
 ## week 6
-week_lecs$L16 <- 
-week_lecs$L17 <- 
-week_lecs$L18 <- 
+week_lecs$L16 <- mixed_models_2
+week_lecs$L17 <- guest_lec_01
+week_lecs$L18 <- intro_GLM
 ## week 7
-week_lecs$L19 <- 
-week_lecs$L20 <- 
-week_lecs$L21 <- 
+week_lecs$L19 <- binary_GLM
+week_lecs$L20 <- overdispersed_binary
+week_lecs$L21 <- count_GLM
 ## week 8
-week_lecs$L22 <- 
-week_lecs$L23 <- 
-week_lecs$L24 <- 
+week_lecs$L22 <- overdispersed_count
+week_lecs$L23 <- intro_GLMM_1
+week_lecs$L24 <- intro_GLMM_2
 ## week 9
 week_lecs$L25 <- holiday
-week_lecs$L26 <- 
-week_lecs$L27 <- 
+week_lecs$L26 <- review
+week_lecs$L27 <- synthesis
 ## week 10
 week_lecs$L28 <- present
 week_lecs$L29 <- present
