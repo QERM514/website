@@ -29,29 +29,8 @@ Who are you?
 ## {.flexbox .vcenter .bigger}
 
 <font size="10">
-[__Course information__](https://qerm514.github.io/website)
-</font>
-
-## {.flexbox .vcenter .bigger}
-
-<font size="10">
 What is this course about? 
 </font>
-
-
-## Learning objectives for the course
-
-By the end of the quarter, students should be able to:
-
-* Identify an appropriate statistical model based on the data and specific question
-
-* Understand the assumptions behind a chosen statistical model
-
-* Use **R** to fit GLMs and GLMMs to data
-
-* Evaluate data support for various models and select the most parsimonious model among them
-
-* Use **R Markdown** to combine text, equations, code, tables, and figures into reports
 
 
 ## Two major goals in ecology:
@@ -60,22 +39,25 @@ By the end of the quarter, students should be able to:
 1. Infer process from pattern   
 </font>
 
-<font size="6">
-2. Make predictions
+
+## {.flexbox .vcenter}
+
+<font size="10">
+Process $\overset{?}{\Rightarrow}$ Pattern
 </font>
 
 
 ## {.flexbox .vcenter}
 
 <font size="10">
-Pattern $\overset{?}{\Rightarrow}$ Process
+Pattern $= f($Process$)$
 </font>
 
 
 ## {.flexbox .vcenter}
 
 <font size="10">
-Data $\overset{?}{\Rightarrow}$ Process
+Data $= f($Process$)$
 </font>
 
 
@@ -102,18 +84,54 @@ text(1.9, 95, adj = c(0.5, 0.5), "Noise", col = "black", cex = 1.5)
 ## {.flexbox .vcenter}
 
 <font size="10">
-Our challenge is to separate the signal from the noise 
+Our challenge is to separate<br>the signal from the noise
+</font>
+
+
+## Two major goals in ecology:
+
+<font size="6">
+1. Infer process from pattern   
+</font>
+
+<font size="6">
+2. **Make predictions**
+</font>
+
+
+## Ecological forecasting
+
+<font size="6">
+How will [some future scenario] affect<br>[some ecosystem service]?
 </font>
 
 
 ## General approach
 
-### Question $\rightarrow$ Data $\rightarrow$ <u>Model</u> $\rightarrow$ Inference $\rightarrow$ Prediction
+### Question $\rightarrow$ Data $\rightarrow$ Model $\rightarrow$ Inference $\rightarrow$ Prediction
 
 
-## A simple starting point
+## Learning objectives for the course
 
-### Data = (Deterministic part) + (Stochastic part)
+By the end of the quarter, students should be able to:
+
+* Identify an appropriate statistical model based on the data and specific question
+
+* Understand the assumptions behind a chosen statistical model
+
+* Use **R** to fit a variety of linear models to data
+
+* Evaluate data support for various models and select the most parsimonious model among them
+
+* Use **R Markdown** to combine text, equations, code, tables, and figures into reports
+
+
+## {.flexbox .vcenter .bigger}
+
+<font size="10">
+[__Course information__](https://qerm514.github.io/website)
+</font>
+
 
 
 
