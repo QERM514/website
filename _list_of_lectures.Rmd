@@ -230,7 +230,7 @@ overdispersed_count <- list(
 
 intro_GLMM_1 <- list(
   title = "",
-  topics = c(""),
+  topics = c("Computing likelihoods", "Daignostics", "Goodness-of-fit"),
   pdf = "",
   rmd = "lectures/week_08/lec_23_intro_GLMMs.Rmd",
   html = "lectures/week_08/lec_23_intro_GLMMs.html",
@@ -240,7 +240,7 @@ intro_GLMM_1 <- list(
 
 intro_GLMM_2 <- list(
   title = "",
-  topics = c(""),
+  topics = c("Computing likelihoods", "Daignostics", "Goodness-of-fit"),
   pdf = "",
   rmd = "lectures/week_08/lec_24_intro_GLMMs.Rmd",
   html = "lectures/week_08/lec_24_intro_GLMMs.html",
@@ -252,28 +252,28 @@ holiday <- list(
   title = "Holiday",
   topics = "<b>Memorial Day - no class</b>",
   pdf = "",
-  rmd = "",
-  html = "",
+  rmd = "lectures/week_09/lec_25_holiday.Rmd",
+  html = "lectures/week_09/lec_25_holiday.html",
   background = "",
   youtube = ""
 )
 
 review <- list(
   title = "Material review",
-  topics = c(""),
+  topics = c("Catchup and review materials"),
   pdf = "",
-  rmd = "",
-  html = "",
+  rmd = "lectures/week_09/lec_26_review.Rmd",
+  html = "lectures/week_09/lec_26_review.html",
   background = "",
   youtube = ""
 )
 
 synthesis <- list(
   title = "Course synthesis",
-  topics = c(""),
+  topics = c("What did we learn?", "Where do we go from here?"),
   pdf = "",
-  rmd = "",
-  html = "",
+  rmd = "lectures/week_09/lec_27_course_summary.Rmd",
+  html = "lectures/week_09/lec_27_course_summary.html",
   background = "",
   youtube = ""
 )
