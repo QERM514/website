@@ -150,7 +150,7 @@ model_selection_2 <- list(
 
 mixed_models_1 <- list(
   title = "Mixed effects models",
-  topics = c("Fixed vs Random effects", "Costs/benefits", "Restricted maximum likelihood"),
+  topics = c("<b>Project plan due by 11:59 PM</b>", "Fixed vs Random effects", "Costs/benefits", "Restricted maximum likelihood"),
   pdf = "",
   rmd = "lectures/week_05/lec_15_intro_mixed_effects.Rmd",
   html = "lectures/week_05/lec_15_intro_mixed_effects.html",
@@ -168,6 +168,86 @@ mixed_models_2 <- list(
   youtube = ""
 )
 
+guest_lec_01 <- list(
+  title = "Guest lecture",
+  topics = c("Dr. Staci Amburgey"),
+  pdf = "",
+  rmd = "lectures/week_06/lec_17_guest_lec_amburgey.Rmd",
+  html = "lectures/week_06/lec_17_guest_lec_amburgey.html",
+  background = "",
+  youtube = ""
+)
+
+intro_GLM <- list(
+  title = "Introduction to GLMs",
+  topics = c("Data distrbution", "Links", "Linear predictors"),
+  pdf = "",
+  rmd = "lectures/week_06/lec_18_intro_GLMs.Rmd",
+  html = "lectures/week_06/lec_18_intro_GLMs.html",
+  background = "",
+  youtube = ""
+)
+
+binary_GLM <- list(
+  title = "Modeling binary data",
+  topics = c("Logistic regression", "Model selection", "Diagnostics"),
+  pdf = "",
+  rmd = "lectures/week_07/lec_19_modeling_binary_data.Rmd",
+  html = "lectures/week_07/lec_19_modeling_binary_data.html",
+  background = "",
+  youtube = ""
+)
+
+overdispersed_binary <- list(
+  title = "Overdispersion in binary data",
+  topics = c("Variance inflation", "beta-binomial modes", "Quasi-likelihood"),
+  pdf = "",
+  rmd = "lectures/week_07/lec_20_overdispersed_binary_data.Rmd",
+  html = "lectures/week_07/lec_20_overdispersed_binary_data.html",
+  background = "",
+  youtube = ""
+)
+
+count_GLM <- list(
+  title = "Modeling count data",
+  topics = c("Poisson regression", "Leverage and influence", "Diagnostics"),
+  pdf = "",
+  rmd = "lectures/week_07/lec_21_modeling_count_data.Rmd",
+  html = "lectures/week_07/lec_21_modeling_count_data.html",
+  background = "",
+  youtube = ""
+)
+
+overdispersed_count <- list(
+  title = "",
+  topics = c("Variance inflation", "QAIC", "Negative-binomial distribution", "Quasi-likelihood"),
+  pdf = "",
+  rmd = "lectures/week_08/lec_22_modeling_count_data.Rmd",
+  html = "lectures/week_08/lec_22_modeling_count_data.html",
+  background = "",
+  youtube = ""
+)
+
+intro_GLMM_1 <- list(
+  title = "",
+  topics = c(""),
+  pdf = "",
+  rmd = "lectures/week_08/lec_23_intro_GLMMs.Rmd",
+  html = "lectures/week_08/lec_23_intro_GLMMs.html",
+  background = "",
+  youtube = ""
+)
+
+intro_GLMM_2 <- list(
+  title = "",
+  topics = c(""),
+  pdf = "",
+  rmd = "lectures/week_08/lec_24_intro_GLMMs.Rmd",
+  html = "lectures/week_08/lec_24_intro_GLMMs.html",
+  background = "",
+  youtube = ""
+)
+
 holiday <- list(
   title = "Holiday",
   topics = "<b>Memorial Day - no class</b>",
@@ -178,9 +258,9 @@ holiday <- list(
   youtube = ""
 )
 
-mixed_models_1 <- list(
-  title = "",
-  topics = "<b>Project plan due by 11:59 PM</b>",
+review <- list(
+  title = "Material review",
+  topics = c(""),
   pdf = "",
   rmd = "",
   html = "",
@@ -188,9 +268,9 @@ mixed_models_1 <- list(
   youtube = ""
 )
 
-mixed_models_2 <- list(
-  title = "",
-  topics = "",
+synthesis <- list(
+  title = "Course synthesis",
+  topics = c(""),
   pdf = "",
   rmd = "",
   html = "",
