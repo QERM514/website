@@ -16,3 +16,87 @@ knitr::opts_chunk$set(echo = FALSE)
 ## Goals for today
 
 
+## Generalized linear models (GLMs)
+
+*Three important components*
+
+1. Distribution of the data
+
+2. Link function
+
+3. Linear model
+
+
+## Example of a GLM
+
+Counts of trees per unit area $y_i$
+
+$$
+\begin{aligned}
+\text{data distribution:} & ~~~ y_i \sim \text{Poisson}(\lambda_i) \\ \\
+\text{link function:} & ~~~ \text{log}(\lambda_i) = \mu_i \\ \\
+\text{linear model:} & ~~~ \mu_i = \alpha + \beta x_i
+\end{aligned}
+$$
+
+
+## Example of a GLM
+
+Survival of fish from eggs to adulthood $s_i$
+
+$$
+\begin{aligned}
+\text{data distribution:} & ~~~ y_i \sim \text{Binomial}(N_i, s_i) \\ \\
+\text{link function:} & ~~~ \text{logit}(s_i) = \text{log}\left(\frac{s_i}{1-s_i}\right) = \mu_i \\ \\
+\text{linear model:} & ~~~ \mu_i = \alpha + \beta x_i
+\end{aligned}
+$$
+
+
+## Writing an LM as a GLM
+
+$$
+y_i = \alpha + \beta x_i + \epsilon_i ~ \text{with} ~ \epsilon_i \sim \text{N}(0,\sigma)
+$$
+
+
+## Writing an LM as a GLM
+
+$$
+y_i = \alpha + \beta x_i + \epsilon_i ~ \text{with} ~ \epsilon_i \sim \text{N}(0,\sigma) \\
+\Downarrow \\
+y_i = \mu_i + \epsilon_i~ \text{with} ~ \epsilon_i \sim \text{N}(0,\sigma) \\
+\mu_i = \alpha + \beta x_i
+$$
+
+
+## Writing an LM as a GLM
+
+$$
+y_i = \alpha + \beta x_i + \epsilon_i ~ \text{with} ~ \epsilon_i \sim \text{N}(0,\sigma) \\
+\Downarrow \\
+y_i = \mu_i + \epsilon_i~ \text{with} ~ \epsilon_i \sim \text{N}(0,\sigma) \\
+\mu_i = \alpha + \beta x_i \\
+\Downarrow \\
+y_i = \epsilon_i ~ \text{with} ~  \epsilon_i \sim \text{N}(\mu,\sigma) \\
+\mu_i = \alpha + \beta x_i
+$$
+
+
+## Writing an LM as a GLM
+
+$$
+y_i = \alpha + \beta x_i + \epsilon_i ~ \text{with} ~ \epsilon_i \sim \text{N}(0,\sigma) \\
+\Downarrow \\
+y_i = \mu_i + \epsilon_i~ \text{with} ~ \epsilon_i \sim \text{N}(0,\sigma) \\
+\mu_i = \alpha + \beta x_i \\
+\Downarrow \\
+y_i = \epsilon_i ~ \text{with} ~  \epsilon_i \sim \text{N}(\mu,\sigma) \\
+\mu_i = \alpha + \beta x_i \\
+\Downarrow \\
+y_i \sim \text{N}(\mu_i,\sigma) \\
+1(\mu_i) = \mu_i \\
+\mu_i = \alpha + \beta x_i
+$$
+
+

@@ -13,3 +13,41 @@ knitr::opts_chunk$set(echo = FALSE)
 ```
 
 ## Topics for today
+
+
+
+## General approach
+
+### Question $\rightarrow$ Data $\rightarrow$ Model $\rightarrow$ Inference $\rightarrow$ Prediction
+
+
+## General approach
+
+### <u>Question</u> $\rightarrow$ Data $\rightarrow$ Model $\rightarrow$ Inference $\rightarrow$ Prediction
+
+
+## Common questions in ecology
+
+### Reproduction?
+
+### Growth? 
+
+### Survival?
+
+### Movement?
+
+
+## General approach
+
+### Question $\rightarrow$ <u>Data</u> $\rightarrow$ Model $\rightarrow$ Inference $\rightarrow$ Prediction
+
+
+## Ecological data
+
+### Counts $\rightarrow$ density/biomass
+
+### Measurements $\rightarrow$ size/growth
+
+### Resights $\rightarrow$ survival/movement
+
+
