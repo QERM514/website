@@ -24,7 +24,7 @@ software <- list(
   pdf = "",
   rmd = c("lectures/week_01/lec_02_software.Rmd"),
   html = c("lectures/week_01/lec_02_software.html"),
-  background = c(""),
+  background = c("[Intro to R Markdown](https://rmarkdown.rstudio.com/lesson-1.html)"),
   youtube = ""
 )
 
@@ -34,7 +34,7 @@ data_types <- list(
   pdf = "",
   rmd = c("lectures/week_01/lec_03_data_types.Rmd"),
   html = c("lectures/week_01/lec_03_data_types.html"),
-  background = c(""),
+  background = c("[Statistical distributions](http://learnbayes.org/demo/stat-distributions-js/distributionTable.html)"),
   youtube = ""
 )
 
@@ -42,8 +42,8 @@ linear_models_1 <- list(
   title = "Linear models",
   topics = c("Regression", "ANOVA", "ANCOVA"),
   pdf = "",
-  rmd = c("lectures/week_02/lec_04_intro_to_linear_models.Rmd"),
-  html = c("lectures/week_02/lec_04_intro_to_linear_models.html"),
+  rmd = c(""),
+  html = c(""),
   background = c(""),
   youtube = ""
 )
@@ -52,8 +52,8 @@ linear_models_2 <- list(
   title = "Linear models",
   topics = c("Models in matrix form", "Least squares"),
   pdf = "",
-  rmd = c("lectures/week_02/lec_05_intro_to_linear_models.Rmd"),
-  html = c("lectures/week_02/lec_05_intro_to_linear_models.html"),
+  rmd = c(""),
+  html = c(""),
   background = c(""),
   youtube = ""
 )
@@ -62,8 +62,8 @@ inference <- list(
   title = "Inference",
   topics = c("Variance partitioning", "F-tests for nested models", "Permutation tests"),
   pdf = "",
-  rmd = c("lectures/week_02/lec_06_inference_from_linear_models.Rmd"),
-  html = c("lectures/week_02/lec_06_inference_from_linear_models.html"),
+  rmd = c(""),
+  html = c(""),
   background = c(""),
   youtube = ""
 )
@@ -72,8 +72,8 @@ diagnostics <- list(
   title = "Model diagnostics",
   topics = c("Model assumptions", "Leverage", "Outliers"),
   pdf = "",
-  rmd = c("lectures/week_03/lec_07_diagnostics_for_linear_models.Rmd"),
-  html = c("lectures/week_03/lec_07_diagnostics_for_linear_models.html"),
+  rmd = c(""),
+  html = c(""),
   background = c(""),
   youtube = ""
 )
@@ -82,8 +82,8 @@ non_IID_errors <- list(
   title = "Problems with model residuals",
   topics = c("Weighted least squares", "Generalized least squares", "Robust regression", "Autocorrelated errors"),
   pdf = "",
-  rmd = "lectures/week_03/lec_08_non-IID_errors.Rmd",
-  html = "lectures/week_03/lec_08_non-IID_errors.html",
+  rmd = c(""),
+  html = c(""),
   background = "",
   youtube = ""
 )
@@ -92,8 +92,8 @@ transformations <- list(
   title = "Data transformations",
   topics = c("Powers/roots", "Box-Cox", "Logarithms"),
   pdf = "",
-  rmd = "lectures/week_03/lec_09_data_transformations.Rmd",
-  html = "lectures/week_03/lec_09_data_transformations.html",
+  rmd = c(""),
+  html = c(""),
   background = "",
   youtube = ""
 )
@@ -102,8 +102,8 @@ design_matrices_1 <- list(
   title = "Design matrices",
   topics = c("Models in matrix form", "Regression", "Multiple regression"),
   pdf = "",
-  rmd = "lectures/week_04/lec_10_design_matrices.Rmd",
-  html = "lectures/week_04/lec_10_design_matrices.html",
+  rmd = c(""),
+  html = c(""),
   background = "",
   youtube = ""
 )
@@ -112,8 +112,8 @@ design_matrices_2 <- list(
   title = "Design matrices",
   topics = c("ANOVA", "ANCOVA"),
   pdf = "",
-  rmd = "lectures/week_04/lec_11_design_matrices.Rmd",
-  html = "lectures/week_04/lec_11_design_matrices.html",
+  rmd = c(""),
+  html = c(""),
   background = "",
   youtube = ""
 )
@@ -122,8 +122,8 @@ max_likelihood <- list(
   title = "Maximum likelihood",
   topics = c("Relationship to probability", "Estimation", "Ratio tests"),
   pdf = "",
-  rmd = "lectures/week_04/lec_12_max_likelihood.Rmd",
-  html = "lectures/week_04/lec_12_max_likelihood.html",
+  rmd = c(""),
+  html = c(""),
   background = "",
   youtube = ""
 )
@@ -132,8 +132,8 @@ model_selection_1 <- list(
   title = "Model selection",
   topics = c("Bias-Variance trade-offs", "In-sample selection", "AIC"),
   pdf = "",
-  rmd = "lectures/week_05/lec_13_model_selection.Rmd",
-  html = "lectures/week_05/lec_13_model_selection.html",
+  rmd = c(""),
+  html = c(""),
   background = "",
   youtube = ""
 )
@@ -142,8 +142,8 @@ model_selection_2 <- list(
   title = "Model selection",
   topics = c("Out-of-sample selection", "Cross-validation", "Multi-model inference"),
   pdf = "",
-  rmd = "lectures/week_05/lec_14_model_selection.Rmd",
-  html = "lectures/week_05/lec_14_model_selection.html",
+  rmd = c(""),
+  html = c(""),
   background = "",
   youtube = ""
 )
@@ -152,8 +152,8 @@ mixed_models_1 <- list(
   title = c("Mixed effects models", "<br><b>Project plan due</b>"),
   topics = c("Fixed vs Random effects", "Costs/benefits", "Restricted maximum likelihood"),
   pdf = "",
-  rmd = "lectures/week_05/lec_15_intro_mixed_effects.Rmd",
-  html = "lectures/week_05/lec_15_intro_mixed_effects.html",
+  rmd = c(""),
+  html = c(""),
   background = "",
   youtube = ""
 )
@@ -162,15 +162,15 @@ mixed_models_2 <- list(
   title = "Mixed effects models",
   topics = c("Inference", "Diagnostics", "Model selection"),
   pdf = "",
-  rmd = "lectures/week_06/lec_16_mixed_effects.Rmd",
-  html = "lectures/week_06/lec_16_mixed_effects.html",
+  rmd = c(""),
+  html = c(""),
   background = "",
   youtube = ""
 )
 
 guest_lec_01 <- list(
-  title = "Guest lecture",
-  topics = c("Dr. Staci Amburgey"),
+  title = "Guest lecture - Dr. Staci Amburgey",
+  topics = c(""),
   pdf = "",
   rmd = "",
   html = "lectures/week_06/lec_17_guest_lec_amburgey.html",
@@ -182,8 +182,8 @@ intro_GLM <- list(
   title = "Introduction to GLMs",
   topics = c("Data distrbution", "Links", "Linear predictors"),
   pdf = "",
-  rmd = "lectures/week_06/lec_18_intro_GLMs.Rmd",
-  html = "lectures/week_06/lec_18_intro_GLMs.html",
+  rmd = c(""),
+  html = c(""),
   background = "",
   youtube = ""
 )
@@ -192,8 +192,8 @@ binary_GLM <- list(
   title = "Modeling binary data",
   topics = c("Logistic regression", "Model selection", "Diagnostics"),
   pdf = "",
-  rmd = "lectures/week_07/lec_19_modeling_binary_data.Rmd",
-  html = "lectures/week_07/lec_19_modeling_binary_data.html",
+  rmd = c(""),
+  html = c(""),
   background = "",
   youtube = ""
 )
@@ -202,8 +202,8 @@ overdispersed_binary <- list(
   title = "Overdispersion in binary data",
   topics = c("Variance inflation", "Beta-binomial modes", "Quasi-likelihood"),
   pdf = "",
-  rmd = "lectures/week_07/lec_20_overdispersed_binary_data.Rmd",
-  html = "lectures/week_07/lec_20_overdispersed_binary_data.html",
+  rmd = c(""),
+  html = c(""),
   background = "",
   youtube = ""
 )
@@ -212,8 +212,8 @@ count_GLM <- list(
   title = "Modeling count data",
   topics = c("Poisson regression", "Leverage and influence", "Diagnostics"),
   pdf = "",
-  rmd = "lectures/week_07/lec_21_modeling_count_data.Rmd",
-  html = "lectures/week_07/lec_21_modeling_count_data.html",
+  rmd = c(""),
+  html = c(""),
   background = "",
   youtube = ""
 )
@@ -222,8 +222,8 @@ overdispersed_count <- list(
   title = "Overdispersion in count data",
   topics = c("Variance inflation", "QAIC", "Negative-binomial distribution", "Quasi-likelihood"),
   pdf = "",
-  rmd = "lectures/week_08/lec_22_modeling_count_data.Rmd",
-  html = "lectures/week_08/lec_22_modeling_count_data.html",
+  rmd = c(""),
+  html = c(""),
   background = "",
   youtube = ""
 )
@@ -232,8 +232,8 @@ intro_GLMM_1 <- list(
   title = "Introduction to GLMMs",
   topics = c("Computing likelihoods", "Diagnostics", "Goodness-of-fit"),
   pdf = "",
-  rmd = "lectures/week_08/lec_23_intro_GLMMs.Rmd",
-  html = "lectures/week_08/lec_23_intro_GLMMs.html",
+  rmd = c(""),
+  html = c(""),
   background = "",
   youtube = ""
 )
@@ -242,8 +242,8 @@ intro_GLMM_2 <- list(
   title = "More on GLMMs",
   topics = c("Computing likelihoods", "Daignostics", "Goodness-of-fit"),
   pdf = "",
-  rmd = "lectures/week_08/lec_24_intro_GLMMs.Rmd",
-  html = "lectures/week_08/lec_24_intro_GLMMs.html",
+  rmd = c(""),
+  html = c(""),
   background = "",
   youtube = ""
 )
@@ -262,8 +262,8 @@ review <- list(
   title = "Material review",
   topics = c("Catchup and review materials"),
   pdf = "",
-  rmd = "lectures/week_09/lec_26_review.Rmd",
-  html = "lectures/week_09/lec_26_review.html",
+  rmd = c(""),
+  html = c(""),
   background = "",
   youtube = ""
 )
@@ -272,8 +272,8 @@ synthesis <- list(
   title = "Course synthesis",
   topics = c("What did we learn?", "Where do we go from here?"),
   pdf = "",
-  rmd = "lectures/week_09/lec_27_course_summary.Rmd",
-  html = "lectures/week_09/lec_27_course_summary.html",
+  rmd = c(""),
+  html = c(""),
   background = "",
   youtube = ""
 )
