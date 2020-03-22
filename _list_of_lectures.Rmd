@@ -44,7 +44,7 @@ linear_models_1 <- list(
   pdf = "",
   rmd = c("lectures/week_02/lec_04_intro_to_linear_models.Rmd"),
   html = c("lectures/week_02/lec_04_intro_to_linear_models.html"),
-  background = c("lectures/week_02/suppl_var_cov.html"),
+  background = c(""),
   youtube = ""
 )
 
@@ -64,7 +64,7 @@ inference <- list(
   pdf = "",
   rmd = c("lectures/week_02/lec_06_inference_from_linear_models.Rmd"),
   html = c("lectures/week_02/lec_06_inference_from_linear_models.html"),
-  background = c("lectures/week_01/suppl_var_cov.html"),
+  background = c(""),
   youtube = ""
 )
 
@@ -80,7 +80,7 @@ diagnostics <- list(
 
 non_IID_errors <- list(
   title = "Problems with model residuals",
-  topics = c("weighted least squares", "generalized least squares", "robust regression", "autocorrelated errors"),
+  topics = c("Weighted least squares", "Generalized least squares", "Robust regression", "Autocorrelated errors"),
   pdf = "",
   rmd = "lectures/week_03/lec_08_non-IID_errors.Rmd",
   html = "lectures/week_03/lec_08_non-IID_errors.html",
@@ -90,7 +90,7 @@ non_IID_errors <- list(
 
 transformations <- list(
   title = "Data transformations",
-  topics = c("Powers/roots", "Box-Cox", "logarithms"),
+  topics = c("Powers/roots", "Box-Cox", "Logarithms"),
   pdf = "",
   rmd = "lectures/week_03/lec_09_data_transformations.Rmd",
   html = "lectures/week_03/lec_09_data_transformations.html",
@@ -120,7 +120,7 @@ design_matrices_2 <- list(
 
 max_likelihood <- list(
   title = "Maximum likelihood",
-  topics = c("relationship to probability", "Estimation", "Ratio tests"),
+  topics = c("Relationship to probability", "Estimation", "Ratio tests"),
   pdf = "",
   rmd = "lectures/week_04/lec_12_max_likelihood.Rmd",
   html = "lectures/week_04/lec_12_max_likelihood.html",
@@ -130,7 +130,7 @@ max_likelihood <- list(
 
 model_selection_1 <- list(
   title = "Model selection",
-  topics = c("Bias-Variance trade-offs", "In-sample", "AIC"),
+  topics = c("Bias-Variance trade-offs", "In-sample selection", "AIC"),
   pdf = "",
   rmd = "lectures/week_05/lec_13_model_selection.Rmd",
   html = "lectures/week_05/lec_13_model_selection.html",
@@ -140,7 +140,7 @@ model_selection_1 <- list(
 
 model_selection_2 <- list(
   title = "Model selection",
-  topics = c("Out-of-sample", "Cross-validation", "Multi-model inference"),
+  topics = c("Out-of-sample selection", "Cross-validation", "Multi-model inference"),
   pdf = "",
   rmd = "lectures/week_05/lec_14_model_selection.Rmd",
   html = "lectures/week_05/lec_14_model_selection.html",
@@ -149,8 +149,8 @@ model_selection_2 <- list(
 )
 
 mixed_models_1 <- list(
-  title = "Mixed effects models",
-  topics = c("<b>Project plan due by 11:59 PM</b>", "Fixed vs Random effects", "Costs/benefits", "Restricted maximum likelihood"),
+  title = c("Mixed effects models", "<br><b>Project plan due</b>"),
+  topics = c("Fixed vs Random effects", "Costs/benefits", "Restricted maximum likelihood"),
   pdf = "",
   rmd = "lectures/week_05/lec_15_intro_mixed_effects.Rmd",
   html = "lectures/week_05/lec_15_intro_mixed_effects.html",
@@ -200,7 +200,7 @@ binary_GLM <- list(
 
 overdispersed_binary <- list(
   title = "Overdispersion in binary data",
-  topics = c("Variance inflation", "beta-binomial modes", "Quasi-likelihood"),
+  topics = c("Variance inflation", "Beta-binomial modes", "Quasi-likelihood"),
   pdf = "",
   rmd = "lectures/week_07/lec_20_overdispersed_binary_data.Rmd",
   html = "lectures/week_07/lec_20_overdispersed_binary_data.html",
@@ -219,7 +219,7 @@ count_GLM <- list(
 )
 
 overdispersed_count <- list(
-  title = "",
+  title = "Overdispersion in count data",
   topics = c("Variance inflation", "QAIC", "Negative-binomial distribution", "Quasi-likelihood"),
   pdf = "",
   rmd = "lectures/week_08/lec_22_modeling_count_data.Rmd",
@@ -229,8 +229,8 @@ overdispersed_count <- list(
 )
 
 intro_GLMM_1 <- list(
-  title = "",
-  topics = c("Computing likelihoods", "Daignostics", "Goodness-of-fit"),
+  title = "Introduction to GLMMs",
+  topics = c("Computing likelihoods", "Diagnostics", "Goodness-of-fit"),
   pdf = "",
   rmd = "lectures/week_08/lec_23_intro_GLMMs.Rmd",
   html = "lectures/week_08/lec_23_intro_GLMMs.html",
@@ -239,7 +239,7 @@ intro_GLMM_1 <- list(
 )
 
 intro_GLMM_2 <- list(
-  title = "",
+  title = "More on GLMMs",
   topics = c("Computing likelihoods", "Daignostics", "Goodness-of-fit"),
   pdf = "",
   rmd = "lectures/week_08/lec_24_intro_GLMMs.Rmd",
@@ -249,8 +249,8 @@ intro_GLMM_2 <- list(
 )
 
 holiday <- list(
-  title = "Holiday",
-  topics = "<b>Memorial Day - no class</b>",
+  title = "<b>Memorial Day - no class</b>",
+  topics = "",
   pdf = "",
   rmd = "lectures/week_09/lec_25_holiday.Rmd",
   html = "lectures/week_09/lec_25_holiday.html",
@@ -279,8 +279,8 @@ synthesis <- list(
 )
 
 present <- list(
-  title = "Presentations",
-  topics = "Presentations of class projects",
+  title = "Presentations of class projects",
+  topics = "",
   pdf = "",
   rmd = "",
   html = "",
