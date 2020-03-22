@@ -133,7 +133,7 @@ rownames(syl_txt) <- NULL
 
 ## generate table
 kableExtra::kable(syl_txt, format = "html", caption = " ",
-                  align = "cllccc", escape = FALSE) %>%
+                  align = "cllccl", escape = FALSE) %>%
   kable_styling(bootstrap_options = "striped",
                 full_width = FALSE,
                 position = "left") %>%
