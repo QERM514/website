@@ -16,18 +16,103 @@ matrixlab <- list(
   rmd = "",
   html = "",
   youtube = "",
-  data = ""
+  data = "",
+  background = c("")
   )
 
 ## overview of R Markdown
 markdown <- list(
   title = "R Markdown",
   topics = c("Authoring reports with R Markdown"),
-  pdf = c("labs/week_01/rmarkdown.pdf"),
-  rmd = c("labs/week_01/rmarkdown.Rmd"),
+  pdf = c(""),
+  rmd = c("labs/week_01/intro_rmarkdown.Rmd"),
   html = c("http://rmarkdown.rstudio.com/lesson-1.html"),
   youtube = "",
-  data = ""
+  data = "",
+  background = c("[R Markdown reference guide](https://rstudio.com/wp-content/uploads/2015/03/rmarkdown-reference.pdf)", "[R Markdown cheat sheet](https://rstudio.com/wp-content/uploads/2016/03/rmarkdown-cheatsheet-2.0.pdf)"))
+
+## fitting linear models
+fitting_LMs <- list(
+  title = "Fitting linear models",
+  topics = c("Fitting linear models"),
+  pdf = c(""),
+  rmd = c(""),
+  html = c(""),
+  youtube = "",
+  data = "",
+  background = c("")
+  )
+
+## model diagnostics & non-IID errors
+diagnostics_and_errors <- list(
+  title = "Model diagnostics",
+  topics = c("Model diagnostics", "Non-IID errors"),
+  pdf = c(""),
+  rmd = c(""),
+  html = c(""),
+  youtube = "",
+  data = "",
+  background = c("")
+  )
+
+## design matrices
+design_matrices <- list(
+  title = "Design matrices",
+  topics = c("Design matrices for", "regression, ANOVA, ANCOVA"),
+  pdf = c(""),
+  rmd = c(""),
+  html = c(""),
+  youtube = "",
+  data = "",
+  background = c("")
+  )
+
+## model diagnostics & non-IID errors
+model_selection <- list(
+  title = "Model selection",
+  topics = c("Model selection", "Multimodel inference"),
+  pdf = c(""),
+  rmd = c(""),
+  html = c(""),
+  youtube = "",
+  data = "",
+  background = c("")
+  )
+
+## mixed models
+mixed_models <- list(
+  title = "Fitting mixed models",
+  topics = c("Fitting mixed models"),
+  pdf = c(""),
+  rmd = c(""),
+  html = c(""),
+  youtube = "",
+  data = "",
+  background = c("")
+  )
+
+## fitting glms
+fitting_glms <- list(
+  title = "Fitting GLMs",
+  topics = c("Fitting GLMs"),
+  pdf = c(""),
+  rmd = c(""),
+  html = c(""),
+  youtube = "",
+  data = "",
+  background = c("")
+  )
+
+## fitting glmms
+fitting_glmms <- list(
+  title = "Fitting GLMMs",
+  topics = c("Fitting GLMMs"),
+  pdf = c(""),
+  rmd = c(""),
+  html = c(""),
+  youtube = "",
+  data = "",
+  background = c("")
   )
 
 ## preparations for project presentation
@@ -38,7 +123,8 @@ present_prep <- list(
   rmd = "",
   html = "",
   youtube = "",
-  data = ""
+  data = "",
+  background = c("")
   )
 
 ## project presentations
@@ -49,7 +135,8 @@ presentlab <- list(
   rmd = "",
   html = "",
   youtube = "",
-  data = ""
+  data = "",
+  background = c("")
   )
 ```
 
