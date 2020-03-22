@@ -249,7 +249,7 @@ intro_GLMM_2 <- list(
 )
 
 holiday <- list(
-  title = "<b>Memorial Day - no class</b>",
+  title = "<b>Memorial Day - No class</b>",
   topics = "",
   pdf = "",
   rmd = "lectures/week_09/lec_25_holiday.Rmd",
