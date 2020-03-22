@@ -13,7 +13,7 @@ output:
 
 # Course overview
 
-This course is intended to introduce students to a large class of statistical models known as Generalized Linear Models (GLMs) and Generalized Linear Mixed Models (GLMMs). These models form the basis for a large majority of statistical analyses conducted in ecology and environmental science. They include simple linear models, such as analysis of variance (ANOVA) and regression models, along with more complex models that assume non-normal error distributions (_e.g._, logistic, Poisson, and Gamma regression). In particular, we will focus on conceptualizing analyses, implementing analyses, and making inference from the results.
+This course is intended to introduce students to a large class of statistical models that form the basis for a large majority of statistical analyses conducted in ecology and environmental science. They include simple linear models, such as analysis of variance (ANOVA) and regression models, along with Generalized Linear Models (GLMs) and Generalized Linear Mixed Models (GLMMs), which assume non-normal error distributions (_e.g._, logistic, Poisson, and Gamma regression). Students will also learn the differences between fixed and random effects. In particular, we will focus on conceptualizing analyses, implementing analyses, and making inference from the results.
 
 <br>
 
@@ -25,7 +25,7 @@ By the end of the quarter, students should be able to:
 
 * Understand the assumptions behind a chosen statistical model
 
-* Use **R** to fit GLMs and GLMMs to data
+* Use **R** to fit a variety of linear models to data
 
 * Evaluate data support for various models and select the most parsimonious model among them
 
@@ -47,10 +47,10 @@ Email: [qerm514@uw.edu](mailto:qerm514@uw.edu)
 # Meeting times & locations
 
 #### Lectures 
-M/W/F from 10:30-11:20 in FSH 213
+M/W/F from 10:30-11:20 <del>in FSH 213</del> via [Zoom](https://washington.zoom.us/j/831083365)
 
 #### Computer Lab
-Friday from 11:30-1:20 in FSH 136
+Friday from 11:30-1:20 <del>in FSH 136</del> via [Zoom](https://washington.zoom.us/j/946943308)
 
 #### Office hours
 By appointment
@@ -73,13 +73,13 @@ All of the software we will be using is free and platform independent, meaning s
 
 # Teaching methodology
 
-This course will use a flipped classroom model, with new material introduced primarily through reading assignments prior to class. In-class time will focus on demonstrating and applying newly learned skills. Students will be expected to work both individually and collaboratively; course content and evaluation will emphasize the communication of ideas and the ability to think critically moreso than a specific pathway or method. Other areas of this website provide an overview of the topics to be covered, including links to weekly reading assignments, lecture materials, computer labs, and homework assignments.
+This course will introduce new material primarily through prepared slides and hands-on demonstrations. Students will be expected to work both individually and collaboratively (to the extent possible given the current conditions); course content and evaluation will emphasize the communication of ideas and the ability to think critically moreso than a specific pathway or method. Other areas of this website provide an overview of the topics to be covered, including links to weekly reading assignments, lecture materials, computer labs, and homework assignments.
 
 <br>
 
 # Evaluation
 
-Students will be evaluated on their knowledge of course content, and their ability to communicate their understanding of the material, via individual homework assignments (70%) and a final project (30%). There will be 8 homework assignments, but the lowest score will be dropped for the purposes of grading; each of the 7 highest scoring assignments will count toward 10% of the final grade. Please note, though, that **all eight homework assignments must be turned in to achieve a passing grade**. Homework will be assigned each Friday of weeks 1-8 and will be due by 11:59 PM one week later on the following Friday (weeks 2-9). The instructor will evaluate and return student homework assignments within one week of their due date. No credit will be given for late assignments.
+Students will be evaluated on their knowledge of course content, and their ability to communicate their understanding of the material, via individual homework assignments (70%) and a final project (30%). There will be 8 homework assignments, but the lowest score will be dropped for the purposes of grading; each of the 7 highest scoring assignments will count toward 10% of the final grade. Please note, though, that **all eight homework assignments must be turned in to achieve a passing grade**. Homework will be assigned each Friday of weeks 1-8 and will be due by 11:59 PM one week later on the following Friday (weeks 2-9). The instructor will evaluate and return student homework assignments within one week of their due date. **If for some reason you cannot meet the homework deadline, contact the instructor as soon as possible to discuss other options**.
 
 Each student will complete a final project consisting of three elements: 1) a project plan, 2) a project presentation, and 3) a project report. The project plan will be due by 11:59 PM on Friday, May 1. Presentations of student projects will occur during the last week of class; specific days/times will be assigned randomly. The final project will be due by 11:59 PM on Sunday, June 7. Please see the [Final Project](final_proj.html) page for more details.
 
@@ -133,33 +133,11 @@ I am dedicated to providing a welcoming and supportive environment for all peopl
 
 # Safety
 
-If you feel unsafe or at-risk in any way while taking any course, contact [SafeCampus](https://www.washington.edu/safecampus/), 206-685-7233 anytime&ndash;no matter where you work or study&ndash;to anonymously discuss safety and well-being concerns for yourself or others. SafeCampus can provide individualized support, discuss short- and long-term solutions, and connect you with additional resources when requested. For a broader range of resources and assistance see the [Husky Health & Well-Being website](https://wellbeing.uw.edu/).
+If you feel unsafe or at-risk in any way while taking any course, contact [SafeCampus](https://www.washington.edu/safecampus/) (206-685-7233) anytime&ndash;no matter where you work or study&ndash;to anonymously discuss safety and well-being concerns for yourself or others. SafeCampus can provide individualized support, discuss short- and long-term solutions, and connect you with additional resources when requested. For a broader range of resources and assistance see the [Husky Health & Well-Being website](https://wellbeing.uw.edu/).
 
 <br>
 
 # Food Pantry
 
 No student should ever have to choose between buying food or textbooks. The UW Food Pantry helps mitigate the social and academic effects of campus food insecurity. They aim to lessen the financial burden of purchasing food by providing students access to shelf-stable groceries, seasonal fresh produce, and hygiene products at **no cost**. Students can expect to receive 4 to 5 days' worth of supplemental food support when they visit the Pantry, located on the north side of Poplar Hall at the corner of NE 41<sup>st</sup> St and Brooklyn Ave NE. Visit the [Any Hungry Husky website](https://uw.edu/anyhungryhusky) for additional information, including operating hours and additional food support resources.
-
-
-```{r child = "_syllabus.Rmd", include=FALSE, eval = FALSE}
-```
-
-```{r generate_syllabus, eval = FALSE, echo=FALSE}
-## data frame with dates & topics
-syl_txt <- data.frame(
-  date = qtr,
-  lec_topics = lec_topics_html,
-  lab_topics = lab_topics_html,
-  hw_topics = hw_topics_html
-)
-colnames(syl_txt) <- c("Date", "Lecture topic(s)", "Lab topic(s)", "Homework")
-## generate table
-kable(syl_txt, format = "html", caption = " ", escape = FALSE) %>%
-  kable_styling(bootstrap_options = "striped",
-                full_width = F,
-                position = "left") %>%
-  column_spec(1, width = "8em") %>%
-  column_spec(2, width = "27em")
-```
 
