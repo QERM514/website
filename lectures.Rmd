@@ -56,6 +56,13 @@ week_lecs$L29 <- present
 week_lecs$L30 <- present
 ```
 
+```{r topics, include = FALSE}
+lec_titles <- lapply(week_lecs, function(x) { if(is.list(x)) {x$title} else {""} })
+## topics formatted for html
+lec_titles_html <- sapply(lapply(lec_titles, paste, "<br>", collapse = ""), c)
+names(lec_titles_html) <- NULL
+```
+
 ```{r lecture_topics, include = FALSE}
 lec_topics <- lapply(week_lecs, function(x) { if(is.list(x)) {x$topics} else {""} })
 ## topics formatted for html
@@ -114,18 +121,19 @@ names(background_links_html) <- NULL
 ## data frame with dates & topics
 syl_txt <- data.frame(
   date = qtr,
+  lec_titles = lec_titles_html,
   lec_topics = lec_topics_html,
   lec_links = slide_links_html,
   rmd_links = source_links_html,
   #youtube_links = youtube_links_html,
   background_links = background_links_html
 )
-colnames(syl_txt) <- c("Date", "Topic(s)", "Slide deck", "Source code", "Background")
+colnames(syl_txt) <- c("Date", "Title", "Topic(s)", "Slide deck", "Source code", "Background")
 rownames(syl_txt) <- NULL
 
 ## generate table
 kableExtra::kable(syl_txt, format = "html", caption = " ",
-                  align = "clccc", escape = FALSE) %>%
+                  align = "cllccc", escape = FALSE) %>%
   kable_styling(bootstrap_options = "striped",
                 full_width = FALSE,
                 position = "left") %>%
