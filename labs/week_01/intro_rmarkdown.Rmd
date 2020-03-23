@@ -17,7 +17,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # What is R Markdown?
 
-Markdown is a simple formatting syntax for authoring HTML, PDF, MS Word documents, and many other document formats. When you click the "Knit" button in **RStudio**, a document will be generated that includes both text content as well as the output of any embedded **R** code chunks within the document. Markdown is written in plain text, which means you can use any text editor to writing or editing Markdown documents. For a much more detailed treatment of R Markdown and its inner workings, please see the [resources page](https://rmarkdown.rstudio.com/lesson-1.html) from RStudio.
+Markdown is a simple formatting syntax for authoring HTML, PDF, MS Word, and many other document formats. When you click the "Knit" button in **RStudio**, a document will be generated that includes text content as well as the output of any embedded **R** code chunks within the document. Markdown is written in plain text, which means you can use any text editor for writing or editing Markdown documents. For a much more detailed treatment of R Markdown and its inner workings, please see the [resources page](https://rmarkdown.rstudio.com/lesson-1.html) from RStudio.
 
 # Document layout
 
@@ -63,7 +63,7 @@ The text in a Markdown document can be formatting in a number of ways. At a basi
 
 ## Headings
 
-You can specify different levels of headings using the hashtag (pound) symbol `#`. By adding more `#` signs you can decrease the heading level. So, for example, the following
+You can specify different levels of headings using the hash tag (pound) symbol `#`. By adding more `#` signs you can decrease the heading level. So, for example, the following
 
 ```
 # Heading 1
@@ -83,7 +83,7 @@ will render to
 
 ### Italics
 
-It's easy to add emphasis to text. For *italic* face, wrap the text with either a single asterisk (`*`) or an underscrore (`_`). For example,
+It's easy to add emphasis to text. For *italic* face, wrap the text with either a single asterisk (`*`) or an underscore (`_`). For example,
 
 ```
 This is *italic*, but then so is _this_.
@@ -95,7 +95,7 @@ will render to
 
 ### Bold
 
-For **bold** face, wrap the text with either two asterisks (`**`) or an underscrores (`__`). For example,
+For **bold** face, wrap the text with either two asterisks (`**`) or an underscores (`__`). For example,
 
 ```
 This is **bold**, but then so is __this__.
@@ -117,9 +117,9 @@ renders to
 
 > This is ***bold and italic***.
 
-### Strikethrough
+### Strike-through
 
-If you want to indicate a deletion or ~~strikethrough~~, just wrap the text in two tilde's (`~~`), such that
+If you want to indicate a deletion or ~~strike-through~~, just wrap the text in two tilde's (`~~`), such that
 
 ```
 Oops, this is ~~a mistake~~.
@@ -182,7 +182,7 @@ will render to
 > 1. This is item 1  
 > 7. Item 2 comes next
 
-You can specifiy unordered list with either an asterisk (`*`) or dash (`-`). For example, the following text 
+You can specify unordered list with either an asterisk (`*`) or dash (`-`). For example, the following text 
 
 ```
 * This is a thing 
@@ -218,7 +218,7 @@ will render to
 
 ### Inline
 
-You can insert links to websites, other files, and other locations within a file. For websites, there are several options. The first is to simply write out the full address inline (eg, http://www.google.com) and it will parse correctly. You can also use shorthand text to hide the full address or make a snetence more readable. To do that, include the name in square brackets followed by the address inside parentheses For example,
+You can insert links to websites, other files, and other locations within a file. For websites, there are several options. The first is to simply write out the full address inline (eg, http://www.google.com) and it will parse correctly. You can also use shorthand text to hide the full address or make a sentence more readable. To do that, include the name in square brackets followed by the address inside parentheses For example,
 
 ```
 Please conduct your search from [this link](http://www.google.com).
@@ -230,7 +230,7 @@ will render as
 
 ### Referenced
 
-It's also possible to include a short numbered reference to the full address rather than writing it out imediately following the link's text. To do so, replace the parenthetic statement with a number inside square brackets (eg, `[1]`)., and then write out the full address *anywhere* in the document. This can be useful if you want to keep a separate section that includes all of the links within a document. So, for example, we could have written the example above as 
+It's also possible to include a short numbered reference to the full address rather than writing it out immediately following the link's text. To do so, replace the parenthetic statement with a number inside square brackets (eg, `[1]`)., and then write out the full address *anywhere* in the document. This can be useful if you want to keep a separate section that includes all of the links within a document. So, for example, we could have written the example above as 
 
 ```
 Please conduct your search from [this link][1].
@@ -281,11 +281,11 @@ Here are the references for the links. For some reason I put the full address he
 
 # Writing code
 
-One of the truly great features of Markdown is the ability to include code within a document, have it executed as written, and the results of the code displayed inline, in blocks, or even hidden from sight. This courses uses **R**, but people also use many other languages in Markdown documents (eg, python).
+One of the truly great features of Markdown is the ability to include code within a document, have it executed as written, and the results of the code displayed inline, in blocks, or even hidden from sight. This course uses **R**, but people also use many other languages in Markdown documents (eg, python).
 
 ## Blocks
 
-The most common method for including code in your document is via code blocks, which can be numerous and separated by text, equations, images, etc. Just as with a typical **R** script, all of the code is exectued in sequence, which means code can reference objects, use packages, etc that were defined or called in previous blocks. Code blocks are delimited at the beginning and end by three backticks (```). In addition, you need to add `{r}` after the beginning ``` so Markdown knows what language interpretor to use (in this case **R**). So, for example, here is a really basic code block
+The most common method for including code in your document is via code blocks, which can be numerous and separated by text, equations, images, etc. Just as with a typical **R** script, all of the code is executed in sequence, which means code can reference objects, use packages, etc that were defined or called in previous blocks. Code blocks are delimited at the beginning and end by three back-ticks (\`\`\`). In addition, you need to add `{r}` after the beginning ``` so Markdown knows what language interpreter to use (in this case **R**). So, for example, here is a really basic code block
 
 ````
 `r ''````{r}
@@ -337,11 +337,11 @@ a / b
 ```
 ````
 
-**NOTE**: There are [many other chunk options](https://yihui.org/knitr/options/#chunk-options) available for customing code evaluation, results, etc.
+**NOTE**: There are [many other chunk options](https://yihui.org/knitr/options/#chunk-options) available for customizing code evaluation, results, etc.
 
 ## Inline
 
-Sometimes it can be nice to include small snippets of hidden **R** code within a sentence. For example, an object is defined once at the beginning of a document and referenced later. Or, in a dynamic report we might want the reported results to reflect any changes to inputs, models, etc. To include inline **R** code, you wrap the call in backticks and preface it with `r` (eg, `` `r
+Sometimes it can be nice to include small snippets of hidden **R** code within a sentence. For example, an object is defined once at the beginning of a document and referenced later. Or, in a dynamic report we might want the reported results to reflect any changes to inputs, models, etc. To include inline **R** code, you wrap the call in back-ticks and preface it with `r` (eg, `` `r
 object` ``). You can also replace `object` with a valid **R** `expression`. For example, imagine we had two variables, `x` and `y`, that had been defined in a previous block of code, such that `x = 2` `r x <- 2` and `y = 3` `r y <- 3`. If we write
 
 ```{r inline_ex, eval = FALSE}
@@ -405,11 +405,11 @@ plot(x, y)
 
 # Writing equations
 
-Fields like ecology and statistics often include lots of equations in journal articles and presentations. You can also use Markdown to write nicely formatted equations using **LaTeX** language constructs. Although the initial leap into **LaTeX** can be a bit daunting, it gets much easier with some practice and help any of the many guides available online. There are also links to pdf documents with [math](latex_math_sheet.pdf) and [document](latex_cheat_sheet.pdf) codes on the course website.
+Fields like ecology and statistics often include lots of equations in journal articles and presentations. You can also use Markdown to write nicely formatted equations using **LaTeX** language constructs. Although the initial leap into **LaTeX** can be a bit daunting, it gets much easier with some practice and help from the many guides available online. There are also pdf documents with [math](latex_math_sheet.pdf) and [document](latex_cheat_sheet.pdf) codes on the course website.
 
 Here are a few things to help you get started (with examples below):
 
-* The default typeface is italic, which is commonly used to indicate a scalar; vectors and matrices are typicallly denoted with **bold** face
+* The default typeface is italic, which is commonly used to indicate a scalar; vectors and matrices are typically denoted with **bold** face, but need special coding to indicate (see below);
 
 * Sub- and superscripts are denoted by `_` and `^`, respectively; any text/number longer than one character/digit must be enclosed in curly braces `{}`
 
