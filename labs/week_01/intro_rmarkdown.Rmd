@@ -281,15 +281,126 @@ Here are the references for the links. For some reason I put the full address he
 
 # Writing code
 
+One of the truly great features of Markdown is the ability to include code within a document, have it executed as written, and the results of the code displayed inline, in blocks, or even hidden from sight. This courses uses **R**, but people also use many other languages in Markdown documents (eg, python).
+
+## Blocks
+
+The most common method for including code in your document is via code blocks, which can be numerous and separated by text, equations, images, etc. Just as with a typical **R** script, all of the code is exectued in sequence, which means code can reference objects, use packages, etc that were defined or called in previous blocks. Code blocks are delimited at the beginning and end by three backticks (```). In addition, you need to add `{r}` after the beginning ``` so Markdown knows what language interpretor to use (in this case **R**). So, for example, here is a really basic code block
+
 ````
-`r ''````{r, eval=TRUE}
-1 + 1
+`r ''````{r}
+a <- 1
+b <- 2
+a / b
 ```
 ````
 
+By default, Markdown will show the code and the output when the document is rendered, such that above code block would look like
 
-## Plots
+```{r}
+a <- 1
+b <- 2
+a / b
+```
 
+### Naming code blocks
+
+If your document will have multiple blocks of code, I strongly suggest you give them meaningful titles. This will help you navigate through your entire Markdown document if you use the "Outline" feature in **RStudio**. It will also help when debugging issues encountered during the rendering ("knitting") process. To add a title to a code block, simply include it after the `r` on the first line (note that names cannot contain spaces). For example,
+
+````
+`r ''````{r simple_arithmetic}
+a <- 1
+b <- 2
+a / b
+```
+````
+
+### Chunk options
+
+Sometimes it's convenient to hide either the code or the output. For example, many Markdown documents begin with a code block to set global options to be used throughout, but most people don't need or want to see them. That's easy to with "chunk options" listed in side the `{r}` statement at the beginning of the block. Here's how to hide the code from view while still executing it:
+
+````
+`r ''````{r simple_arithmetic, echo = FALSE}
+a <- 1
+b <- 2
+a / b
+```
+````
+
+Alternatively, you may want to show a chunk of code for demonstration purposes, but not actually execute it. In that case you would write
+
+````
+`r ''````{r simple_arithmetic, eval = FALSE}
+a <- 1
+b <- 2
+a / b
+```
+````
+
+**NOTE**: There are [many other chunk options](https://yihui.org/knitr/options/#chunk-options) available for customing code evaluation, results, etc.
+
+## Inline
+
+Sometimes it can be nice to include small snippets of hidden **R** code within a sentence. For example, an object is defined once at the beginning of a document and referenced later. Or, in a dynamic report we might want the reported results to reflect any changes to inputs, models, etc. To include inline **R** code, you wrap the call in backticks and preface it with `r` (eg, `` `r
+object` ``). You can also replace `object` with a valid **R** `expression`. For example, imagine we had two variables, `x` and `y`, that had been defined in a previous block of code, such that `x = 2` `r x <- 2` and `y = 3` `r y <- 3`. If we write
+
+```{r, eval = FALSE}
+The sum of x and y is `r x + y`.
+```
+
+the rendered Markdown document will read
+
+> The sum of x and y is `r x + y`.
+
+## Figures
+
+Another of Markdown's strengths is its ability to render high-quality figures. This can be done by either inserting links to saved figures/images as shown above, or executing **R** code to do so. For example, this code
+
+````
+`r ''````{r xy_plot}
+set.seeed(123)
+n <- 100
+x <- runif(nn, 0, 10)
+e <- rnorm(nn)
+y <- 1 + 0.5 * x + e
+plot(x, y)
+```
+````
+
+would produce the following plot
+
+```{r xy_plot, echo = FALSE}
+set.seed(123)
+n <- 100
+x <- runif(n, 0, 10)
+e <- rnorm(n)
+y <- 1 + 0.5 * x + e
+plot(x, y)
+```
+
+You can also add chunk options to change the figure's size, location, etc. For example,
+
+````
+`r ''````{r xy_plot, fig.height = 4, fig.width = 4, fig.align = "center"}
+set.seed(123)
+n <- 100
+x <- runif(n, 0, 10)
+e <- rnorm(n)
+y <- 1 + 0.5 * x + e
+plot(x, y)
+```
+````
+
+would instead yield
+
+```{r xy_plot_2, echo = FALSE, fig.height = 4, fig.width = 4, fig.align = "center"}
+set.seed(123)
+n <- 100
+x <- runif(n, 0, 10)
+e <- rnorm(n)
+y <- 1 + 0.5 * x + e
+plot(x, y)
+```
 
 
 # Writing equations
