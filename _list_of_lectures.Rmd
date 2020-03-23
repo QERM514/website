@@ -24,7 +24,7 @@ software <- list(
   pdf = "",
   rmd = c("lectures/week_01/lec_02_software.Rmd"),
   html = c("lectures/week_01/lec_02_software.html"),
-  background = c("[Intro to R Markdown](https://rmarkdown.rstudio.com/lesson-1.html)"),
+  background = c("[R software](https://www.r-project.org/about.html)", "[RStudio](https://resources.rstudio.com/)", "[Intro to R Markdown](https://rmarkdown.rstudio.com/lesson-1.html)"),
   youtube = ""
 )
 
