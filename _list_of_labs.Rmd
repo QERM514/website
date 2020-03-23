@@ -26,7 +26,7 @@ markdown <- list(
   topics = c("Authoring reports with R Markdown"),
   pdf = c(""),
   rmd = c("labs/week_01/intro_rmarkdown.Rmd"),
-  html = c("http://rmarkdown.rstudio.com/lesson-1.html"),
+  html = c("labs/week_01/intro_rmarkdown.html"),
   youtube = "",
   data = "",
   background = c("[R Markdown reference guide](https://rstudio.com/wp-content/uploads/2015/03/rmarkdown-reference.pdf)", "[R Markdown cheat sheet](https://rstudio.com/wp-content/uploads/2016/03/rmarkdown-cheatsheet-2.0.pdf)"))
