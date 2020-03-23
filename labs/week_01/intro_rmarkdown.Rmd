@@ -216,6 +216,67 @@ will render to
   
 ## Links
 
+### Inline
+
+You can insert links to websites, other files, and other locations within a file. For websites, there are several options. The first is to simply write out the full address inline (eg, http://www.google.com) and it will parse correctly. You can also use shorthand text to hide the full address or make a snetence more readable. To do that, include the name in square brackets followed by the address inside parentheses For example,
+
+```
+Please conduct your search from [this link](http://www.google.com).
+```
+
+will render as
+
+> Please conduct your search from [this link](http://www.google.com).
+
+### Referenced
+
+It's also possible to include a short numbered reference to the full address rather than writing it out imediately following the link's text. To do so, replace the parenthetic statement with a number inside square brackets (eg, `[1]`)., and then write out the full address *anywhere* in the document. This can be useful if you want to keep a separate section that includes all of the links within a document. So, for example, we could have written the example above as 
+
+```
+Please conduct your search from [this link][1].
+```
+
+and then provided the full address as `[1]: http://www.google.com` at the end of the section below on "Inserting pictures". If so, it would have rendered and worked just as above:
+
+> Please conduct your search from [this link][1].
+
+## Inserting pictures
+
+### Inline
+
+Inserting links to images works much the same as for websites, but you add an exclamation point (`!`) at the beginning of the construct (and the text inside the square brackets in optional). For example, here is how to include an inline link to the logo for the QERM program, which exists in the same directory as this Markdown document.
+
+```
+Check out the QERM Program's logo: ![](qerm_logo.png)
+```
+
+which will yield this
+
+> Check out the QERM Program's logo: ![](qerm_logo.png)
+
+### Referenced
+
+Referenced links work just as above for websites, but instead of the site's address, include the name of the image file. For example, we could have used
+
+```
+Check out the QERM Program's logo: ![][2]
+```
+
+which yields the same result:
+
+> Check out the QERM Program's logo: ![][2]
+
+(NOTE that we used `[1]` for the referenced Google link above, so we used `[2]` here.)
+
+Here are the references for the links. For some reason I put the full address here for the web link in the above section on "Referenced links", but it works just fine.
+
+```
+[1]: http://www.google.com
+[2]: qerm_logo.png
+```
+
+[1]: http://www.google.com
+[2]: qerm_logo.png
 
 
 # Writing code
