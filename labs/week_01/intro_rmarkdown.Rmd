@@ -81,6 +81,8 @@ will render to
 
 ## Emphasis
 
+### Italics
+
 It's easy to add emphasis to text. For *italic* face, wrap the text with either a single asterisk (`*`) or an underscrore (`_`). For example,
 
 ```
@@ -90,6 +92,8 @@ This is *italic*, but then so is _this_.
 will render to 
 
 > This is *italic*, but then so is _this_.
+
+### Bold
 
 For **bold** face, wrap the text with either two asterisks (`**`) or an underscrores (`__`). For example,
 
@@ -101,16 +105,56 @@ will render to
 
 > This is **bold**, but then so is __this__.
 
+### Bold & italic
+
 For combined ***bold and italics*** face, wrap the text with three asterisks (`***`), such that
 
 ```
 This is ***bold and italic***.
 ```
 
-renders 
+renders to
 
 > This is ***bold and italic***.
 
+### Strikethrough
+
+If you want to indicate a deletion or ~~strikethrough~~, just wrap the text in two tilde's (`~~`), such that
+
+```
+Oops, this is ~~a mistake~~.
+```
+
+will render to 
+
+> Oops, this is ~~a mistake~~.
+
+### Underline
+
+Unfortunately, Markdown does not include a built-in format for <u>underlining text</u>. You can, however, use regular HTML tags to do so. So, for example,
+
+```
+This bit is <u>underlined</u>.
+```
+
+results in
+
+> This bit is <u>underlined</u>.
+
+[Aside: It turns out that you can use all kinds of HTML tags within Markdown documents for additional formatting options.]
+
+
+## Block quotes
+
+You can specify a block quote by preceding it with the `>` symbol, such that
+
+```
+> Four score and seven years ago... 
+```
+
+yields
+
+> Four score and seven years ago...
 
 ## Lists
 
@@ -170,11 +214,7 @@ will render to
 > 2. Item 2 comes next
 >    - And yet another
   
-## Inserting links
-
-
-
-## Inserting pictures
+## Links
 
 
 
