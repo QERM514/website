@@ -1,30 +1,130 @@
 ---
-title: "R Markdown template"
+title: "Introduction to R Markdown"
 author: "Mark Scheuerell"
-date: "3/22/2020"
-output: html_document
+date: "3 April 2020"
+output:
+  html_document:
+    theme: journal
+    highlight: textmate
+    toc: true
+    toc_float: true
+    toc_depth: 3
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+# What is R Markdown?
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+Markdown is a simple formatting syntax for authoring HTML, PDF, MS Word documents, and many other document formats. When you click the "Knit" button in **RStudio**, a document will be generated that includes both text content as well as the output of any embedded **R** code chunks within the document. Markdown is written in plain text, which means you can use any text editor to writing or editing Markdown documents. For a much more detailed treatment of R Markdown and its inner workings, please see the [resources page](https://rmarkdown.rstudio.com/lesson-1.html) from RStudio.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+# Document layout
 
-```{r cars}
-summary(cars)
+## Front Matter (YAML)
+
+Every Markdown document begins with a section of plain text written in [YAML](https://en.wikipedia.org/wiki/YAML) ("YAML Ain't Markup Language"). This block of human readable code is used to define some of the document's metadata such as the title, author, and date. It is also used to specify the document's format (eg, HTML or pdf) and its layout (eg, theme, font).
+
+The front matter is defined in a block of text that begins and ends with 3 dashes `---`. For example, here is the YAML for a simple HTML document:
+
+```
+---
+title: "I really like R Markdown"
+author: "Mark Scheuerell"
+date: "3 April 2020"
+output: html_document
+---
 ```
 
-## Including Plots
+The YAML can include a lot more information as well, including fields for various pre-defined themes, a table of contents, adding citations and formatting references, and whether to use other files as formatting templates. For example, here is the YAML for this document:
 
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+```
+---
+title: "Introduction to R Markdown"
+author: "Mark Scheuerell"
+date: "3 April 2020"
+output:
+  html_document:
+    theme: journal
+    highlight: textmate
+    toc: true
+    toc_float: true
+    toc_depth: 3
+---
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+## Body
+
+The body of a Markdown document can contain a mix of variously formatted text, equations, and code. The code can be written so that it is executed upon "knitting" the document with the output displayed in the document or hidden from view. The code can also be flagged so that it is only shown for example purposes and not actually executed.
+
+# Writing text
+
+The text in a Markdown document can be formatting in a number of ways. At a basic level, it's just various forms of text that are converted to nicely formatted features when the file is rendered.
+
+## Headings
+
+You can specify different levels of headings using the hashtag (pound) symbol `#`. By adding more `#` signs you can decrease the heading level. So, for example, the following
+
+```
+# Heading 1
+## Heading 2
+### Heading 3
+#### Heading 4
+```
+
+will render to 
+
+# Heading 1
+## Heading 2
+### Heading 3
+#### Heading 4
+
+## Lists
+
+You can include ordered (numbered) lists, unordered (bulleted) lists, or a combination of the two in Markdown documents as well. Numbered lists simply use a number and period following by the text; line breaks are indicated with a minimum of 2 spaces after each line, or by using hard returns. For example,
+
+```
+1. This is item 1  
+2. Item 2 comes next
+```
+will render to
+
+1. This is item 1  
+2. Item 2 comes next
+
+
+
+## Inserting links
+
+
+
+## Inserting pictures
+
+
+
+# Writing code
+
+````
+`r ''````{r, eval=TRUE}
+1 + 1
+```
+````
+
+
+## Plots
+
+
+
+# Writing equations
+
+
+
+## Inline
+
+
+
+## Block
+
+
+
+
