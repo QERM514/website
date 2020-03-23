@@ -74,26 +74,102 @@ You can specify different levels of headings using the hashtag (pound) symbol `#
 
 will render to 
 
-# Heading 1
-## Heading 2
-### Heading 3
-#### Heading 4
+> # Heading 1
+> ## Heading 2
+> ### Heading 3
+> #### Heading 4
+
+## Emphasis
+
+It's easy to add emphasis to text. For *italic* face, wrap the text with either a single asterisk (`*`) or an underscrore (`_`). For example,
+
+```
+This is *italic*, but then so is _this_.
+```
+
+will render to 
+
+> This is *italic*, but then so is _this_.
+
+For **bold** face, wrap the text with either two asterisks (`**`) or an underscrores (`__`). For example,
+
+```
+This is **bold**, but then so is __this__.
+```
+
+will render to 
+
+> This is **bold**, but then so is __this__.
+
+For combined ***bold and italics*** face, wrap the text with three asterisks (`***`), such that
+
+```
+This is ***bold and italic***.
+```
+
+renders 
+
+> This is ***bold and italic***.
+
 
 ## Lists
 
-You can include ordered (numbered) lists, unordered (bulleted) lists, or a combination of the two in Markdown documents as well. Numbered lists simply use a number and period following by the text; line breaks are indicated with a minimum of 2 spaces after each line, or by using hard returns. For example,
+You can include ordered (numbered) lists, unordered (bulleted) lists, or a combination of the two in Markdown documents as well. Numbered lists simply use a number and period (`1.`) followed by a space and the text. For example, this text
 
 ```
 1. This is item 1  
 2. Item 2 comes next
 ```
+     
+will render to
+     
+> 1. This is item 1  
+> 2. Item 2 comes next
+
+It also turns out that you don't even have to use consecutive numbers to make it work. For example,
+
+```
+1. This is item 1  
+7. Item 2 comes next
+```
+
 will render to
 
-1. This is item 1  
+> 1. This is item 1  
+> 7. Item 2 comes next
+
+You can specifiy unordered list with either an asterisk (`*`) or dash (`-`). For example, the following text 
+
+```
+* This is a thing 
+* Here is another
+- And yet another
+```
+
+will render to
+
+> * This is a thing 
+> * Here is another
+> - And yet another
+
+Mixed lists simply use a mixture of the two constructs, such that 
+
+```
+1. This is item 1
+   * This is a thing
+   * Here is another  
 2. Item 2 comes next
+   - And yet another
+```
 
+will render to
 
-
+> 1. This is item 1
+>    * This is a thing
+>    * Here is another  
+> 2. Item 2 comes next
+>    - And yet another
+  
 ## Inserting links
 
 
