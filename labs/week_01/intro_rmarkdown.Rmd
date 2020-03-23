@@ -344,7 +344,7 @@ a / b
 Sometimes it can be nice to include small snippets of hidden **R** code within a sentence. For example, an object is defined once at the beginning of a document and referenced later. Or, in a dynamic report we might want the reported results to reflect any changes to inputs, models, etc. To include inline **R** code, you wrap the call in backticks and preface it with `r` (eg, `` `r
 object` ``). You can also replace `object` with a valid **R** `expression`. For example, imagine we had two variables, `x` and `y`, that had been defined in a previous block of code, such that `x = 2` `r x <- 2` and `y = 3` `r y <- 3`. If we write
 
-```{r, eval = FALSE}
+```{r inline_ex, eval = FALSE}
 The sum of x and y is `r x + y`.
 ```
 
@@ -405,14 +405,80 @@ plot(x, y)
 
 # Writing equations
 
+Fields like ecology and statistics often include lots of equations in journal articles and presentations. You can also use Markdown to write nicely formatted equations using **LaTeX** language constructs. Although the initial leap into **LaTeX** can be a bit daunting, it gets much easier with some practice and help any of the many guides available online. There are also links to pdf documents with [math](latex_math_sheet.pdf) and [document](latex_cheat_sheet.pdf) codes on the course website.
 
+Here are a few things to help you get started (with examples below):
+
+* The default typeface is italic, which is commonly used to indicate a scalar; vectors and matrices are typicallly denoted with **bold** face
+
+* Sub- and superscripts are denoted by `_` and `^`, respectively; any text/number longer than one character/digit must be enclosed in curly braces `{}`
 
 ## Inline
 
+You can include equations inline by enabling the "inline math mode" through the use of a single dollar sign (`$`) at the beginning and end of the equation. For example,
+
+```
+Each of the errors are normally distributed, such that $e_{i,j} \sim \text{N}(0, \sigma^2)$.
+```
+
+will render as
+
+> The errors are normally distributed, such that as $e_{i,j} \sim \text{N}(0, \sigma^2)$.
+
+## Stand alone
+
+In many cases, you may want to have your equations set apart from the text on lines by themselves. To do this in Markdown, begin and end the equation block with 2 dollar signs (`$$`). If you want equations on multiple lines, use `\\` to indicate a line break. For example,
+
+````
+$$
+y_{i,j} = \alpha + \beta x_{i,j} + e_{i,j} \\
+e_{i,j} \sim \text{N}(0, \sigma^2)
+$$
+````
+
+will render to
+
+$$
+y_{i,j} = \alpha + \beta x_{i,j} + e_{i,j} \\
+e_{i,j} \sim \text{N}(0, \sigma^2)
+$$
+
+and 
+
+````
+$$
+\mathbf{x}_t = \mathbf{B} \mathbf{x}_{t-1} + \mathbf{C} \mathbf{c}_t + \mathbf{w}_t \\
+\mathbf{y}_t = \mathbf{Z} \mathbf{x}_t + \mathbf{a} + \mathbf{v}_t
+$$
+````
+
+would give
+
+$$
+\mathbf{x}_t = \mathbf{B} \mathbf{x}_{t-1} + \mathbf{C} \mathbf{c}_t + \mathbf{w}_t \\
+\mathbf{y}_t = \mathbf{Z} \mathbf{x}_t + \mathbf{a} + \mathbf{v}_t
+$$
+
+You can also use some additional **LaTeX** options inside the equation block for additional formatting options. For example, the `aligned` command can be used with an ampersand `&` to align multiple equations, such that 
+
+````
+\begin{aligned}
+\text{Var}(p_{ex}) &= \text{Var}(o) - \text{Var}(e) + 2 ~ \text{Cov}(p_{ex}, e) \\
+  &= \text{Var}(o) - \text{RMSE}_{ex}^2 + 2 ~ \text{Cov}(p_{ex}, e) \\
+  &\approx 3.6 - 1^2 + 2 ~ \text{Cov}(p_{ex}, e).
+\end{aligned}
+````
+
+yields
+
+$$
+\begin{aligned}
+\text{Var}(p_{ex}) &= \text{Var}(o) - \text{Var}(e) + 2 ~ \text{Cov}(p_{ex}, e) \\
+  &= \text{Var}(o) - \text{RMSE}_{ex}^2 + 2 ~ \text{Cov}(p_{ex}, e) \\
+  &\approx 3.6 - 1^2 + 2 ~ \text{Cov}(p_{ex}, e).
+\end{aligned}
+$$
 
 
-## Block
 
-
-
-
+**NOTE**: If your preferred output format is pdf, there are additional **LaTeX** options for formatting equations.
