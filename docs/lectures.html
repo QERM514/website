@@ -7,7 +7,6 @@
 <meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
-<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
@@ -23,7 +22,6 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
 <link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
 <link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
 
@@ -87,6 +85,7 @@ code {
 }
 img {
   max-width:100%;
+  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -247,6 +246,18 @@ $(document).ready(function () {
 }
 </style>
 
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
 <!-- code folding -->
 
 
@@ -312,6 +323,8 @@ $(document).ready(function () {
 </div>
 
 
+<p><br></p>
+<p><strong>NOTE: All lectures will be delivered via <a href="https://washington.zoom.us/j/831083365">Zoom</a></strong></p>
 <table class="table table-striped" style="width: auto !important; ">
 <caption>
 </caption>
@@ -319,6 +332,9 @@ $(document).ready(function () {
 <tr>
 <th style="text-align:center;">
 Date
+</th>
+<th style="text-align:left;">
+Title
 </th>
 <th style="text-align:left;">
 Topic(s)
@@ -329,7 +345,7 @@ Slide deck
 <th style="text-align:center;">
 Source code
 </th>
-<th style="text-align:center;">
+<th style="text-align:left;">
 Background
 </th>
 </tr>
@@ -340,6 +356,9 @@ Background
 30 March
 </td>
 <td style="text-align:left;">
+Introduction <br>
+</td>
+<td style="text-align:left;">
 Course overview <br>
 </td>
 <td style="text-align:center;">
@@ -348,7 +367,7 @@ Course overview <br>
 <td style="text-align:center;">
 <a href="lectures/week_01/lec_01_class_overview.Rmd"><svg style="height:20;fill:#eb6864;" viewbox="0 0 384 512"><path d="M384 121.941V128H256V0h6.059c6.365 0 12.47 2.529 16.971 7.029l97.941 97.941A24.005 24.005 0 0 1 384 121.941zM248 160c-13.2 0-24-10.8-24-24V0H24C10.745 0 0 10.745 0 24v464c0 13.255 10.745 24 24 24h336c13.255 0 24-10.745 24-24V160H248zM123.206 400.505a5.4 5.4 0 0 1-7.633.246l-64.866-60.812a5.4 5.4 0 0 1 0-7.879l64.866-60.812a5.4 5.4 0 0 1 7.633.246l19.579 20.885a5.4 5.4 0 0 1-.372 7.747L101.65 336l40.763 35.874a5.4 5.4 0 0 1 .372 7.747l-19.579 20.884zm51.295 50.479l-27.453-7.97a5.402 5.402 0 0 1-3.681-6.692l61.44-211.626a5.402 5.402 0 0 1 6.692-3.681l27.452 7.97a5.4 5.4 0 0 1 3.68 6.692l-61.44 211.626a5.397 5.397 0 0 1-6.69 3.681zm160.792-111.045l-64.866 60.812a5.4 5.4 0 0 1-7.633-.246l-19.58-20.885a5.4 5.4 0 0 1 .372-7.747L284.35 336l-40.763-35.874a5.4 5.4 0 0 1-.372-7.747l19.58-20.885a5.4 5.4 0 0 1 7.633-.246l64.866 60.812a5.4 5.4 0 0 1-.001 7.879z"></path></svg></a>
 </td>
-<td style="text-align:center;">
+<td style="text-align:left;">
 <br>
 </td>
 </tr>
@@ -357,16 +376,17 @@ Course overview <br>
 1 April
 </td>
 <td style="text-align:left;">
-Regression <br>ANOVA <br>ANCOVA <br>Matrix representation of models <br>
+Overview of required software <br>
+</td>
+<td style="text-align:left;">
+R <br>RStudio <br>R Markdown <br>
 </td>
 <td style="text-align:center;">
-<a href="lectures/week_01/lec_02_intro_linear_models.html"><svg style="height:20;fill:#eb6864;" viewbox="0 0 384 512"><path d="M224 136V0H24C10.7 0 0 10.7 0 24v464c0 13.3 10.7 24 24 24h336c13.3 0 24-10.7 24-24V160H248c-13.2 0-24-10.8-24-24zm64 236c0 6.6-5.4 12-12 12H108c-6.6 0-12-5.4-12-12v-8c0-6.6 5.4-12 12-12h168c6.6 0 12 5.4 12 12v8zm0-64c0 6.6-5.4 12-12 12H108c-6.6 0-12-5.4-12-12v-8c0-6.6 5.4-12 12-12h168c6.6 0 12 5.4 12 12v8zm0-72v8c0 6.6-5.4 12-12 12H108c-6.6 0-12-5.4-12-12v-8c0-6.6 5.4-12 12-12h168c6.6 0 12 5.4 12 12zm96-114.1v6.1H256V0h6.1c6.4 0 12.5 2.5 17 7l97.9 98c4.5 4.5 7 10.6 7 16.9z"></path></svg></a>
 </td>
 <td style="text-align:center;">
-<a href="lectures/week_01/lec_02_intro_linear_models.Rmd"><svg style="height:20;fill:#eb6864;" viewbox="0 0 384 512"><path d="M384 121.941V128H256V0h6.059c6.365 0 12.47 2.529 16.971 7.029l97.941 97.941A24.005 24.005 0 0 1 384 121.941zM248 160c-13.2 0-24-10.8-24-24V0H24C10.745 0 0 10.745 0 24v464c0 13.255 10.745 24 24 24h336c13.255 0 24-10.745 24-24V160H248zM123.206 400.505a5.4 5.4 0 0 1-7.633.246l-64.866-60.812a5.4 5.4 0 0 1 0-7.879l64.866-60.812a5.4 5.4 0 0 1 7.633.246l19.579 20.885a5.4 5.4 0 0 1-.372 7.747L101.65 336l40.763 35.874a5.4 5.4 0 0 1 .372 7.747l-19.579 20.884zm51.295 50.479l-27.453-7.97a5.402 5.402 0 0 1-3.681-6.692l61.44-211.626a5.402 5.402 0 0 1 6.692-3.681l27.452 7.97a5.4 5.4 0 0 1 3.68 6.692l-61.44 211.626a5.397 5.397 0 0 1-6.69 3.681zm160.792-111.045l-64.866 60.812a5.4 5.4 0 0 1-7.633-.246l-19.58-20.885a5.4 5.4 0 0 1 .372-7.747L284.35 336l-40.763-35.874a5.4 5.4 0 0 1-.372-7.747l19.58-20.885a5.4 5.4 0 0 1 7.633-.246l64.866 60.812a5.4 5.4 0 0 1-.001 7.879z"></path></svg></a>
 </td>
-<td style="text-align:center;">
-lectures/week_01/suppl_var_cov.html <br>
+<td style="text-align:left;">
+<br>
 </td>
 </tr>
 <tr>
@@ -374,13 +394,16 @@ lectures/week_01/suppl_var_cov.html <br>
 3 April
 </td>
 <td style="text-align:left;">
-<br>
+Ecological data and distributions <br>
+</td>
+<td style="text-align:left;">
+Detections <br>Counts <br>Survival <br>
 </td>
 <td style="text-align:center;">
 </td>
 <td style="text-align:center;">
 </td>
-<td style="text-align:center;">
+<td style="text-align:left;">
 <br>
 </td>
 </tr>
@@ -389,13 +412,16 @@ lectures/week_01/suppl_var_cov.html <br>
 6 April
 </td>
 <td style="text-align:left;">
-<br>
+Linear models <br>
+</td>
+<td style="text-align:left;">
+Regression <br>ANOVA <br>ANCOVA <br>
 </td>
 <td style="text-align:center;">
 </td>
 <td style="text-align:center;">
 </td>
-<td style="text-align:center;">
+<td style="text-align:left;">
 <br>
 </td>
 </tr>
@@ -404,13 +430,16 @@ lectures/week_01/suppl_var_cov.html <br>
 8 April
 </td>
 <td style="text-align:left;">
-<br>
+Linear models <br>
+</td>
+<td style="text-align:left;">
+Models in matrix form <br>Least squares <br>
 </td>
 <td style="text-align:center;">
 </td>
 <td style="text-align:center;">
 </td>
-<td style="text-align:center;">
+<td style="text-align:left;">
 <br>
 </td>
 </tr>
@@ -419,13 +448,16 @@ lectures/week_01/suppl_var_cov.html <br>
 10 April
 </td>
 <td style="text-align:left;">
-<br>
+Inference <br>
+</td>
+<td style="text-align:left;">
+Variance partitioning <br>F-tests for nested models <br>Permutation tests <br>
 </td>
 <td style="text-align:center;">
 </td>
 <td style="text-align:center;">
 </td>
-<td style="text-align:center;">
+<td style="text-align:left;">
 <br>
 </td>
 </tr>
@@ -434,13 +466,16 @@ lectures/week_01/suppl_var_cov.html <br>
 13 April
 </td>
 <td style="text-align:left;">
-<br>
+Model diagnostics <br>
+</td>
+<td style="text-align:left;">
+Model assumptions <br>Leverage <br>Outliers <br>
 </td>
 <td style="text-align:center;">
 </td>
 <td style="text-align:center;">
 </td>
-<td style="text-align:center;">
+<td style="text-align:left;">
 <br>
 </td>
 </tr>
@@ -449,13 +484,16 @@ lectures/week_01/suppl_var_cov.html <br>
 15 April
 </td>
 <td style="text-align:left;">
-<br>
+Problems with model residuals <br>
+</td>
+<td style="text-align:left;">
+Weighted least squares <br>Generalized least squares <br>Robust regression <br>Autocorrelated errors <br>
 </td>
 <td style="text-align:center;">
 </td>
 <td style="text-align:center;">
 </td>
-<td style="text-align:center;">
+<td style="text-align:left;">
 <br>
 </td>
 </tr>
@@ -464,13 +502,16 @@ lectures/week_01/suppl_var_cov.html <br>
 17 April
 </td>
 <td style="text-align:left;">
-<br>
+Data transformations <br>
+</td>
+<td style="text-align:left;">
+Powers/roots <br>Box-Cox <br>Logarithms <br>
 </td>
 <td style="text-align:center;">
 </td>
 <td style="text-align:center;">
 </td>
-<td style="text-align:center;">
+<td style="text-align:left;">
 <br>
 </td>
 </tr>
@@ -479,13 +520,16 @@ lectures/week_01/suppl_var_cov.html <br>
 20 April
 </td>
 <td style="text-align:left;">
-<br>
+Design matrices <br>
+</td>
+<td style="text-align:left;">
+Models in matrix form <br>Regression <br>Multiple regression <br>
 </td>
 <td style="text-align:center;">
 </td>
 <td style="text-align:center;">
 </td>
-<td style="text-align:center;">
+<td style="text-align:left;">
 <br>
 </td>
 </tr>
@@ -494,13 +538,16 @@ lectures/week_01/suppl_var_cov.html <br>
 22 April
 </td>
 <td style="text-align:left;">
-<br>
+Design matrices <br>
+</td>
+<td style="text-align:left;">
+ANOVA <br>ANCOVA <br>
 </td>
 <td style="text-align:center;">
 </td>
 <td style="text-align:center;">
 </td>
-<td style="text-align:center;">
+<td style="text-align:left;">
 <br>
 </td>
 </tr>
@@ -509,13 +556,16 @@ lectures/week_01/suppl_var_cov.html <br>
 24 April
 </td>
 <td style="text-align:left;">
-<br>
+Maximum likelihood <br>
+</td>
+<td style="text-align:left;">
+Relationship to probability <br>Estimation <br>Ratio tests <br>
 </td>
 <td style="text-align:center;">
 </td>
 <td style="text-align:center;">
 </td>
-<td style="text-align:center;">
+<td style="text-align:left;">
 <br>
 </td>
 </tr>
@@ -524,13 +574,16 @@ lectures/week_01/suppl_var_cov.html <br>
 27 April
 </td>
 <td style="text-align:left;">
-<br>
+Model selection <br>
+</td>
+<td style="text-align:left;">
+Bias-Variance trade-offs <br>In-sample selection <br>AIC <br>
 </td>
 <td style="text-align:center;">
 </td>
 <td style="text-align:center;">
 </td>
-<td style="text-align:center;">
+<td style="text-align:left;">
 <br>
 </td>
 </tr>
@@ -539,13 +592,16 @@ lectures/week_01/suppl_var_cov.html <br>
 29 April
 </td>
 <td style="text-align:left;">
-<br>
+Model selection <br>
+</td>
+<td style="text-align:left;">
+Out-of-sample selection <br>Cross-validation <br>Multi-model inference <br>
 </td>
 <td style="text-align:center;">
 </td>
 <td style="text-align:center;">
 </td>
-<td style="text-align:center;">
+<td style="text-align:left;">
 <br>
 </td>
 </tr>
@@ -554,13 +610,16 @@ lectures/week_01/suppl_var_cov.html <br>
 1 May
 </td>
 <td style="text-align:left;">
-<b>Project plan due by 11:59 PM</b> <br>
+Mixed effects models <br><br><b>Project plan due</b> <br>
+</td>
+<td style="text-align:left;">
+Fixed vs Random effects <br>Costs/benefits <br>Restricted maximum likelihood <br>
 </td>
 <td style="text-align:center;">
 </td>
 <td style="text-align:center;">
 </td>
-<td style="text-align:center;">
+<td style="text-align:left;">
 <br>
 </td>
 </tr>
@@ -569,13 +628,16 @@ lectures/week_01/suppl_var_cov.html <br>
 4 May
 </td>
 <td style="text-align:left;">
-<br>
+Mixed effects models <br>
+</td>
+<td style="text-align:left;">
+Inference <br>Diagnostics <br>Model selection <br>
 </td>
 <td style="text-align:center;">
 </td>
 <td style="text-align:center;">
 </td>
-<td style="text-align:center;">
+<td style="text-align:left;">
 <br>
 </td>
 </tr>
@@ -584,13 +646,17 @@ lectures/week_01/suppl_var_cov.html <br>
 6 May
 </td>
 <td style="text-align:left;">
-<br>
+Guest lecture - Dr. Staci Amburgey <br>
+</td>
+<td style="text-align:left;">
+Using quantitative ecology for species conservation in the face of anthropogenic-change <br>
+</td>
+<td style="text-align:center;">
+<a href="lectures/week_06/lec_17_guest_lec_amburgey.html"><svg style="height:20;fill:#eb6864;" viewbox="0 0 384 512"><path d="M224 136V0H24C10.7 0 0 10.7 0 24v464c0 13.3 10.7 24 24 24h336c13.3 0 24-10.7 24-24V160H248c-13.2 0-24-10.8-24-24zm64 236c0 6.6-5.4 12-12 12H108c-6.6 0-12-5.4-12-12v-8c0-6.6 5.4-12 12-12h168c6.6 0 12 5.4 12 12v8zm0-64c0 6.6-5.4 12-12 12H108c-6.6 0-12-5.4-12-12v-8c0-6.6 5.4-12 12-12h168c6.6 0 12 5.4 12 12v8zm0-72v8c0 6.6-5.4 12-12 12H108c-6.6 0-12-5.4-12-12v-8c0-6.6 5.4-12 12-12h168c6.6 0 12 5.4 12 12zm96-114.1v6.1H256V0h6.1c6.4 0 12.5 2.5 17 7l97.9 98c4.5 4.5 7 10.6 7 16.9z"></path></svg></a>
 </td>
 <td style="text-align:center;">
 </td>
-<td style="text-align:center;">
-</td>
-<td style="text-align:center;">
+<td style="text-align:left;">
 <br>
 </td>
 </tr>
@@ -599,13 +665,16 @@ lectures/week_01/suppl_var_cov.html <br>
 8 May
 </td>
 <td style="text-align:left;">
-<br>
+Introduction to GLMs <br>
+</td>
+<td style="text-align:left;">
+Data distrbution <br>Links <br>Linear predictors <br>
 </td>
 <td style="text-align:center;">
 </td>
 <td style="text-align:center;">
 </td>
-<td style="text-align:center;">
+<td style="text-align:left;">
 <br>
 </td>
 </tr>
@@ -614,13 +683,16 @@ lectures/week_01/suppl_var_cov.html <br>
 11 May
 </td>
 <td style="text-align:left;">
-<br>
+Modeling binary data <br>
+</td>
+<td style="text-align:left;">
+Logistic regression <br>Model selection <br>Diagnostics <br>
 </td>
 <td style="text-align:center;">
 </td>
 <td style="text-align:center;">
 </td>
-<td style="text-align:center;">
+<td style="text-align:left;">
 <br>
 </td>
 </tr>
@@ -629,13 +701,16 @@ lectures/week_01/suppl_var_cov.html <br>
 13 May
 </td>
 <td style="text-align:left;">
-<br>
+Overdispersion in binary data <br>
+</td>
+<td style="text-align:left;">
+Variance inflation <br>Beta-binomial modes <br>Quasi-likelihood <br>
 </td>
 <td style="text-align:center;">
 </td>
 <td style="text-align:center;">
 </td>
-<td style="text-align:center;">
+<td style="text-align:left;">
 <br>
 </td>
 </tr>
@@ -644,13 +719,16 @@ lectures/week_01/suppl_var_cov.html <br>
 15 May
 </td>
 <td style="text-align:left;">
-<br>
+Modeling count data <br>
+</td>
+<td style="text-align:left;">
+Poisson regression <br>Leverage and influence <br>Diagnostics <br>
 </td>
 <td style="text-align:center;">
 </td>
 <td style="text-align:center;">
 </td>
-<td style="text-align:center;">
+<td style="text-align:left;">
 <br>
 </td>
 </tr>
@@ -659,13 +737,16 @@ lectures/week_01/suppl_var_cov.html <br>
 18 May
 </td>
 <td style="text-align:left;">
-<br>
+Overdispersion in count data <br>
+</td>
+<td style="text-align:left;">
+Variance inflation <br>QAIC <br>Negative-binomial distribution <br>Quasi-likelihood <br>
 </td>
 <td style="text-align:center;">
 </td>
 <td style="text-align:center;">
 </td>
-<td style="text-align:center;">
+<td style="text-align:left;">
 <br>
 </td>
 </tr>
@@ -674,13 +755,16 @@ lectures/week_01/suppl_var_cov.html <br>
 20 May
 </td>
 <td style="text-align:left;">
-<br>
+Introduction to GLMMs <br>
+</td>
+<td style="text-align:left;">
+Computing likelihoods <br>Diagnostics <br>Goodness-of-fit <br>
 </td>
 <td style="text-align:center;">
 </td>
 <td style="text-align:center;">
 </td>
-<td style="text-align:center;">
+<td style="text-align:left;">
 <br>
 </td>
 </tr>
@@ -689,13 +773,16 @@ lectures/week_01/suppl_var_cov.html <br>
 22 May
 </td>
 <td style="text-align:left;">
-<br>
+More on GLMMs <br>
+</td>
+<td style="text-align:left;">
+Computing likelihoods <br>Daignostics <br>Goodness-of-fit <br>
 </td>
 <td style="text-align:center;">
 </td>
 <td style="text-align:center;">
 </td>
-<td style="text-align:center;">
+<td style="text-align:left;">
 <br>
 </td>
 </tr>
@@ -704,13 +791,16 @@ lectures/week_01/suppl_var_cov.html <br>
 25 May
 </td>
 <td style="text-align:left;">
-<b>Memorial Day - no class</b> <br>
+<b>Memorial Day - No class</b> <br>
+</td>
+<td style="text-align:left;">
+<br>
 </td>
 <td style="text-align:center;">
 </td>
 <td style="text-align:center;">
 </td>
-<td style="text-align:center;">
+<td style="text-align:left;">
 <br>
 </td>
 </tr>
@@ -719,13 +809,16 @@ lectures/week_01/suppl_var_cov.html <br>
 27 May
 </td>
 <td style="text-align:left;">
-<br>
+Material review <br>
+</td>
+<td style="text-align:left;">
+Catchup and review materials <br>
 </td>
 <td style="text-align:center;">
 </td>
 <td style="text-align:center;">
 </td>
-<td style="text-align:center;">
+<td style="text-align:left;">
 <br>
 </td>
 </tr>
@@ -734,13 +827,16 @@ lectures/week_01/suppl_var_cov.html <br>
 29 May
 </td>
 <td style="text-align:left;">
-<br>
+Course synthesis <br>
+</td>
+<td style="text-align:left;">
+What did we learn? <br>Where do we go from here? <br>
 </td>
 <td style="text-align:center;">
 </td>
 <td style="text-align:center;">
 </td>
-<td style="text-align:center;">
+<td style="text-align:left;">
 <br>
 </td>
 </tr>
@@ -751,11 +847,14 @@ lectures/week_01/suppl_var_cov.html <br>
 <td style="text-align:left;">
 Presentations of class projects <br>
 </td>
-<td style="text-align:center;">
+<td style="text-align:left;">
+<br>
 </td>
 <td style="text-align:center;">
 </td>
 <td style="text-align:center;">
+</td>
+<td style="text-align:left;">
 <br>
 </td>
 </tr>
@@ -766,11 +865,14 @@ Presentations of class projects <br>
 <td style="text-align:left;">
 Presentations of class projects <br>
 </td>
-<td style="text-align:center;">
+<td style="text-align:left;">
+<br>
 </td>
 <td style="text-align:center;">
 </td>
 <td style="text-align:center;">
+</td>
+<td style="text-align:left;">
 <br>
 </td>
 </tr>
@@ -781,11 +883,14 @@ Presentations of class projects <br>
 <td style="text-align:left;">
 Presentations of class projects <br>
 </td>
-<td style="text-align:center;">
+<td style="text-align:left;">
+<br>
 </td>
 <td style="text-align:center;">
 </td>
 <td style="text-align:center;">
+</td>
+<td style="text-align:left;">
 <br>
 </td>
 </tr>
@@ -809,23 +914,6 @@ $(document).ready(function () {
 
 
 </script>
-
-<!-- tabsets -->
-
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
-<!-- code folding -->
-
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>

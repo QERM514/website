@@ -7,7 +7,6 @@
 <meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
-<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
@@ -23,7 +22,6 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
 <link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
 <link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
 
@@ -87,6 +85,7 @@ code {
 }
 img {
   max-width:100%;
+  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -247,6 +246,18 @@ $(document).ready(function () {
 }
 </style>
 
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
 <!-- code folding -->
 
 
@@ -312,7 +323,8 @@ $(document).ready(function () {
 </div>
 
 
-<p>Students will use <strong>R Markdown</strong> to complete their homework assignments, which will allow you to easily save and execute <strong>R</strong> code, and combine the output with additional text and equations into a single pdf file. Each home assignment will have it’s own <strong>R Markdown</strong> template for students to fill out and submit. We will use <strong>RStudio</strong> as an IDE for working with <strong>R</strong> and authoring <strong>R Markdown</strong> documents. Those students who are unfamiliar with <strong>R Markdown</strong> should read through <a href="http://rmarkdown.rstudio.com/lesson-1.html">this introduction</a>.</p>
+<p>Students will use <strong>R Markdown</strong> to complete their homework assignments, which will allow you to execute <strong>R</strong> code and combine the output with additional text and equations into a single pdf file. Each homework assignment will have it’s own Markdown template for students to fill in and submit. Completed homework files should be named <code>[lastname]_qerm514_hw_[#].Rmd</code>, where <code>[lastname]</code> is replaced with the student’s last name and the <code>[#]</code> is replaced with the actual number of the homework assignment (eg, <code>scheuerell_qerm514_hw_1.Rmd</code>).</p>
+<p><strong>Homework will be assigned each Friday of weeks 1-8 and will be due by 11:59 PM one week later on the following Friday (weeks 2-9)</strong>. Students should send their completed homework to the instructor as an attachment to an email message.</p>
 <table class="table table-striped" style="width: auto !important; ">
 <caption>
 </caption>
@@ -344,12 +356,10 @@ Answer key
 <br>
 </td>
 <td style="text-align:center;">
-<a href="homework/week_01/rmarkdown.Rmd"><svg style="height:20;fill:#eb6864;" viewbox="0 0 384 512"><path d="M224 136V0H24C10.7 0 0 10.7 0 24v464c0 13.3 10.7 24 24 24h336c13.3 0 24-10.7 24-24V160H248c-13.2 0-24-10.8-24-24zm64 236c0 6.6-5.4 12-12 12H108c-6.6 0-12-5.4-12-12v-8c0-6.6 5.4-12 12-12h168c6.6 0 12 5.4 12 12v8zm0-64c0 6.6-5.4 12-12 12H108c-6.6 0-12-5.4-12-12v-8c0-6.6 5.4-12 12-12h168c6.6 0 12 5.4 12 12v8zm0-72v8c0 6.6-5.4 12-12 12H108c-6.6 0-12-5.4-12-12v-8c0-6.6 5.4-12 12-12h168c6.6 0 12 5.4 12 12zm96-114.1v6.1H256V0h6.1c6.4 0 12.5 2.5 17 7l97.9 98c4.5 4.5 7 10.6 7 16.9z"></path></svg></a>
 </td>
 <td style="text-align:center;">
 </td>
 <td style="text-align:center;">
-<a href="homework/week_01/rmarkdown.pdf"><svg style="height:20;fill:#eb6864;" viewbox="0 0 512 512"><path d="M512 176.001C512 273.203 433.202 352 336 352c-11.22 0-22.19-1.062-32.827-3.069l-24.012 27.014A23.999 23.999 0 0 1 261.223 384H224v40c0 13.255-10.745 24-24 24h-40v40c0 13.255-10.745 24-24 24H24c-13.255 0-24-10.745-24-24v-78.059c0-6.365 2.529-12.47 7.029-16.971l161.802-161.802C163.108 213.814 160 195.271 160 176 160 78.798 238.797.001 335.999 0 433.488-.001 512 78.511 512 176.001zM336 128c0 26.51 21.49 48 48 48s48-21.49 48-48-21.49-48-48-48-48 21.49-48 48z"></path></svg></a>
 </td>
 </tr>
 <tr>
@@ -470,23 +480,6 @@ $(document).ready(function () {
 
 
 </script>
-
-<!-- tabsets -->
-
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
-<!-- code folding -->
-
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>

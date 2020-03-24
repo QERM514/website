@@ -7,7 +7,6 @@
 <meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
-<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
@@ -89,6 +88,7 @@ code {
 }
 img {
   max-width:100%;
+  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -249,9 +249,48 @@ $(document).ready(function () {
 }
 </style>
 
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
 <!-- code folding -->
 
 
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
 
 <style type="text/css">
 
@@ -300,6 +339,8 @@ div.tocify {
 
 .tocify-subheader .tocify-item {
   font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -384,7 +425,7 @@ div.tocify {
 <p><br></p>
 <div id="course-overview" class="section level1">
 <h1>Course overview</h1>
-<p>This course is intended to introduce students to a large class of statistical models known as Generalized Linear Models (GLMs) and Generalized Linear Mixed Models (GLMMs). These models form the basis for a large majority of statistical analyses conducted in ecology and environmental science. They include simple linear models, such as analysis of variance (ANOVA) and regression models, along with more complex models that assume non-normal error distributions (<em>e.g.</em>, logistic, Poisson, and Gamma regression). In particular, we will focus on conceptualizing analyses, implementing analyses, and making inference from the results.</p>
+<p>This course is intended to introduce students to a large class of statistical models that form the basis for a large majority of statistical analyses conducted in ecology and environmental science. They include simple linear models, such as analysis of variance (ANOVA) and regression models, along with Generalized Linear Models (GLMs) and Generalized Linear Mixed Models (GLMMs), which assume non-normal error distributions (<em>e.g.</em>, logistic and Poisson regression). Students will also learn the differences between fixed and random effects. In particular, we will focus on conceptualizing analyses, implementing analyses, and making inference from the results.</p>
 <p><br></p>
 </div>
 <div id="learning-objectives" class="section level1">
@@ -393,7 +434,7 @@ div.tocify {
 <ul>
 <li><p>Identify an appropriate statistical model based on the data and specific question</p></li>
 <li><p>Understand the assumptions behind a chosen statistical model</p></li>
-<li><p>Use <strong>R</strong> to fit GLMs and GLMMs to data</p></li>
+<li><p>Use <strong>R</strong> to fit a variety of linear models to data</p></li>
 <li><p>Evaluate data support for various models and select the most parsimonious model among them</p></li>
 <li><p>Use <strong>R Markdown</strong> to combine text, equations, code, tables, and figures into reports</p></li>
 </ul>
@@ -401,8 +442,8 @@ div.tocify {
 </div>
 <div id="instructor" class="section level1">
 <h1>Instructor</h1>
-<p><a href="https://fish.uw.edu/faculty/mark-scheuerell/"><strong>Mark Scheuerell</strong></a>, Associate Professor<br />
-School of Aquatic &amp; Fishery Sciences</p>
+<p><a href="https://fish.uw.edu/faculty/mark-scheuerell/"><strong>Mark Scheuerell</strong></a><br />
+Associate Professor, School of Aquatic &amp; Fishery Sciences</p>
 <p>Office: Rm 220A Fishery Sciences</p>
 <p>Email: <a href="mailto:qerm514@uw.edu">qerm514@uw.edu</a></p>
 <p><br></p>
@@ -411,11 +452,11 @@ School of Aquatic &amp; Fishery Sciences</p>
 <h1>Meeting times &amp; locations</h1>
 <div id="lectures" class="section level4">
 <h4>Lectures</h4>
-<p>M/W/F from 10:30-11:20 in FSH 213</p>
+<p>M/W/F from 10:30-11:20 <del>in FSH 213</del> via <a href="https://washington.zoom.us/j/831083365">Zoom</a></p>
 </div>
 <div id="computer-lab" class="section level4">
 <h4>Computer Lab</h4>
-<p>Friday from 11:30-1:20 in FSH 136</p>
+<p>Friday from 11:30-1:20 <del>in FSH 136</del> via <a href="https://washington.zoom.us/j/946943308">Zoom</a></p>
 </div>
 <div id="office-hours" class="section level4">
 <h4>Office hours</h4>
@@ -425,30 +466,30 @@ School of Aquatic &amp; Fishery Sciences</p>
 </div>
 <div id="pre-requisites" class="section level1">
 <h1>Pre-requisites</h1>
-<p>Students should have a working knowledge of the <a href="https://www.r-project.org/"><strong>R</strong></a> computing software, such as that provided in FISH 552/553.</p>
+<p>Students should be comfortable with basic probability and statistics. Students should also have a working knowledge of the <a href="https://www.r-project.org/"><strong>R</strong></a> computing software, such as that provided in FISH 552/553.</p>
 <p><br></p>
 </div>
 <div id="technology" class="section level1">
 <h1>Technology</h1>
 <p>This course will revolve around hands-on computing exercises that demonstrate the topics of interest. Therefore, students are strongly recommended to bring their own laptop to class, although students are certainly free to work with one another. <strong>For students without access to a personal laptop</strong>: it is possible to check out UW laptops for an entire quarter (see the <a href="https://education.uw.edu/admissions/office-of-student-services">Student Services office</a> for details).</p>
-<p>All of the software we will be using is free and platform independent, meaning students may use macOS, Linux, or Windows operating systems. In addition to a web browser, we will be using the free <a href="https://www.r-project.org/"><strong>R</strong></a> software and the desktop version of the <a href="https://www.rstudio.com/products/rstudio-desktop/"><strong>R Studio</strong></a> integrated development environment (IDE). We will also be using various packages not contained in the base installation of <strong>R</strong>, but we will wait and install them at the necessary time. The instructor will be available during the first week of class to help students troubleshoot any installation problems.</p>
+<p>All of the software we will be using is free and platform independent, meaning students may use macOS, Linux, or Windows operating systems. In addition to a web browser, we will be using the free <a href="https://www.r-project.org/"><strong>R</strong></a> software and the desktop version of the <a href="https://www.rstudio.com/products/rstudio-desktop/"><strong>R Studio</strong></a> integrated development environment (IDE). We will also be using various packages not contained in the base installation of <strong>R</strong>, but we will wait and install them at the necessary time. The instructor will be available during the first week of class to help students troubleshoot any software installation problems.</p>
 <p><br></p>
 </div>
 <div id="teaching-methodology" class="section level1">
 <h1>Teaching methodology</h1>
-<p>This course will use a flipped classroom model, with new material introduced primarily through reading assignments prior to class. In-class time will focus on demonstrating and applying newly learned skills. Students will be expected to work both individually and collaboratively; course content and evaluation will emphasize the communication of ideas and the ability to think critically moreso than a specific pathway or method. Other areas of this website provide an overview of the topics to be covered, including links to weekly reading assignments, lecture materials, computer labs, and homework assignments.</p>
+<p>This course will introduce new material primarily through prepared slides and hands-on demonstrations. Students will be expected to work both individually and collaboratively (to the extent possible given the current conditions); course content and evaluation will emphasize the communication of ideas and the ability to think critically more so than a specific pathway or method. Other areas of this website provide an overview of the topics to be covered, including links to weekly reading assignments, lecture materials, computer labs, and homework assignments.</p>
 <p><br></p>
 </div>
 <div id="evaluation" class="section level1">
 <h1>Evaluation</h1>
-<p>Students will be evaluated on their knowledge of course content, and their ability to communicate their understanding of the material, via individual homework assignments (70%) and a final project (30%). There will be 8 homework assignments, but the lowest score will be dropped for the purposes of grading; each of the 7 highest scoring assignments will count toward 10% of the final grade. Please note, though, that <strong>all eight homework assignments must be turned in to achieve a passing grade</strong>. Homework will be assigned each Friday of weeks 1-8 and will be due by 11:59 PM one week later on the following Friday (weeks 2-9). The instructor will evaluate and return student homework assignments within one week of their due date. No credit will be given for late assignments.</p>
+<p>Students will be evaluated on their knowledge of course content, and their ability to communicate their understanding of the material, via individual homework assignments (70%) and a final project (30%). There will be 8 homework assignments, but the lowest score will be dropped for the purposes of grading; each of the 7 highest scoring assignments will count toward 10% of the final grade. Please note, though, that <strong>all eight homework assignments must be turned in to achieve a passing grade</strong>. Homework will be assigned each Friday of weeks 1-8 and will be due by 11:59 PM one week later on the following Friday (weeks 2-9). The instructor will evaluate and return student homework assignments within one week of their due date. <strong>If for some reason you cannot meet the homework deadline, contact the instructor as soon as possible to discuss other options</strong>.</p>
 <p>Each student will complete a final project consisting of three elements: 1) a project plan, 2) a project presentation, and 3) a project report. The project plan will be due by 11:59 PM on Friday, May 1. Presentations of student projects will occur during the last week of class; specific days/times will be assigned randomly. The final project will be due by 11:59 PM on Sunday, June 7. Please see the <a href="final_proj.html">Final Project</a> page for more details.</p>
 <p>Students should discuss any potential schedule conflicts with the instructor during the first week of class.</p>
 <p><br></p>
 </div>
 <div id="communication" class="section level1">
 <h1>Communication</h1>
-<p>This course will involve a <em>lot</em> of communication between and among students and the instructor. Short questions should be addressed to me via email; I will respond to your message within 48 hours. Detailed questions should be addressed to me in person–either after class or during a scheduled meeting. As the course progresses, we will also use some online tools for larger discussions and comments.</p>
+<p>This course will involve a <em>lot</em> of communication between and among students and the instructor. Short questions should be addressed to me via email; I will try my best to respond to your message within 24 hours. Under more normal circumstances, detailed questions would be addressed to me in person–either after class or during a scheduled meeting. In this case, however, we will schedule one-on-one or group Zoom calls as needed. As the course progresses, we will also use some online tools for larger discussions and comments.</p>
 <p><br></p>
 </div>
 <div id="access-accommodations" class="section level1">
@@ -460,7 +501,7 @@ School of Aquatic &amp; Fishery Sciences</p>
 </div>
 <div id="religious-observances" class="section level3">
 <h3>Religious observances</h3>
-<p>Students who expect to miss class or assignments as a consequence of their religious observance will be provided with a reasonable accomodation to fulfill their academic responsibilities. Absence from class for religious reasons does not relieve students from responsibility for the course work required during the period of absence. It is the responsibility of the student to provide the instructor with advance notice of the dates of religious holidays on which they will be absent. Students who are absent will be offered an opportunity to make up the work, without penalty, within a reasonable time, as long as the student has made prior arrangements.</p>
+<p>Students who expect to miss class or assignments as a consequence of their religious observance will be provided with a reasonable accommodation to fulfill their academic responsibilities. Absence from class for religious reasons does not relieve students from responsibility for the course work required during the period of absence. It is the responsibility of the student to provide the instructor with advance notice of the dates of religious holidays on which they will be absent. Students who are absent will be offered an opportunity to make up the work, without penalty, within a reasonable time, as long as the student has made prior arrangements.</p>
 <p><br></p>
 </div>
 </div>
@@ -483,7 +524,7 @@ School of Aquatic &amp; Fishery Sciences</p>
 </div>
 <div id="safety" class="section level1">
 <h1>Safety</h1>
-<p>If you feel unsafe or at-risk in any way while taking any course, contact <a href="https://www.washington.edu/safecampus/">SafeCampus</a>, 206-685-7233 anytime–no matter where you work or study–to anonymously discuss safety and well-being concerns for yourself or others. SafeCampus can provide individualized support, discuss short- and long-term solutions, and connect you with additional resources when requested. For a broader range of resources and assistance see the <a href="https://wellbeing.uw.edu/">Husky Health &amp; Well-Being website</a>.</p>
+<p>If you feel unsafe or at-risk in any way while taking any course, contact <a href="https://www.washington.edu/safecampus/">SafeCampus</a> (206-685-7233) anytime–no matter where you work or study–to anonymously discuss safety and well-being concerns for yourself or others. SafeCampus can provide individualized support, discuss short- and long-term solutions, and connect you with additional resources when requested. For a broader range of resources and assistance see the <a href="https://wellbeing.uw.edu/">Husky Health &amp; Well-Being website</a>.</p>
 <p><br></p>
 </div>
 <div id="food-pantry" class="section level1">
@@ -509,49 +550,6 @@ $(document).ready(function () {
 });
 
 
-</script>
-
-<!-- tabsets -->
-
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
-<!-- code folding -->
-
-<script>
-$(document).ready(function ()  {
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
 </script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->

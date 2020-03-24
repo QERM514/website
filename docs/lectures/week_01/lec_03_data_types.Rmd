@@ -1,0 +1,53 @@
+---
+title: "Ecological data and distributions"
+subtitle: "Analysis of Ecological and Environmental Data<br>QERM 514"
+author: "Mark Scheuerell"
+date: "3 April 2020"
+output:
+  ioslides_presentation:
+    css: lecture_slides.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Topics for today
+
+
+
+## General approach
+
+### Question $\rightarrow$ Data $\rightarrow$ Model $\rightarrow$ Inference $\rightarrow$ Prediction
+
+
+## General approach
+
+### <u>Question</u> $\rightarrow$ Data $\rightarrow$ Model $\rightarrow$ Inference $\rightarrow$ Prediction
+
+
+## Common questions in ecology
+
+### Reproduction?
+
+### Growth? 
+
+### Survival?
+
+### Movement?
+
+
+## General approach
+
+### Question $\rightarrow$ <u>Data</u> $\rightarrow$ Model $\rightarrow$ Inference $\rightarrow$ Prediction
+
+
+## Ecological data
+
+### Counts $\rightarrow$ density/biomass
+
+### Measurements $\rightarrow$ size/growth
+
+### Resights $\rightarrow$ survival/movement
+
+

@@ -7,7 +7,6 @@
 <meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
-<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
@@ -86,6 +85,7 @@ code {
 }
 img {
   max-width:100%;
+  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -246,6 +246,18 @@ $(document).ready(function () {
 }
 </style>
 
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
 <!-- code folding -->
 
 
@@ -311,11 +323,22 @@ $(document).ready(function () {
 </div>
 
 
-<div id="textbooks" class="section level2">
-<h2>Textbooks</h2>
-<p><strong>We will use these as references for the class.</strong></p>
-<p>Lynn Eyur. 2019. Super awesome models.</p>
-</div>
+<p><br></p>
+<p>Students are not required to purchase any textbooks for the course, but we will use two books by Julian Faraway as reference materials, which are available in pdf format on this website. As the course progresses, more references will be added to this page, including a number of journal articles.</p>
+<p style="margin-left: 22px; text-indent: -22px;">
+Faraway JJ (2015) <em>Linear Models with R</em> (2nd Ed). CRC Press, United Kingdom. 270 pp. [available <a href="references/Faraway_2015_Linear_models_with_R.pdf">here</a>]
+</p>
+<p style="margin-left: 22px; text-indent: -22px;">
+Faraway JJ (2016) <em>Extending the Linear Model with R - Generalized Linear, Mixed Effects and Nonparametric Regression Models</em> (2nd Ed). CRC Press, United Kingdom. 394 pp. [available <a href="references/Faraway_2016_Extending_the_Linear_Models_with_R.pdf">here</a>]
+</p>
+<p><br></p>
+<p>In addition, the following books are useful references for the material covered in this course.</p>
+<p style="margin-left: 22px; text-indent: -22px;">
+Burnham KP, Anderson DR (2002) <em>Model Selection and Multimodel Inference - A Practical Information-Theoretic Approach</em> (2nd Ed). Springer, New York. 488 pp. [available <a href="references/Burnham_Anderson_2002_model_selection.pdf">here</a>]
+</p>
+<p style="margin-left: 22px; text-indent: -22px;">
+Zuur AF, Ieno EN, Walker NJ, Saveliev AA, Smith GM (2009) <em>Mixed Effects Models and Extensions in Ecology with R</em>. Springer, New York. 574 pp. [available <a href="references/Zuur_2009_mixed_effects_models_in_R.pdf">here</a>]
+</p>
 
 
 
@@ -334,23 +357,6 @@ $(document).ready(function () {
 
 
 </script>
-
-<!-- tabsets -->
-
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
-<!-- code folding -->
-
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>
