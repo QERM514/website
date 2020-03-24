@@ -7,8 +7,26 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Textbooks
+<br>
 
-**We will use these as references for the class.**
+Students are not required to purchase any textbooks for the course, but we will use two books by Julian Faraway as reference materials, which are available in pdf format on this website.
 
-Lynn Eyur. 2019. Super awesome models.
+<p style="margin-left: 22px; text-indent: -22px;">
+Faraway JJ (2015) *Linear Models with R* (2nd Ed). CRC Press, United Kingdom. 270 pp. [available [here](references/Faraway_2015_Linear_models_with_R.pdf)]   
+</p>
+
+<p style="margin-left: 22px; text-indent: -22px;">
+Faraway JJ (2016) *Extending the Linear Model with R - Generalized Linear, Mixed Effects and Nonparametric Regression Models* (2nd Ed). CRC Press, United Kingdom. 394 pp. [available [here](references/Faraway_2016_Extending_the_Linear_Models_with_R.pdf)]
+</p>
+
+
+In addition, the following books are useful references for the material covered in this course.
+
+<p style="margin-left: 22px; text-indent: -22px;">
+Burnham KP, Anderson DR (2002) *Model Selection and Multimodel Inference - A Practical Information-Theoretic Approach* (2nd Ed). Springer, New York. 488 pp. [available [here](references/Burnham_Anderson_2002_model_selection.pdf)]    
+</p>
+
+<p style="margin-left: 22px; text-indent: -22px;">
+Zuur AF, Ieno EN, Walker NJ, Saveliev AA, Smith GM (2009) *Mixed Effects Models and Extensions in Ecology with R*. Springer, New York. 574 pp. [available [here](references/Zuur_2009_mixed_effects_models_in_R.pdf)]    
+</p>
+
