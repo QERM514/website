@@ -19,6 +19,15 @@ Who am I?
 </font>
 
 
+## My role as course instructor
+
+> - Help you learn the material
+
+> - Help you learn how to ask for help
+
+> - Be a future resource
+
+
 ## {.flexbox .vcenter .bigger}
 
 <font size="10">
@@ -109,6 +118,44 @@ How will [some future scenario] affect<br>[some ecosystem service]?
 ## General approach
 
 ### Question $\rightarrow$ Data $\rightarrow$ Model $\rightarrow$ Inference $\rightarrow$ Prediction
+
+
+## Forms of linear models
+
+| Errors | Single random process | Multiple random processes |
+|:-------|:--------------:|:------------------:|
+| Normal | Linear Model (LM) | Linear Mixed Model (LMM) |
+| Non-normal | Generalized Linear Model (GLM) | Generalized Linear Mixed Model (GLMM) |
+
+
+## Forms of linear models
+ 
+```{r model_diagram, fig.height = 5, fig.width = 7, fig.align = 'center'}
+par(mai = rep(0, 4), omi = rep(0, 4), bg = NA)
+
+## order: GLM, LM, GLMM, LMM
+xx <- c(1, 2, 2, 3) * 10
+yy <- c(2, 1, 3, 2) * 10
+
+plot(c(7, 33), c(7, 33), type = "n", xlim = c(7, 33), ylim = c(7, 33),
+     xaxt = "n", yaxt = "n", xlab = "", ylab = "",
+     bty = "n")
+symbols(xx, yy, circle = rep(2, 4), inches = 0.5, add = TRUE,
+        lwd = 2, bg = "white")
+text(xx, yy, c("GLM", "LM", "GLMM", "LMM"), cex = 1.5)
+## from LM to GLM
+arrows(xx[2]-2, yy[2]+2, xx[1]+2, yy[1]-2, length = 0.2)
+text(15, 14, "multiple forms of errors", pos = 2)
+## from LM to LMM
+arrows(xx[2]+2, yy[2]+2, xx[4]-2, yy[4]-2, length = 0.2)
+text(25, 14, "multiple random processes", pos = 4)
+## from GLM to GLMM
+arrows(xx[1]+2, yy[1]+2, xx[3]-2, yy[3]-2, length = 0.2)
+text(15, 26, "multiple random processes", pos = 2)
+## from LMM to GLMM
+arrows(xx[4]-2, yy[4]+2, xx[3]+2, yy[3]-2, length = 0.2)
+text(25, 26, "multiple forms of errors", pos = 4)
+```
 
 
 ## Learning objectives for the course
