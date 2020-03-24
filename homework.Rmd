@@ -13,7 +13,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-Students will use **R Markdown** to complete their homework assignments, which will allow you to easily save and execute **R** code, and combine the output with additional text and equations into a single pdf file. Each home assignment will have it's own **R Markdown** template for students to fill out and submit. We will use **RStudio** as an IDE for working with **R** and authoring **R Markdown** documents. Those students who are unfamiliar with **R Markdown** should read through [this introduction](http://rmarkdown.rstudio.com/lesson-1.html).
+Students will use **R Markdown** to complete their homework assignments, which will allow you to execute **R** code and combine the output with additional text and equations into a single pdf file. Each homework assignment will have it's own Markdown template for students to fill out and submit.
 
 ```{r week_hw, include = FALSE}
 ## empty list for labs
