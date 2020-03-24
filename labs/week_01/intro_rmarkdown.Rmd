@@ -149,12 +149,12 @@ results in
 You can specify a block quote by preceding it with the `>` symbol, such that
 
 ```
-> Four score and seven years ago... 
+> I have a dream that one day this nation will rise up and live out the true meaning of its creed: 'We hold these truths to be self-evident, that all men are created equal.'
 ```
 
 yields
 
-> Four score and seven years ago...
+> I have a dream that one day this nation will rise up and live out the true meaning of its creed: 'We hold these truths to be self-evident, that all men are created equal.'
 
 ## Lists
 
@@ -418,7 +418,7 @@ Here are a few things to help you get started (with examples below):
 You can include equations inline by enabling the "inline math mode" through the use of a single dollar sign (`$`) at the beginning and end of the equation. For example,
 
 ```
-Each of the errors are normally distributed, such that $e_{i,j} \sim \text{N}(0, \sigma^2)$.
+The errors are normally distributed, such that $e_{i,j} \sim \text{N}(0, \sigma^2)$.
 ```
 
 will render as
@@ -475,7 +475,7 @@ $$
 \begin{aligned}
 \text{Var}(p_{ex}) &= \text{Var}(o) - \text{Var}(e) + 2 ~ \text{Cov}(p_{ex}, e) \\
   &= \text{Var}(o) - \text{RMSE}_{ex}^2 + 2 ~ \text{Cov}(p_{ex}, e) \\
-  &\approx 3.6 - 1^2 + 2 ~ \text{Cov}(p_{ex}, e).
+  &\approx 3.6 - 1^2 + 2 (0.4) = 3.4
 \end{aligned}
 $$
 
