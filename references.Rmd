@@ -9,7 +9,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 <br>
 
-Students are not required to purchase any textbooks for the course, but we will use two books by Julian Faraway as reference materials, which are available in pdf format on this website.
+Students are not required to purchase any textbooks for the course, but we will use two books by Julian Faraway as reference materials, which are available in pdf format on this website. As the course progresses, more references will be added to this page, including a number of journal articles.
 
 <p style="margin-left: 22px; text-indent: -22px;">
 Faraway JJ (2015) *Linear Models with R* (2nd Ed). CRC Press, United Kingdom. 270 pp. [available [here](references/Faraway_2015_Linear_models_with_R.pdf)]   
@@ -19,6 +19,7 @@ Faraway JJ (2015) *Linear Models with R* (2nd Ed). CRC Press, United Kingdom. 27
 Faraway JJ (2016) *Extending the Linear Model with R - Generalized Linear, Mixed Effects and Nonparametric Regression Models* (2nd Ed). CRC Press, United Kingdom. 394 pp. [available [here](references/Faraway_2016_Extending_the_Linear_Models_with_R.pdf)]
 </p>
 
+<br>
 
 In addition, the following books are useful references for the material covered in this course.
 
