@@ -1,5 +1,5 @@
 ---
-title: "Guest lecture"
+title: "Using quantitative ecology for species conservation in the face of anthropogenic-change"
 subtitle: "Analysis of Ecological and Environmental Data<br>QERM 514"
 author: "Dr. Staci Amburgey"
 date: "6 May 2020"
