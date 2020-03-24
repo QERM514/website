@@ -13,7 +13,7 @@ output:
 
 # Course overview
 
-This course is intended to introduce students to a large class of statistical models that form the basis for a large majority of statistical analyses conducted in ecology and environmental science. They include simple linear models, such as analysis of variance (ANOVA) and regression models, along with Generalized Linear Models (GLMs) and Generalized Linear Mixed Models (GLMMs), which assume non-normal error distributions (_e.g._, logistic, Poisson, and Gamma regression). Students will also learn the differences between fixed and random effects. In particular, we will focus on conceptualizing analyses, implementing analyses, and making inference from the results.
+This course is intended to introduce students to a large class of statistical models that form the basis for a large majority of statistical analyses conducted in ecology and environmental science. They include simple linear models, such as analysis of variance (ANOVA) and regression models, along with Generalized Linear Models (GLMs) and Generalized Linear Mixed Models (GLMMs), which assume non-normal error distributions (_e.g._, logistic and Poisson regression). Students will also learn the differences between fixed and random effects. In particular, we will focus on conceptualizing analyses, implementing analyses, and making inference from the results.
 
 <br>
 
@@ -35,8 +35,8 @@ By the end of the quarter, students should be able to:
 
 # Instructor
 
-[**Mark Scheuerell**](https://fish.uw.edu/faculty/mark-scheuerell/), Associate Professor  
-School of Aquatic & Fishery Sciences
+[**Mark Scheuerell**](https://fish.uw.edu/faculty/mark-scheuerell/)  
+Associate Professor, School of Aquatic & Fishery Sciences
 
 Office: Rm 220A Fishery Sciences
 
@@ -47,10 +47,10 @@ Email: [qerm514@uw.edu](mailto:qerm514@uw.edu)
 # Meeting times & locations
 
 #### Lectures 
-M/W/F from 10:30-11:20 <del>in FSH 213</del> via [Zoom](https://washington.zoom.us/j/831083365)
+M/W/F from 10:30-11:20 ~~in FSH 213~~ via [Zoom](https://washington.zoom.us/j/831083365)
 
 #### Computer Lab
-Friday from 11:30-1:20 <del>in FSH 136</del> via [Zoom](https://washington.zoom.us/j/946943308)
+Friday from 11:30-1:20 ~~in FSH 136~~ via [Zoom](https://washington.zoom.us/j/946943308)
 
 #### Office hours
 By appointment
@@ -59,7 +59,7 @@ By appointment
 
 # Pre-requisites
 
-Students should have a working knowledge of the [**R**](https://www.r-project.org/) computing software, such as that provided in FISH 552/553. 
+Students should be comfortable with basic probability and statistics. Students should also have a working knowledge of the [**R**](https://www.r-project.org/) computing software, such as that provided in FISH 552/553.
 
 <br>
 
@@ -67,13 +67,13 @@ Students should have a working knowledge of the [**R**](https://www.r-project.or
 
 This course will revolve around hands-on computing exercises that demonstrate the topics of interest. Therefore, students are strongly recommended to bring their own laptop to class, although students are certainly free to work with one another. **For students without access to a personal laptop**: it is possible to check out UW laptops for an entire quarter (see the [Student Services office](https://education.uw.edu/admissions/office-of-student-services) for details).
 
-All of the software we will be using is free and platform independent, meaning students may use macOS, Linux, or Windows operating systems. In addition to a web browser, we will be using the free [**R**](https://www.r-project.org/) software and the desktop version of the [**R Studio**](https://www.rstudio.com/products/rstudio-desktop/) integrated development environment (IDE). We will also be using various packages not contained in the base installation of **R**, but we will wait and install them at the necessary time. The instructor will be available during the first week of class to help students troubleshoot any installation problems.
+All of the software we will be using is free and platform independent, meaning students may use macOS, Linux, or Windows operating systems. In addition to a web browser, we will be using the free [**R**](https://www.r-project.org/) software and the desktop version of the [**R Studio**](https://www.rstudio.com/products/rstudio-desktop/) integrated development environment (IDE). We will also be using various packages not contained in the base installation of **R**, but we will wait and install them at the necessary time. The instructor will be available during the first week of class to help students troubleshoot any software installation problems.
 
 <br>
 
 # Teaching methodology
 
-This course will introduce new material primarily through prepared slides and hands-on demonstrations. Students will be expected to work both individually and collaboratively (to the extent possible given the current conditions); course content and evaluation will emphasize the communication of ideas and the ability to think critically moreso than a specific pathway or method. Other areas of this website provide an overview of the topics to be covered, including links to weekly reading assignments, lecture materials, computer labs, and homework assignments.
+This course will introduce new material primarily through prepared slides and hands-on demonstrations. Students will be expected to work both individually and collaboratively (to the extent possible given the current conditions); course content and evaluation will emphasize the communication of ideas and the ability to think critically more so than a specific pathway or method. Other areas of this website provide an overview of the topics to be covered, including links to weekly reading assignments, lecture materials, computer labs, and homework assignments.
 
 <br>
 
@@ -89,7 +89,7 @@ Students should discuss any potential schedule conflicts with the instructor dur
 
 # Communication
 
-This course will involve a *lot* of communication between and among students and the instructor. Short questions should be addressed to me via email; I will respond to your message within 48 hours. Detailed questions should be addressed to me in person--either after class or during a scheduled meeting. As the course progresses, we will also use some online tools for larger discussions and comments.
+This course will involve a *lot* of communication between and among students and the instructor. Short questions should be addressed to me via email; I will try my best to respond to your message within 24 hours. Under more normal circumstances, detailed questions would be addressed to me in person--either after class or during a scheduled meeting. In this case, however, we will schedule one-on-one or group Zoom calls as needed. As the course progresses, we will also use some online tools for larger discussions and comments.
 
 <br>
 
@@ -105,7 +105,7 @@ If you have already established accommodations with Disability Resources for Stu
 
 ### Religious observances
 
-Students who expect to miss class or assignments as a consequence of their religious observance will be provided with a reasonable accomodation to fulfill their academic responsibilities. Absence from class for religious reasons does not relieve students from responsibility for the course work required during the period of absence. It is the responsibility of the student to provide the instructor with advance notice of the dates of religious holidays on which they will be absent. Students who are absent will be offered an opportunity to make up the work, without penalty, within a reasonable time, as long as the student has made prior arrangements.
+Students who expect to miss class or assignments as a consequence of their religious observance will be provided with a reasonable accommodation to fulfill their academic responsibilities. Absence from class for religious reasons does not relieve students from responsibility for the course work required during the period of absence. It is the responsibility of the student to provide the instructor with advance notice of the dates of religious holidays on which they will be absent. Students who are absent will be offered an opportunity to make up the work, without penalty, within a reasonable time, as long as the student has made prior arrangements.
 
 <br>
 
