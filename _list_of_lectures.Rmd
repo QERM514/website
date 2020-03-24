@@ -22,9 +22,9 @@ software <- list(
   title = "Overview of required software",
   topics = c("R", "RStudio", "R Markdown"),
   pdf = "",
-  rmd = c("lectures/week_01/lec_02_software.Rmd"),
-  html = c("lectures/week_01/lec_02_software.html"),
-  background = c("[R software](https://www.r-project.org/about.html)", "[RStudio](https://resources.rstudio.com/)", "[Intro to R Markdown](https://rmarkdown.rstudio.com/lesson-1.html)"),
+  rmd = c(""),
+  html = c(""),
+  background = c(""),
   youtube = ""
 )
 
@@ -32,9 +32,9 @@ data_types <- list(
   title = "Ecological data and distributions",
   topics = c("Detections", "Counts", "Survival"),
   pdf = "",
-  rmd = c("lectures/week_01/lec_03_data_types.Rmd"),
-  html = c("lectures/week_01/lec_03_data_types.html"),
-  background = c("[Statistical distributions](http://learnbayes.org/demo/stat-distributions-js/distributionTable.html)"),
+  rmd = c(""),
+  html = c(""),
+  background = c(""),
   youtube = ""
 )
 
