@@ -20,7 +20,7 @@ intro <- list(
 
 software <- list(
   title = "Overview of required software",
-  topics = c("R", "RStudio", "R Markdown"),
+  topics = c("R", "RStudio", "R Markdown", "GitHub"),
   pdf = "",
   rmd = c(""),
   html = c(""),
@@ -170,7 +170,7 @@ mixed_models_2 <- list(
 
 guest_lec_01 <- list(
   title = "Guest lecture - Dr. Staci Amburgey",
-  topics = c("Using quantitative ecology for species conservation in the face of anthropogenic-change"),
+  topics = c("Using quantitative ecology for species<br>conservation in the face of anthropogenic change"),
   pdf = "",
   rmd = "",
   html = "lectures/week_06/lec_17_guest_lec_amburgey.html",
