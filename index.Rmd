@@ -73,7 +73,7 @@ Students will also be required to have a user account on [**GitHub**](https://gi
 
 ### Zoom recordings
 
-This course is scheduled to run synchronously at our scheduled class time via [Zoom](https://itconnect.uw.edu/connect/phones/conferencing/zoom-video-conferencing/). These Zoom class sessions will be recorded. The recording will capture the presenter’s audio, video and computer screen. Student audio and video will be recorded if they share their computer audio and video during the recorded session. The recordings will only be accessible to students enrolled in the course to review materials. These recordings will not be shared in the public, and will be deleted after 90 days.
+This course is scheduled to run synchronously at our scheduled class time via [Zoom](https://itconnect.uw.edu/connect/phones/conferencing/zoom-video-conferencing/). These Zoom class sessions will be recorded. The recording will capture the presenter’s audio, video and computer screen. Student audio and video will be recorded if they share their computer audio and video during the recorded session. The recordings will only be accessible to students enrolled in the course to review materials. These recordings will not be shared with the public, and will be deleted after 90 days.
 
 UW-IT and Zoom have a Business Associates Agreement (BAA) to protect the security and privacy of UW Zoom accounts and is [FERPA](https://registrar.washington.edu/students/ferpa/) compliant. Students who **do not** wish to give consent to being recorded should:
 
