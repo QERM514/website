@@ -35,7 +35,7 @@ Things to consider:
 
 #### Presentations will be during week of June 1-5 and make up 9% of your final grade.
 
-Each student will be expected to present their project to the class. The instructor will randomly assign each student to a time slot for their presentation, either during class on June 1, June 3, or June 5, or during lab on June 5. You will have 10 minutes for your presentation, and there will be 2 minutes for questions. I will be quite strict with time. To minimize time lost switching between computers, students will need to email their presentation to the instructor no later than 8:00 AM on the day they are scheduled to deliver it. All presenters will use the instructor's computer.
+Each student will be expected to present their project to the class. The instructor will randomly assign each student to a time slot for their presentation, either during class on June 1, June 3, or June 5, or during lab on June 5. You will have 10 minutes for your presentation, and there will be 2 minutes for questions. I will be quite strict with time. Unfortunately, we will not be able to gather together to watch everyone's presentations, so you will have to take turns presenting remotely via **Zoom**. Students will have an opportunity for a "dry run" if you would like.
 
 Your presentation should include
 
@@ -48,4 +48,6 @@ Your presentation should include
 
 #### Reports are due by 11:59 PM on June 7 and constitute 18% of your final grade.
 
-Please use the RMarkdown report template for your final report, which will facilitate proper formatting of text, equations, code, figures, references, etc. Your report is restricted to 2000 words (independent of code chunks) plus no more than 2 tables and 2 figures. If you don’t need 2000 words to cover your topic, you should not feel obligated to use them. Clear and succinct writing is an important skill, and you should practice it at every opportunity. Please bear in mind that your report should detail a fully reproducible workflow of your analysis. As such, please provide a copy of any necessary data file(s). However, I’ll only consult this as a last resort if there seems to be an error or I can’t work out what you did. All the relevant information should be in your written report.
+Please use the RMarkdown report template for your final report, which will facilitate proper formatting of text, equations, code, figures, references, etc. Your report is restricted to 2000 words (exclusive of code chunks and figure/table captions) plus no more than 2 tables and 2 figures, although you should not feel obligated to hit that limit.
+
+Please bear in mind that your report should detail a fully reproducible workflow of your analysis. As such, please provide a copy of any necessary data file(s). However, I’ll only consult this as a last resort if there seems to be an error or I can’t work out what you did. Otherwise, all of the relevant information should be contained within your written report.
