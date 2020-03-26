@@ -1,0 +1,88 @@
+---
+title: "Overview of software requirements"
+subtitle: "Analysis of Ecological and Environmental Data<br>QERM 514"
+author: "Mark Scheuerell"
+date: "1 April 2020"
+output:
+  ioslides_presentation:
+    css: lecture_slides.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Goals for today
+
+* Identify the software requirements for the course
+
+> - Verify that you have the software installed and working
+
+
+## R Software | An environment for statistical computing and graphics
+
+* It's FREE!
+
+> - Enormous developer & support communities
+
+> - [Learn more here](https://www.r-project.org/about.html)
+
+
+## R Software
+
+* Most of R's current capabilities come from *packages*
+
+> - We will use several different packages for fitting statistical models (eg, `nlme`, `lme4`)
+
+
+## RStudio | An integrated development environment (IDE) for R
+
+
+## &nbsp; {data-background=RStudio_desktop.png data-background-size=cover}
+
+
+## RStudio highlights
+
+* Syntax highlighting, code completion, smart indentation  
+* Easily manage multiple working directories using projects  
+* Interactive debugger to diagnose and fix errors quickly  
+* Extensive package development tools  
+* Built-in tools & GUIs for git & Markdown
+
+
+## RStudio benefits
+
+[Cheat sheets](https://rstudio.com/resources/cheatsheets/)
+
+[Webinars, links, etc](https://resources.rstudio.com/)
+
+
+## &nbsp; {data-background=RStudio_cheatsheet.png data-background-size=cover}
+
+
+## R Markdown
+
+Notebook interface to weave together text, equations, and code into nicely formatted output
+
+Allows you to create and document fully reproducible workflows
+
+Ideal framework for homework assignments!
+
+
+## R Markdown
+
+Supports dozens of static and dynamic output formats
+
+* HTML  
+* PDF  
+* MS Word  
+* HTML5 slides  
+* Books  
+* Shiny apps  
+* Scientific articles  
+* websites
+
+[Gallery here](https://rmarkdown.rstudio.com/gallery.html)
+
+
+
