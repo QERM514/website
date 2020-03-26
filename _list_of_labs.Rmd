@@ -29,7 +29,7 @@ markdown <- list(
   html = c("labs/week_01/intro_rmarkdown.html"),
   youtube = "",
   data = "",
-  background = c("[R Markdown reference guide](https://rstudio.com/wp-content/uploads/2015/03/rmarkdown-reference.pdf)",
+  background = c("[R Markdown definitive guide](https://bookdown.org/yihui/rmarkdown/)",
                  "[R Markdown cheat sheet](https://rstudio.com/wp-content/uploads/2016/03/rmarkdown-cheatsheet-2.0.pdf)",
                  "[LaTeX math codes](labs/week_01/latex_math_sheet.pdf)")
 )
