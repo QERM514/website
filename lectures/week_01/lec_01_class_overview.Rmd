@@ -35,6 +35,15 @@ Who are you?
 </font>
 
 
+## Introduce yourself | Tell us via Zoom chat:
+
+1. Your degree program (MS, PhD)
+
+2. Your school/department
+
+3. Your area of study (a phrase or short sentence)
+
+
 ## {.flexbox .vcenter .bigger}
 
 <font size="10">
