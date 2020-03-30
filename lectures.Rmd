@@ -178,7 +178,7 @@ syl_txt <- data.frame(
   lec_links = slide_links_html,
   rmd_links = source_links_html,
   pdf_links = pdf_links_html,
-  zoom_links = youtube_links_html,
+  zoom_links = zoom_links_html,
   # youtube_links = youtube_links_html,
   background_links = background_links_html
 )
