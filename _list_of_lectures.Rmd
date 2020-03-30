@@ -50,7 +50,7 @@ linear_models_1 <- list(
 
 linear_models_2 <- list(
   title = "Linear models",
-  topics = c("Models in matrix form", "Least squares"),
+  topics = c("Models in matrix form", "Least squares", "Identifiability"),
   pdf = "",
   rmd = c(""),
   html = c(""),
@@ -180,7 +180,7 @@ guest_lec_01 <- list(
 
 intro_GLM <- list(
   title = "Introduction to GLMs",
-  topics = c("Data distrbution", "Links", "Linear predictors"),
+  topics = c("Data distribution", "Links", "Linear predictors"),
   pdf = "",
   rmd = c(""),
   html = c(""),
@@ -240,7 +240,7 @@ intro_GLMM_1 <- list(
 
 intro_GLMM_2 <- list(
   title = "More on GLMMs",
-  topics = c("Computing likelihoods", "Daignostics", "Goodness-of-fit"),
+  topics = c("Computing likelihoods", "Diagnostics", "Goodness-of-fit"),
   pdf = "",
   rmd = c(""),
   html = c(""),
@@ -260,7 +260,7 @@ holiday <- list(
 
 review <- list(
   title = "Material review",
-  topics = c("Catchup and review materials"),
+  topics = c("Catch-up and review materials"),
   pdf = "",
   rmd = c(""),
   html = c(""),
