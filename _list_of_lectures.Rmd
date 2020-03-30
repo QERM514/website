@@ -10,7 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 intro <- list(
   title = "Introduction",
-  topics = c("Course overview"),
+  topics = c("<b>Course overview</b>"),
   pdf = c("lectures/week_01/lec_01_class_overview.pdf"),
   rmd = c("lectures/week_01/lec_01_class_overview.Rmd"),
   html = c("lectures/week_01/lec_01_class_overview.html"),
@@ -20,7 +20,7 @@ intro <- list(
 
 software <- list(
   title = "Overview of required software",
-  topics = c("R", "RStudio", "R Markdown", "GitHub"),
+  topics = c("<b>Required software</b>","R", "RStudio", "R Markdown", "GitHub"),
   pdf = c(""),
   rmd = c(""),
   html = c(""),
@@ -30,7 +30,7 @@ software <- list(
 
 data_types <- list(
   title = "Ecological data and distributions",
-  topics = c("Detections", "Counts", "Survival"),
+  topics = c("<b>Ecological data & distributions</b>", "Detections", "Counts", "Survival"),
   pdf = c(""),
   rmd = c(""),
   html = c(""),
@@ -40,7 +40,7 @@ data_types <- list(
 
 linear_models_1 <- list(
   title = "Linear models",
-  topics = c("Regression", "ANOVA", "ANCOVA"),
+  topics = c("<b>Linear models</b>", "Regression", "ANOVA", "ANCOVA"),
   pdf = c(""),
   rmd = c(""),
   html = c(""),
@@ -50,7 +50,7 @@ linear_models_1 <- list(
 
 linear_models_2 <- list(
   title = "Linear models",
-  topics = c("Models in matrix form", "Least squares", "Identifiability"),
+  topics = c("<b>Linear models</b>", "Models in matrix form", "Least squares", "Identifiability"),
   pdf = c(""),
   rmd = c(""),
   html = c(""),
@@ -60,7 +60,7 @@ linear_models_2 <- list(
 
 inference <- list(
   title = "Inference",
-  topics = c("Variance partitioning", "F-tests for nested models", "Permutation tests"),
+  topics = c("<b>Inference</b>", "Variance partitioning", "F-tests for nested models", "Permutation tests"),
   pdf = c(""),
   rmd = c(""),
   html = c(""),
@@ -70,7 +70,7 @@ inference <- list(
 
 diagnostics <- list(
   title = "Model diagnostics",
-  topics = c("Model assumptions", "Leverage", "Outliers"),
+  topics = c("<b>Model diagnostics</b>", "Assumptions", "Leverage", "Outliers"),
   pdf = c(""),
   rmd = c(""),
   html = c(""),
@@ -80,7 +80,7 @@ diagnostics <- list(
 
 non_IID_errors <- list(
   title = "Problems with model residuals",
-  topics = c("Weighted least squares", "Generalized least squares", "Robust regression", "Autocorrelated errors"),
+  topics = c("<b>Problems with model errors</b>", "Weighted least squares", "Generalized least squares", "Robust regression", "Autocorrelated errors"),
   pdf = c(""),
   rmd = c(""),
   html = c(""),
@@ -90,7 +90,7 @@ non_IID_errors <- list(
 
 transformations <- list(
   title = "Data transformations",
-  topics = c("Powers/roots", "Box-Cox", "Logarithms"),
+  topics = c("<b>Data transformations</b>", "Powers/roots", "Box-Cox", "Logarithms"),
   pdf = c(""),
   rmd = c(""),
   html = c(""),
@@ -100,7 +100,7 @@ transformations <- list(
 
 design_matrices_1 <- list(
   title = "Design matrices",
-  topics = c("Models in matrix form", "Regression", "Multiple regression"),
+  topics = c("<b>Design matrices</b>", "Models in matrix form", "Regression", "Multiple regression"),
   pdf = c(""),
   rmd = c(""),
   html = c(""),
@@ -110,7 +110,7 @@ design_matrices_1 <- list(
 
 design_matrices_2 <- list(
   title = "Design matrices",
-  topics = c("ANOVA", "ANCOVA"),
+  topics = c("<b>Design matrices</b>", "ANOVA", "ANCOVA"),
   pdf = c(""),
   rmd = c(""),
   html = c(""),
@@ -120,7 +120,7 @@ design_matrices_2 <- list(
 
 max_likelihood <- list(
   title = "Maximum likelihood",
-  topics = c("Relationship to probability", "Estimation", "Ratio tests"),
+  topics = c("<b>Maximum likelihood</b>", "Relationship to probability", "Estimation", "Ratio tests"),
   pdf = c(""),
   rmd = c(""),
   html = c(""),
@@ -130,7 +130,7 @@ max_likelihood <- list(
 
 model_selection_1 <- list(
   title = "Model selection",
-  topics = c("Bias-Variance trade-offs", "In-sample selection", "AIC"),
+  topics = c("<b>Model selection</b>", "Bias-Variance trade-offs", "In-sample selection", "AIC"),
   pdf = c(""),
   rmd = c(""),
   html = c(""),
@@ -140,7 +140,7 @@ model_selection_1 <- list(
 
 model_selection_2 <- list(
   title = "Model selection",
-  topics = c("Out-of-sample selection", "Cross-validation", "Multi-model inference"),
+  topics = c("<b>Model selection</b>", "Out-of-sample selection", "Cross-validation", "Multi-model inference"),
   pdf = c(""),
   rmd = c(""),
   html = c(""),
@@ -150,7 +150,8 @@ model_selection_2 <- list(
 
 mixed_models_1 <- list(
   title = c("Mixed effects models", "<br><b>Project plan due</b>"),
-  topics = c("Fixed vs Random effects", "Costs/benefits", "Restricted maximum likelihood"),
+  topics = c("<b>Mixed effects models</b>", "Fixed vs Random effects", "Costs/benefits", "Restricted maximum likelihood",
+             "<br><b>Project plan due</b>"),
   pdf = c(""),
   rmd = c(""),
   html = c(""),
@@ -160,7 +161,7 @@ mixed_models_1 <- list(
 
 mixed_models_2 <- list(
   title = "Mixed effects models",
-  topics = c("Inference", "Diagnostics", "Model selection"),
+  topics = c("<b>Mixed effects models</b>", "Inference", "Diagnostics", "Model selection"),
   pdf = c(""),
   rmd = c(""),
   html = c(""),
@@ -170,7 +171,7 @@ mixed_models_2 <- list(
 
 guest_lec_01 <- list(
   title = "Guest lecture - Dr. Staci Amburgey",
-  topics = c("Using quantitative ecology for species<br>conservation in the face of anthropogenic change"),
+  topics = c("<b>Guest lecture:</b>", "<b>Dr. Staci Amburgey</b>", "<i>Using quantitative ecology for<br>species conservation in the face<br>of anthropogenic change</i>"),
   pdf = c(""),
   rmd = "",
   html = "lectures/week_06/lec_17_guest_lec_amburgey.html",
@@ -180,7 +181,7 @@ guest_lec_01 <- list(
 
 intro_GLM <- list(
   title = "Introduction to GLMs",
-  topics = c("Data distribution", "Links", "Linear predictors"),
+  topics = c("<b>Introduction to GLMs</b>", "Data distribution", "Links", "Linear predictors"),
   pdf = c(""),
   rmd = c(""),
   html = c(""),
@@ -190,7 +191,7 @@ intro_GLM <- list(
 
 binary_GLM <- list(
   title = "Modeling binary data",
-  topics = c("Logistic regression", "Model selection", "Diagnostics"),
+  topics = c("<b>Modeling binary data</b>", "Logistic regression", "Model selection", "Diagnostics"),
   pdf = c(""),
   rmd = c(""),
   html = c(""),
@@ -200,7 +201,7 @@ binary_GLM <- list(
 
 overdispersed_binary <- list(
   title = "Overdispersion in binary data",
-  topics = c("Variance inflation", "Beta-binomial modes", "Quasi-likelihood"),
+  topics = c("<b>Overdispersion in binary data</b>", "Variance inflation", "Beta-binomial modes", "Quasi-likelihood"),
   pdf = c(""),
   rmd = c(""),
   html = c(""),
@@ -210,7 +211,7 @@ overdispersed_binary <- list(
 
 count_GLM <- list(
   title = "Modeling count data",
-  topics = c("Poisson regression", "Leverage and influence", "Diagnostics"),
+  topics = c("<b>Modeling count data</b>", "Poisson regression", "Leverage and influence", "Diagnostics"),
   pdf = c(""),
   rmd = c(""),
   html = c(""),
@@ -220,7 +221,7 @@ count_GLM <- list(
 
 overdispersed_count <- list(
   title = "Overdispersion in count data",
-  topics = c("Variance inflation", "QAIC", "Negative-binomial distribution", "Quasi-likelihood"),
+  topics = c("<b>Overdispersion in count data</b>", "Variance inflation", "QAIC", "Negative-binomial distribution", "Quasi-likelihood"),
   pdf = c(""),
   rmd = c(""),
   html = c(""),
@@ -230,7 +231,7 @@ overdispersed_count <- list(
 
 intro_GLMM_1 <- list(
   title = "Introduction to GLMMs",
-  topics = c("Computing likelihoods", "Diagnostics", "Goodness-of-fit"),
+  topics = c("<b>Introductions to GLMMs</b>", "Computing likelihoods", "Diagnostics", "Goodness-of-fit"),
   pdf = c(""),
   rmd = c(""),
   html = c(""),
@@ -240,7 +241,7 @@ intro_GLMM_1 <- list(
 
 intro_GLMM_2 <- list(
   title = "More on GLMMs",
-  topics = c("Computing likelihoods", "Diagnostics", "Goodness-of-fit"),
+  topics = c("<b>More on GLMMs</b>", "Computing likelihoods", "Diagnostics", "Goodness-of-fit"),
   pdf = c(""),
   rmd = c(""),
   html = c(""),
@@ -250,7 +251,7 @@ intro_GLMM_2 <- list(
 
 holiday <- list(
   title = "<b>Memorial Day - No class</b>",
-  topics = "",
+  topics = "<b>Memorial Day - No class</b>",
   pdf = c(""),
   rmd = "",
   html = "",
@@ -260,7 +261,7 @@ holiday <- list(
 
 review <- list(
   title = "Material review",
-  topics = c("Catch-up and review materials"),
+  topics = c("<b>Review of materials</b>"),
   pdf = c(""),
   rmd = c(""),
   html = c(""),
@@ -270,7 +271,7 @@ review <- list(
 
 synthesis <- list(
   title = "Course synthesis",
-  topics = c("What did we learn?", "Where do we go from here?"),
+  topics = c("<b>Course synthesis</b>", "What did we learn?", "Where do we go from here?"),
   pdf = c(""),
   rmd = c(""),
   html = c(""),
@@ -280,7 +281,7 @@ synthesis <- list(
 
 present <- list(
   title = "Presentations of class projects",
-  topics = "",
+  topics = "<b>Presentations of class projects</b>",
   pdf = c(""),
   rmd = "",
   html = "",
