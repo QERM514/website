@@ -11,281 +11,281 @@ knitr::opts_chunk$set(echo = TRUE)
 intro <- list(
   title = "Introduction",
   topics = c("Course overview"),
-  pdf = "",
+  pdf = c("lectures/week_01/lec_01_class_overview.pdf"),
   rmd = c("lectures/week_01/lec_01_class_overview.Rmd"),
   html = c("lectures/week_01/lec_01_class_overview.html"),
   background = c(""),
-  youtube = ""
+  zoom = ""
 )
 
 software <- list(
   title = "Overview of required software",
   topics = c("R", "RStudio", "R Markdown", "GitHub"),
-  pdf = "",
+  pdf = c(""),
   rmd = c(""),
   html = c(""),
   background = c(""),
-  youtube = ""
+  zoom = ""
 )
 
 data_types <- list(
   title = "Ecological data and distributions",
   topics = c("Detections", "Counts", "Survival"),
-  pdf = "",
+  pdf = c(""),
   rmd = c(""),
   html = c(""),
   background = c(""),
-  youtube = ""
+  zoom = ""
 )
 
 linear_models_1 <- list(
   title = "Linear models",
   topics = c("Regression", "ANOVA", "ANCOVA"),
-  pdf = "",
+  pdf = c(""),
   rmd = c(""),
   html = c(""),
   background = c(""),
-  youtube = ""
+  zoom = ""
 )
 
 linear_models_2 <- list(
   title = "Linear models",
   topics = c("Models in matrix form", "Least squares", "Identifiability"),
-  pdf = "",
+  pdf = c(""),
   rmd = c(""),
   html = c(""),
   background = c(""),
-  youtube = ""
+  zoom = ""
 )
 
 inference <- list(
   title = "Inference",
   topics = c("Variance partitioning", "F-tests for nested models", "Permutation tests"),
-  pdf = "",
+  pdf = c(""),
   rmd = c(""),
   html = c(""),
   background = c(""),
-  youtube = ""
+  zoom = ""
 )
 
 diagnostics <- list(
   title = "Model diagnostics",
   topics = c("Model assumptions", "Leverage", "Outliers"),
-  pdf = "",
+  pdf = c(""),
   rmd = c(""),
   html = c(""),
   background = c(""),
-  youtube = ""
+  zoom = ""
 )
 
 non_IID_errors <- list(
   title = "Problems with model residuals",
   topics = c("Weighted least squares", "Generalized least squares", "Robust regression", "Autocorrelated errors"),
-  pdf = "",
+  pdf = c(""),
   rmd = c(""),
   html = c(""),
   background = "",
-  youtube = ""
+  zoom = ""
 )
 
 transformations <- list(
   title = "Data transformations",
   topics = c("Powers/roots", "Box-Cox", "Logarithms"),
-  pdf = "",
+  pdf = c(""),
   rmd = c(""),
   html = c(""),
   background = "",
-  youtube = ""
+  zoom = ""
 )
 
 design_matrices_1 <- list(
   title = "Design matrices",
   topics = c("Models in matrix form", "Regression", "Multiple regression"),
-  pdf = "",
+  pdf = c(""),
   rmd = c(""),
   html = c(""),
   background = "",
-  youtube = ""
+  zoom = ""
 )
 
 design_matrices_2 <- list(
   title = "Design matrices",
   topics = c("ANOVA", "ANCOVA"),
-  pdf = "",
+  pdf = c(""),
   rmd = c(""),
   html = c(""),
   background = "",
-  youtube = ""
+  zoom = ""
 )
 
 max_likelihood <- list(
   title = "Maximum likelihood",
   topics = c("Relationship to probability", "Estimation", "Ratio tests"),
-  pdf = "",
+  pdf = c(""),
   rmd = c(""),
   html = c(""),
   background = "",
-  youtube = ""
+  zoom = ""
 )
 
 model_selection_1 <- list(
   title = "Model selection",
   topics = c("Bias-Variance trade-offs", "In-sample selection", "AIC"),
-  pdf = "",
+  pdf = c(""),
   rmd = c(""),
   html = c(""),
   background = "",
-  youtube = ""
+  zoom = ""
 )
 
 model_selection_2 <- list(
   title = "Model selection",
   topics = c("Out-of-sample selection", "Cross-validation", "Multi-model inference"),
-  pdf = "",
+  pdf = c(""),
   rmd = c(""),
   html = c(""),
   background = "",
-  youtube = ""
+  zoom = ""
 )
 
 mixed_models_1 <- list(
   title = c("Mixed effects models", "<br><b>Project plan due</b>"),
   topics = c("Fixed vs Random effects", "Costs/benefits", "Restricted maximum likelihood"),
-  pdf = "",
+  pdf = c(""),
   rmd = c(""),
   html = c(""),
   background = "",
-  youtube = ""
+  zoom = ""
 )
 
 mixed_models_2 <- list(
   title = "Mixed effects models",
   topics = c("Inference", "Diagnostics", "Model selection"),
-  pdf = "",
+  pdf = c(""),
   rmd = c(""),
   html = c(""),
   background = "",
-  youtube = ""
+  zoom = ""
 )
 
 guest_lec_01 <- list(
   title = "Guest lecture - Dr. Staci Amburgey",
   topics = c("Using quantitative ecology for species<br>conservation in the face of anthropogenic change"),
-  pdf = "",
+  pdf = c(""),
   rmd = "",
   html = "lectures/week_06/lec_17_guest_lec_amburgey.html",
   background = "",
-  youtube = ""
+  zoom = ""
 )
 
 intro_GLM <- list(
   title = "Introduction to GLMs",
   topics = c("Data distribution", "Links", "Linear predictors"),
-  pdf = "",
+  pdf = c(""),
   rmd = c(""),
   html = c(""),
   background = "",
-  youtube = ""
+  zoom = ""
 )
 
 binary_GLM <- list(
   title = "Modeling binary data",
   topics = c("Logistic regression", "Model selection", "Diagnostics"),
-  pdf = "",
+  pdf = c(""),
   rmd = c(""),
   html = c(""),
   background = "",
-  youtube = ""
+  zoom = ""
 )
 
 overdispersed_binary <- list(
   title = "Overdispersion in binary data",
   topics = c("Variance inflation", "Beta-binomial modes", "Quasi-likelihood"),
-  pdf = "",
+  pdf = c(""),
   rmd = c(""),
   html = c(""),
   background = "",
-  youtube = ""
+  zoom = ""
 )
 
 count_GLM <- list(
   title = "Modeling count data",
   topics = c("Poisson regression", "Leverage and influence", "Diagnostics"),
-  pdf = "",
+  pdf = c(""),
   rmd = c(""),
   html = c(""),
   background = "",
-  youtube = ""
+  zoom = ""
 )
 
 overdispersed_count <- list(
   title = "Overdispersion in count data",
   topics = c("Variance inflation", "QAIC", "Negative-binomial distribution", "Quasi-likelihood"),
-  pdf = "",
+  pdf = c(""),
   rmd = c(""),
   html = c(""),
   background = "",
-  youtube = ""
+  zoom = ""
 )
 
 intro_GLMM_1 <- list(
   title = "Introduction to GLMMs",
   topics = c("Computing likelihoods", "Diagnostics", "Goodness-of-fit"),
-  pdf = "",
+  pdf = c(""),
   rmd = c(""),
   html = c(""),
   background = "",
-  youtube = ""
+  zoom = ""
 )
 
 intro_GLMM_2 <- list(
   title = "More on GLMMs",
   topics = c("Computing likelihoods", "Diagnostics", "Goodness-of-fit"),
-  pdf = "",
+  pdf = c(""),
   rmd = c(""),
   html = c(""),
   background = "",
-  youtube = ""
+  zoom = ""
 )
 
 holiday <- list(
   title = "<b>Memorial Day - No class</b>",
   topics = "",
-  pdf = "",
+  pdf = c(""),
   rmd = "",
   html = "",
   background = "",
-  youtube = ""
+  zoom = ""
 )
 
 review <- list(
   title = "Material review",
   topics = c("Catch-up and review materials"),
-  pdf = "",
+  pdf = c(""),
   rmd = c(""),
   html = c(""),
   background = "",
-  youtube = ""
+  zoom = ""
 )
 
 synthesis <- list(
   title = "Course synthesis",
   topics = c("What did we learn?", "Where do we go from here?"),
-  pdf = "",
+  pdf = c(""),
   rmd = c(""),
   html = c(""),
   background = "",
-  youtube = ""
+  zoom = ""
 )
 
 present <- list(
   title = "Presentations of class projects",
   topics = "",
-  pdf = "",
+  pdf = c(""),
   rmd = "",
   html = "",
   background = "",
-  youtube = ""
+  zoom = ""
 )
 ```
 
