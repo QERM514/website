@@ -334,16 +334,19 @@ $(document).ready(function () {
 Date
 </th>
 <th style="text-align:left;">
-Title
-</th>
-<th style="text-align:left;">
 Topic(s)
 </th>
 <th style="text-align:center;">
-Slide deck
+Slides (html)
 </th>
 <th style="text-align:center;">
-Source code
+Source (Rmd)
+</th>
+<th style="text-align:center;">
+Slides (pdf)
+</th>
+<th style="text-align:center;">
+Zoom recording
 </th>
 <th style="text-align:left;">
 Background
@@ -356,16 +359,18 @@ Background
 30 March
 </td>
 <td style="text-align:left;">
-Introduction <br>
-</td>
-<td style="text-align:left;">
-Course overview <br>
+<b>Course overview</b> <br>
 </td>
 <td style="text-align:center;">
 <a href="lectures/week_01/lec_01_class_overview.html"><svg style="height:20;fill:#eb6864;" viewbox="0 0 384 512"><path d="M224 136V0H24C10.7 0 0 10.7 0 24v464c0 13.3 10.7 24 24 24h336c13.3 0 24-10.7 24-24V160H248c-13.2 0-24-10.8-24-24zm64 236c0 6.6-5.4 12-12 12H108c-6.6 0-12-5.4-12-12v-8c0-6.6 5.4-12 12-12h168c6.6 0 12 5.4 12 12v8zm0-64c0 6.6-5.4 12-12 12H108c-6.6 0-12-5.4-12-12v-8c0-6.6 5.4-12 12-12h168c6.6 0 12 5.4 12 12v8zm0-72v8c0 6.6-5.4 12-12 12H108c-6.6 0-12-5.4-12-12v-8c0-6.6 5.4-12 12-12h168c6.6 0 12 5.4 12 12zm96-114.1v6.1H256V0h6.1c6.4 0 12.5 2.5 17 7l97.9 98c4.5 4.5 7 10.6 7 16.9z"></path></svg></a>
 </td>
 <td style="text-align:center;">
 <a href="lectures/week_01/lec_01_class_overview.Rmd"><svg style="height:20;fill:#eb6864;" viewbox="0 0 384 512"><path d="M384 121.941V128H256V0h6.059c6.365 0 12.47 2.529 16.971 7.029l97.941 97.941A24.005 24.005 0 0 1 384 121.941zM248 160c-13.2 0-24-10.8-24-24V0H24C10.745 0 0 10.745 0 24v464c0 13.255 10.745 24 24 24h336c13.255 0 24-10.745 24-24V160H248zM123.206 400.505a5.4 5.4 0 0 1-7.633.246l-64.866-60.812a5.4 5.4 0 0 1 0-7.879l64.866-60.812a5.4 5.4 0 0 1 7.633.246l19.579 20.885a5.4 5.4 0 0 1-.372 7.747L101.65 336l40.763 35.874a5.4 5.4 0 0 1 .372 7.747l-19.579 20.884zm51.295 50.479l-27.453-7.97a5.402 5.402 0 0 1-3.681-6.692l61.44-211.626a5.402 5.402 0 0 1 6.692-3.681l27.452 7.97a5.4 5.4 0 0 1 3.68 6.692l-61.44 211.626a5.397 5.397 0 0 1-6.69 3.681zm160.792-111.045l-64.866 60.812a5.4 5.4 0 0 1-7.633-.246l-19.58-20.885a5.4 5.4 0 0 1 .372-7.747L284.35 336l-40.763-35.874a5.4 5.4 0 0 1-.372-7.747l19.58-20.885a5.4 5.4 0 0 1 7.633-.246l64.866 60.812a5.4 5.4 0 0 1-.001 7.879z"></path></svg></a>
+</td>
+<td style="text-align:center;">
+<a href="lectures/week_01/lec_01_class_overview.pdf"><svg style="height:20;fill:#eb6864;" viewbox="0 0 384 512"><path d="M181.9 256.1c-5-16-4.9-46.9-2-46.9 8.4 0 7.6 36.9 2 46.9zm-1.7 47.2c-7.7 20.2-17.3 43.3-28.4 62.7 18.3-7 39-17.2 62.9-21.9-12.7-9.6-24.9-23.4-34.5-40.8zM86.1 428.1c0 .8 13.2-5.4 34.9-40.2-6.7 6.3-29.1 24.5-34.9 40.2zM248 160h136v328c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V24C0 10.7 10.7 0 24 0h200v136c0 13.2 10.8 24 24 24zm-8 171.8c-20-12.2-33.3-29-42.7-53.8 4.5-18.5 11.6-46.6 6.2-64.2-4.7-29.4-42.4-26.5-47.8-6.8-5 18.3-.4 44.1 8.1 77-11.6 27.6-28.7 64.6-40.8 85.8-.1 0-.1.1-.2.1-27.1 13.9-73.6 44.5-54.5 68 5.6 6.9 16 10 21.5 10 17.9 0 35.7-18 61.1-61.8 25.8-8.5 54.1-19.1 79-23.2 21.7 11.8 47.1 19.5 64 19.5 29.2 0 31.2-32 19.7-43.4-13.9-13.6-54.3-9.7-73.6-7.2zM377 105L279 7c-4.5-4.5-10.6-7-17-7h-6v128h128v-6.1c0-6.3-2.5-12.4-7-16.9zm-74.1 255.3c4.1-2.7-2.5-11.9-42.8-9 37.1 15.8 42.8 9 42.8 9z"></path></svg></a>
+</td>
+<td style="text-align:center;">
 </td>
 <td style="text-align:left;">
 <br>
@@ -376,10 +381,11 @@ Course overview <br>
 1 April
 </td>
 <td style="text-align:left;">
-Overview of required software <br>
+<b>Required software</b> <br>R <br>RStudio <br>R Markdown <br>GitHub <br>
 </td>
-<td style="text-align:left;">
-R <br>RStudio <br>R Markdown <br>GitHub <br>
+<td style="text-align:center;">
+</td>
+<td style="text-align:center;">
 </td>
 <td style="text-align:center;">
 </td>
@@ -394,10 +400,11 @@ R <br>RStudio <br>R Markdown <br>GitHub <br>
 3 April
 </td>
 <td style="text-align:left;">
-Ecological data and distributions <br>
+<b>Ecological data &amp; distributions</b> <br>Detections <br>Counts <br>Survival <br>
 </td>
-<td style="text-align:left;">
-Detections <br>Counts <br>Survival <br>
+<td style="text-align:center;">
+</td>
+<td style="text-align:center;">
 </td>
 <td style="text-align:center;">
 </td>
@@ -412,10 +419,11 @@ Detections <br>Counts <br>Survival <br>
 6 April
 </td>
 <td style="text-align:left;">
-Linear models <br>
+<b>Linear models</b> <br>Regression <br>ANOVA <br>ANCOVA <br>
 </td>
-<td style="text-align:left;">
-Regression <br>ANOVA <br>ANCOVA <br>
+<td style="text-align:center;">
+</td>
+<td style="text-align:center;">
 </td>
 <td style="text-align:center;">
 </td>
@@ -430,10 +438,11 @@ Regression <br>ANOVA <br>ANCOVA <br>
 8 April
 </td>
 <td style="text-align:left;">
-Linear models <br>
+<b>Linear models</b> <br>Models in matrix form <br>Least squares <br>Identifiability <br>
 </td>
-<td style="text-align:left;">
-Models in matrix form <br>Least squares <br>Identifiability <br>
+<td style="text-align:center;">
+</td>
+<td style="text-align:center;">
 </td>
 <td style="text-align:center;">
 </td>
@@ -448,10 +457,11 @@ Models in matrix form <br>Least squares <br>Identifiability <br>
 10 April
 </td>
 <td style="text-align:left;">
-Inference <br>
+<b>Inference</b> <br>Variance partitioning <br>F-tests for nested models <br>Permutation tests <br>
 </td>
-<td style="text-align:left;">
-Variance partitioning <br>F-tests for nested models <br>Permutation tests <br>
+<td style="text-align:center;">
+</td>
+<td style="text-align:center;">
 </td>
 <td style="text-align:center;">
 </td>
@@ -466,10 +476,11 @@ Variance partitioning <br>F-tests for nested models <br>Permutation tests <br>
 13 April
 </td>
 <td style="text-align:left;">
-Model diagnostics <br>
+<b>Model diagnostics</b> <br>Assumptions <br>Leverage <br>Outliers <br>
 </td>
-<td style="text-align:left;">
-Model assumptions <br>Leverage <br>Outliers <br>
+<td style="text-align:center;">
+</td>
+<td style="text-align:center;">
 </td>
 <td style="text-align:center;">
 </td>
@@ -484,10 +495,11 @@ Model assumptions <br>Leverage <br>Outliers <br>
 15 April
 </td>
 <td style="text-align:left;">
-Problems with model residuals <br>
+<b>Problems with model errors</b> <br>Weighted least squares <br>Generalized least squares <br>Robust regression <br>Autocorrelated errors <br>
 </td>
-<td style="text-align:left;">
-Weighted least squares <br>Generalized least squares <br>Robust regression <br>Autocorrelated errors <br>
+<td style="text-align:center;">
+</td>
+<td style="text-align:center;">
 </td>
 <td style="text-align:center;">
 </td>
@@ -502,10 +514,11 @@ Weighted least squares <br>Generalized least squares <br>Robust regression <br>A
 17 April
 </td>
 <td style="text-align:left;">
-Data transformations <br>
+<b>Data transformations</b> <br>Powers/roots <br>Box-Cox <br>Logarithms <br>
 </td>
-<td style="text-align:left;">
-Powers/roots <br>Box-Cox <br>Logarithms <br>
+<td style="text-align:center;">
+</td>
+<td style="text-align:center;">
 </td>
 <td style="text-align:center;">
 </td>
@@ -520,10 +533,11 @@ Powers/roots <br>Box-Cox <br>Logarithms <br>
 20 April
 </td>
 <td style="text-align:left;">
-Design matrices <br>
+<b>Design matrices</b> <br>Models in matrix form <br>Regression <br>Multiple regression <br>
 </td>
-<td style="text-align:left;">
-Models in matrix form <br>Regression <br>Multiple regression <br>
+<td style="text-align:center;">
+</td>
+<td style="text-align:center;">
 </td>
 <td style="text-align:center;">
 </td>
@@ -538,10 +552,11 @@ Models in matrix form <br>Regression <br>Multiple regression <br>
 22 April
 </td>
 <td style="text-align:left;">
-Design matrices <br>
+<b>Design matrices</b> <br>ANOVA <br>ANCOVA <br>
 </td>
-<td style="text-align:left;">
-ANOVA <br>ANCOVA <br>
+<td style="text-align:center;">
+</td>
+<td style="text-align:center;">
 </td>
 <td style="text-align:center;">
 </td>
@@ -556,10 +571,11 @@ ANOVA <br>ANCOVA <br>
 24 April
 </td>
 <td style="text-align:left;">
-Maximum likelihood <br>
+<b>Maximum likelihood</b> <br>Relationship to probability <br>Estimation <br>Ratio tests <br>
 </td>
-<td style="text-align:left;">
-Relationship to probability <br>Estimation <br>Ratio tests <br>
+<td style="text-align:center;">
+</td>
+<td style="text-align:center;">
 </td>
 <td style="text-align:center;">
 </td>
@@ -574,10 +590,11 @@ Relationship to probability <br>Estimation <br>Ratio tests <br>
 27 April
 </td>
 <td style="text-align:left;">
-Model selection <br>
+<b>Model selection</b> <br>Bias-Variance trade-offs <br>In-sample selection <br>AIC <br>
 </td>
-<td style="text-align:left;">
-Bias-Variance trade-offs <br>In-sample selection <br>AIC <br>
+<td style="text-align:center;">
+</td>
+<td style="text-align:center;">
 </td>
 <td style="text-align:center;">
 </td>
@@ -592,10 +609,11 @@ Bias-Variance trade-offs <br>In-sample selection <br>AIC <br>
 29 April
 </td>
 <td style="text-align:left;">
-Model selection <br>
+<b>Model selection</b> <br>Out-of-sample selection <br>Cross-validation <br>Multi-model inference <br>
 </td>
-<td style="text-align:left;">
-Out-of-sample selection <br>Cross-validation <br>Multi-model inference <br>
+<td style="text-align:center;">
+</td>
+<td style="text-align:center;">
 </td>
 <td style="text-align:center;">
 </td>
@@ -610,10 +628,11 @@ Out-of-sample selection <br>Cross-validation <br>Multi-model inference <br>
 1 May
 </td>
 <td style="text-align:left;">
-Mixed effects models <br><br><b>Project plan due</b> <br>
+<b>Mixed effects models</b> <br>Fixed vs Random effects <br>Costs/benefits <br>Restricted maximum likelihood <br><br><b>Project plan due</b> <br>
 </td>
-<td style="text-align:left;">
-Fixed vs Random effects <br>Costs/benefits <br>Restricted maximum likelihood <br>
+<td style="text-align:center;">
+</td>
+<td style="text-align:center;">
 </td>
 <td style="text-align:center;">
 </td>
@@ -628,10 +647,11 @@ Fixed vs Random effects <br>Costs/benefits <br>Restricted maximum likelihood <br
 4 May
 </td>
 <td style="text-align:left;">
-Mixed effects models <br>
+<b>Mixed effects models</b> <br>Inference <br>Diagnostics <br>Model selection <br>
 </td>
-<td style="text-align:left;">
-Inference <br>Diagnostics <br>Model selection <br>
+<td style="text-align:center;">
+</td>
+<td style="text-align:center;">
 </td>
 <td style="text-align:center;">
 </td>
@@ -646,13 +666,14 @@ Inference <br>Diagnostics <br>Model selection <br>
 6 May
 </td>
 <td style="text-align:left;">
-Guest lecture - Dr. Staci Amburgey <br>
-</td>
-<td style="text-align:left;">
-Using quantitative ecology for species<br>conservation in the face of anthropogenic change <br>
+<b>Guest lecture:</b> <br><b>Dr. Staci Amburgey</b> <br><i>Using quantitative ecology for<br>species conservation in the face<br>of anthropogenic change</i> <br>
 </td>
 <td style="text-align:center;">
 <a href="lectures/week_06/lec_17_guest_lec_amburgey.html"><svg style="height:20;fill:#eb6864;" viewbox="0 0 384 512"><path d="M224 136V0H24C10.7 0 0 10.7 0 24v464c0 13.3 10.7 24 24 24h336c13.3 0 24-10.7 24-24V160H248c-13.2 0-24-10.8-24-24zm64 236c0 6.6-5.4 12-12 12H108c-6.6 0-12-5.4-12-12v-8c0-6.6 5.4-12 12-12h168c6.6 0 12 5.4 12 12v8zm0-64c0 6.6-5.4 12-12 12H108c-6.6 0-12-5.4-12-12v-8c0-6.6 5.4-12 12-12h168c6.6 0 12 5.4 12 12v8zm0-72v8c0 6.6-5.4 12-12 12H108c-6.6 0-12-5.4-12-12v-8c0-6.6 5.4-12 12-12h168c6.6 0 12 5.4 12 12zm96-114.1v6.1H256V0h6.1c6.4 0 12.5 2.5 17 7l97.9 98c4.5 4.5 7 10.6 7 16.9z"></path></svg></a>
+</td>
+<td style="text-align:center;">
+</td>
+<td style="text-align:center;">
 </td>
 <td style="text-align:center;">
 </td>
@@ -665,10 +686,11 @@ Using quantitative ecology for species<br>conservation in the face of anthropoge
 8 May
 </td>
 <td style="text-align:left;">
-Introduction to GLMs <br>
+<b>Introduction to GLMs</b> <br>Data distribution <br>Links <br>Linear predictors <br>
 </td>
-<td style="text-align:left;">
-Data distribution <br>Links <br>Linear predictors <br>
+<td style="text-align:center;">
+</td>
+<td style="text-align:center;">
 </td>
 <td style="text-align:center;">
 </td>
@@ -683,10 +705,11 @@ Data distribution <br>Links <br>Linear predictors <br>
 11 May
 </td>
 <td style="text-align:left;">
-Modeling binary data <br>
+<b>Modeling binary data</b> <br>Logistic regression <br>Model selection <br>Diagnostics <br>
 </td>
-<td style="text-align:left;">
-Logistic regression <br>Model selection <br>Diagnostics <br>
+<td style="text-align:center;">
+</td>
+<td style="text-align:center;">
 </td>
 <td style="text-align:center;">
 </td>
@@ -701,10 +724,11 @@ Logistic regression <br>Model selection <br>Diagnostics <br>
 13 May
 </td>
 <td style="text-align:left;">
-Overdispersion in binary data <br>
+<b>Overdispersion in binary data</b> <br>Variance inflation <br>Beta-binomial modes <br>Quasi-likelihood <br>
 </td>
-<td style="text-align:left;">
-Variance inflation <br>Beta-binomial modes <br>Quasi-likelihood <br>
+<td style="text-align:center;">
+</td>
+<td style="text-align:center;">
 </td>
 <td style="text-align:center;">
 </td>
@@ -719,10 +743,11 @@ Variance inflation <br>Beta-binomial modes <br>Quasi-likelihood <br>
 15 May
 </td>
 <td style="text-align:left;">
-Modeling count data <br>
+<b>Modeling count data</b> <br>Poisson regression <br>Leverage and influence <br>Diagnostics <br>
 </td>
-<td style="text-align:left;">
-Poisson regression <br>Leverage and influence <br>Diagnostics <br>
+<td style="text-align:center;">
+</td>
+<td style="text-align:center;">
 </td>
 <td style="text-align:center;">
 </td>
@@ -737,10 +762,11 @@ Poisson regression <br>Leverage and influence <br>Diagnostics <br>
 18 May
 </td>
 <td style="text-align:left;">
-Overdispersion in count data <br>
+<b>Overdispersion in count data</b> <br>Variance inflation <br>QAIC <br>Negative-binomial distribution <br>Quasi-likelihood <br>
 </td>
-<td style="text-align:left;">
-Variance inflation <br>QAIC <br>Negative-binomial distribution <br>Quasi-likelihood <br>
+<td style="text-align:center;">
+</td>
+<td style="text-align:center;">
 </td>
 <td style="text-align:center;">
 </td>
@@ -755,10 +781,11 @@ Variance inflation <br>QAIC <br>Negative-binomial distribution <br>Quasi-likelih
 20 May
 </td>
 <td style="text-align:left;">
-Introduction to GLMMs <br>
+<b>Introductions to GLMMs</b> <br>Computing likelihoods <br>Diagnostics <br>Goodness-of-fit <br>
 </td>
-<td style="text-align:left;">
-Computing likelihoods <br>Diagnostics <br>Goodness-of-fit <br>
+<td style="text-align:center;">
+</td>
+<td style="text-align:center;">
 </td>
 <td style="text-align:center;">
 </td>
@@ -773,10 +800,11 @@ Computing likelihoods <br>Diagnostics <br>Goodness-of-fit <br>
 22 May
 </td>
 <td style="text-align:left;">
-More on GLMMs <br>
+<b>More on GLMMs</b> <br>Computing likelihoods <br>Diagnostics <br>Goodness-of-fit <br>
 </td>
-<td style="text-align:left;">
-Computing likelihoods <br>Diagnostics <br>Goodness-of-fit <br>
+<td style="text-align:center;">
+</td>
+<td style="text-align:center;">
 </td>
 <td style="text-align:center;">
 </td>
@@ -793,8 +821,9 @@ Computing likelihoods <br>Diagnostics <br>Goodness-of-fit <br>
 <td style="text-align:left;">
 <b>Memorial Day - No class</b> <br>
 </td>
-<td style="text-align:left;">
-<br>
+<td style="text-align:center;">
+</td>
+<td style="text-align:center;">
 </td>
 <td style="text-align:center;">
 </td>
@@ -809,10 +838,11 @@ Computing likelihoods <br>Diagnostics <br>Goodness-of-fit <br>
 27 May
 </td>
 <td style="text-align:left;">
-Material review <br>
+<b>Review of materials</b> <br>
 </td>
-<td style="text-align:left;">
-Catch-up and review materials <br>
+<td style="text-align:center;">
+</td>
+<td style="text-align:center;">
 </td>
 <td style="text-align:center;">
 </td>
@@ -827,10 +857,11 @@ Catch-up and review materials <br>
 29 May
 </td>
 <td style="text-align:left;">
-Course synthesis <br>
+<b>Course synthesis</b> <br>What did we learn? <br>Where do we go from here? <br>
 </td>
-<td style="text-align:left;">
-What did we learn? <br>Where do we go from here? <br>
+<td style="text-align:center;">
+</td>
+<td style="text-align:center;">
 </td>
 <td style="text-align:center;">
 </td>
@@ -845,10 +876,11 @@ What did we learn? <br>Where do we go from here? <br>
 1 June
 </td>
 <td style="text-align:left;">
-Presentations of class projects <br>
+<b>Presentations of class projects</b> <br>
 </td>
-<td style="text-align:left;">
-<br>
+<td style="text-align:center;">
+</td>
+<td style="text-align:center;">
 </td>
 <td style="text-align:center;">
 </td>
@@ -863,10 +895,11 @@ Presentations of class projects <br>
 3 June
 </td>
 <td style="text-align:left;">
-Presentations of class projects <br>
+<b>Presentations of class projects</b> <br>
 </td>
-<td style="text-align:left;">
-<br>
+<td style="text-align:center;">
+</td>
+<td style="text-align:center;">
 </td>
 <td style="text-align:center;">
 </td>
@@ -881,10 +914,11 @@ Presentations of class projects <br>
 5 June
 </td>
 <td style="text-align:left;">
-Presentations of class projects <br>
+<b>Presentations of class projects</b> <br>
 </td>
-<td style="text-align:left;">
-<br>
+<td style="text-align:center;">
+</td>
+<td style="text-align:center;">
 </td>
 <td style="text-align:center;">
 </td>
