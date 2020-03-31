@@ -27,7 +27,7 @@ software <- list(
   background = c("[R software](https://www.r-project.org/about.html)",
                  "[RStudio](https://resources.rstudio.com/)",
                  "[Intro to R Markdown](https://rmarkdown.rstudio.com/lesson-1.html)",
-                 "[Video intro to GitHub](https://www.youtube.com/watch?v=w3jLJU7DT5E"),
+                 "[Video intro to GitHub](https://www.youtube.com/watch?v=w3jLJU7DT5E)"),
   zoom = ""
 )
 
