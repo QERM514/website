@@ -22,9 +22,12 @@ software <- list(
   title = "Overview of required software",
   topics = c("<b>Required software</b>","R", "RStudio", "R Markdown", "GitHub"),
   pdf = c(""),
-  rmd = c(""),
-  html = c(""),
-  background = c(""),
+  rmd = c("lectures/week_01/lec_02_software.Rmd"),
+  html = c("lectures/week_01/lec_02_software.html"),
+  background = c("[R software](https://www.r-project.org/about.html)",
+                 "[RStudio](https://resources.rstudio.com/)",
+                 "[Intro to R Markdown](https://rmarkdown.rstudio.com/lesson-1.html)",
+                 "[Video intro to GitHub](https://www.youtube.com/watch?v=w3jLJU7DT5E"),
   zoom = ""
 )
 
