@@ -21,7 +21,7 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ## R Software | An environment for statistical computing and graphics
 
-* It's FREE!
+> - It's FREE!
 
 > - Enormous developer & support communities
 
@@ -85,4 +85,28 @@ Supports dozens of static and dynamic output formats
 [Gallery here](https://rmarkdown.rstudio.com/gallery.html)
 
 
+## GitHub | A website & cloud-based service that helps developers
 
+* Store & manage their code
+
+> - Track & control changes to their code
+
+> - Communicate with other members
+
+
+## GitHub
+
+Its central focus is version control via [**git**](https://git-scm.com/) 
+
+but that's not our focus in this course
+
+
+## &nbsp; {data-background=GitHub_repo.png data-background-size=cover}
+
+
+## {.flexbox .vcenter .bigger}
+
+
+<font size="10">
+[**Intro to GitHub issues**](https://github.com/QERM514/assistance)
+</font>
