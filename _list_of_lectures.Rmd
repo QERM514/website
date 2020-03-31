@@ -21,7 +21,7 @@ intro <- list(
 software <- list(
   title = "Overview of required software",
   topics = c("<b>Required software</b>","R", "RStudio", "R Markdown", "GitHub"),
-  pdf = c(""),
+  pdf = c("lectures/week_01/lec_02_software.pdf"),
   rmd = c("lectures/week_01/lec_02_software.Rmd"),
   html = c("lectures/week_01/lec_02_software.html"),
   background = c("[R software](https://www.r-project.org/about.html)",
