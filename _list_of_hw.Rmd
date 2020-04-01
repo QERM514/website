@@ -16,10 +16,8 @@ matrixlab <- list(
   rmd = "",
   html = "",
   data = "",
-  homework = "Listed at end of lab",
-  key = "",
-  hw_topics = "Review of matrix math"
-)
+  key = ""
+  )
 
 ## overview of R Markdown
 markdown <- list(
@@ -28,11 +26,8 @@ markdown <- list(
   pdf = "",
   rmd = "",
   html = "",
-  youtube = "",
   data = "",
-  homework = "",
-  key = "",
-  hw_topics = ""
+  key = ""
 )
 ```
 
