@@ -1,10 +1,6 @@
 name: "docs"
 navbar:
-  title: ""
-  left:
-    - text: ""
-      icon: fa-home
-      href: index.html
+  title: "QERM 514"
   right:
     - text: "Lectures"
       href: lectures.html
@@ -16,6 +12,9 @@ navbar:
       href: final_proj.html
     - text: "References"
       href: references.html
+    - text: ""
+      icon: fa-github
+      href: https://github.com/QERM514
 output_dir: "docs"
 output:
   html_document:
