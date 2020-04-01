@@ -25,25 +25,45 @@ names(week_hw) <- paste0("L", seq(8))
 week_hw$L1 <- markdown
 ```
 
-```{r hw_topics, include = FALSE}
-hw_topics <- lapply(week_hw, function(x) { if(is.list(x)) {c(x$hw_topics)} else {""} })
+```{r topics, include = FALSE}
+topics <- lapply(week_hw, function(x) { if(is.list(x)) {c(x$topics)} else {""} })
 ## topics formatted for html
-hw_topics_html <- sapply(lapply(hw_topics, paste, "<br>", collapse = ""), c)
-names(hw_topics_html) <- NULL
+topics_html <- sapply(lapply(topics, paste, "<br>", collapse = ""), c)
+names(topics_html) <- NULL
 ```
 
-```{r hw_links, include = FALSE}
-# hw_links <- lapply(week_hw, function(x) {if(is.list(x)) {x$homework} else {""} })
+```{r assignment_links, include = FALSE}
+# assignment_links <- lapply(week_hw, function(x) {if(is.list(x)) {x$pdf} else {""} })
 # ## topics formatted for html
-# hw_links_html <- sapply(lapply(hw_links, paste, "<br>", collapse = ""), c)
-# names(hw_links_html) <- NULL
+# assignment_links_html <- sapply(lapply(assignment_links, paste, "<br>", collapse = ""), c)
+# names(assignment_links_html) <- NULL
 
-hw_links <- lapply(week_hw, function(x) { if(is.list(x)) {c(x$homework)} else {""} })
-hw_links_html <- sapply(lapply(hw_links, function(x) {
+assignment_links <- lapply(week_hw, function(x) { if(is.list(x)) {c(x$pdf)} else {""} })
+assignment_links_html <- sapply(lapply(assignment_links, function(x) {
   if(length(x)>1) {
-    tmp1 <- paste0("[", as.character(fontawesome::fa("file-alt", height = 20, fill = "#eb6864")), " (", 1:length(x), ")](")
+    tmp1 <- paste0("[", as.character(fontawesome::fa("file-pdf", height = 20, fill = "#eb6864")), " (", 1:length(x), ")](")
     } else {
-      tmp1 <- paste0("[", as.character(fontawesome::fa("file-alt", height = 20, fill = "#eb6864")), "](")
+      tmp1 <- paste0("[", as.character(fontawesome::fa("file-pdf", height = 20, fill = "#eb6864")), "](")
+      }
+  tmp2 <- ")"
+  tmp <- paste0(tmp1, x, tmp2)
+  tmp[x==""] <- ""
+  tmp <- paste(tmp, collapse="<br>"); tmp}), c)
+
+```
+
+```{r template_links, include = FALSE}
+# template_links <- lapply(week_hw, function(x) {if(is.list(x)) {x$rmd} else {""} })
+# ## topics formatted for html
+# template_links_html <- sapply(lapply(template_links, paste, "<br>", collapse = ""), c)
+# names(template_links_html) <- NULL
+
+template_links <- lapply(week_hw, function(x) { if(is.list(x)) {c(x$rmd)} else {""} })
+template_links_html <- sapply(lapply(template_links, function(x) {
+  if(length(x)>1) {
+    tmp1 <- paste0("[", as.character(fontawesome::fa("file-code", height = 20, fill = "#eb6864")), " (", 1:length(x), ")](")
+    } else {
+      tmp1 <- paste0("[", as.character(fontawesome::fa("file-code", height = 20, fill = "#eb6864")), "](")
       }
   tmp2 <- ")"
   tmp <- paste0(tmp1, x, tmp2)
@@ -86,12 +106,13 @@ names(key_links_html) <- NULL
 ## data frame with dates & topics
 syl_txt <- data.frame(
   date = sub("0(\\d)", "\\1", format(fri[1:8], "%d %B")),
-  hw_topics = hw_topics_html,
-  hw_links = hw_links_html,
+  topics = topics_html,
+  assignment_links = assignment_links_html,
+  template_links = template_links_html,
   data_links = data_links_html,
   key_links = key_links_html
 )
-colnames(syl_txt) <- c("Date", "Topic(s)", "Assignment", "Data", "Answer key")
+colnames(syl_txt) <- c("Date", "Topic(s)", "Assignment", "Template", "Data", "Answer key")
 rownames(syl_txt) <- NULL
 
 ## generate table
