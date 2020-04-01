@@ -28,7 +28,7 @@ software <- list(
                  "[RStudio](https://resources.rstudio.com/)",
                  "[Intro to R Markdown](https://rmarkdown.rstudio.com/lesson-1.html)",
                  "[Video intro to GitHub](https://www.youtube.com/watch?v=w3jLJU7DT5E)"),
-  zoom = ""
+  zoom = "https://washington.zoom.us/rec/share/ucxNJqvQ6kpJR4nV-Vjnd5N9ALXvT6a82ykaqfdYxR0_zA1nuhdWz6dZRWcQOrrg"
 )
 
 data_types <- list(
