@@ -1,6 +1,6 @@
 ---
 title: "Analysis of Ecological and Environmental Data"
-subtitle: "QERM 514 - Spring 2020"
+subtitle: "QERM 514 &nbsp; &nbsp; University of Washington &nbsp; &nbsp; Spring 2020"
 output:
   html_document:
     toc: true
