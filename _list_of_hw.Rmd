@@ -23,8 +23,8 @@ matrixlab <- list(
 markdown <- list(
   title = "R Markdown",
   topics = c("Authoring reports with R Markdown"),
-  pdf = "",
-  rmd = "",
+  pdf = "hw_01_intro_to_markdown.pdf",
+  rmd = "hw_01_intro_to_markdown.Rmd",
   html = "",
   data = "",
   key = ""
