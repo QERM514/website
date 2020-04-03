@@ -15,7 +15,7 @@ matrixlab <- list(
   pdf = "labs/week_01/basic-matrix-math.pdf",
   rmd = "",
   html = "",
-  youtube = "",
+  zoom = "",
   data = "",
   background = c("")
   )
@@ -27,7 +27,7 @@ markdown <- list(
   pdf = c(""),
   rmd = c("labs/week_01/intro_rmarkdown.Rmd"),
   html = c("labs/week_01/intro_rmarkdown.html"),
-  youtube = "",
+  zoom = "https://washington.zoom.us/rec/play/vsIpdOn-pj83S92WtwSDUaAvW464LKys0SdKq_RZyknkUiFQOwL1N-cRMzd1BCseNEzjbju3EOzkBdU?continueMode=true",
   data = "",
   background = c("[R Markdown definitive guide](https://bookdown.org/yihui/rmarkdown/)",
                  "[R Markdown cheat sheet](https://rstudio.com/wp-content/uploads/2016/03/rmarkdown-cheatsheet-2.0.pdf)",
@@ -41,7 +41,7 @@ fitting_LMs <- list(
   pdf = c(""),
   rmd = c(""),
   html = c(""),
-  youtube = "",
+  zoom = "",
   data = "",
   background = c("")
   )
@@ -53,7 +53,7 @@ diagnostics_and_errors <- list(
   pdf = c(""),
   rmd = c(""),
   html = c(""),
-  youtube = "",
+  zoom = "",
   data = "",
   background = c("")
   )
@@ -65,7 +65,7 @@ design_matrices <- list(
   pdf = c(""),
   rmd = c(""),
   html = c(""),
-  youtube = "",
+  zoom = "",
   data = "",
   background = c("")
   )
@@ -77,7 +77,7 @@ model_selection <- list(
   pdf = c(""),
   rmd = c(""),
   html = c(""),
-  youtube = "",
+  zoom = "",
   data = "",
   background = c("")
   )
@@ -89,7 +89,7 @@ mixed_models <- list(
   pdf = c(""),
   rmd = c(""),
   html = c(""),
-  youtube = "",
+  zoom = "",
   data = "",
   background = c("")
   )
@@ -101,7 +101,7 @@ fitting_glms <- list(
   pdf = c(""),
   rmd = c(""),
   html = c(""),
-  youtube = "",
+  zoom = "",
   data = "",
   background = c("")
   )
@@ -113,7 +113,7 @@ fitting_glmms <- list(
   pdf = c(""),
   rmd = c(""),
   html = c(""),
-  youtube = "",
+  zoom = "",
   data = "",
   background = c("")
   )
@@ -125,7 +125,7 @@ present_prep <- list(
   pdf = "",
   rmd = "",
   html = "",
-  youtube = "",
+  zoom = "",
   data = "",
   background = c("")
   )
@@ -137,7 +137,7 @@ presentlab <- list(
   pdf = "",
   rmd = "",
   html = "",
-  youtube = "",
+  zoom = "",
   data = "",
   background = c("")
   )
