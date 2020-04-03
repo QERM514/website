@@ -19,7 +19,7 @@ Students will use **R Markdown** to complete their homework assignments, which w
 
 where `[lastname]` is replaced with the student's last name and the `[#]` is replaced with the actual number of the homework assignment (eg, `fisher_qerm514_hw_1.Rmd`). Students should attach their completed homework file to an email message and send it to [qerm514@uw.edu](mailto:qerm514@uw.edu).
 
-**Homework will be assigned each Friday of weeks 1-8 and will be due by 11:59 PM one week later on the following Friday (weeks 2-9)**.  
+### Homework will be assigned each Friday of weeks 1-8 and will be due by 11:59 PM on the following Friday (weeks 2-9).
 
 ```{r week_hw, include = FALSE}
 ## empty list for labs
@@ -125,6 +125,6 @@ kable(syl_txt, format = "html", caption = " ",
   kable_styling(bootstrap_options = "striped",
                 full_width = FALSE,
                 position = "left") %>%
-  column_spec(1, width = "8em") 
+  column_spec(1, width = "6em") 
 ```
 

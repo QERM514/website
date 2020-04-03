@@ -5,7 +5,7 @@ output: html_document
 
 <br>
 
-**NOTE: All lectures will be delivered synchronously via [Zoom](https://washington.zoom.us/j/831083365)**
+### NOTE: All lectures will be delivered synchronously via [Zoom](https://washington.zoom.us/j/831083365)
 
 ```{r child = "_timeline.Rmd", include=FALSE}
 ```
@@ -194,6 +194,6 @@ kableExtra::kable(syl_txt, format = "html", caption = " ",
   kable_styling(bootstrap_options = "striped",
                 full_width = FALSE,
                 position = "left") %>%
-  column_spec(1, width = "8em") 
+  column_spec(c(1,3,4,5,6), width = "6em") 
 ```
 
