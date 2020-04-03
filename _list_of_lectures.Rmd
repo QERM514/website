@@ -40,7 +40,7 @@ data_types <- list(
   background = c("[Understanding data](https://punkrockor.com/2019/11/01/data-science-isnt-just-data-wrangling-and-data-analysis-on-understanding-your-data/)",
                  "[Statistical distributions](http://learnbayes.org/demo/stat-distributions-js/distributionTable.html)",
                  "[Distribution relationships](http://www.math.wm.edu/~leemis/chart/UDR/UDR.html)"),
-  zoom = ""
+  zoom = "https://washington.zoom.us/rec/share/_o9nHZ7g-1pLWKvhuE3mBfYkNd-4eaa8gCQe-PQOyh3HoSm7VFUsg4u0GcXsJYEn"
 )
 
 linear_models_1 <- list(
