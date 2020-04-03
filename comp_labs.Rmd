@@ -72,13 +72,20 @@ source_links_html <- sapply(lapply(source_links, function(x) {
 zoom_links <- lapply(week_labs, function(x) { if(is.list(x)) {x$zoom} else {""} })
 ## topics formatted for html
 zoom_links_html <- sapply(lapply(zoom_links, function(x) {
-  tmp1 <- "[zoom]("
+  if(length(x)>1) {
+    tmp1 <- paste0("[",
+                   as.character(fontawesome::fa("file-video", height = 20, fill = "#eb6864")),
+                   " (", 1:length(x), ")](")
+    } else {
+      tmp1 <- paste0("[",
+                     as.character(fontawesome::fa("file-video", height = 20, fill = "#eb6864")),
+                     "](")
+      }
   tmp2 <- ")"
-  tmp <- paste0(tmp1,x,tmp2)
+  tmp <- paste0(tmp1, x, tmp2)
   tmp[x==""] <- ""
-  tmp <- paste(tmp, collapse="<br>")
+  tmp <- paste(tmp, collapse = "<br>")
   tmp}), c)
-names(zoom_links_html) <- NULL
 ```
 
 ```{r data_links, include = FALSE}
@@ -109,19 +116,20 @@ syl_txt <- data.frame(
   lab_topics = lab_topics_html,
   lab_links = handout_links_html,
   source_links = source_links_html,
-  # zoom_links = zoom_links_html,
   data_links = data_links_html,
+  zoom_links = zoom_links_html,
   background_links = background_links_html
 )
-colnames(syl_txt) <- c("Date", "Topic(s)", "Handout(s)", "Source code", "Data", "Reference(s)")
+colnames(syl_txt) <- c("Date", "Topic(s)",
+                       "Handout(s)", "Source code", "Data", "Zoom recording", "Reference(s)")
 rownames(syl_txt) <- NULL
 
 ## generate table
 kable(syl_txt, format = "html", caption = " ",
-      align = "clcccl", escape = FALSE) %>%
+      align = "clccccl", escape = FALSE) %>%
   kable_styling(bootstrap_options = "striped",
                 full_width = FALSE,
                 position = "left") %>%
-  column_spec(1, width = "8em") 
+  column_spec(1, width = "7em") 
 ```
 
