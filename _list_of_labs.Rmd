@@ -29,7 +29,7 @@ markdown <- list(
   html = c("labs/week_01/intro_rmarkdown.html"),
   zoom = "https://washington.zoom.us/rec/play/vsIpdOn-pj83S92WtwSDUaAvW464LKys0SdKq_RZyknkUiFQOwL1N-cRMzd1BCseNEzjbju3EOzkBdU?continueMode=true",
   data = "",
-  background = c("[R Markdown definitive guide](https://bookdown.org/yihui/rmarkdown/)",
+  background = c("[R Markdown full guide](https://bookdown.org/yihui/rmarkdown/)",
                  "[R Markdown cheat sheet](https://rstudio.com/wp-content/uploads/2016/03/rmarkdown-cheatsheet-2.0.pdf)",
                  "[LaTeX math codes](labs/week_01/latex_math_sheet.pdf)")
 )
