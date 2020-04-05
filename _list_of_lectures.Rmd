@@ -45,7 +45,7 @@ data_types <- list(
 
 linear_models_1 <- list(
   title = "Linear models",
-  topics = c("<b>Linear models</b>", "Regression", "ANOVA", "ANCOVA"),
+  topics = c("<b>Linear models</b>", "Non-linear approximations", "Regression, ANOVA, ANCOVA"),
   pdf = c(""),
   rmd = c(""),
   html = c(""),
@@ -65,7 +65,7 @@ linear_models_2 <- list(
 
 inference <- list(
   title = "Inference",
-  topics = c("<b>Inference</b>", "Variance partitioning", "F-tests for nested models", "Permutation tests"),
+  topics = c("<b>Inference</b>", "Variance partitioning", "F-tests for nested models", "Confidence intervals"),
   pdf = c(""),
   rmd = c(""),
   html = c(""),
@@ -206,7 +206,7 @@ binary_GLM <- list(
 
 overdispersed_binary <- list(
   title = "Overdispersion in binary data",
-  topics = c("<b>Overdispersion in binary data</b>", "Variance inflation", "Beta-binomial modes", "Quasi-likelihood"),
+  topics = c("<b>Overdispersion in binary data</b>", "Variance inflation", "Beta-binomial models", "Quasi-likelihood"),
   pdf = c(""),
   rmd = c(""),
   html = c(""),
