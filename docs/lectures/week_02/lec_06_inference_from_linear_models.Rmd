@@ -774,3 +774,24 @@ The bootstrap<sup>$\dagger$</sup> method provides a way to construct CI's withou
 Given a fitted model $\mathbf{y} = \mathbf{X} \hat{\boldsymbol{\beta}} + \mathbf{e}$, we might want to know the uncertainty around a new estimate $\mathbf{y}^*$ given some new predictor $\mathbf{X}^*$
 
 
+## CI for the mean response
+
+Suppose we wanted to estimate the uncertainty in the *average* response given by
+
+$$
+\hat{\mathbf{y}}^* = \mathbf{X}^* \hat{\boldsymbol{\beta}}
+$$
+
+Recall that the general formula for a CI on a quantity $z$ is
+
+$$
+100(1 - \alpha)\% ~ \text{CI}: \text{E}(z) ~ \pm ~ t^{(\alpha / 2)}_{df}\text{SD}(z)
+$$
+
+So we would have
+
+$$
+\hat{\mathbf{y}}^* ~ \pm ~ t^{(\alpha / 2)}_{df} \sqrt{\text{Var} \left( \hat{\mathbf{y}}^* \right)}
+$$
+
+
