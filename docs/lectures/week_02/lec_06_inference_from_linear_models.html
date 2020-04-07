@@ -3744,6 +3744,20 @@ t_i = \frac{(\hat{\beta_i} - \beta_{H_0})}{\text{SE} \left( \hat{\beta}_i \right
 
 <p>\[
 \hat{\mathbf{y}}^* ~ \pm ~ t^{(\alpha / 2)}_{df} \sqrt{\text{Var} \left( \hat{\mathbf{y}}^* \right)}
+\]</p>
+
+</article></slide><slide class=""><hgroup><h2>CI for the mean response</h2></hgroup><article  id="ci-for-the-mean-response-1">
+
+<p>We can calculate the SD of our expectation as</p>
+
+<p>\[
+\begin{aligned}
+\text{Var} \left( \hat{\mathbf{y}}^* \right) &amp;= \text{Var} \left( \mathbf{X}^* \hat{\boldsymbol{\beta}} \right)  \\
+  &amp;= {\mathbf{X}^*}^{\top} \text{Var}\left( \hat{\boldsymbol{\beta}} \right) \mathbf{X}^* \\
+  &amp;= {\mathbf{X}^*}^{\top} \left[ \sigma^2 (\mathbf{X}^{\top} \mathbf{X})^{-1} \right] \mathbf{X}^* \\
+  &amp;\Downarrow \\
+\text{SD} \left( \hat{\mathbf{y}}^* \right) &amp;= \sigma \sqrt{{\mathbf{X}^*}^{\top} (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^* } 
+\end{aligned}
 \]</p></article></slide>
 
 
