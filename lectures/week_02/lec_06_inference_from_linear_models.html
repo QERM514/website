@@ -3720,7 +3720,89 @@ t_i = \frac{(\hat{\beta_i} - \beta_{H_0})}{\text{SE} \left( \hat{\beta}_i \right
 <li>Estimate \(\hat{\boldsymbol{\beta}}^*\) from \(\mathbf{X}\) &amp; \(\mathbf{y}^*\))</li>
 </ul></li>
 <li><p>Select the \(\tfrac{\alpha}{2}\) and \((1 - \tfrac{\alpha}{2})\) percentiles from the saved \(\hat{\boldsymbol{\beta}}^*\)</p></li>
-</ol></article></slide>
+</ol>
+
+</article></slide><slide class=""><hgroup><h2>Confidence interval for new predictions</h2></hgroup><article  id="confidence-interval-for-new-predictions">
+
+<p>Given a fitted model \(\mathbf{y} = \mathbf{X} \hat{\boldsymbol{\beta}} + \mathbf{e}\), we might want to know the uncertainty around a new estimate \(\mathbf{y}^*\) given some new predictor \(\mathbf{X}^*\)</p>
+
+</article></slide><slide class=""><hgroup><h2>CI for the mean response</h2></hgroup><article  id="ci-for-the-mean-response">
+
+<p>Suppose we wanted to estimate the uncertainty in the <em>average</em> response given by</p>
+
+<p>\[
+\hat{\mathbf{y}}^* = \mathbf{X}^* \hat{\boldsymbol{\beta}}
+\]</p>
+
+<p>Recall that the general formula for a CI on a quantity \(z\) is</p>
+
+<p>\[
+100(1 - \alpha)\% ~ \text{CI}: \text{E}(z) ~ \pm ~ t^{(\alpha / 2)}_{df}\text{SD}(z)
+\]</p>
+
+<p>So we would have</p>
+
+<p>\[
+\hat{\mathbf{y}}^* ~ \pm ~ t^{(\alpha / 2)}_{df} \sqrt{\text{Var} \left( \hat{\mathbf{y}}^* \right)}
+\]</p>
+
+</article></slide><slide class=""><hgroup><h2>CI for the mean response</h2></hgroup><article  id="ci-for-the-mean-response-1">
+
+<p>We can calculate the SD of our expectation as</p>
+
+<p>\[
+\begin{aligned}
+\text{Var} \left( \hat{\mathbf{y}}^* \right) &amp;= \text{Var} \left( \mathbf{X}^* \hat{\boldsymbol{\beta}} \right)  \\
+  &amp;= {\mathbf{X}^*}^{\top} \text{Var}\left( \hat{\boldsymbol{\beta}} \right) \mathbf{X}^* \\
+  &amp;= {\mathbf{X}^*}^{\top} \left[ \sigma^2 (\mathbf{X}^{\top} \mathbf{X})^{-1} \right] \mathbf{X}^* \\
+  &amp;\Downarrow \\
+\text{SD} \left( \hat{\mathbf{y}}^* \right) &amp;= \sigma \sqrt{{\mathbf{X}^*}^{\top} (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^* } 
+\end{aligned}
+\]</p>
+
+</article></slide><slide class=""><hgroup><h2>CI for the mean response</h2></hgroup><article  id="ci-for-the-mean-response-2">
+
+<p>So our CI on the mean response is given by</p>
+
+<p>\[
+\hat{\mathbf{y}}^* \pm ~ t^{(\alpha / 2)}_{df} \sigma \sqrt{{\mathbf{X}^*}^{\top} (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^* } 
+\]</p>
+
+</article></slide><slide class=""><hgroup><h2>CI for a specific response</h2></hgroup><article  id="ci-for-a-specific-response">
+
+<p>What about the uncertainty in a <em>specific</em> prediction?</p>
+
+<p>In that case we need to account for our additional uncertainty owing to the error in our relationship, which is given by</p>
+
+<p>\[
+\hat{\mathbf{y}}^* = \mathbf{X}^* \hat{\boldsymbol{\beta}} + \mathbf{e}
+\]</p>
+
+</article></slide><slide class=""><hgroup><h2>CI for a specific response</h2></hgroup><article  id="ci-for-a-specific-response-1">
+
+<p>The SD of the new prediction is given by</p>
+
+<p>\[
+\begin{aligned}
+\text{Var} \left( \hat{\mathbf{y}}^* \right) &amp;= {\mathbf{X}^*}^{\top} \text{Var}\left( \hat{\boldsymbol{\beta}} \right) \mathbf{X}^* + \text{Var} \left( \mathbf{e} \right) \\
+  &amp;= {\mathbf{X}^*}^{\top} \left[ \sigma^2 (\mathbf{X}^{\top} \mathbf{X})^{-1} \right] \mathbf{X}^* + \sigma^2\\
+  &amp;= \sigma^2 \left( {\mathbf{X}^*}^{\top} (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^* + 1 \right) \\
+  &amp;\Downarrow \\
+\text{SD} \left( \hat{\mathbf{y}}^* \right) &amp;= \sigma \sqrt{1 + {\mathbf{X}^*}^{\top} (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^* } 
+\end{aligned}
+\]</p>
+
+</article></slide><slide class=""><hgroup><h2>CI for a specific response</h2></hgroup><article  id="ci-for-a-specific-response-2">
+
+<p>So our CI on the new prediction is given by</p>
+
+<p>\[
+\hat{\mathbf{y}}^* \pm ~ t^{(\alpha / 2)}_{df} \sigma \sqrt{1 + {\mathbf{X}^*}^{\top} (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^* } 
+\]</p>
+
+<p><br></p>
+
+<p>This is typically referred to as the <em>prediction interval</em></p></article></slide>
 
 
   <slide class="backdrop"></slide>
