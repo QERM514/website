@@ -3614,7 +3614,7 @@ diversity = \(f\)(area, elevation, distance to nearest island)
 <p>Another option is to estimate a \(t\)-statistic as</p>
 
 <p>\[
-t_i = \frac{\beta_i}{\text{SE} \left( \beta_i \right)}
+t_i = \frac{\hat{\beta}_i}{\text{SE} \left( \hat{\beta}_i \right)}
 \]</p>
 
 <p>and compare it to a \(t\)-distribution with \(n - k\) degrees of freedom</p>
@@ -3659,10 +3659,10 @@ t_i = \frac{\beta_i}{\text{SE} \left( \beta_i \right)}
 
 </article></slide><slide class=""><hgroup><h2>Testing a subspace</h2></hgroup><article  id="testing-a-subspace-2">
 
-<p>We can also modify our \(t\)-test from before and use it for our comparison</p>
+<p>We can also modify our \(t\)-test from before and use it for our comparison by including the hypothesized \(\hat{\beta}_{H_0}\) as an offset</p>
 
 <p>\[
-t_i = \frac{(\beta_i - c)}{\text{SE} \left( \beta_i \right)}
+t_i = \frac{(\hat{\beta_i} - \beta_{H_0})}{\text{SE} \left( \hat{\beta}_i \right)}
 \]</p>
 
 </article></slide><slide class=""><hgroup><h2>Caveats about hypothesis testing</h2></hgroup><article  id="caveats-about-hypothesis-testing">

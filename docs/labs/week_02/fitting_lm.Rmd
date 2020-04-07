@@ -17,7 +17,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Background
 
-This week we will see how to fit linear models in **R**, and estimate parameter uncertainty and confidence intervals. The data set we will use comes from a paper by Johnson & Raven (1973, *Science* 179:893-895) and consists of the diversity of plants species across 30 of the Galapagos Islands, along with measurements of 5 possible explanatory variables:
+This week we will see how to fit linear models in **R**, and estimate parameter uncertainty and confidence intervals. The data come from a paper by Johnson & Raven (1973, *Science* 179:893-895) and consist of the diversity of plants species across 30 islands in the Galapagos Archipelago. The data set also contains measurements of 5 possible explanatory variables:
 
 * `Area`: the area of the island (km<sup>2</sup>)  
 * `Elevation`: the highest elevation of the island (m)  
@@ -25,7 +25,7 @@ This week we will see how to fit linear models in **R**, and estimate parameter 
 * `Scruz`: the distance from Santa Cruz Island (km)  
 * `Adjacent`: the area of the adjacent island (km<sup>2</sup>)
 
-The `gala` dataset are included in the **faraway** package. Let's load the package and inspect the dataset 
+The `gala` dataset is included in the **faraway** package. Let's load the package and inspect the data.
 
 ```{r load_gala_dataset}
 library(faraway)
@@ -39,7 +39,7 @@ The second column `Endemics` is the number of plant species that are endemic to 
 
 We seek a linear model that would help us explain the diversity (number) of plant species as a function of some predictors, which are sometimes referred to as *covariates*. From the theory of island biogeography, it would seem reasonable that plant diversity is related to the area of an island, such that
 
-<center>species diversity = $f$(area).</center>
+<center>species diversity = $f$(area)</center><br>
 
 More formally, we can write our explicit linear regression model as
 
@@ -76,9 +76,9 @@ head(yy)
 Next let's create the matrix of predictors $\mathbf{X}$. There is only one predictor in the model (`Area`), so our matrix should consist of a column of 1's and a column with the area of each island.
 
 ```{r create_design_matrix}
-X1 <- rep(1, nn)
-X2 <- gala$Area
-XX <- cbind(X1, X2)
+Intercept <- rep(1, nn)
+Area <- gala$Area
+XX <- cbind(Intercept, Area)
 head(XX)
 ```
 
@@ -117,7 +117,7 @@ Let's add the predicted values to our plot of the data.
 par(mai = c(0.9, 0.9, 0.3, 0.1), omi = rep(0, 4))
 ## plot the data
 plot(gala$Area, gala$Species, pch = 16, col = "dark green",
-     ylab = "Number of species", xlab = expression(paste("Area of island (", km^2, ")")))
+     ylab = "Number of plant species", xlab = expression(paste("Area of island (", km^2, ")")))
 ## add the fitted values (line)
 abline(a = beta_hat[1], b = beta_hat[2])
 ```
@@ -137,7 +137,7 @@ simple_model <- lm(Species ~ Area, gala)
 simple_model
 ```
 
-Note that these are the same estimates that we obtained above.
+Note that these are the same estimates that we obtained earlier
 
 We can obtain the estimates of the fitted values $\hat{\mathbf{y}}$ via one of two functions in **R**: `fitted()` and `predict()`. We'll see later that `predict()` has additional functionality that we can use.
 
@@ -152,7 +152,7 @@ all.equal(y_hat_f, y_hat_p)
 
 ## Goodness-of-fit
 
-We saw in lecture that we can the *coefficient of determination* $(R^2)$ to measure how well a model fits the data. The formula is
+We saw in lecture that we can use the *coefficient of determination* $(R^2)$ to measure how well a model fits the data. The formula is
 
 $$
 R^2 = 1 - \frac{SSE}{SSTO}
@@ -186,7 +186,7 @@ $$
 \min \sum SSE = \min \sum_i (y_i - X_i \beta).
 $$
 
-Increasing the dimension of $\mathbf{X}$ by adding more predictors (columns) necessitates an increased space within which to minimize this objective function. We can demonstrate this with a simple example. Suppose we added another predictor to our simple model that was nothing more than a vector of Gaussian white noise, which is unrelated to the response.
+Increasing the dimension of $\mathbf{X}$ by adding more predictors (columns) necessitates an increased space within which to minimize this objective function, and hence you can get a better fit o the data. We can demonstrate this with a simple example. Suppose we added another predictor to our simple model that was nothing more than a vector of Gaussian white noise, which is unrelated to the response.
 
 ```{r demo_adj_R2}
 set.seed(514)
@@ -198,9 +198,9 @@ gala$WN <- WN
 summary(lm(Species ~ Area + WN, gala))
 ```
 
-Notice that our $R^2$ value increased.
+Notice that our $R^2$ value has indeed increased.
 
-To account for this, we can use an *adjusted* $R^2$, which accounts for these additional degrees of freedom.
+To account for this, we can use an *adjusted* $R^2$, which corrects for these additional degrees of freedom.
 
 $$
 \bar{R}^2 = 1 - \frac{SSE ~ / ~ df_{error}}{SSTO ~ / ~ df_{total}}
@@ -237,7 +237,7 @@ full_mod <- lm(Species ~ Area + Elevation + Nearest, gala)
 full_mod
 ```
 
-Notice that our estimates for the intercept $\beta_0$ and the effect of island area $\beta_1$ have changed when we accounted for additional predictors in the model.
+Notice that our estimates for the intercept $\beta_0$ and the effect of island area $\beta_1$ changed when we accounted for additional predictors in the model.
 
 ## Hypothesis tests to compare models
 
@@ -301,18 +301,18 @@ null_mod <- lm(Species ~ 1, gala)
 anova(null_mod, full_mod)
 ```
 
-Here we can see that we got the same $F$-statistic and $p$-value ias above.
+We can see that we get the same $F$-statistic and $p$-value as earlier
 
 
 ### Testing one predictor
 
-We might ask whether any one predictor could be dropped from our model. For example, can $\text{nearest}$ be dropped from this model? One option is to fit these two models and compare them via our $F$-test with $H_0: \beta_3 = 0$
+We might ask whether any one predictor could be dropped from our model. For example, can `nearest` be dropped from this model? One option is to fit this reduced model and compare to it to the full model via our $F$-test with $H_0: \beta_3 = 0$
 
 $$
 \begin{aligned}
-\text{species}_i &= \beta_0 + \beta_1 \text{area}_i + \beta_2 \text{elevation}_i + \beta_3 \text{nearest}_i + e_i \\
+\Theta: \text{species}_i &= \beta_0 + \beta_1 \text{area}_i + \beta_2 \text{elevation}_i + \beta_3 \text{nearest}_i + e_i \\
 ~ \\ 
-\text{species}_i &= \beta_0 + \beta_1 \text{area}_i + \beta_2 \text{elevation}_i + e_i
+\theta: \text{species}_i &= \beta_0 + \beta_1 \text{area}_i + \beta_2 \text{elevation}_i + e_i
 \end{aligned}
 $$
 
@@ -331,7 +331,7 @@ The $F$-statistic is small and the $p$-value is large so we cannot reject $H_0$,
 
 #### Using a $t$-test
 
-Another option is to estimate a $t$-statistic as
+Another option for testing the signficance of one predictor is to estimate a $t$-statistic as
 
 $$
 t_i = \frac{\beta_i}{\text{SE} \left( \beta_i \right)}
@@ -351,26 +351,28 @@ Note that we get $t^2 = F$ and the same $p$-value as before
 
 ### Testing 2+ predictors
 
-Sometimes we might want to know whether we can drop 2+ predictors from a model
-
-For example, can we drop both $\text{elevation}$ and $\text{nearest}$ from our full model?
+Sometimes we might want to know whether we can drop 2+ predictors from a model. For example, could we drop both $\text{area}$ and $\text{nearest}$ from our full model?
 
 $$
-\text{species}_i = \beta_0 + \beta_1 \text{area}_i + \beta_2 \text{elevation}_i + \beta_3 \text{nearest}_i + e_i
+\begin{aligned}
+\Theta: \text{species}_i &= \beta_0 + \beta_1 \text{area}_i + \beta_2 \text{elevation}_i + \beta_3 \text{nearest}_i + e_i \\
+~ \\ 
+\theta: \text{species}_i &= \beta_0 + \beta_2 \text{elevation}_i + e_i
+\end{aligned}
 $$
 
-$H_0 : \beta_2 = \beta_3 = 0$
+$H_0 : \beta_1 = \beta_3 = 0$
 
 Again we can conduct this test by fitting both models and calculating $F$.
 
 ```{r gala_one_predictor_F2, echo = TRUE}
-## reduced model without `elevation` and `nearest`
-reduced_mod <- lm(Species ~ Area, gala)
+## reduced model without `area` and `nearest`
+reduced_mod <- lm(Species ~ Elevation, gala)
 ## use `anova('reduced', 'full')` to get the F-test results
 anova(reduced_mod, full_mod)
 ```
 
-The $F$-statistic is big and the $p$-value is small so we reject $H_0$
+The $F$-statistic is rather small and the $p$-value is big so we cannot reject $H_0$, suggesting we would be justified in dropping area and elevation from the model.
 
 
 #### Multiple $t$-tests versus one $F$-test
@@ -406,7 +408,7 @@ $H_0 : \beta_{\text{area}} = \beta_{\text{adjacent}}$
 We can do this in **R** by using the `I()` function, which tells **R** to treat things inside the `()` as an operation.
 
 ```{r gala_subspace, echo = TRUE}
-## full model
+## full model as before
 full_mod <- lm(Species ~ Area + Adjacent + Elevation + Nearest, gala)
 ## reduced model without `elevation + nearest`
 comb_mod <- lm(Species ~ I(Area + Adjacent) + Elevation + Nearest, gala)
@@ -414,7 +416,9 @@ comb_mod <- lm(Species ~ I(Area + Adjacent) + Elevation + Nearest, gala)
 anova(comb_mod, full_mod)
 ```
 
-The $F$-statistic is large and the $p$-value is small so we reject $H_0$
+The $F$-statistic is large and the $p$-value is reasonably small so we reject $H_0$.
+
+<br>
 
 What if we wanted to test whether a predictor had a specific (non-zero) value? For example, is there a 1:1 relationship between $\text{species}$ and $\text{elevation}$ after controlling for the other predictors?
 
@@ -435,25 +439,25 @@ fixed_mod <- lm(Species ~ Area + offset(1 * Elevation) + Nearest, gala)
 anova(fixed_mod, full_mod)
 ```
 
-The $F$-statistic is very large and the $p$-value is tiny so we reject $H_0$
+The $F$-statistic is very large and the $p$-value is tiny so we reject $H_0$.
 
 
 #### Using a $t$-test
 
-We can also modify our $t$-test from before and use it for our comparison
+We can also modify our $t$-test from before and use it for our comparison by including the hypothesized $\hat{\beta}_{H_0}$ as an offset
 
 $$
-t_i = \frac{(\beta_i - c)}{\text{SE} \left( \beta_i \right)}
+t_i = \frac{(\hat{\beta_i} - \beta_{H_0})}{\text{SE} \left( \hat{\beta}_i \right)}
 $$
 
-We get the estimate of $\beta_{\text{elevation}}$ and $\text{SE}(\beta_{\text{elevation}})$ from our model summary
+We can get $\hat{\beta}_{\text{elevation}}$ and $\text{SE}(\hat{\beta}_{\text{elevation}})$ from our model summary
 
 ```{r gala_subspace_elev_2, echo = TRUE}
 ## full model
 sumary(full_mod)
 ```
 
-This leaves us with $\beta_{\text{elevation}} \approx 0.17$ and $\text{SE}(\beta_{\text{elevation}}) \approx 0.055$. 
+This leaves us with $\hat{\beta}_{\text{elevation}} \approx 0.17$ and $\text{SE}(\hat{\beta}_{\text{elevation}}) \approx 0.055$. 
 
 We can calculate the $t$-test by hand and compare the results to the above $F$-test
 
@@ -471,7 +475,7 @@ The $p$-value is the same and $t^2 = F$ as before
 
 ## Confidence intervals for $\beta$
 
-We can also use confidence intervals (CI's) to express uncertainty in $\beta_i$, which take the form
+We can also use confidence intervals (CI's) to express uncertainty in $\hat{\beta}_i$, which take the form
 
 $$
 100(1 - \alpha)\% ~ \text{CI}: \hat{\beta}_{i} \pm t_{n-p}^{(\alpha / 2)} \operatorname{SE}(\hat{\beta})
@@ -484,7 +488,7 @@ where here $\alpha$ is our *predetermined* Type-I error rate. To do so, we need 
 sumary(full_mod)
 ```
 
-We can construct a 95% CI on $\beta_{\text{area}}$ using the 2.5% and 97.5% percentiles of the $t$-distribution with $df = 30 - 4 = 26$.
+We can construct a 95% CI on $\hat{\beta}_{\text{area}}$ using the 2.5% and 97.5% percentiles of the $t$-distribution with $df = 30 - 4 = 26$.
 
 ```{r gala_CI_2, echo = TRUE}
 ## critical value for the t-dist
@@ -498,7 +502,7 @@ round(CI95_beta, 3)
 
 ### Confidence intervals for all $\beta$
 
-We can quickly get the 95% CI for all the $beta_i$ using the function `confint()`.
+We can quickly get the 95% CI for all the $\beta_i$ using the function `confint()`.
 
 ```{r gala_CI_all, echo = TRUE}
 ## all of the 95% CI's
@@ -508,7 +512,7 @@ confint(full_mod)
 
 ## Bootstrap confidence intervals
 
-The above $F$- and $t$-based CI's depend on the assumption of normality. Recall that the bootstrap<sup>$\dagger$</sup> method provides a way to construct CI's without this assumption
+The above $F$- and $t$-based CI's depend on the assumption of normality. Recall that the bootstrap method provides a way to construct CI's without this assumption
 
 ### Bootstrap procedure
 
@@ -614,7 +618,7 @@ The estimated lower and upper bounds are the same as those we obtained by hand.
 
 ### Prediction interval for a new response
 
-We saw in lecture that we can also estimate the uncertainty for a *specific* prediction rather than the average response. Let's do so for the same hypothetical 2000 km<sup>2</sup> island. Recall that a PI is given by 
+We saw in lecture that we can also estimate the uncertainty for a *specific* prediction rather than the average response. Let's now imagine we wanted to predict how many plant species we might find on a hypothetical island that might one day emerge from an underwater volcano and is ultimately 2000 km<sup>2</sup>. Recall that a PI is given by 
 
 $$
 \hat{\mathbf{y}}^* \pm ~ t^{(\alpha / 2)}_{df} \sigma \sqrt{1 + {\mathbf{X}^*}^{\top} (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^* } 
@@ -623,17 +627,19 @@ $$
 To calculate the PI by hand simply requires a different calculation for `inner_X` above.
 
 ```{r PI_by_hand, warning=FALSE, message=FALSE}
+## new X_star
+X_star <- c(Intercept = 1, Area = 2000)
 ## inside sqrt
 inner_X <- 1 + t(X_star) %*% solve(t(XX) %*% XX) %*% X_star
 ## 95% CI
 y_star + c(-1,1) * t_crit * sigma * sqrt(inner_X)
 ```
 
-Notice how much wider this interval is than the CI we estimated above. We could instead use `predict()` as we did above for the CI by switching the `interval` argument.
+Notice how much wider this interval is than the CI we estimated above. We could instead use `predict()` as we did above for the CI by switching the `interval` argument to `"prediction"`.
 
 ```{r PI_with_predict}
 predict(simple_model, new = data.frame(t(X_star)),
-        level = 0.95, interval = "confidence")
+        level = 0.95, interval = "prediction")
 ```
 
 
