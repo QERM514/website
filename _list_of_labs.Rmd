@@ -39,8 +39,8 @@ fitting_LMs <- list(
   title = "Fitting linear models",
   topics = c("Fitting linear models"),
   pdf = c(""),
-  rmd = c(""),
-  html = c(""),
+  rmd = c("labs/week_02/fitting_lm.Rmd"),
+  html = c("labs/week_02/fitting_lm.html"),
   zoom = "",
   data = "",
   background = c("")
