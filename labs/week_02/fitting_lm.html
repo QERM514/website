@@ -2123,6 +2123,7 @@ t(round(CI95, 3))</code></pre>
 </div>
 <div id="confidence-interval-for-new-predictions" class="section level2">
 <h2>Confidence interval for new predictions</h2>
+<p>Given a fitted model <span class="math inline">\(\mathbf{y} = \mathbf{X} \hat{\boldsymbol{\beta}} + \mathbf{e}\)</span>, we might want to know the uncertainty around a new estimate <span class="math inline">\(\mathbf{y}^*\)</span> given some new predictor <span class="math inline">\(\mathbf{X}^*\)</span></p>
 <div id="ci-for-the-mean-response" class="section level3">
 <h3>CI for the mean response</h3>
 <p>Think back to our simple model for plant diversity as a function of island area, such that</p>
@@ -2130,9 +2131,6 @@ t(round(CI95, 3))</code></pre>
 \text{species}_i = \beta_0 + \beta_1 \text{area}_i + e_i
 \]</span></p>
 <p>Suppose we wanted to estimate the uncertainty in the <em>average</em> diversity for an island with an area of 2000 km<sup>2</sup>. Recall that our CI on the mean response is given by</p>
-<p><span class="math display">\[
-\hat{\mathbf{y}}^* \pm ~ t^{(\alpha / 2)}_{df} \sigma \sqrt{{\mathbf{X}^*}^{\top} (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^*} 
-\]</span></p>
 <p>and here <span class="math inline">\(\mathbf{X}^* = [1 ~~ 2000]\)</span> (ie, a <span class="math inline">\(1 \times 2\)</span> row matrix).</p>
 <div id="ci-by-hand" class="section level4">
 <h4>CI by hand</h4>

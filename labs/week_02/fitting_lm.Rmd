@@ -565,6 +565,7 @@ t(round(CI95, 3))
 
 ## Confidence interval for new predictions
 
+Given a fitted model $\mathbf{y} = \mathbf{X} \hat{\boldsymbol{\beta}} + \mathbf{e}$, we might want to know the uncertainty around a new estimate $\mathbf{y}^*$ given some new predictor $\mathbf{X}^*$
 
 ### CI for the mean response
 
@@ -576,9 +577,6 @@ $$
 
 Suppose we wanted to estimate the uncertainty in the *average* diversity for an island with an area of 2000 km<sup>2</sup>. Recall that our CI on the mean response is given by
 
-$$
-\hat{\mathbf{y}}^* \pm ~ t^{(\alpha / 2)}_{df} \sigma \sqrt{{\mathbf{X}^*}^{\top} (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^*} 
-$$
 
 and here $\mathbf{X}^* = [1 ~~ 2000]$ (ie, a $1 \times 2$ row matrix).
 
