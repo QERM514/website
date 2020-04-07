@@ -530,7 +530,7 @@ resids <- residuals(full_mod)
 ```
 
 Step 3a: Generate $\mathbf{e}^*$ by sampling *with replacement* from $\mathbf{e}$  
-Step 3b: Calculate $\mathbf{y}^*$ = $\mathbf{X} \hat{\boldsymbol{\beta}} + \mathbf{e}^*$  
+Step 3b: Calculate $\mathbf{y}^* = \mathbf{X} \hat{\boldsymbol{\beta}} + \mathbf{e}^*$  
 Step 3c: Estimate $\hat{\boldsymbol{\beta}}^*$ from $\mathbf{X}$ & $\mathbf{y}^*$  
 
 ```{r bootstrap_CI_3, echo = TRUE}
@@ -565,7 +565,6 @@ t(round(CI95, 3))
 
 ## Confidence interval for new predictions
 
-Given a fitted model , we might want to know the uncertainty around a new estimate $\mathbf{y}^*$ given some new predictor $\mathbf{X}^*$
 
 ### CI for the mean response
 
