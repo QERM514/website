@@ -5,7 +5,7 @@ output: html_document
 
 <br>
 
-### NOTE: All lectures will be delivered synchronously via [Zoom](https://washington.zoom.us/j/946943308)
+### NOTE: All computer labs will be delivered synchronously via [Zoom](https://washington.zoom.us/j/946943308)
 
 ```{r child = "_timeline.Rmd", include=FALSE}
 ```
