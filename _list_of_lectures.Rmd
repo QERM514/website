@@ -50,16 +50,16 @@ linear_models_1 <- list(
   rmd = c("lectures/week_02/lec_04_intro_to_linear_models.Rmd"),
   html = c("lectures/week_02/lec_04_intro_to_linear_models.html"),
   background = c("[Farraway (2015) Chap 2](references/Faraway_2015_Linear_models_with_R.pdf)"),
-  zoom = ""
+  zoom = "https://washington.zoom.us/rec/share/3MdxDY_d6GNJT7OKq3DeWekoBtq0X6a8hiAb8vQKzEpMOBCGCWXB7lQXyVSeosLU"
 )
 
 linear_models_2 <- list(
   title = "Linear models",
   topics = c("<b>Linear models</b>", "Models in matrix form", "Least squares", "Identifiability"),
-  pdf = c(""),
-  rmd = c(""),
-  html = c(""),
-  background = c(""),
+  pdf = c("lectures/week_02/lec_05_intro_to_linear_models.pdf"),
+  rmd = c("lectures/week_02/lec_05_intro_to_linear_models.Rmd"),
+  html = c("lectures/week_02/lec_05_intro_to_linear_models.html"),
+  background = c("[Farraway (2015) Chap 2](references/Faraway_2015_Linear_models_with_R.pdf)"),
   zoom = ""
 )
 
