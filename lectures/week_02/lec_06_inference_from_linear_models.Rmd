@@ -662,7 +662,7 @@ $$
 Another option is to estimate a $t$-statistic as
 
 $$
-t_i = \frac{\beta_i}{\text{SE} \left( \beta_i \right)}
+t_i = \frac{\hat{\beta}_i}{\text{SE} \left( \hat{\beta}_i \right)}
 $$
 
 and compare it to a $t$-distribution with $n - k$ degrees of freedom
@@ -711,10 +711,10 @@ $H_0 : \beta_2 = 1$
 
 ## Testing a subspace
 
-We can also modify our $t$-test from before and use it for our comparison
+We can also modify our $t$-test from before and use it for our comparison by including the hypothesized $\hat{\beta}_{H_0}$ as an offset
 
 $$
-t_i = \frac{(\beta_i - c)}{\text{SE} \left( \beta_i \right)}
+t_i = \frac{(\hat{\beta_i} - \beta_{H_0})}{\text{SE} \left( \hat{\beta}_i \right)}
 $$
 
 
@@ -733,7 +733,7 @@ Null hypothesis testing (NHT) is a slippery slope
 
 ## Confidence intervals for $\beta$
 
-We can also use confidence intervals (CI's) to express uncertainty in $\beta_i$
+We can also use confidence intervals (CI's) to express uncertainty in $\hat{\beta}_i$
 
 They take the form
 
