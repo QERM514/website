@@ -1,0 +1,29 @@
+.title-slide hgroup h1 {
+  font-size: 36pt;
+  letter-spacing: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Create two unequal columns that float next to each other */
+.column {
+  float: left;
+  padding: 10px;
+}
+
+.left {
+  width: 35%;
+}
+
+.right {
+  width: 65%;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
