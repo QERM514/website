@@ -810,3 +810,12 @@ $$
 $$
 
 
+## CI for the mean response
+
+So our CI on the mean response is given by
+
+$$
+\hat{\mathbf{y}}^* \pm ~ t^{(\alpha / 2)}_{df} \sigma \sqrt{{\mathbf{X}^*}^{\top} (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^* } 
+$$
+
+
