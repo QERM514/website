@@ -795,16 +795,5 @@ $$
 $$
 
 
-## CI for the mean response
-
-We can calculate the SD of our expectation as
-
-$$
-\begin{aligned}
-\text{Var} \left( \hat{\mathbf{y}}^* \right) &= \text{Var} \left( \mathbf{X}^* \hat{\boldsymbol{\beta}} \right)  \\
-  &= {\mathbf{X}^*}^{\top} \text{Var}\left( \hat{\boldsymbol{\beta}} \right) \mathbf{X}^* \\
-  &= {\mathbf{X}^*}^{\top} \left[ \sigma^2 (\mathbf{X}^{\top} \mathbf{X})^{-1} \right] \mathbf{X}^* \\
-\end{aligned}
-$$
 
 
