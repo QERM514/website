@@ -3758,7 +3758,51 @@ t_i = \frac{(\hat{\beta_i} - \beta_{H_0})}{\text{SE} \left( \hat{\beta}_i \right
   &amp;\Downarrow \\
 \text{SD} \left( \hat{\mathbf{y}}^* \right) &amp;= \sigma \sqrt{ {\mathbf{X}^*}^{\top} (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^* } 
 \end{aligned}
-\]</p></article></slide>
+\]</p>
+
+</article></slide><slide class=""><hgroup><h2>CI for the mean response</h2></hgroup><article  id="ci-for-the-mean-response-2">
+
+<p>So our CI on the mean response is given by</p>
+
+<p>\[
+\hat{\mathbf{y}}^* \pm ~ t^{(\alpha / 2)}_{df} \sigma \sqrt{ {\mathbf{X}^*}^{\top} (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^* } 
+\]</p>
+
+</article></slide><slide class=""><hgroup><h2>CI for a specific response</h2></hgroup><article  id="ci-for-a-specific-response">
+
+<p>What about the uncertainty in a <em>specific</em> prediction?</p>
+
+<p>In that case we need to account for our additional uncertainty owing to the error in our relationship, which is given by</p>
+
+<p>\[
+\hat{\mathbf{y}}^* = \mathbf{X}^* \hat{\boldsymbol{\beta}} + \mathbf{e}
+\]</p>
+
+</article></slide><slide class=""><hgroup><h2>CI for a specific response</h2></hgroup><article  id="ci-for-a-specific-response-1">
+
+<p>The SD of the new prediction is given by</p>
+
+<p>\[
+\begin{aligned}
+\text{Var} \left( \hat{\mathbf{y}}^* \right) &amp;= {\mathbf{X}^*}^{\top} \text{Var}\left( \hat{\boldsymbol{\beta}} \right) \mathbf{X}^* + \text{Var} \left( \mathbf{e} \right) \\
+  &amp;= {\mathbf{X}^*}^{\top} \left[ \sigma^2 (\mathbf{X}^{\top} \mathbf{X})^{-1} \right] \mathbf{X}^* + \sigma^2\\
+  &amp;= \sigma^2 \left( {\mathbf{X}^*}^{\top} (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^* + 1 \right) \\
+  &amp;\Downarrow \\
+\text{SD} \left( \hat{\mathbf{y}}^* \right) &amp;= \sigma \sqrt{1 + {\mathbf{X}^*}^{\top} (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^* } 
+\end{aligned}
+\]</p>
+
+</article></slide><slide class=""><hgroup><h2>CI for a specific response</h2></hgroup><article  id="ci-for-a-specific-response-2">
+
+<p>So our CI on the new prediction is given by</p>
+
+<p>\[
+\hat{\mathbf{y}}^* \pm ~ t^{(\alpha / 2)}_{df} \sigma \sqrt{1 + {\mathbf{X}^*}^{\top} (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^* } 
+\]</p>
+
+<p><br></p>
+
+<p>This is typically referred to as the <em>prediction interval</em></p></article></slide>
 
 
   <slide class="backdrop"></slide>
