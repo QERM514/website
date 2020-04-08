@@ -60,7 +60,7 @@ linear_models_2 <- list(
   rmd = c("lectures/week_02/lec_05_intro_to_linear_models.Rmd"),
   html = c("lectures/week_02/lec_05_intro_to_linear_models.html"),
   background = c("[Farraway (2015) Chap 2](references/Faraway_2015_Linear_models_with_R.pdf)"),
-  zoom = ""
+  zoom = "https://washington.zoom.us/rec/share/2dVrKI_71EpJAYWVq2jna7UdHK3Eeaa81nNPqfIFnh2fJYha4c7zZa3sot5Tx4b3"
 )
 
 inference <- list(
@@ -75,7 +75,7 @@ inference <- list(
 
 diagnostics <- list(
   title = "Model diagnostics",
-  topics = c("<b>Model diagnostics</b>", "Assumptions", "Leverage", "Outliers"),
+  topics = c("<b>Model diagnostics</b>", "Assumptions about errors", "Leverage", "Outliers"),
   pdf = c(""),
   rmd = c(""),
   html = c(""),
