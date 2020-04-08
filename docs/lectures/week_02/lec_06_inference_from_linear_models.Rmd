@@ -231,17 +231,14 @@ The number of *independent* elements that are free to vary when estimating quant
 ## Model in geometric space
 
 ```{r model_geom, fig.height=4, fig.width=6, fig.align="center"}
-pgram <- data.frame(x = c(0, 3, 10, 7), y = c(0, 3, 3, 0))
+pgram <- data.frame(x = c(0, 3, 10, 7, 0), y = c(0, 3, 3, 0, 0))
 
 ## empty plot space
 par(mai = rep(0,4), omi = rep(0, 4))
 plot(c(0,10), c(0,5), type = "n", xaxt = "n", yaxt = "n",
      bty = "n", xlab = "", ylab = "")
 ## parallelogram
-lines(pgram[1:2,1], pgram[1:2,2])
-lines(pgram[2:3,1], pgram[2:3,2])
-lines(pgram[3:4,1], pgram[3:4,2])
-lines(pgram[c(1,4),1], pgram[c(1,4),2])
+lines(pgram[,1], pgram[,2])
 text(1, 0.5, expression(paste("space spanned by ",bold(X))),
      pos = 4, cex = 1.2, col = "darkgray")
 ## perpendicular
