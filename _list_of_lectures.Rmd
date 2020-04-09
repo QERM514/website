@@ -20,7 +20,7 @@ intro <- list(
 
 software <- list(
   title = "Overview of required software",
-  topics = c("<b>Required software</b>","R", "RStudio", "R Markdown", "GitHub"),
+  topics = c("<b>Required software</b>","R / RStudio", "R Markdown", "GitHub"),
   pdf = c("lectures/week_01/lec_02_software.pdf"),
   rmd = c("lectures/week_01/lec_02_software.Rmd"),
   html = c("lectures/week_01/lec_02_software.html"),
@@ -66,10 +66,11 @@ linear_models_2 <- list(
 inference <- list(
   title = "Inference",
   topics = c("<b>Inference</b>", "Variance partitioning", "F-tests for nested models", "Confidence intervals"),
-  pdf = c(""),
-  rmd = c(""),
-  html = c(""),
-  background = c(""),
+  pdf = c("lectures/week_02/lec_06_inference_from_linear_models.pdf"),
+  rmd = c("lectures/week_02/lec_06_inference_from_linear_models.Rmd"),
+  html = c("lectures/week_02/lec_06_inference_from_linear_models.html"),
+  background = c("[Farraway (2015) Chap 3](references/Faraway_2015_Linear_models_with_R.pdf)",
+                 "[Farraway (2015) Chap 4](references/Faraway_2015_Linear_models_with_R.pdf)"),
   zoom = ""
 )
 
