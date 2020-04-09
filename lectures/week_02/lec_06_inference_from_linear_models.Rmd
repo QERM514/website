@@ -363,8 +363,8 @@ Thus, given
 
 $$
 \mathbf{e}^{\top}\mathbf{e} \sim \sigma^2 \cdot \chi^2_{n - k} \\
-E(\chi^2_{n - k}) = n - k \\
-E(\mathbf{e}^{\top}\mathbf{e}) = SSE
+\text{E}(\chi^2_{n - k}) = n - k \\
+\text{E}(\mathbf{e}^{\top}\mathbf{e}) = SSE
 $$
 
 then
@@ -424,7 +424,7 @@ $$
 \mathbf{y} = \mathbf{X} \boldsymbol{\beta} + \mathbf{e} \\
 \mathbf{e} \sim \text{MVN}(\mathbf{0}, \sigma^2 \mathbf{I}) \\
 \Downarrow \\
-\mathbf{y} \sim \text{MVN}(\mathbf{X} \boldsymbol{\beta}, \underbrace{\sigma^2 \mathbf{I}}_{\text{Var}(\mathbf{y})}) \\
+\mathbf{y} \sim \text{MVN}(\mathbf{X} \boldsymbol{\beta}, \underbrace{\sigma^2 \mathbf{I}}_{\text{Var}(\mathbf{y} | \mathbf{X} \boldsymbol{\beta})}) \\
 $$
 
 
@@ -481,14 +481,14 @@ par(mfrow = c(1,2), mai = c(0.5, 0.5, 0.1, 0.1), omi = c(0,0,0,0))
 plot(xx, yy, pch = 16, xlim = range(xx), ylim = range(yy),
      xlab = expression(italic(y)), ylab = expression(italic(y)))
 lines(xx, yy_ci[,"fit"])
-text(1, 10.5, substitute(paste(SE(beta)," = ", seb1), list(seb1 = se_b1)), pos = 4)
+text(1, 10.5, substitute(paste(SE(hat(beta))," = ", seb1), list(seb1 = se_b1)), pos = 4)
 
 ## large range in X
 plot(xs, ys, pch = 16, xlim = range(xx), ylim = range(yy),
      xlab = "", ylab = "",
      yaxt = "n")
 lines(xs, ys_ci[,"fit"])
-text(1, 10.5, substitute(paste(SE(beta)," = ", seb2), list(seb2 = se_b2)), pos = 4)
+text(1, 10.5, substitute(paste(SE(hat(beta))," = ", seb2), list(seb2 = se_b2)), pos = 4)
 ```
 
 
@@ -548,7 +548,7 @@ The $F$-distribution is the ratio of two random variates, each with a $\chi^2_{n
 If $A \sim \chi_{df_{A}}^{2}$ and $B \sim \chi_{df_{B}}^{2}$ are independent, then
 
 $$
-\frac{\frac{A}{df_{A}}}{\frac{B}{df_{B}}} \sim F _{df_{A},df_{B}}
+\frac{\left( \frac{A}{df_{A}} \right) }{ \left( \frac{B}{df_{B}} \right) }  \sim F _{df_{A},df_{B}}
 $$
 
 
@@ -611,28 +611,11 @@ For now let's hypothesize that
 <sup>$\dagger$</sup>From Johnson & Raven (1973) *Science* 179:893-895
 
 
-## Predictors of plant diversity
-
-Here is our full model $\Theta$
-
-$$
-\text{species}_i = \alpha + \beta_1 \text{area}_i + \beta_2 \text{elevation}_i + \beta_3 \text{nearest}_i + \epsilon_i
-$$
-
-<br>
-
-and here is our alternative (reduced) model $\theta$
-
-$$
-\text{species}_i = \alpha + \epsilon_i
-$$
-
-
 ## Testing one predictor
 
 We might ask whether any one predictor could be dropped from a model
 
-For example, can $\text{nearest}$ be dropped from this model?
+For example, can $\text{nearest}$ be dropped from ourf full model?
 
 $$
 \text{species}_i = \alpha + \beta_1 \text{area}_i + \beta_2 \text{elevation}_i + \beta_3 \text{nearest}_i + \epsilon_i
@@ -672,7 +655,11 @@ Sometimes we might want to know whether we can drop 2+ predictors from a model
 For example, can we drop both $\text{elevation}$ and $\text{nearest}$ from our full model?
 
 $$
-\text{species}_i = \alpha + \beta_1 \text{area}_i + \beta_2 \text{elevation}_i + \beta_3 \text{nearest}_i + \epsilon_i
+\begin{aligned}
+\text{species}_i &= \alpha + \beta_1 \text{area}_i + \beta_2 \text{elevation}_i + \beta_3 \text{nearest}_i + \epsilon_i \\
+~ \\ 
+\text{species}_i &= \alpha + \beta_1 \text{area}_i + \epsilon_i
+\end{aligned}
 $$
 
 $H_0 : \beta_2 = \beta_3 = 0$
@@ -708,7 +695,7 @@ $H_0 : \beta_2 = 1$
 
 ## Testing a subspace
 
-We can also modify our $t$-test from before and use it for our comparison by including the hypothesized $\hat{\beta}_{H_0}$ as an offset
+We can also modify our $t$-test from before and use it for our comparison by including the hypothesized $\beta_{H_0}$ as an offset
 
 $$
 t_i = \frac{(\hat{\beta_i} - \beta_{H_0})}{\text{SE} \left( \hat{\beta}_i \right)}
@@ -726,6 +713,9 @@ Null hypothesis testing (NHT) is a slippery slope
 > - "Critical" or "threshold" values against which to compare $p$-values must be chosen *a priori*
 
 > - Be aware of "$p$ hacking" where researchers make *many* tests to find significance
+
+
+# QUESTIONS?
 
 
 ## Confidence intervals for $\beta$
