@@ -14,7 +14,7 @@ output:
 
 This course will introduce students to a large class of statistical models commonly used for analyses in ecology and environmental science. These include simple linear models, such as analysis of variance (ANOVA) and regression models, along with Generalized Linear Models (GLMs) that assume non-normal error distributions (_e.g._, logistic and Poisson regression). Students will learn to distinguish the difference between fixed and random effects, and how to implement them in mixed-effects models such as Generalized Linear Mixed Models (GLMMs). This course also covers various aspects of assessing model performance and evaluating model diagnostics. In general, students will focus on conceptualizing analyses, implementing analyses, and making inference from the results.
 
-This course is also one of the core requirements for graduate students in the Quantitative Ecology & Resource Management (QERM) program at the University of Washington. For more information, click  [here](https://quantitative.uw.edu/graduate/).
+This course is also one of the core requirements for graduate students in the Quantitative Ecology & Resource Management (QERM) program at the University of Washington. For more information, [click here](https://quantitative.uw.edu/graduate/).
 
 <br>
 
