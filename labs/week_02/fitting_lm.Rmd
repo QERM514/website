@@ -565,7 +565,12 @@ t(round(CI95, 3))
 
 ## Confidence interval for new predictions
 
-Given a fitted model $\mathbf{y} = \mathbf{X} \hat{\boldsymbol{\beta}} + \mathbf{e}$, we might want to know the uncertainty around a new estimate $\mathbf{y}^*$ given some new predictor $\mathbf{X}^*$
+Given a fitted model $\mathbf{y} = \mathbf{X} \hat{\boldsymbol{\beta}} + \mathbf{e}$, we might want to know the uncertainty around a new estimate $\mathbf{y}^*$ given some new predictor $\mathbf{X}^*$. Recall that this CI is given by 
+
+$$
+\hat{\mathbf{y}}^* \pm ~ t^{(\alpha / 2)}_{df} \sigma \sqrt{ {\mathbf{X}^*}^{\top} (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^* } 
+$$
+
 
 ### CI for the mean response
 
