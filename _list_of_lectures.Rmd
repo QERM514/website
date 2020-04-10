@@ -71,7 +71,7 @@ inference <- list(
   html = c("lectures/week_02/lec_06_inference_from_linear_models.html"),
   background = c("[Farraway (2015) Chap 3](references/Faraway_2015_Linear_models_with_R.pdf)",
                  "[Farraway (2015) Chap 4](references/Faraway_2015_Linear_models_with_R.pdf)"),
-  zoom = ""
+  zoom = "https://washington.zoom.us/rec/share/xpVXMLCozlhJa5Hy013wYbAGQpTPT6a8gHQX__QIzU3slPvtOjG8chISlLY8mfrx"
 )
 
 diagnostics <- list(

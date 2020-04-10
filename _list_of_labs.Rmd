@@ -41,7 +41,7 @@ fitting_LMs <- list(
   pdf = c(""),
   rmd = c("labs/week_02/fitting_lm.Rmd"),
   html = c("labs/week_02/fitting_lm.html"),
-  zoom = "",
+  zoom = "https://washington.zoom.us/rec/share/yusrCq3T2j9LTKP28BjaVq8mNYC1X6a80XAW-aFcxRmxPW2MGrqYzK-eD5eySfcC",
   data = "",
   background = c("")
   )
