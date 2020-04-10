@@ -29,5 +29,16 @@ markdown <- list(
   data = "",
   key = ""
 )
+
+## fitting linear models
+linear_models <- list(
+  title = "Fitting linear models",
+  topics = c("Fitting linear models"),
+  pdf = "homework/week_02/hw_02_fitting_lm.pdf",
+  rmd = "homework/week_02/hw_02_fitting_lm.Rmd",
+  html = "",
+  data = "homework/week_02/L_Washington_plankton.csv",
+  key = ""
+)
 ```
 
