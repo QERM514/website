@@ -14,4 +14,718 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ## Goals for today
 
+* Recognize that diagnostic checks are necessary for any model
+
+> - Learn how to check for constant variance, normally distributed errors, and autocorrelation
+
+> - Learn how to check for outlying or influential observations
+
+
+## Model diagnostics
+
+We have seen how to fit models, estimate parameters with uncertainty, and conduct hypothesis tests
+
+All of these rely on a number of assumptions about
+
+* our model (its structure is correct)
+
+> - the errors (independent, equal variance, normally distributed)
+
+> - observations and predictors (no undue influence)
+
+
+## Model structure
+
+Our focus here is on linear models, and we saw previously that we can use linear models to approximate nonlinear functions
+
+The specific form of the model should reflect our understanding of the system and any particular hypotheses we'd like to test
+
+
+## Checking error assumptions
+
+So far our models have assumed the errors to be *independent and identically distributed* (IID)
+
+What exactly does this mean?
+
+
+## Checking error assumptions | Constant variance
+
+Let's begin with the notion of "identically distributed", which suggests no change in the variance across the model space
+
+For example, if our errors are assumed to be normally distributed, such that
+
+$$
+\epsilon_i \sim \text{N}(0, \sigma^2) ~ \Rightarrow ~ \boldsymbol{\epsilon} \sim \text{MVN}(\mathbf{0}, \sigma^2 \mathbf{I})
+$$
+
+then we expect no difference in $\sigma^2$ among any of the $\epsilon_i$.
+
+
+## Checking error assumptions | Constant variance
+
+To check this assumption, we can plot our estimates $\hat{\epsilon}_i = e_i = y- \hat{y}$ against our fitted values $\hat{y}_i$ and look for any patterns
+
+
+## Checking error assumptions | Constant variance
+
+```{r nonconstant_variance, echo = FALSE, fig.width = 8, fig.height = 3.5, fig.align="center"}
+set.seed(514)
+## sample size
+nn <- 30
+## phony y_hat
+y_hat <- runif(nn,0, 10)
+
+## expectation
+e1 <- ee <- rnorm(nn)
+## heteroscedastic
+e2 <- 0.1 * e1 * y_hat
+## nonlinear
+e3 <- 0.1 * (y_hat - 5)^2 - 1 + e1
+
+## set plot area
+par(mfrow = c(1,3),
+    mai = c(0.9,0.5,0.5,0.2),
+    omi = c(0, 0.4, 0, 0),
+    cex = 0.7)
+
+## plot errors
+plot(y_hat, e1, pch = 16, las = 1, xpd = NA,
+     cex.lab = 1.5, xlab = "Fitted values", ylab = "Residuals",
+     main = "No problem")
+abline(h = 0, lty ="dashed")
+plot(y_hat, e2, pch = 16, las = 1,
+     cex.lab = 1.5, xlab = "Fitted values", ylab = "",
+     main = "Heteroscedastic")
+abline(h = 0, lty ="dashed")
+plot(y_hat, e3, pch = 16, las = 1,
+     cex.lab = 1.5, xlab = "Fitted values", ylab = "",
+     main = "Nonlinear")
+abline(h = 0, lty ="dashed")
+```
+
+
+## Checking error assumptions | Constant variance
+
+For a finer resolution, we can also plot $\sqrt{| \hat{\epsilon}_i |}$ against our fitted values $\hat{y}_i$ and look for any patterns
+
+The distribution of $| \hat{\epsilon}_i |$ is a skewed half-normal on the positive interval; the square-root transformation makes them less skewed 
+
+
+## Checking error assumptions | Constant variance
+
+```{r nonconstant_variance_2, echo = FALSE, fig.width = 8, fig.height = 3.5, fig.align="center"}
+## calculate the sqrt of abs value
+## expectation
+e1s <- sqrt(abs(e1))
+## heteroscedastic
+e2s <- sqrt(abs(e2))
+## nonlinear
+e3s <- sqrt(abs(e3))
+
+## set plot area
+par(mfrow = c(1,3),
+    mai = c(0.9,0.5,0.5,0.2),
+    omi = c(0, 0.4, 0, 0),
+    cex = 0.7)
+
+## plot errors
+plot(y_hat, e1s, pch = 16, las = 1, xpd = NA,
+     cex.lab = 1.5, xlab = "Fitted values", ylab = expression(sqrt(abs(epsilon))),
+     main = "No problem")
+plot(y_hat, e2s, pch = 16, las = 1,
+     cex.lab = 1.5, xlab = "Fitted values", ylab = "",
+     main = "Heteroscedastic")
+plot(y_hat, e3s, pch = 16, las = 1,
+     cex.lab = 1.5, xlab = "Fitted values", ylab = "",
+     main = "Nonlinear")
+```
+
+
+## Checking error assumptions | Constant variance
+
+We can formally test the assumption of homogeneous variance via *Levene's Test*
+
+$$
+W=\frac{(n-k)}{(k-1)} \cdot \frac{\sum_{i=1}^{k} n_{i}\left(Z_{i} - \bar{Z} \right)^{2}}{\sum_{i=1}^{k} \sum_{j=1}^{n_{i}} \left( Z_{i j} - \bar{Z_{i}} \right)^{2}}
+$$
+
+The test statistic $W$ is approximately $F$-distributed with $k-1$ and $N-k$ degrees of freedom
+
+
+## Checking error assumptions {.smaller}
+
+Levene's Test is easy to compute in **R**
+
+```{r levene, echo = TRUE}
+## split residuals (ee) into 2 groups
+g1 <- ee[ee < median(ee)]
+g2 <- ee[ee > median(ee)]
+## Levene's Test
+var.test(g1, g2)
+```
+
+
+## Checking error assumptions | Constant variance
+
+What can we do if we find evidence of heteroscedasticity?
+
+Try a transformation or weighted least squares, which we will see later this week
+
+
+## Checking error assumptions | Residuals vs other predictors
+
+We can also plot the residuals against any potential predictors that were *not* included in the model
+
+If we see a (linear) pattern, then consider including that predictor in a new model
+
+
+## Checking error assumptions | Residuals vs other predictors for $y_i = \alpha + \beta x_{1,i} + e_i$
+
+```{r resids_vs_x, echo = FALSE, fig.width = 7, fig.height = 3.5, fig.align="center"}
+xx1 <- runif(nn, 0, 10)
+xx2 <- runif(nn, 0, 10)
+ee <- rnorm(nn)
+yh <- 1 + 1*xx1 - 0.5*xx2
+yy <- yh + ee
+m1 <- lm(yy ~ xx1)
+rr <- residuals(m1)
+
+## set plot area
+par(mfrow = c(1,2),
+    mai = c(0.9,0.5,0.1,0.2),
+    omi = c(0, 0.4, 0, 0),
+    cex = 1)
+
+## plot errors
+plot(yh, rr, pch = 16, las = 1, xpd = NA,
+     cex.lab = 1.2, xlab = "Fitted values", ylab = "Residuals", main = "")
+abline(h = 0, lty ="dashed")
+plot(xx2, rr, pch = 16, las = 1,
+     cex.lab = 1.2, xlab = expression(italic(x)[2]), ylab = "", main = "")
+abline(h = 0, lty ="dashed")
+```
+
+
+## Checking error assumptions | Normality
+
+We seek a method for assessing whether our residuals are indeed normally distributed
+
+The easiest way is via a so-called $Q$-$Q$ plot (for quantile-quantile)
+
+
+## Checking error assumptions | Expected quantiles for $\epsilon \sim \text{N}(0,1)$
+
+```{r QQ_theory, echo = FALSE, fig.width = 4.5, fig.height = 4, fig.align="center"}
+## set plot area
+par(mai = c(1,1,0.1,0.1),
+    omi = c(0, 0, 0, 0),
+    cex = 1.2)
+
+## plot Gaussian pdf
+curve(dnorm, -4, 4, las = 1, bty = "n", lwd = 2,
+      ylab = "Density", xlab = expression(epsilon))
+abline(v = qnorm(c(0.5)), lty = "dashed")
+abline(v = qnorm(c(0.25, 0.75)), lty = "dashed", col = "purple")
+abline(v = qnorm(c(0.1, 0.9)), lty = "dashed", col = "blue")
+abline(v = qnorm(c(0.025, 0.975)), lty = "dashed", col = "red")
+```
+
+
+## Checking error assumptions | Heavy-tailed (*leptokurtic*)
+
+```{r QQ_theory_lepto, echo = FALSE, fig.width = 4.5, fig.height = 4, fig.align="center"}
+## set plot area
+par(mai = c(1,1,0.1,0.1),
+    omi = c(0, 0, 0, 0),
+    cex = 1.2)
+
+## plot Gaussian pdf
+curve(dnorm, -4, 4, las = 1, bty = "n", lwd = 2, col = "gray",
+      ylab = "Density", xlab = expression(epsilon))
+## plot Cauchy
+curve(dcauchy(x, 0, 0.8), -4, 4, las = 1, bty = "n", lwd = 2, add = TRUE,
+      ylab = "Density", xlab = expression(epsilon))
+abline(v = qcauchy(c(0.5)), lty = "dashed")
+abline(v = qcauchy(c(0.25, 0.75)), lty = "dashed", col = "purple")
+abline(v = qcauchy(c(0.1, 0.9)), lty = "dashed", col = "blue")
+abline(v = qcauchy(c(0.025, 0.975)), lty = "dashed", col = "red")
+```
+
+
+## Checking error assumptions | Short-tailed (*platykurtic*)
+
+```{r QQ_theory_platy, echo = FALSE, fig.width = 4.5, fig.height = 4, fig.align="center"}
+## set plot area
+par(mai = c(1,1,0.1,0.1),
+    omi = c(0, 0, 0, 0),
+    cex = 1.2)
+
+## Butterworth fx
+butter <- function(x, c = 1, n = 4) {
+  0.4 / (1 + (x / c)^n)
+}
+ii <- seq(-40,40)/10
+ww <- round(butter(ii, 1, 6)*1e4, 0)
+vv <- NULL
+for(i in 1:length(ww)) {
+  tmp <- rep(ii[i], ww[i])
+  vv <- c(vv, tmp)
+}
+qb <- quantile(vv, c(2.5, 10, 25, 50, 75, 90, 97.5)/100)
+## plot Gaussian pdf
+curve(dnorm, -4, 4, las = 1, bty = "n", lwd = 2, col = "gray",
+      ylab = "Density", xlab = expression(epsilon))
+## plot Butterworth
+curve(butter(x, 1, 4), -4, 4, las = 1, bty = "n", lwd = 2, add = TRUE,
+      ylab = "Density", xlab = expression(epsilon))
+abline(v = qb[4], lty = "dashed")
+abline(v = qb[c(3,5)], lty = "dashed", col = "purple")
+abline(v = qb[c(2,6)], lty = "dashed", col = "blue")
+abline(v = qb[c(1,7)], lty = "dashed", col = "red")
+```
+
+
+## Checking error assumptions | $Q$-$Q$ plots via `qqnorm(x)` in **R**
+
+```{r qq_plots, echo = FALSE, fig.width = 8, fig.height = 3.5, fig.align="center"}
+## set plot area
+par(mfrow = c(1,3),
+    mai = c(0.9,0.5,0.5,0.2),
+    omi = c(0, 0.4, 0, 0),
+    cex = 1.1)
+
+
+## Q-Q plots
+## normal
+z1 <- rnorm(nn)
+qqnorm(z1, pch =16, main = "Normal", xpd = NA)
+qqline(z1)
+## lepto
+z2 <- rcauchy(nn)
+qqnorm(z2, pch =16, main = "Heavy-tailed")
+qqline(z2)
+## platy
+ii <- sample(seq(-40,40)/10, nn)
+z3 <- butter(ii, nn) * ii
+qqnorm(z3, pch =16, main = "Light-tailed")
+qqline(z3)
+```
+
+
+## Correlated errors
+
+One component of *IID* errors is "independent"
+
+This means we expect no correlation among any of the errors
+
+
+## Correlated errors
+
+We might expect to find correlated errors when working with
+
+* Temporal data
+
+* Spatial data
+
+* Blocked data
+
+
+## Correlated errors
+
+Consider a model for tree growth as a function of temperature
+
+```{r tree_rings, , echo = FALSE, fig.width = 4.5, fig.height = 4, fig.align="center"}
+## get raw data
+data(globwarm, package = "faraway")
+## trim to recent years
+dat <- globwarm[globwarm$year > 1960,]
+## fit a model
+mm <- lm(wusa ~ nhtemp, dat)
+## extract fits
+ff <- fitted(mm)
+## extract residuals
+ee <- resid(mm)
+
+## set plot area
+par(mai = c(0.9,0.9,0.1,0.1),
+    omi = c(0, 0.4, 0, 0),
+    cex = 1.1)
+
+## plot regr
+plot(dat$nhtemp, dat$wusa, pch = 16, las = 1, xpd = NA,
+     cex.lab = 1.2, xlab = "Temperature", ylab = "Tree growth", main = "")
+```
+
+
+## Correlated errors
+
+Closer examination of the residuals reveals a problem
+
+```{r tree_rings_ee, echo = FALSE, fig.width = 7.5, fig.height = 3.5, fig.align="center"}
+## set plot area
+par(mfrow = c(1,2),
+    mai = c(0.9,0.9,0.1,0.1),
+    omi = c(0, 0.4, 0, 0),
+    cex = 1)
+
+## plots
+plot(ff, ee, pch = 16, las = 1, xpd = NA,
+     cex.lab = 1.2, xlab = "Fitted values", ylab = "Residuals", main = "")
+abline(h = 0, lty ="dashed")
+plot(ee[1:(length(ee)-1)], ee[2:length(ee)], pch = 16, las = 1,
+     cex.lab = 1.2, xlab = expression(italic(e[t])), ylab = expression(italic(e)[italic(t)+1]),
+     main = "")
+```
+
+
+## Correlated errors
+
+We can estimate the *autocorrelation function* in **R** with `acf()`
+
+```{r tree_rings_acf, , echo = FALSE, fig.width = 5, fig.height = 4, fig.align="center"}
+## set plot area
+par(mai = c(0.9,0.9,0.1,0.1),
+    omi = c(0, 0.4, 0, 0))
+
+## plot acf
+acf(ee, ylab = expression(paste("Correlation of ", italic(e[t]), " & ", italic(e[t + h]))),
+    main = "", cex.lab = 1.3)
+```
+
+
+# QUESTIONS
+
+
+## Unusual observations | Outliers
+
+It is often the case that one or more data points do not fit our model well
+
+We refer to these as *outliers*
+
+
+## Unusual observations | Influence
+
+Some outliers affect the fit of the model
+
+We refer to these as *influential* observations
+
+
+## Unusual observations | Leverage points
+
+*Leverage points* are extreme in the predictor $(X)$ space
+
+They may or may not affect model fit
+
+
+## Unusual observations | Examples
+
+```{r outliers, echo = FALSE, fig.width = 8, fig.height = 3.5, fig.align="center"}
+xr <- round(1:10 + rnorm(10, 0, 0.2), 1)
+testdata <- data.frame(x = xr,
+                       y = xr + rnorm(10))
+mm <- lm(y ~ x, testdata)
+
+p1 <- c(5.5,12)
+m1 <- lm(y ~ x, rbind(testdata, p1))
+
+p2 <- c(17,17)
+m2 <- lm(y ~ x, rbind(testdata, p2))
+
+p3 <- c(17,5.1)
+m3 <- lm(y ~ x, rbind(testdata, p3))
+
+## set plot area
+par(mfrow = c(1,3),
+    mai = c(0.9,0.4,0.5,0.1),
+    omi = c(0, 0.5, 0, 0),
+    cex = 1)
+
+## plot examples
+plot(y ~ x, rbind(testdata, p1), pch = 16, las = 1, xpd = NA,
+     cex.lab = 1.5, xlab = expression(italic(x)), ylab = expression(y),
+     main = "No leverage or influence", cex.main = 1)
+points(5.5, 12, pch = 16, cex = 1.5, col ="red")
+abline(mm)
+abline(m1, lty=2, col ="red")
+plot(y ~ x, rbind(testdata, p2), pch = 16, las = 1,
+     cex.lab = 1.5, xlab = expression(italic(x)), ylab = expression(y),
+     main = "Leverage but no influence", cex.main = 1)
+points(17, 17, pch = 16, cex = 1.5, col ="red")
+abline(mm)
+abline(m2, lty=2, col ="red")
+plot(y ~ x, rbind(testdata, p3), pch = 16, las = 1,
+     cex.lab = 1.5, xlab = expression(italic(x)), ylab = expression(y),
+     main = "Leverage and influence", cex.main = 1)
+points(17, 5.1, pch = 16, cex = 1.5, col ="red")
+abline(mm)
+abline(m3, lty=2, col ="red")
+```
+
+
+## Unusual observations | Identifying leverage points
+
+Remember the "hat matrix" $(\mathbf{H})$?
+
+The values along the diagonal $h_i = \mathbf{H}_{ii}$ are the leverages
+
+
+## Unusual observations | Identifying leverage points
+
+Also recall that
+
+$$
+\text{Var}(\hat{\epsilon}_i) = \sigma^2 (1 - h_i)
+$$
+
+Large $h_i$ lead to small variances of $\epsilon_i$ & hence $\hat{y}_i$ tends to $y_i$
+
+
+## Unusual observations | Identifying leverage points
+
+$\mathbf{H}$ has dimensions $n \times n$ and $\text{trace}(\mathbf{H}) = \sum_{i = 1}^n h_i = k$
+
+Thus, on average we should expect that $\bar{h}_i = \frac{k}{n}$
+
+<br>
+
+Any $h_i > 2 \frac{k}{n}$ deserve closer inspection
+
+
+## Unusual observations | Identifying leverage points
+
+We can easily compute the $h_i$ in **R** via the function `hatvalues()`
+
+```{r ex_hat_values, echo = TRUE}
+## leverages of points in middle plot on slide 30
+hv <- hatvalues(m2)
+## threshold value for h_i ~= 0.36
+th <- 2 * (2 / length(hv))
+## are any h_i > Eh?
+hv > th
+```
+
+
+## Unusual observations | Identifying leverage points
+
+We can also identify high leverage via a half-normal plot (R)
+
+```{r leverage_plots, echo = FALSE, fig.width = 8, fig.height = 3.5, fig.align="center"}
+## revised `halfnorm` from Faraway
+halfnorm <- function(x, nlab = 1, ylab = "Sorted data") {
+  x <- abs(x)
+  labord <- order(x)
+  x <- sort(x)
+  i <- order(x)
+  n <- length(x)
+  ui <- qnorm((n + 1:n)/(2 * n + 1))
+  labs <- as.character(1:length(x))
+  plot(ui, x[i], pch = 16, las = 1,
+       xlab = "Half-normal quantiles", ylab = ylab, 
+       ylim = c(0, max(x)), type = "n")
+  if(nlab < n) {
+    points(ui[1:(n - nlab)], x[i][1:(n - nlab)], pch = 16)
+  }
+  text(ui[(n - nlab + 1):n], x[i][(n - nlab + 1):n], labs[labord][(n - nlab + 1):n])
+}
+
+## set plot area
+par(mfrow = c(1,2),
+    mai = c(0.9,0.9,0.1,0.3),
+    omi = c(0, 0.4, 0, 0),
+    cex = 1)
+
+## plots
+plot(model.matrix(m2)[,2], hv, pch = 16, las = 1,
+     ylab = "Leverage", xlab = expression(italic(x)))
+mtext(expression(italic(h)^{"*"}), 4, line = 0.3, cex = 1.1, at = th, las = 1)
+abline(h = th, lty = "dashed")
+halfnorm(hv)
+```
+
+
+## Using leverage to standardize residuals
+
+We can use the leverages to scale the residuals so their variance is 1
+
+$$
+r_i = \frac{\hat{\epsilon}_i}{\hat{\sigma} \sqrt{1 - h_i} }
+$$
+
+Doing so allows for easy examination via $Q$-$Q$ plots as values should lie on the 1:1 line
+
+
+## Using leverage to standardize residuals
+
+Standardized residuals from the high leverage example
+
+```{r std_resid, echo = FALSE, fig.width = 4, fig.height = 4, fig.align="center"}
+par(mai = c(0.9,0.9,0.1,0.1), omi = c(0, 0, 0, 0), cex = 1)
+## standardized r
+qqnorm(rstandard(m2), pch = 16, las = 1, main = "")
+abline(0, 1)
+```
+
+
+## Unusual observations | Identifying outliers
+
+One way to detect outliers is to estimate $n$ different models where we exclude one data point from each model
+
+More formally we have
+
+$$
+\hat{\mathbf{y}}_{(i)} = \mathbf{X}_{(i)} \hat{\boldsymbol{\beta}}_{(i)}
+$$
+
+where $(i)$ indicates that the $i$<sup>th</sup> datum has been omitted
+
+If $y_{i} - \hat{y}_{(i)}$ is large, then observation $i$ is an outlier
+
+
+## Unusual observations | Identifying outliers
+
+To evaluate the size of particular outlier we need to scale the residuals
+
+This is similar to scaling a parameter estimate by its standard deviation to test model hypotheses, with
+
+$$
+t_i = \frac{\beta_i}{\text{SE} \left( \beta_i \right)}
+$$
+
+and we compare it to a $t$-distribution with $n - k$ degrees of freedom
+
+
+## Unusual observations | Identifying outliers
+
+It turns out that the variance of the difference $y_{i} - \hat{y}_{(i)}$ is just like that for a prediction interval
+
+$$
+\widehat{\text{Var}} \left( y_{i}-\hat{y}_{(i)} \right) = \hat{\sigma}_{(i)}^{2} \left( 1 + \mathbf{X}_{i}^{\top} \left( \mathbf{X}_{(i)}^{\top} \mathbf{X}_{(i)} \right)^{-1} \mathbf{X}_{i} \right)
+$$
+
+
+## Unusual observations | Identifying outliers
+
+We can now compute the "studentized" (scaled) residuals as
+
+$$
+t_i = \frac{y_{i} - \hat{y}_{(i)}}{ \hat{\sigma}_{(i)} \sqrt{ 1 + \mathbf{X}_{i}^{\top} \left( \mathbf{X}_{(i)}^{\top} \mathbf{X}_{(i)} \right)^{-1} \mathbf{X}_{i} } }
+$$
+
+which are distributed as a $t$ distribution with $n - l - 1$ df
+
+
+## Unusual observations | Identifying outliers
+
+There is an easer way to do this without fitting $n$ different models, where
+
+$$
+t_i = \frac{y_{i} - \hat{y}_{(i)}}{ \hat{\sigma}_{(i)} \sqrt{ 1 - h_i } } = r_i \sqrt{ \frac{n - k - 1}{n - k - r_i^2} }
+$$
+
+and $r_i$ is the residual for the $i$<sup>th</sup> case based on a model that includes *all* of the data
+
+
+## Unusual observations | Identifying outliers
+
+Some points to consider
+
+* Two or more outliers next to each other can hide each other
+
+> * An outlier in one model may not be an outlier in another
+
+> * The error distribution may not be normal and so larger residuals may be expected
+
+> * Individual outliers are usually much less of a problem in larger datasets
+
+
+## Unusual observations | Identifying outliers
+
+What can be done about outliers?
+
+* Check for a data-entry error
+
+> * Examine the physical context — why did it happen?
+
+> * Exclude the point from the analysis but try reincluding it later if the model is changed
+
+> * Consider using "robust regression" (more later)
+
+> * Be wary of automatic discarding of outliers
+
+
+## Unusual observations | Influential observations
+
+Influential observations might not be outliers nor have high leverage, but we want to identify them
+
+Cook's Distance $(D)$ is a popular choice, where
+
+$$
+D_i = r_i^2 \frac{h_i}{k (1 - h_i)}
+$$
+
+## Unusual observations
+
+We can evaulate Cook's $D$ with a half-normal plot
+
+```{r cooks_d, echo = FALSE, fig.width = 4, fig.height = 4, fig.align="center"}
+par(mai = c(0.9,0.9,0.1,0.1), omi = c(0, 0, 0, 0), cex = 1)
+## Cook's D
+cook <- cooks.distance(m2)
+## half-normal plot
+halfnorm(cook, 2, ylab="Cook’s Distance")
+```
+
+
+## Summary
+
+When fitting linear models via least squares we make several assumptions about our model 
+
+
+## Summary
+
+The importance of our assumptions can be ranked as
+
+1. Systematic form of the model
+
+If we get this wrong, explanations & predictions will be off
+
+
+## Summary
+
+The importance of our assumptions can be ranked as
+
+1. Systematic form of the model
+
+2. Independence of errors
+
+Dependence (correlation) among errors means there is less info in the data than the sample size suggests
+
+
+## Summary
+
+The importance of our assumptions can be ranked as
+
+1. Systematic form of the model
+
+2. Independence of errors
+
+3. Non-constant variance
+
+This may affect inference and confidence/prediction intervals
+
+## Summary
+
+The importance of our assumptions can be ranked as
+
+1. Systematic form of the model
+
+2. Independence of errors
+
+3. Non-constant variance
+
+4. Normality of errors
+
+This is less of a concern as sample size increases
+
+
 
