@@ -77,10 +77,10 @@ inference <- list(
 diagnostics <- list(
   title = "Model diagnostics",
   topics = c("<b>Model diagnostics</b>", "Assumptions about errors", "Leverage", "Outliers"),
-  pdf = c(""),
-  rmd = c(""),
-  html = c(""),
-  background = c(""),
+  pdf = c("lectures/week_03/lec_07_diagnostics_for_linear_models.pdf"),
+  rmd = c("lectures/week_03/lec_07_diagnostics_for_linear_models.Rmd"),
+  html = c("lectures/week_03/lec_07_diagnostics_for_linear_models.html"),
+  background = c("[Farraway (2015) Chap 6](references/Faraway_2015_Linear_models_with_R.pdf)"),
   zoom = ""
 )
 
