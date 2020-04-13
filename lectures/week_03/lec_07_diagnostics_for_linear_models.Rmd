@@ -143,10 +143,23 @@ plot(y_hat, e3s, pch = 16, las = 1,
 
 ## Checking error assumptions | Constant variance
 
-We can formally test the assumption of homogeneous variance via *Levene's Test*
+We can formally test the assumption of homogeneous variance via *Levene's Test*, which compares the absolute values of the residuals among $j$ groups of data
 
 $$
-W=\frac{(n-k)}{(k-1)} \cdot \frac{\sum_{i=1}^{k} n_{i}\left(Z_{i} - \bar{Z} \right)^{2}}{\sum_{i=1}^{k} \sum_{j=1}^{n_{i}} \left( Z_{i j} - \bar{Z_{i}} \right)^{2}}
+Z_{ij} = \left| y_{ij} - \hat{y}_j \right|
+$$
+
+<br>
+
+Levene's test is a one-way ANOVA of the residuals
+
+
+## Checking error assumptions | Constant variance
+
+The statistic for *Levene's Test* is
+
+$$
+W=\frac{(n-k)}{(k-1)} \cdot \frac{\sum_{j=1}^{k} n_{j}\left(Z_{j} - \bar{Z} \right)^{2}}{\sum_{j=1}^{k} \sum_{i=1}^{n_{j}} \left( Z_{i j} - \bar{Z_{i}} \right)^{2}}
 $$
 
 The test statistic $W$ is approximately $F$-distributed with $k-1$ and $N-k$ degrees of freedom
@@ -611,7 +624,7 @@ $$
 t_i = \frac{y_{i} - \hat{y}_{(i)}}{ \hat{\sigma}_{(i)} \sqrt{ 1 + \mathbf{X}_{i}^{\top} \left( \mathbf{X}_{(i)}^{\top} \mathbf{X}_{(i)} \right)^{-1} \mathbf{X}_{i} } }
 $$
 
-which are distributed as a $t$ distribution with $n - l - 1$ df
+which are distributed as a $t$ distribution with $n - k - 1$ df
 
 
 ## Unusual observations | Identifying outliers

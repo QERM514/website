@@ -3222,15 +3222,27 @@ clear: both;
 
 </article></slide><slide class=""><hgroup><h2>Checking error assumptions </h2><h3> Constant variance</h3></hgroup><article  id="checking-error-assumptions-constant-variance-5">
 
-<p>We can formally test the assumption of homogeneous variance via <em>Levene’s Test</em></p>
+<p>We can formally test the assumption of homogeneous variance via <em>Levene’s Test</em>, which compares the absolute values of the residuals among \(j\) groups of data</p>
 
 <p>\[
-W=\frac{(n-k)}{(k-1)} \cdot \frac{\sum_{i=1}^{k} n_{i}\left(Z_{i} - \bar{Z} \right)^{2}}{\sum_{i=1}^{k} \sum_{j=1}^{n_{i}} \left( Z_{i j} - \bar{Z_{i}} \right)^{2}}
+Z_{ij} = \left| y_{ij} - \hat{y}_j \right|
+\]</p>
+
+<p><br></p>
+
+<p>Levene’s test is a one-way ANOVA of the residuals</p>
+
+</article></slide><slide class=""><hgroup><h2>Checking error assumptions </h2><h3> Constant variance</h3></hgroup><article  id="checking-error-assumptions-constant-variance-6">
+
+<p>The statistic for <em>Levene’s Test</em> is</p>
+
+<p>\[
+W=\frac{(n-k)}{(k-1)} \cdot \frac{\sum_{j=1}^{k} n_{j}\left(Z_{j} - \bar{Z} \right)^{2}}{\sum_{j=1}^{k} \sum_{i=1}^{n_{j}} \left( Z_{i j} - \bar{Z_{i}} \right)^{2}}
 \]</p>
 
 <p>The test statistic \(W\) is approximately \(F\)-distributed with \(k-1\) and \(N-k\) degrees of freedom</p>
 
-</article></slide><slide class=""><hgroup><h2>Checking error assumptions</h2></hgroup><article  id="checking-error-assumptions-1" class="smaller">
+</article></slide><slide class=""><hgroup><h2>Checking error assumptions</h2></hgroup><article  class="smaller" id="checking-error-assumptions-1">
 
 <p>Levene’s Test is easy to compute in <strong>R</strong></p>
 
@@ -3252,7 +3264,7 @@ var.test(g1, g2)</pre>
 ## ratio of variances 
 ##          0.9048584</pre>
 
-</article></slide><slide class=""><hgroup><h2>Checking error assumptions </h2><h3> Constant variance</h3></hgroup><article  id="checking-error-assumptions-constant-variance-6">
+</article></slide><slide class=""><hgroup><h2>Checking error assumptions </h2><h3> Constant variance</h3></hgroup><article  id="checking-error-assumptions-constant-variance-7">
 
 <p>What can we do if we find evidence of heteroscedasticity?</p>
 
@@ -3452,7 +3464,7 @@ t_i = \frac{\beta_i}{\text{SE} \left( \beta_i \right)}
 t_i = \frac{y_{i} - \hat{y}_{(i)}}{ \hat{\sigma}_{(i)} \sqrt{ 1 + \mathbf{X}_{i}^{\top} \left( \mathbf{X}_{(i)}^{\top} \mathbf{X}_{(i)} \right)^{-1} \mathbf{X}_{i} } }
 \]</p>
 
-<p>which are distributed as a \(t\) distribution with \(n - l - 1\) df</p>
+<p>which are distributed as a \(t\) distribution with \(n - k - 1\) df</p>
 
 </article></slide><slide class=""><hgroup><h2>Unusual observations </h2><h3> Identifying outliers</h3></hgroup><article  id="unusual-observations-identifying-outliers-4">
 
