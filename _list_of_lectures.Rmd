@@ -81,16 +81,16 @@ diagnostics <- list(
   rmd = c("lectures/week_03/lec_07_diagnostics_for_linear_models.Rmd"),
   html = c("lectures/week_03/lec_07_diagnostics_for_linear_models.html"),
   background = c("[Farraway (2015) Chap 6](references/Faraway_2015_Linear_models_with_R.pdf)"),
-  zoom = ""
+  zoom = "https://washington.zoom.us/rec/share/45V5Jq_g_EhOU9bhtXvyeYgtJ6_HX6a81nAe86EPykgGzHzr6mPuy0buVUjP30h-"
 )
 
 non_IID_errors <- list(
   title = "Problems with model residuals",
   topics = c("<b>Problems with model errors</b>", "Weighted least squares", "Generalized least squares", "Robust regression", "Autocorrelated errors"),
-  pdf = c(""),
-  rmd = c(""),
-  html = c(""),
-  background = "",
+  pdf = c("lectures/week_03/lec_08_non-IID_errors.pdf"),
+  rmd = "lectures/week_03/lec_08_non-IID_errors.Rmd",
+  html = "lectures/week_03/lec_08_non-IID_errors.html",
+  background = "[Farraway (2015) Chap 8](references/Faraway_2015_Linear_models_with_R.pdf)",
   zoom = ""
 )
 
