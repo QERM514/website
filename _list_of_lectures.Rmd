@@ -86,7 +86,7 @@ diagnostics <- list(
 
 non_IID_errors <- list(
   title = "Problems with model residuals",
-  topics = c("<b>Problems with model errors</b>", "Weighted least squares", "Generalized least squares", "Robust regression", "Autocorrelated errors"),
+  topics = c("<b>Problems with model errors</b>", "Weighted least squares", "Generalized least squares", "Robust regression"),
   pdf = c("lectures/week_03/lec_08_problems_with_errors.pdf"),
   rmd = "lectures/week_03/lec_08_problems_with_errors.Rmd",
   html = "lectures/week_03/lec_08_problems_with_errors.html",
