@@ -1,5 +1,5 @@
 ---
-title: "Problems with non-IID errors"
+title: "Problems with model errors"
 subtitle: "Analysis of Ecological and Environmental Data<br>QERM 514"
 author: "Mark Scheuerell"
 date: "15 April 2020"

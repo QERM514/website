@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Problems with non-IID errors</title>
+  <title>Problems with model errors</title>
 
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="chrome=1">
@@ -20,7 +20,7 @@
     var SLIDE_CONFIG = {
       // Slide settings
       settings: {
-                title: 'Problems with non-IID errors',
+                title: 'Problems with model errors',
                         subtitle: 'Analysis of Ecological and Environmental Data<br>QERM 514',
                 useBuilds: true,
         usePrettify: true,
@@ -3327,7 +3327,7 @@ s_{n1} &amp; s_{n2} &amp; \cdots &amp; s_{nn}
 \end{bmatrix}
 \]</p>
 
-</article></slide><slide class=""><hgroup><h2>Generalized least squares</h2></hgroup><article  id="generalized-least-squares-4" class="smaller">
+</article></slide><slide class=""><hgroup><h2>Generalized least squares</h2></hgroup><article  class="smaller" id="generalized-least-squares-4">
 
 <p>You can think of the Cholesky decomposition as a square root transformation for matrices</p>
 
@@ -3342,7 +3342,7 @@ CC</pre>
 ## [2,]    4    8    6
 ## [3,]    3    6    9</pre>
 
-</article></slide><slide class=""><hgroup><h2>Generalized least squares</h2></hgroup><article  id="generalized-least-squares-5" class="smaller">
+</article></slide><slide class=""><hgroup><h2>Generalized least squares</h2></hgroup><article  class="smaller" id="generalized-least-squares-5">
 
 <pre class = 'prettyprint lang-r'>## Choleshky decomposition; `chol()` returns t(S)
 SS &lt;- t(chol(CC))
