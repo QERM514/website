@@ -632,7 +632,7 @@ which are distributed as a $t$ distribution with $n - k - 1$ df
 There is an easer way to do this without fitting $n$ different models, where
 
 $$
-t_i = \frac{y_{i} - \hat{y}_{(i)}}{ \hat{\sigma}_{(i)} \sqrt{ 1 - h_i } } = r_i \sqrt{ \frac{n - k - 1}{n - k - r_i^2} }
+t_i = \frac{y_{i} - \hat{y}_{(i)}}{ \hat{\sigma}_{(i)} \sqrt{ 1 - h_i } } = e_i \sqrt{ \frac{n - k - 1}{n - k - e_i^2} }
 $$
 
 and $r_i$ is the residual for the $i$<sup>th</sup> case based on a model that includes *all* of the data
@@ -673,8 +673,11 @@ Influential observations might not be outliers nor have high leverage, but we wa
 Cook's Distance $(D)$ is a popular choice, where
 
 $$
-D_i = r_i^2 \frac{h_i}{k (1 - h_i)}
+D_i = e_i^2 \frac{1}{k} \left( \frac{h_i}{1 - h_i} \right)
 $$
+
+$D_i$ scales the errors by their $df$ and leverage
+
 
 ## Unusual observations
 
