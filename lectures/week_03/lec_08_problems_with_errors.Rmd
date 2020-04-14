@@ -14,6 +14,11 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ## Goals for today
 
+* Understand how generalized least squares can be used when the errors are correlated
+
+> - Understand how weighted least squares can be used when the errors have nonconstant variance
+
+> - Understand how robust methods can be used when the errors are non-normal or when we ahve influential observations
 
 
 ## Concerns re: model assumptions
@@ -448,7 +453,7 @@ This suggests $w_i = n_i$
 
 ## Weighted least squares | Observations are sums
 
-Similarly, the observations $y_i$ might sums of several pieces of raw data
+Similarly, the observations $y_i$ might be sums of several pieces of raw data
 
 In that case
 
@@ -463,7 +468,7 @@ This suggests $w_i = \frac{1}{n_i}$
 
 We saw in the last lecture that non-normal errors & unusual observations can affect model fits
 
-> - heteroskedastic errors where $\text{Var}(e_i) \propto n_i$
+> - heteroscedastic errors where $\text{Var}(e_i) \propto n_i$
 
 > - outliers that do not come from the data generating process
 
@@ -472,7 +477,7 @@ We saw in the last lecture that non-normal errors & unusual observations can aff
 
 We saw in the last lecture that non-normal errors & unusual observations can affect model fits
 
-* heteroskedastic errors where $\text{Var}(e_i) \propto n_i$
+* heteroscedastic errors where $\text{Var}(e_i) \propto n_i$
 
 * outliers that do not come from the data generating process
 
@@ -481,7 +486,7 @@ In these case we can use so-called *robust regression*
 
 ## Robust regression | M-estimation
 
-Recall that our goal in ordinary least squares is to minimize the $SSE$
+Recall that our goal in ordinary least squares is to minimize the error sum-of-squares $(SSE)$
 
 $$
 SSE = \sum^n_{i = 1} (y_i - \boldsymbol{\beta} \mathbf{x}_i)^2
