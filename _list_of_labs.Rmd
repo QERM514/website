@@ -51,10 +51,10 @@ diagnostics_and_errors <- list(
   title = "Model diagnostics",
   topics = c("Model diagnostics", "Non-IID errors"),
   pdf = c(""),
-  rmd = c(""),
-  html = c(""),
+  rmd = c("labs/week_02/diagnostics_and_errors.Rmd"),
+  html = c("labs/week_02/diagnostics_and_errors.html"),
   zoom = "",
-  data = "",
+  data = "labs/week_02/galton_peas.csv",
   background = c("")
   )
 
