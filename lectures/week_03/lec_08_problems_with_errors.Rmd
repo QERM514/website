@@ -18,7 +18,7 @@ knitr::opts_chunk$set(echo = FALSE)
 
 > - Understand how weighted least squares can be used when the errors have nonconstant variance
 
-> - Understand how robust methods can be used when the errors are non-normal or when we ahve influential observations
+> - Understand how robust methods can be used when the errors are non-normal or when we have influential observations
 
 
 ## Concerns re: model assumptions
@@ -208,7 +208,7 @@ You can think of the Cholesky decomposition as a square root transformation for 
 Consider this example
 
 ```{r chol_demo, echo = TRUE}
-## covariance matrix
+## symmetrical matrix
 CC <- matrix(c(3,4,3,4,8,6,3,6,9), 3, 3)
 CC
 ```
@@ -548,7 +548,7 @@ curve(dnorm, -4, 4, las = 1, lwd = 2,
 abline(v = c(-1,1), lty = "dashed")
 text(x = c(-1,1), y = c(-0.04, -0.04), expression(italic(c)), xpd = NA)
 text(0, 0.2, expression(italic(x)^2/2))
-text(x = c(-3,3), y = c(0.2, 0.2), expression(''*italic(c)*"|"*italic(x)*"|"*-italic(c)^2/2*''), xpd = NA)
+text(x = c(-3,3), y = c(0.2, 0.2), expression(''*italic(c)*"|"*italic(z)*"|"*-italic(c)^2/2*''), xpd = NA)
 ```
 
 
