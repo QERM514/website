@@ -27,7 +27,7 @@ markdown <- list(
   rmd = "homework/week_01/hw_01_intro_to_markdown.Rmd",
   html = "",
   data = "",
-  key = ""
+  key = "homework/week_01/hw_01_intro_to_markdown_key.pdf"
 )
 
 ## fitting linear models
