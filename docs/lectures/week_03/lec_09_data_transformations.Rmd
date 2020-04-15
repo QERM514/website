@@ -9,8 +9,471 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 ```
 
 ## Goals for today
+
+* Identify possible transformations of the response when your errors have unequal variance or are skewed
+
+> - Understand how to use common transformations and make inference from the resulting model
+
+> - Understand that there are alternatives to transformation that we will use later
+
+
+## Why would you transform?
+
+We have made a number of assumptions about our models, which include
+
+* the distribution of the errors (IID)
+
+* linear relationship(s) between the response and predictor(s)
+
+What can we do when these assumptions are not met?
+
+
+## What can you transform?
+
+It's possible to transform both sides of our models to
+
+* achieve constant variance $(y)$
+
+* correct for skewness $(y)$
+
+* linearize the relationship $(y, x)$
+
+
+## Types of transformations
+
+The most common form is where $y' = y^\lambda$
+
+and $\lambda > 1$ (powers)
+
+or $0 < \lambda < 1$ (roots)
+
+<br>
+
+For example
+
+$\lambda = 2 \Rightarrow y' = y^2$
+
+$\lambda = \frac{1}{2} \Rightarrow y' = \sqrt{y}$
+
+
+## Types of transformations
+
+One can also use inverses where $y' = y^{-\lambda}$
+
+and $\lambda > 1$ (powers)
+
+or $0 < \lambda < 1$ (roots)
+
+<br>
+
+For example
+
+$\lambda = 2 \Rightarrow y' = \frac{1}{y^2}$
+
+$\lambda = \frac{1}{2} \Rightarrow y' = \frac{1}{\sqrt{y}}$
+
+
+## Box-Cox transformation
+
+The Box-Cox transformation is a popular method for stabilizing the variance of errors
+
+It is defined as
+
+$$
+y' = \frac{y^{\lambda} - 1}{\lambda}
+$$
+
+for all $y > 0$
+
+## Box-Cox transformation
+
+More specifically, because 
+
+$$
+\lim\limits_{\lambda \to 0} \frac{y^{\lambda} - 1}{\lambda} = \log(y)
+$$
+
+we instead use
+
+$$
+y' = \left\{ 
+\begin{matrix}
+\frac{y^{\lambda} - 1}{\lambda} ~ \text{if} ~ \lambda \neq 0 \\
+\log(y) ~ \text{if} ~ \lambda = 0
+\end{matrix}
+\right.
+$$
+
+
+## Box-Cox transformation
+
+How does one choose $\lambda$?
+
+By using *profile likelihoods* (which we will see in a later lecture)
+
+<br>
+
+(We'll use the `boxcox()` function in the **MASS** package)
+
+
+## Box-Cox transformation | An example
+
+Let's return to the plant data from the Galapagos Archipelago where we modeled diversity as a function of island area
+
+```{r model_gala, echo = TRUE, eval = FALSE}
+## get data
+data(gala, package = "faraway")
+## fit regression model
+mm <- lm(Species ~ Area, gala)
+## estimate lambda
+MASS::boxcox(mm)
+```
+
+
+## Box-Cox transformation
+
+Here is the result of calling `boxcox(mm)`
+
+```{r boxcox_gala, echo = FALSE, fig.width = 5, fig.height = 4, fig.align="center"}
+## get data
+data(gala, package = "faraway")
+## fit regression model
+mm <- lm(Species ~ Area, gala)
+## set plot area
+par(mai = c(1.0,1.0,0.1,0.1),
+    omi = c(0, 0, 0.3, 0),
+    cex = 1.1)
+## plot profile & estimate lambda
+llp <- MASS::boxcox(mm, lambda = seq(-100,100)/100)
+lm <- llp$x[which.max(llp$y)]
+mtext(side = 3, line = 0.5, at = lm, substitute(hat(lambda) == lm, list(lm = lm)))
+```
+
+
+## Box-Cox transformation
+
+After transformation, how do we interpret $\lambda = 0.17$?
+
+Box-Cox transformations work well, but sometimes we can do better with an approximation to $\lambda$
+
+
+## Box-Cox transformation
+
+General considerations
+
+* The Box–Cox method gets upset by outliers
+
+For example, if $\hat{\lambda}$ = 5 there is little rationale for such an
+extreme transformation
+
+
+## Box-Cox transformation
+
+General considerations
+
+* The Box–Cox method gets upset by outliers
+
+* If some $y_i$ < 0, we can add a constant to all the $y$
+
+This works if the constant is small, but it's a "hack"
+
+
+
+## Box-Cox transformation
+
+General considerations
+
+* The Box–Cox method gets upset by outliers
+
+* If some $y_i$ < 0, we can add a constant to all the $y$
+
+* If the range in $y$ is small, then the Box–Cox transformation will not have much effect
+
+Recall that linear models work well for *local* non-linear functions
+
+
+## Alternative to Box-Cox
+
+Consider the fecundity of a fish versus its length
+
+```{r sim_fecund, echo = FALSE, fig.width = 5, fig.height = 4, fig.align="center"}
+set.seed(514)
+nn <- 100
+ll <- runif(nn, 3, 8)
+ee <- rnorm(nn, 0, 3)
+b0 <- 5
+b1 <- 12
+ff <- (b0 + b1*ll + ee)^2
+## set plot area
+par(mai = c(1.0,1.0,0.1,0.1),
+    omi = c(0, 0, 0, 0),
+    cex = 1)
+## plot data
+plot(ll, ff, pch = 16, xpd = NA,
+     ylab = "Number of eggs", xlab = "Length (dm)", cex.lab = 1.5)
+```
+
+
+## Alternative to Box-Cox
+
+Here's the fit from a linear regression
+
+```{r sim_fecund_fit, echo = FALSE, fig.width = 5, fig.height = 4, fig.align="center"}
+## fit regression model
+mm <- lm(ff ~ ll)
+## set plot area
+par(mai = c(1.0,1.0,0.1,0.1),
+    omi = c(0, 0, 0, 0),
+    cex = 1)
+## plot data
+plot(ll, ff, pch = 16, xpd = NA,
+     ylab = "Number of eggs", xlab = "Length (dm)", cex.lab = 1.5)
+abline(coef(mm))
+```
+
+
+## Alternative to Box-Cox
+
+And here are the residuals from the fitted model
+
+```{r sim_fecund_resids, echo = FALSE, fig.width = 5, fig.height = 4, fig.align="center"}
+## set plot area
+par(mai = c(1.0,1.0,0.1,0.1),
+    omi = c(0, 0, 0, 0),
+    cex = 1)
+## plot data
+plot(fitted(mm), resid(mm), pch = 16, las = 1, xpd = NA,
+     ylab = "Residuals", xlab = "Estimated fecundity", cex.lab = 1.5)
+abline(h = 0, lty = "dashed")
+```
+
+
+## Alternative to Box-Cox
+
+This $\hat{\lambda}$ is really close to 0.5 (ie, a square root transform)
+
+```{r boxcox_fecund, echo = FALSE, fig.width = 5, fig.height = 4, fig.align="center"}
+## set plot area
+par(mai = c(1.0,1.0,0.1,0.1),
+    omi = c(0, 0, 0.3, 0),
+    cex = 1.1)
+## plot profile & estimate lambda
+llp <- MASS::boxcox(mm, lambda = seq(-50,150)/100)
+lm <- llp$x[which.max(llp$y)]
+mtext(side = 3, line = 0.5, at = lm, substitute(hat(lambda) == lm, list(lm = lm)))
+```
+
+
+## Square root transformation
+
+Here's the fit from a linear regression to $\sqrt{y}$
+
+```{r fecund_fit_sqrt, echo = FALSE, fig.width = 5, fig.height = 4, fig.align="center"}
+## fit regression model
+ms <- lm(sqrt(ff) ~ ll)
+## set plot area
+par(mai = c(1.0,1.0,0.1,0.1),
+    omi = c(0, 0, 0, 0),
+    cex = 1)
+## plot data
+plot(ll, sqrt(ff), pch = 16, xpd = NA,
+     ylab = expression(sqrt(Number~of~eggs)), xlab = "Length (dm)", cex.lab = 1.5)
+abline(coef(ms))
+```
+
+
+## Square root transformation
+
+And here are the residuals from the fitted model
+
+```{r fecund_resids_sqrt, echo = FALSE, fig.width = 5, fig.height = 4, fig.align="center"}
+## set plot area
+par(mai = c(1.0,1.0,0.1,0.1),
+    omi = c(0, 0, 0, 0),
+    cex = 1)
+## plot data
+plot(fitted(ms), resid(ms), pch = 16, las = 1, xpd = NA,
+     ylab = "Residuals", xlab = expression(sqrt(Estimated~number~of~eggs)), cex.lab = 1.5)
+abline(h = 0, lty = "dashed")
+```
+
+
+## Predictions from a transformed model
+
+Using `predict()` will give fits on the transformed scale
+
+```{r ex_trans_fits, echo = TRUE}
+## expected sqrt(fecundity) for length = 5 dm
+predict(ms, data.frame(ll = 5), interval = "confidence")
+```
+
+
+## Predictions from a transformed model
+
+We need to incude the back-transformation on `predict()`
+
+$$
+\begin{aligned}
+\sqrt{\hat{y}}_i &= x_i \hat{\boldsymbol{\beta}} \\
+&\Downarrow \\
+\hat{y}_i &= (x_i \hat{\boldsymbol{\beta}})^2 \\
+\end{aligned}
+$$
+
+
+## Back-transformed fit
+
+Here's the fit and prediction interval on the natural scale
+
+```{r fecund_fit_sqrt_back, echo = FALSE, fig.width = 5, fig.height = 4, fig.align="center"}
+## back-transformed predictions
+tp <- predict(ms, data.frame(ll = seq(30,80)/10), interval = "prediction")
+## set plot area
+par(mai = c(1.0,1.0,0.1,0.1),
+    omi = c(0, 0, 0, 0),
+    cex = 1)
+## plot data
+plot(ll, ff, pch = 16, xpd = NA,
+     ylab = expression(Number~of~eggs), xlab = "Length (dm)", cex.lab = 1.5)
+matlines(seq(30,80)/10, (tp)^2, lty = c(1, 2, 2), col = c("blue", "red", "red"))
+```
+
+
+## Transformed polynomials
+
+Think back to an early lecture where we transformed a nonlinear polynomial into a linear model
+
+$$
+y_i = \beta_0 + \beta_1 x_{1,i} + \beta_2 x_{2,i}^2 + \epsilon_i \\
+\Downarrow \\
+y_i = \beta_0 + \beta_1 x_{1,i} + \beta_2 z_{2,i} + \epsilon_i \\
+z_{2,i} = x_{2,i}^2
+$$
+
+## Transformed polynomials
+
+Polynomials are an easy way to model nonlinearities in data, such as
+
+* Seasonal effects on primary productivity
+
+* Temperature effects on growth of poikilotherms
+
+
+## Ecological data
+
+Many ecological observations only take positive values $(y > 0)$
+
+* length or mass or fecundity
+
+* species counts/density
+
+* latency periods for infectious diseases
+
+The distributions of these data also tend to be "long-tailed"
+
+
+## Long-tailed data
+
+Distribution of plant diversity data in the `gala` dataset
+
+```{r gala_hist, echo = FALSE, fig.width = 5, fig.height = 4, fig.align="center"}
+data(gala, package="faraway")
+rr <- range(gala$Species)
+## set plot area
+par(mai = c(1.0,1.0,0.1,0.1),
+    omi = c(0, 0, 0, 0),
+    cex = 1.1)
+## plot data
+hist(gala$Species, breaks = seq(0, 450, 50),
+     xlab = "Number of species", ylab = "Number of islands",
+     main = "")
+```
+
+
+## Long-tailed data
+
+These long-tailed data often follow a log-normal distribution
+
+```{r gala_hist_ln, echo = FALSE, fig.width = 5, fig.height = 4, fig.align="center"}
+## set plot area
+par(mai = c(1.0,1.0,0.1,0.1),
+    omi = c(0, 0, 0, 0),
+    cex = 1.1)
+## plot data
+hist(log(gala$Species), breaks = seq(0, 7, 0.5),
+     xlab = "log(number of species)", ylab = "Number of islands",
+     main = "")
+```
+
+
+## Log transformation
+
+A log-transformation is a really common way to deal with ecological data that are constrained to be positive
+
+$$
+y_i = \exp(\beta_0 + \beta_1 x_{i} + \epsilon_i) \\
+\Downarrow \\
+\log(y_i) = \beta_0 + \beta_1 x_{i} + \epsilon_i
+$$
+
+
+## Log-log transformation
+
+Consider allometric scaling laws in ecology of the form
+
+$$
+y_i = \alpha x_i^\beta \epsilon_i
+$$
+
+For example, body mass as a function of length
+
+
+## Log-log transformation
+
+Log-log transformations are an easy way to linearize power models
+
+$$
+m_i = \alpha l_i^\beta \epsilon_i \\
+\Downarrow \\
+\log(m_i) = \log(\alpha) + \beta ~ \log(l_i) + \log(\epsilon_i) \\
+\Downarrow \\
+y_i = \alpha' + \beta x_i + \epsilon'_i
+$$
+
+
+## Linear model for size of fish
+
+The response and predictor are linear on the log-log scale
+
+```{r lw_regr, fig.align = 'center', fig.height = 4, fig.width = 4}
+## simulated data
+nn <- 35
+L10_length <- log(runif(nn, 100, 400), 10)
+L10_mass <- -5.3 + 3.1 * L10_length + rnorm(nn, 0, 0.2)
+## plot them
+par(mai = c(1, 1, 0.1, 0.1), omi = rep(0, 4), bg = NA)
+plot(10^(L10_length), 10^(L10_mass), pch = 16, log = "xy",
+     ylab = "Mass (g)", xlab = "Length (mm)", cex.lab = 1.2)
+```
+
+
+## Summary
+
+* Box-Cox is good to help ID a power/root, but the transformed variable can be hard to interpret
+
+> - $\sqrt{y}$ is good for equalizing variance
+
+> - $\log(y)$ is good for skewed data
+
+> - $\log(y + a)$ with $a$ small relative to the data is good for skewed data with some 0's
+
+> - We will see later that there are model alternatives to transformations (GLMs)
+
+
+
+
 
