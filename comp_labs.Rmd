@@ -92,14 +92,15 @@ zoom_links_html <- sapply(lapply(zoom_links, function(x) {
 data_links <- lapply(week_labs, function(x) {if(is.list(x)) {x$data} else {""} })
 ## topics formatted for html
 data_links_html <- sapply(lapply(data_links, function(x) {
-  tmp1 <- paste0("[", x, "](")
-  tmp2 <- rep(")", length(x))
-  tmp1[x==""] <- ""
-  tmp2[x==""] <- ""
+  if(length(x)>1) {
+    tmp1 <- paste0("[", as.character(fontawesome::fa("table", height = 20, fill = "#eb6864")), " (", 1:length(x), ")](")
+    } else {
+      tmp1 <- paste0("[", as.character(fontawesome::fa("table", height = 20, fill = "#eb6864")), "](")
+      }
+  tmp2 <- ")"
   tmp <- paste0(tmp1, x, tmp2)
-  tmp <- paste(tmp, collapse="<br>")
-  tmp}), c)
-names(data_links_html) <- NULL
+  tmp[x==""] <- ""
+  tmp <- paste(tmp, collapse="<br>"); tmp}), c)
 ```
 
 ```{r background_links, include = FALSE}

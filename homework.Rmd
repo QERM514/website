@@ -72,17 +72,6 @@ template_links_html <- sapply(lapply(template_links, function(x) {
 
 ```{r data_links, include = FALSE}
 data_links <- lapply(week_hw, function(x) { if(is.list(x)) {x$data} else {""} })
-## topics formatted for html
-# data_links_html <- sapply(lapply(data_links, function(x) {
-#   tmp1 <- paste("[",x,"](")
-#   tmp2 <- rep(")",length(x))
-#   tmp1[x==""] <- ""
-#   tmp2[x==""] <- ""
-#   tmp <- paste0(tmp1, x, tmp2)
-#   tmp <- paste(tmp, collapse = "<br>")
-#   tmp}), c)
-# names(data_links_html) <- NULL
-## topics formatted for html
 data_links_html <- sapply(lapply(data_links, function(x) {
   if(length(x)>1) {
     tmp1 <- paste0("[", as.character(fontawesome::fa("table", height = 20, fill = "#eb6864")), " (", 1:length(x), ")](")
