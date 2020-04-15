@@ -91,16 +91,16 @@ non_IID_errors <- list(
   rmd = "lectures/week_03/lec_08_problems_with_errors.Rmd",
   html = "lectures/week_03/lec_08_problems_with_errors.html",
   background = "[Farraway (2015) Chap 8](references/Faraway_2015_Linear_models_with_R.pdf)",
-  zoom = ""
+  zoom = "https://washington.zoom.us/rec/share/pp02Mp-h-2hLQIHOwULTebwQMbamT6a8gycb-6FenR1JEP75CyEOQp4EMSEuE1uf"
 )
 
 transformations <- list(
   title = "Data transformations",
   topics = c("<b>Data transformations</b>", "Powers/roots", "Box-Cox", "Logarithms"),
-  pdf = c(""),
-  rmd = c(""),
-  html = c(""),
-  background = "",
+  pdf = c("lectures/week_03/lec_09_data_transformations.pdf"),
+  rmd = "lectures/week_03/lec_09_data_transformations.Rmd",
+  html = "lectures/week_03/lec_09_data_transformations.html",
+  background = "[Farraway (2015) Chap 9](references/Faraway_2015_Linear_models_with_R.pdf)",
   zoom = ""
 )
 
