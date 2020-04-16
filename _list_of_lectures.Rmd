@@ -87,7 +87,7 @@ diagnostics <- list(
 
 non_IID_errors <- list(
   title = "Problems with model residuals",
-  topics = c("<b>Problems with model errors</b>", "Weighted least squares", "Generalized least squares", "Robust regression"),
+  topics = c("<b>Problems with model errors</b>", "Generalized least squares", "Weighted least squares", "Robust regression"),
   pdf = c("lectures/week_03/lec_08_problems_with_errors.pdf"),
   rmd = "lectures/week_03/lec_08_problems_with_errors.Rmd",
   html = "lectures/week_03/lec_08_problems_with_errors.html",
@@ -97,7 +97,7 @@ non_IID_errors <- list(
 
 transformations <- list(
   title = "Data transformations",
-  topics = c("<b>Data transformations</b>", "Powers/roots", "Box-Cox", "Logarithms"),
+  topics = c("<b>Data transformations</b>", "Box-Cox", "Powers/roots", "Logarithms"),
   pdf = c("lectures/week_03/lec_09_data_transformations.pdf"),
   rmd = "lectures/week_03/lec_09_data_transformations.Rmd",
   html = "lectures/week_03/lec_09_data_transformations.html",
