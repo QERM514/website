@@ -444,23 +444,28 @@ hv > Eh
 We can also plot the individual leverage values to see whether they exceed their expectation, or identify high leverage via a half-normal plot.
 
 ```{r leverage_plots, echo = TRUE, fig.width = 8, fig.height = 4.5, fig.align="center"}
-## revised `halfnorm` from Faraway
-## the arg `nlab` gives the number of leverage points to label in the plot
-halfnorm <- function(x, nlab = 1, ylab = "Sorted data") {
+## revised `halfnorm()` from Faraway
+## `nlab` gives the number of points to label in the plot
+## `labels` can be a character vector the same length as `x`,
+##          which can be used to label the points in the plot
+## `ylab` can be used to labeling of the y-axis
+halfnorm <- function(x, nlab = 1, labels = NULL, ylab = "Sorted data") {
   x <- abs(x)
   labord <- order(x)
   x <- sort(x)
   i <- order(x)
   n <- length(x)
   ui <- qnorm((n + 1:n)/(2 * n + 1))
-  labs <- as.character(1:length(x))
+  if(is.null(labels)) {
+    labels <- as.character(1:length(x))
+  }
   plot(ui, x[i], pch = 16, las = 1,
        xlab = "Half-normal quantiles", ylab = ylab, 
        ylim = c(0, max(x)), type = "n")
   if(nlab < n) {
     points(ui[1:(n - nlab)], x[i][1:(n - nlab)], pch = 16)
   }
-  text(ui[(n - nlab + 1):n], x[i][(n - nlab + 1):n], labs[labord][(n - nlab + 1):n])
+  text(ui[(n - nlab + 1):n], x[i][(n - nlab + 1):n], labels[labord][(n - nlab + 1):n])
 }
 ## set plot area
 par(mfrow = c(1,2),
@@ -486,9 +491,9 @@ $$
 
 and $e_i$ is the residual for the $i$<sup>th</sup> case based on a model that includes *all* of the data. This $t_i$ statistic is distributed as a $t$-distribution with $n - k - 1$ degrees of freedom.
 
-Note, however, that this requires us to undertake $n$ different null hypothesis tests. Thus, if we chose a Type-I error rate of $\alpha$ = 0.05, we should expect that 1 in 20 of these tests would be signficant by chance alone. To account for all of these tests, we can employ a *Bonferroni correction*, which instead sets the threshold at $\alpha_B = \alpha / n$. This correction factor comes up elsewhere in statistical testing and is known to be conservative; it finds fewer outliers than the nominal level of confidence would.
+Note, however, that this requires us to undertake $n$ different null hypothesis tests. Thus, if we chose a Type-I error rate of $\alpha$ = 0.05, we should expect that 1 in 20 of these tests would be significant by chance alone. To account for all of these tests, we can employ a *Bonferroni correction*, which instead sets the threshold at $\alpha_B = \alpha / n$. This correction factor comes up elsewhere in statistical testing and is known to be conservative; it finds fewer outliers than the nominal level of confidence would.
 
-Computing the studentized residuals in **R** is easy with the `rstudent()` function. We can then compare them to the critical $t$ value with `qt()`. Let's do so for case #1 above (lefthand plot).
+Computing the studentized residuals in **R** is easy with the `rstudent()` function. We can then compare them to the critical $t$ value with `qt()`. Let's do so for case #1 above (left-hand plot).
 
 ```{r student_t, echo = TRUE}
 ## get studentized e
@@ -512,7 +517,7 @@ $$
 D_i = e_i^2 \frac{1}{k} \left( \frac{h_i}{1 - h_i} \right).
 $$
 
-The idea here is that $D_i$ combines the magnitude of a resdiual and its leverage. It's easy to calculate the $D_i$ with the `cooks.distance()` function. We can then visually inspect $D$ with a half-normal plot (we'll label the 2 values with the highest $D$ by setting `nlab = 2`).
+The idea here is that $D_i$ combines the magnitude of a residual and its leverage. It's easy to calculate the $D_i$ with the `cooks.distance()` function. We can then visually inspect $D$ with a half-normal plot (we'll label the 2 values with the highest $D$ by setting `nlab = 2`).
 
 ```{r cooks_d, echo = TRUE, fig.width = 4, fig.height = 4, fig.align="center"}
 ## Cook's D
@@ -581,7 +586,7 @@ $$
 
 and $c = \hat{\sigma} \propto \text{Median}(\left| \hat{\epsilon} \right|)$.
 
-As an example, let's return to the plant data from the Galapagos Archipeligo that we used last week in lab. To begin, we'll fit a normal regression model and plot the residuals against the fitted values.
+As an example, let's return to the plant data from the Galapagos Archipelago that we used last week in lab. To begin, we'll fit a normal regression model and plot the residuals against the fitted values.
 
 ```{r plain_gala, echo = TRUE, fig.width = 4.5, fig.height = 4.5, fig.align="center"}
 ## get the data
