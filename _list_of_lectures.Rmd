@@ -70,7 +70,8 @@ inference <- list(
   rmd = c("lectures/week_02/lec_06_inference_from_linear_models.Rmd"),
   html = c("lectures/week_02/lec_06_inference_from_linear_models.html"),
   background = c("[Farraway (2015) Chap 3](references/Faraway_2015_Linear_models_with_R.pdf)",
-                 "[Farraway (2015) Chap 4](references/Faraway_2015_Linear_models_with_R.pdf)"),
+                 "[Farraway (2015) Chap 4](references/Faraway_2015_Linear_models_with_R.pdf)",
+                 "[Wasserstein et al. (2019)](references/Wasserstein_2019_world_beyond_p05.pdf)"),
   zoom = "https://washington.zoom.us/rec/share/xpVXMLCozlhJa5Hy013wYbAGQpTPT6a8gHQX__QIzU3slPvtOjG8chISlLY8mfrx"
 )
 
@@ -100,7 +101,9 @@ transformations <- list(
   pdf = c("lectures/week_03/lec_09_data_transformations.pdf"),
   rmd = "lectures/week_03/lec_09_data_transformations.Rmd",
   html = "lectures/week_03/lec_09_data_transformations.html",
-  background = "[Farraway (2015) Chap 9](references/Faraway_2015_Linear_models_with_R.pdf)",
+  background = c("[Farraway (2015) Chap 9](references/Faraway_2015_Linear_models_with_R.pdf)",
+                 "[O'Hara & Kotze (2010)](references/OHara_Kotze_2010_dont_log_counts.pdf)",
+                 "[Xiao et al. (2011)](references/Xiao_2011_log_vs_NL_regr.pdf)"),
   zoom = ""
 )
 
