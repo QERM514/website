@@ -28,6 +28,7 @@ names(week_hw) <- paste0("L", seq(8))
 ## hw topics
 week_hw$L1 <- markdown
 week_hw$L2 <- linear_models
+week_hw$L3 <- diagnostics
 ```
 
 ```{r topics, include = FALSE}
