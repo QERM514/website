@@ -40,5 +40,16 @@ linear_models <- list(
   data = "homework/week_02/L_Washington_plankton.csv",
   key = ""
 )
+
+## diagnostics
+diagnostics <- list(
+  title = "Checking model diagnostics",
+  topics = c("Checking model diagnostics"),
+  pdf = "homework/week_03/hw_03_diagnostics.pdf",
+  rmd = "homework/week_03/hw_03_diagnostics.Rmd",
+  html = "",
+  data = "homework/week_03/usfws_bull_trout.csv",
+  key = ""
+)
 ```
 
