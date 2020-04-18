@@ -53,7 +53,7 @@ diagnostics_and_errors <- list(
   pdf = c(""),
   rmd = c("labs/week_03/diagnostics_and_errors.Rmd"),
   html = c("labs/week_03/diagnostics_and_errors.html"),
-  zoom = "",
+  zoom = "https://washington.zoom.us/rec/share/3OZfAunW6kRIbrfO-GzUXfZ4WafaT6a8g3RN-_dfzh6lCRPG869aupgkFEw9vsd8",
   data = "labs/week_03/galton_peas.csv",
   background = c("")
   )

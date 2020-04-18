@@ -104,7 +104,7 @@ transformations <- list(
   background = c("[Farraway (2015) Chap 9](references/Faraway_2015_Linear_models_with_R.pdf)",
                  "[O'Hara & Kotze (2010)](references/OHara_Kotze_2010_dont_log_counts.pdf)",
                  "[Xiao et al. (2011)](references/Xiao_2011_log_vs_NL_regr.pdf)"),
-  zoom = ""
+  zoom = "https://washington.zoom.us/rec/share/xcp-L-2s7kJJTdLS6l36Zqo-Ao--aaa80ykWqfBYn0wVsgUnSaSXqZlgCyZLzV8f"
 )
 
 design_matrices_1 <- list(
