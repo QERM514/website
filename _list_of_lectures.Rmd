@@ -107,19 +107,19 @@ transformations <- list(
   zoom = "https://washington.zoom.us/rec/share/xcp-L-2s7kJJTdLS6l36Zqo-Ao--aaa80ykWqfBYn0wVsgUnSaSXqZlgCyZLzV8f"
 )
 
-design_matrices_1 <- list(
+design_matrices <- list(
   title = "Design matrices",
-  topics = c("<b>Design matrices</b>", "Models in matrix form", "Regression", "Multiple regression"),
-  pdf = c(""),
-  rmd = c(""),
-  html = c(""),
-  background = "",
+  topics = c("<b>Design matrices</b>", "Models in matrix form", "Regression", "ANOVA / ANCOVA"),
+  pdf = c("lectures/week_04/lec_10_design_matrices.pdf"),
+  rmd = c("lectures/week_04/lec_10_design_matrices.Rmd"),
+  html = c("lectures/week_04/lec_10_design_matrices.html"),
+  background = "[Venables (2018)](references/Venables_2018_design_matrices.pdf)",
   zoom = ""
 )
 
-design_matrices_2 <- list(
-  title = "Design matrices",
-  topics = c("<b>Design matrices</b>", "ANOVA", "ANCOVA"),
+review <- list(
+  title = "Review session",
+  topics = c("<b>Review session</b>", "All topics to date"),
   pdf = c(""),
   rmd = c(""),
   html = c(""),
@@ -268,7 +268,7 @@ holiday <- list(
   zoom = ""
 )
 
-review <- list(
+review_2 <- list(
   title = "Material review",
   topics = c("<b>Review of materials</b>"),
   pdf = c(""),
