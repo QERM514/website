@@ -31,8 +31,8 @@ week_lecs$L7 <- diagnostics
 week_lecs$L8 <- non_IID_errors
 week_lecs$L9 <- transformations
 ## week 4
-week_lecs$L10 <- design_matrices_1
-week_lecs$L11 <- design_matrices_2
+week_lecs$L10 <- design_matrices
+week_lecs$L11 <- review
 week_lecs$L12 <- max_likelihood
 ## week 5
 week_lecs$L13 <- model_selection_1
@@ -52,7 +52,7 @@ week_lecs$L23 <- intro_GLMM_1
 week_lecs$L24 <- intro_GLMM_2
 ## week 9
 week_lecs$L25 <- holiday
-week_lecs$L26 <- review
+week_lecs$L26 <- review_2
 week_lecs$L27 <- synthesis
 ## week 10
 week_lecs$L28 <- present
