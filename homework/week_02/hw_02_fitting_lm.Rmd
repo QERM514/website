@@ -30,7 +30,7 @@ The goal of this assignment is to familiarize yourself with fitting linear model
 
 *Daphnia* are an effective grazer on phytoplankton and green algae make up a large proportion of their diet. *Cyclops* are an inferior grazer compared to *Daphnia*, but a competitor nonetheless. *Daphnia* growth rates are also affected by water temperature.
 
-As you work through the follwoing problems, make sure to explain your thought process and show your code, so Mark can give you partial credit, if necessary.
+As you work through the following problems, make sure to explain your thought process and show your code, so Mark can give you partial credit, if necessary.
 
 
 # Question 1
