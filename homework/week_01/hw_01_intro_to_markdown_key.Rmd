@@ -1,0 +1,134 @@
+---
+title: "Background information for QERM 514"
+subtitle: "Homework 1 Answer Key"
+author: "Mark Scheuerell"
+date: "3 April 2020"
+output:
+  pdf_document:
+    highlight: haddock
+fontsize: 11pt
+geometry: margin=1in
+urlcolor: blue
+header-includes:
+  \usepackage{float}
+  \floatplacement{figure}{H}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.pos = 'h')
+```
+
+# R Markdown file
+
+You can find the R Markdown file used to create this answer key [here](homework/week_01/hw_01_intro_to_markdown_key.Rmd).
+
+
+# 1) Who am I? (6 points)
+
+I am the Assistant Unit Leader for the U.S. Geological Survey Washington Cooperative Fish and Wildlife Research Unit and an Associate Professor in the School of Aquatic and Fishery Sciences at the University of Washington. Before coming to UW, I was a research biologist for 16 years at NOAA Fisheries here in Seattle. I grew up in central Minnesota on the banks of the Mississippi River. I spent **a lot** of time in and on that river (e.g., swimming, canoeing, and water skiing in the summer; skating and cross-country skiing in the winter). I have a BS in Zoology from the University of Wisconsin - Madison, an MS in Fisheries and Aquatic Science from Cornell University, and a PhD in Zoology from here at UW. In my free time I enjoy cycling, skiing, and spending time with my wife and two daughters.
+
+# 2) What do I study? (6 points)
+
+I work on a variety of problems related to the conservation and management of aquatic resources, particularly along the west coast of North America. At the outset of my career I was involved in a lot of fieldwork, but more recently my research is focused on the development and application of statistical methods for analyzing temporal and spatial data. I have worked on projects in Alaska, British Columbia, Washington, Oregon, and Idaho. In my new position here at UW, I plan to do more fieldwork in collaboration with tribal, state, and federal scientists.
+
+### Keywords (3 points)
+
+* applied ecology
+* time series analysis
+* salmon conservation
+
+# 3) What do I want from this course? (3 points)
+
+1. My students to learn the basics of linear models
+2. My students to feel comfortable asking me and others for help
+2. Demonstrated ability to teach remotely 
+
+# 4) Plot air quality data (4 points)
+
+Use the `airquality` data set included with **R** to do the following:
+
+* insert a new code block below and give it an informative name;
+* create *any* kind of plot using *any* of the 6 fields in `airquality`;
+* use chunk options to make the plot 5 inches wide by 4 inches tall, and center it on the page;
+* use the `fig.cap=''` option to add an informative figure caption).
+
+\vspace{0.25in}
+
+Here's my named code block, chunk options, and (simple) plotting code. Please note that in practice **you cannot place a line break between any of the chunk options**; I did so here for display purposes only.
+
+\vspace{0.25in}
+
+````
+`r ''````{r ts_plot_of_ozone, fig.height=4, fig.width=5, fig.align='center',
+                        fig.cap='Time series of daily ozone concentration.'}
+## plot time series of ozone concentration
+plot.ts(airquality$Ozone, ylab = expression(group("[",O[3],"]")))
+```
+````
+
+\vspace{0.25in}
+
+```{r ts_plot_of_ozone, fig.height=4, fig.width=5, fig.align='center', fig.cap='Time series of ozone concentration.', echo=FALSE}
+## get the data
+dat <- airquality
+## plot some data
+plot.ts(airquality$Ozone, ylab = expression(group("[",O[3],"]")))
+```
+
+# 5) Say it with an equation (4 points)
+
+Use the **LaTeX** math options to write a stand alone equation for a linear model that describes the relationship between a dependent variable and two different predictor variables. Follow up the equation with some text that uses inline math to describe any abbreviations used for the variables and parameters (eg, "$\beta_0$ is the intercept").
+
+Here's the code I used to create the equation below:
+
+````
+$$
+y_i = \alpha + \beta_1 x_{1,i} + \beta_2 x_{2,i} + e_i
+$$
+````
+
+$$
+y_i = \alpha + \beta_1 x_{1,i} + \beta_2 x_{2,i} + e_i
+$$
+
+And here's my description of the equation:
+
+````
+Each observation of log-mass ($y_i$) is a function of an intercept ($\alpha$)
+and the effects $\beta_1$ and $\beta_2$ of temperature ($x_{1,i}$) and food
+ration ($x_{2,i}$), respectively. The model residuals are assumed to be
+normally distributed with mean 0 and variance $\sigma^2$, such that
+$e_i \sim \text{N}(0, \sigma^2)$.
+````
+
+which, when formatted, yields
+
+> Each observation of log-mass ($y_i$) is a function of an intercept ($\alpha$) and the effects $\beta_1$ and $\beta_2$ of temperature ($x_{1,i}$) and food ration ($x_{2,i}$), respectively. The model residuals are assumed to be normally distributed with mean 0 and variance $\sigma^2$, such that $e_i \sim \text{N}(0, \sigma^2)$.
+
+# 6) Comment on an issue in GitHub (4 points)
+
+Navigate to the *Issues* page for the course's *assistance* repo on GitHub and find the issue that Mark posted called
+
+> **Question about GitHub for HW 1**
+
+Click on the issue to bring up a comment box below the original comment or the responses of your classmates who have already answered this question. In the comment box, answer Mark's question posted in the first comment box.
+
+When you are finished with your comment/answer, click the green **Comment** button. Next, click on the 3 dots in the upper right corner of your posted comment and select "Copy link" (see picture below). Include your copied url here in your answer using the the shortened link method we learned in lab.
+
+\vspace{0.25in}
+
+There are 2 different ways to do this in Markdown. The first involves including the full url inside parentheses directly after the link text inside of square brackets. For example, 
+
+````
+My comment on question 6 is [here](your-full-url-goes-here).
+````
+
+The second option uses a reference link in square brackets after the link text inside of square brackets. For example, 
+
+````
+My comment on question 6 is [here][1].
+
+[1]: your-full-url-goes-here
+````
+
+
