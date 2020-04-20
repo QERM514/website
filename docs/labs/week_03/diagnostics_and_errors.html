@@ -1977,8 +1977,8 @@ hv &gt; Eh</code></pre>
 <p>We can also plot the individual leverage values to see whether they exceed their expectation, or identify high leverage via a half-normal plot.</p>
 <pre class="r"><code>## revised `halfnorm()` from Faraway
 ## `nlab` gives the number of points to label in the plot
-## `labels` can be a character vector the same length as `x`,
-##          which can be used to label the points in the plot
+## `labels` can be a character vector the same length as `x`
+##          that can be used to label the points in the plot
 ## `ylab` can be used to labeling of the y-axis
 halfnorm &lt;- function(x, nlab = 1, labels = NULL, ylab = &quot;Sorted data&quot;) {
   x &lt;- abs(x)
@@ -1996,8 +1996,10 @@ halfnorm &lt;- function(x, nlab = 1, labels = NULL, ylab = &quot;Sorted data&quo
   if(nlab &lt; n) {
     points(ui[1:(n - nlab)], x[i][1:(n - nlab)], pch = 16)
   }
-  text(ui[(n - nlab + 1):n], x[i][(n - nlab + 1):n], labels[labord][(n - nlab + 1):n])
+  text(x = ui[(n - nlab + 1):n], y = x[i][(n - nlab + 1):n],
+       labels = labels[labord][(n - nlab + 1):n])
 }
+
 ## set plot area
 par(mfrow = c(1,2),
     mai = c(0.9,0.9,0.1,0.3),
