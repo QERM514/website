@@ -114,7 +114,7 @@ design_matrices <- list(
   rmd = c("lectures/week_04/lec_10_design_matrices.Rmd"),
   html = c("lectures/week_04/lec_10_design_matrices.html"),
   background = "[Venables (2018)](references/Venables_2018_design_matrices.pdf)",
-  zoom = ""
+  zoom = "https://washington.zoom.us/rec/share/xctFDZ_TrD5OR6PEx2_TGa07WYHYT6a80yBMrPYJzUZic0blhrwFbi8UM_hnrEp4"
 )
 
 review <- list(
