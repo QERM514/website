@@ -38,7 +38,7 @@ linear_models <- list(
   rmd = "homework/week_02/hw_02_fitting_lm.Rmd",
   html = "",
   data = "homework/week_02/L_Washington_plankton.csv",
-  key = ""
+  key = "homework/week_02/hw_02_fitting_lm_key.pdf"
 )
 
 ## diagnostics
