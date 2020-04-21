@@ -468,7 +468,6 @@ halfnorm <- function(x, nlab = 1, labels = NULL, ylab = "Sorted data") {
   text(x = ui[(n - nlab + 1):n], y = x[i][(n - nlab + 1):n],
        labels = labels[labord][(n - nlab + 1):n])
 }
-
 ## set plot area
 par(mfrow = c(1,2),
     mai = c(0.9,0.9,0.1,0.3),
@@ -498,12 +497,14 @@ Note, however, that this requires us to undertake $n$ different null hypothesis 
 Computing the studentized residuals in **R** is easy with the `rstudent()` function. We can then compare them to the critical $t$ value with `qt()`. Let's do so for case #1 above (left-hand plot).
 
 ```{r student_t, echo = TRUE}
+## get sample size
+n_m1 <- nrow(model.matrix(m1))
 ## get studentized e
 t_stud <- rstudent(m1)
 ## Bonferroni alpha
-alpha <- 0.05 / length(m1)
+alpha <- 0.05 / n_m1
 ## critical t value
-df <- length(m1) - length(coef(m1)) - 1 
+df <- n_m1 - length(coef(m1)) - 1 
 t_crit <- qt(1 - alpha, df)
 ## compare t_stud to t_crit
 t_stud > t_crit
