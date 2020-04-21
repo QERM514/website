@@ -1975,31 +1975,24 @@ hv &gt; Eh</code></pre>
 <pre><code>##     1     2     3     4     5     6     7     8     9    10    11 
 ## FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE</code></pre>
 <p>We can also plot the individual leverage values to see whether they exceed their expectation, or identify high leverage via a half-normal plot.</p>
-<pre class="r"><code>## revised `halfnorm()` from Faraway
-## `nlab` gives the number of points to label in the plot
-## `labels` can be a character vector the same length as `x`
-##          that can be used to label the points in the plot
-## `ylab` can be used to labeling of the y-axis
-halfnorm &lt;- function(x, nlab = 1, labels = NULL, ylab = &quot;Sorted data&quot;) {
+<pre class="r"><code>## revised `halfnorm` from Faraway
+## the arg `nlab` gives the number of leverage points to label in the plot
+halfnorm &lt;- function(x, nlab = 1, ylab = &quot;Sorted data&quot;) {
   x &lt;- abs(x)
   labord &lt;- order(x)
   x &lt;- sort(x)
   i &lt;- order(x)
   n &lt;- length(x)
   ui &lt;- qnorm((n + 1:n)/(2 * n + 1))
-  if(is.null(labels)) {
-    labels &lt;- as.character(1:length(x))
-  }
+  labs &lt;- as.character(1:length(x))
   plot(ui, x[i], pch = 16, las = 1,
        xlab = &quot;Half-normal quantiles&quot;, ylab = ylab, 
        ylim = c(0, max(x)), type = &quot;n&quot;)
   if(nlab &lt; n) {
     points(ui[1:(n - nlab)], x[i][1:(n - nlab)], pch = 16)
   }
-  text(x = ui[(n - nlab + 1):n], y = x[i][(n - nlab + 1):n],
-       labels = labels[labord][(n - nlab + 1):n])
+  text(ui[(n - nlab + 1):n], x[i][(n - nlab + 1):n], labs[labord][(n - nlab + 1):n])
 }
-
 ## set plot area
 par(mfrow = c(1,2),
     mai = c(0.9,0.9,0.1,0.3),
@@ -2021,14 +2014,16 @@ halfnorm(hv)</code></pre>
 t_i = \frac{y_{i} - \hat{y}_{(i)}}{ \hat{\sigma}_{(i)} \sqrt{ 1 - h_i } } = e_i \sqrt{ \frac{n - k - 1}{n - k - e_i^2} }
 \]</span></p>
 <p>and <span class="math inline">\(e_i\)</span> is the residual for the <span class="math inline">\(i\)</span><sup>th</sup> case based on a model that includes <em>all</em> of the data. This <span class="math inline">\(t_i\)</span> statistic is distributed as a <span class="math inline">\(t\)</span>-distribution with <span class="math inline">\(n - k - 1\)</span> degrees of freedom.</p>
-<p>Note, however, that this requires us to undertake <span class="math inline">\(n\)</span> different null hypothesis tests. Thus, if we chose a Type-I error rate of <span class="math inline">\(\alpha\)</span> = 0.05, we should expect that 1 in 20 of these tests would be significant by chance alone. To account for all of these tests, we can employ a <em>Bonferroni correction</em>, which instead sets the threshold at <span class="math inline">\(\alpha_B = \alpha / n\)</span>. This correction factor comes up elsewhere in statistical testing and is known to be conservative; it finds fewer outliers than the nominal level of confidence would.</p>
-<p>Computing the studentized residuals in <strong>R</strong> is easy with the <code>rstudent()</code> function. We can then compare them to the critical <span class="math inline">\(t\)</span> value with <code>qt()</code>. Let’s do so for case #1 above (left-hand plot).</p>
-<pre class="r"><code>## get studentized e
+<p>Note, however, that this requires us to undertake <span class="math inline">\(n\)</span> different null hypothesis tests. Thus, if we chose a Type-I error rate of <span class="math inline">\(\alpha\)</span> = 0.05, we should expect that 1 in 20 of these tests would be signficant by chance alone. To account for all of these tests, we can employ a <em>Bonferroni correction</em>, which instead sets the threshold at <span class="math inline">\(\alpha_B = \alpha / n\)</span>. This correction factor comes up elsewhere in statistical testing and is known to be conservative; it finds fewer outliers than the nominal level of confidence would.</p>
+<p>Computing the studentized residuals in <strong>R</strong> is easy with the <code>rstudent()</code> function. We can then compare them to the critical <span class="math inline">\(t\)</span> value with <code>qt()</code>. Let’s do so for case #1 above (lefthand plot).</p>
+<pre class="r"><code>## get sample size
+n_m1 &lt;- nrow(model.matrix(m1))
+## get studentized e
 t_stud &lt;- rstudent(m1)
 ## Bonferroni alpha
-alpha &lt;- 0.05 / length(m1)
+alpha &lt;- 0.05 / n_m1
 ## critical t value
-df &lt;- length(m1) - length(coef(m1)) - 1 
+df &lt;- n_m1 - length(coef(m1)) - 1 
 t_crit &lt;- qt(1 - alpha, df)
 ## compare t_stud to t_crit
 t_stud &gt; t_crit</code></pre>
@@ -2042,7 +2037,7 @@ t_stud &gt; t_crit</code></pre>
 <p><span class="math display">\[
 D_i = e_i^2 \frac{1}{k} \left( \frac{h_i}{1 - h_i} \right).
 \]</span></p>
-<p>The idea here is that <span class="math inline">\(D_i\)</span> combines the magnitude of a residual and its leverage. It’s easy to calculate the <span class="math inline">\(D_i\)</span> with the <code>cooks.distance()</code> function. We can then visually inspect <span class="math inline">\(D\)</span> with a half-normal plot (we’ll label the 2 values with the highest <span class="math inline">\(D\)</span> by setting <code>nlab = 2</code>).</p>
+<p>The idea here is that <span class="math inline">\(D_i\)</span> combines the magnitude of a resdiual and its leverage. It’s easy to calculate the <span class="math inline">\(D_i\)</span> with the <code>cooks.distance()</code> function. We can then visually inspect <span class="math inline">\(D\)</span> with a half-normal plot (we’ll label the 2 values with the highest <span class="math inline">\(D\)</span> by setting <code>nlab = 2</code>).</p>
 <pre class="r"><code>## Cook's D
 cook &lt;- cooks.distance(m2)
 ## half-normal plot
@@ -2106,7 +2101,7 @@ c \left| z \right| - \frac{c^2}{2} &amp; \text{otherwise}
 \right.
 \]</span></p>
 <p>and <span class="math inline">\(c = \hat{\sigma} \propto \text{Median}(\left| \hat{\epsilon} \right|)\)</span>.</p>
-<p>As an example, let’s return to the plant data from the Galapagos Archipelago that we used last week in lab. To begin, we’ll fit a normal regression model and plot the residuals against the fitted values.</p>
+<p>As an example, let’s return to the plant data from the Galapagos Archipeligo that we used last week in lab. To begin, we’ll fit a normal regression model and plot the residuals against the fitted values.</p>
 <pre class="r"><code>## get the data
 library(faraway)
 head(gala)</code></pre>
