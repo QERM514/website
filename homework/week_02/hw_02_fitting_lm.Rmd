@@ -9,7 +9,8 @@ fontsize: 11pt
 geometry: margin=1in
 urlcolor: blue
 header-includes:
-  \makeatletter\renewcommand*{\fps@figure}{H}\makeatother
+  \usepackage{float}
+  \floatplacement{figure}{H}
 ---
 
 ```{r setup, include=FALSE}
