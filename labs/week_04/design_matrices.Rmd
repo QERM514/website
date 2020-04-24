@@ -1,0 +1,925 @@
+---
+title: "Creating design matrices"
+author: "Mark Scheuerell"
+date: "24 April 2020"
+output:
+  html_document:
+    theme: journal
+    highlight: textmate
+    toc: true
+    toc_float: true
+    toc_depth: 4
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE)
+```
+
+# Background
+
+We have several examples in lecture and lab of how we can format linear models in matrix form. In particular, understanding how to create and interpret the design matrix $(\mathbf{X}$ is an important part of fitting models and realizing their limitations. A common misunderstanding is that the choice of design follows directly from a description of which samples are to be included in the analysis. As we saw in lecture, this is not the case. Rather, we saw how different design matrices can be used to address the same problem. We also saw how to assemble design matrices from their component pieces, where the columns were different predictor variables, as well as how to use the function `model.matrix()` as a shortcut for doing so. This lab is intended to familiarize you with these concepts and practices.
+
+# Regression models
+
+Much of our focus to date has been on linear regression models wherein the predictor variables are continuous. Specifically, for a model with $n$ predictors, we have
+$$
+\mathbf{y} = \mathbf{X} \boldsymbol{\beta} + \mathbf{e} \\
+\Downarrow \\
+\begin{bmatrix}
+y_1 \\ y_2 \\ \vdots \\ y_n
+\end{bmatrix}
+= 
+\begin{bmatrix}
+1 & x_{1,1} & \cdots & x_{n,1} \\
+1 & x_{1,2} & \cdots & x_{n,2} \\
+\vdots & \vdots & \ddots & \vdots \\
+1 & x_{1,n} & \cdots & x_{n,n} 
+\end{bmatrix}
+\begin{bmatrix}
+\beta_0 \\ \beta_1 \\ \vdots \\ \beta_n
+\end{bmatrix}
++
+\begin{bmatrix}
+e_1 \\ e_2 \\ \vdots \\ e_n
+\end{bmatrix}
+$$
+
+The first column of $\mathbf{X}$ contains all 1's, and is used to estimate the intercept $(\beta_0)$. Columns 2 - $n$ contain the measured predictor variables corresponding to each of the observations in $\mathbf{y}$, from which we estimate their effects as $\beta_1$ through $\beta_n$.
+
+## Power functions
+
+We have talked a bit about how to include nonlinear relationships in linear models. For example, we might have a model like
+
+$$
+\log (y_i) = \beta_0 + \beta_1 x_{1, i} + e_i
+$$
+
+which we could redefine as
+
+$$
+z_i = \beta_0 + \beta_1 x_{1, i} + e_i \\
+z_i = \log (y_i)
+$$
+
+Another case we discussed was power functions, such as using a squared term to capture a nonlinear effect of day-of-year $(d)$
+
+$$
+y_i = \beta_0 + \beta_1 d_{i} + \beta_2 d_{i}^2 + e_i
+$$
+
+Similar to above, we can just define a new variable and rewrite our equation as
+
+$$
+z_i = \beta_0 + \beta_1 d_{i} + \beta_2 z_{i} + e_i \\
+z_i = d_i^2
+$$
+
+We have two options for doing this in **R**. The first is to explicitly create the predictor $z$ as above and then include it in the design matrix. For example,
+
+```{r quadratic_term_hand}
+## some random x
+xx <- rnorm(10)
+## create x^2
+x2 <- xx^2
+## create design matrix
+## option 1
+(XX <- cbind(rep(1, 10), xx, x2))
+## option 2
+(XX <- model.matrix(~ xx + x2))
+```
+
+The second option is to use `model.matrix()` combined with the "AsIs" function `I()`. Because `lm()` uses several mathematical operators (eg, `+` and `*`) as formula constructors, `I()` allows us to use them in their true sense. So, for a model as above with a quadratic effect, we could instead use
+
+```{r quadratic_term_I}
+## create design matrix
+(XX <- model.matrix(~ xx + I(xx^2)))
+```
+
+<br>
+
+## Indicators in regression models
+
+We have only briefly discussed options for encoding indicators in regression models. One of the most common is the case where we want to estimate some "trend" over time or space. Here we mean trend to include any systematic change in the response per unit change in the predictor. Most people think of these as linear trends, but we might also be interested in nonlinear trends such as quadratic or periodic signals.
+
+### Linear trends over time
+
+Let's begin with a simple model that treats the response as a function of an intercept and linear trend over time $(t)$. For example, let's imagine we want to estimate the annual increase in $CO_2$ concentration measured in the atmosphere above Mauna Loa, Hawai'i from 1971 through 2000. Our model is
+
+$$
+[CO_2]_t = \beta_0 + \beta_1 t + e_t.
+$$
+
+Here we require a sequence of numbers to represent time (years), which could be as simple as the years themselves (eg, 1971, 1972, ..., 2000), such that 
+
+$$
+\begin{bmatrix}
+[CO_2]_{1971} \\ [CO_2]_{1972} \\ [CO_2]_{1973} \\ \vdots \\ [CO_2]_{2000}
+\end{bmatrix}
+= 
+\begin{bmatrix}
+1 & 1971  \\
+1 & 1972  \\
+1 & 1973  \\
+\vdots & \vdots \\
+1 & 2000  
+\end{bmatrix}
+\begin{bmatrix}
+\beta_0 \\ \beta_1
+\end{bmatrix}
++
+\begin{bmatrix}
+e_{1971} \\ e_{1972} \\ e_{1973} \\ \vdots \\ e_{2000}
+\end{bmatrix}.
+$$
+
+We could also use a sequence of integers (eg, 1, 2, ..., 30), such that
+
+$$
+\begin{bmatrix}
+[CO_2]_{1971} \\ [CO_2]_{1972} \\ [CO_2]_{1973} \\ \vdots \\ [CO_2]_{2000}
+\end{bmatrix}
+= 
+\begin{bmatrix}
+1 & 1  \\
+1 & 2  \\
+1 & 3  \\
+\vdots & \vdots \\
+1 & n  
+\end{bmatrix}
+\begin{bmatrix}
+\beta_0 \\ \beta_1
+\end{bmatrix}
++
+\begin{bmatrix}
+e_{1971} \\ e_{1972} \\ e_{1973} \\ \vdots \\ e_{2000}
+\end{bmatrix}.
+$$
+
+Let's try it for ourselves. These data come from NOAA's [Global Monitoring Lab](https://www.esrl.noaa.gov/gmd/ccgg/trends/) and are freely available to anyone. I have selected 30 years and saved them in the accompanying file `mauna_loa_co2.csv`.
+
+```{r mauna_loa_co2, echo = TRUE, fig.align='center', fig.height=4.5, fig.width=5}
+## get the data
+co2 <- read.csv("mauna_loa_co2.csv")
+## plot the data
+par(mai = c(0.9 ,0.9, 0.6, 0.1))
+plot(co2$year, co2$CO2, pch = 16, las = 1,
+     xlab = "Year", ylab = expression(CO[2]~(ppm)))
+```
+
+Now let's fit a linear regression model to these data. For the moment we'll skip the design matrix and just use `lm()`.
+
+```{r fit_co2_year}
+## fit model
+co2_fit <- lm(CO2 ~ year, data = co2)
+## inspect fit
+summary(co2_fit)
+```
+
+This analysis indicates that $[CO_2]$ is increasing at ~1.5 ppm per year. Now let's fit the model with an integer index for time (year).
+
+```{r fit_co2_index}
+## create index from 1:30
+index <- seq(length(co2$CO2))
+## fit model
+co2_fit_2 <- lm(co2$CO2 ~ index)
+## inspect fit
+summary(co2_fit_2)
+```
+
+These results are identical to those with year as a predictor.
+
+### Periodic trends over time
+
+Ecological studies commonly occur over multiple time periods that have some intrinsic periodicity to them (eg, tidal cycles over 24 hours, months in a year). We can also use continuous indicator variables to model theses regularly occurring, non-linear fluctuations. In particular, sine and cosine waves make a great choice. As a reminder, these waves are written as function of amplitude $(A)$, frequency $(f)$, and phase $(\phi)$, such that
+
+$$
+y(t) = A \sin (2 \pi f t - \phi) \\
+y(t) = A \cos (2 \pi f t - \phi).
+$$
+
+For our purposes, the amplitude and phase are less of a concern than the frequency, which should reflect the periodicity in the interval of interest (eg, hourly data imply $f$ = 1/24 and monthly data imply $f$ = 1/12).
+
+We can create these waves in **R** and have a look.
+
+```{r plot_sine, echo = TRUE, fig.align='center', fig.height=4.5, fig.width=5}
+## amplitude
+A <- 2
+## frequency for monthly data
+f <- 1/12
+## phase
+phi <- 0
+## time index
+t <- seq(240)/10
+## sine wave
+sine <- A*sin(2*pi*f*t - phi)
+## cosine wave
+cosine <- A*cos(2*pi*f*t - phi)
+## plot them
+par(mai = c(0.9 ,0.9, 0.6, 0.1))
+plot.ts(sine, las = 1, col = "red", lwd = 2,
+        ylab = "Sine or Cosine")
+lines(cosine, col = "blue", lwd = 2)
+```
+
+As an example, let's consider the monthly change in temperature in Lake Washington. We can find these data in the **MARSS** package as `lakeWAplanktonRaw`.
+
+```{r lwa_temp, echo = TRUE, fig.align='center', fig.height=4.5, fig.width=6}
+## get the data
+data(lakeWAplankton, package = "MARSS")
+dat <- as.data.frame(lakeWAplanktonRaw)
+tmp <- ts(dat$Temp, start = c(1962,1), frequency = 12)
+## impute 1 missing value
+ii <- which(is.na(tmp))
+tmp[ii] <- (tmp[ii-1] + tmp[ii+1]) / 2
+## plot them
+par(mai = c(0.9 ,0.9, 0.6, 0.1))
+plot.ts(tmp, las = 1, col = "blue",
+        ylab = "Temperature (C)")
+```
+
+Let's model these data with a sine wave to capture the seasonal variation in temperature.
+
+```{r fit_lwa_temp, echo = TRUE, fig.align='center', fig.height=4.5, fig.width=6}
+## length of time series
+TT <- length(tmp)
+## create sine wave
+sw <- sin(2*pi*(1/12)*seq(TT))
+## create design matrix
+XX <- cbind(rep(1, TT), sw)
+head(XX)
+## fit model
+lwa_fit <- lm(tmp ~ XX - 1)
+summary(lwa_fit)
+## get fitted values
+fts <- ts(fitted(lwa_fit), start = c(1962,1), frequency = 12)
+## plot fitted values
+par(mai = c(0.9 ,0.9, 0.6, 0.1))
+plot.ts(tmp, las = 1, col = "blue",
+        ylab = "Temperature (C)")
+lines(fts, col = "orange", lwd = 2)
+```
+
+### Linear and periodic trends
+
+We can also combine periodic and linear trends in the same model. This is useful in cases where seasonal signals exist and there is a general increase or decrease as well. For example, let's now consider the average monthly $CO_2$ concentration at Mauna Loa, which come from the same source.
+
+```{r mauna_loa_co2_mon, echo = TRUE, fig.align='center', fig.height=4.5, fig.width=6}
+## get the data
+co2m <- read.csv("mauna_loa_co2_mon.csv")
+## plot the data
+par(mai = c(0.9 ,0.9, 0.6, 0.1))
+plot(co2m$dyear, co2m$CO2, pch = 16, cex = 0.6, las = 1,
+     xlab = "Year", ylab = expression(CO[2]~(ppm)))
+```
+
+```{r fit_co2_mon, echo = TRUE, fig.align='center', fig.height=4.5, fig.width=6}
+## length of time series
+TT <- nrow(co2m)
+## create time index from 1:TT
+index <- seq(TT)
+## create sine wave
+sw <- sin(2*pi*(1/12)*index)
+## create design matrix
+XX <- cbind(rep(1, TT), index, sw)
+head(XX)
+## fit model
+co2m_fit <- lm(co2m$CO2 ~ XX - 1)
+summary(co2m_fit)
+## get fitted values
+fts <- fitted(co2m_fit)
+## plot fitted values
+par(mai = c(0.9 ,0.9, 0.6, 0.1))
+plot(co2m$dyear, co2m$CO2, pch = 16, cex = 0.6, las = 1,
+     xlab = "Year", ylab = expression(CO[2]~(ppm)))
+lines(co2m$dyear, fts, col = "orange", lwd = 2)
+```
+
+
+# Analysis of variance (ANOVA) models
+
+ANOVA was popularized by [Ronald Fisher](https://en.wikipedia.org/wiki/Ronald_Fisher) ~100 years ago when he was studying the variance of genetic traits among commercial crops. We use ANOVA models to analyze *differences among group means*. Recall our analysis of fish growth as a function of ration, wherein we initially had three groups of juvenile fish that were fed different sized rations. Here are the "data".
+
+```{r sim_data, echo = TRUE, fig.align='center', fig.height=4, fig.width=5}
+set.seed(514)
+## sample size
+nn <- 30
+## groups
+pp <- 3
+## global intercept
+alpha <- 5
+## offsets
+beta_1 <- c(1,2,3)*5
+## slope
+beta_2 <- 2
+## vector of linear parameters
+BETA <- matrix(c(alpha, beta_1, beta_2), ncol = 1)
+## global mean
+x_avg <- rep(1, nn*pp)
+## offsets
+grps <- factor(rep(seq(3), ea = nn))
+x_int <- model.matrix(~ grps + 0)
+## slope
+x_cov <- c(runif(nn, 0, 4), runif(nn, 4, 8), runif(nn, 8, 12))
+x_cov <- sample(x_cov, nn*pp)
+## groups for anova
+i1 <- x_cov <= 4
+i2 <- x_cov > 4 & x_cov <= 8
+i3 <- x_cov > 8
+ration <- cbind(i1, i2, i3) * 1
+colnames(ration) <- c("_1", "_2", "_3")
+## matrix of predictors
+xx <- cbind(x_avg, x_int, x_cov)
+## Gaussian errors
+ee <- rnorm(nn*pp, 0, 2)
+## simulated data
+yy <- xx %*% BETA + ee
+## plot all data
+par(mai = c(0.9,0.9,0.1,0.1),
+    cex = 1.1)
+## low
+plot(rep(1, nn), yy[i1], pch = 16, col = "red", las = 1,
+     xlim = c(0.5,3.5), ylim = range(yy),
+     xaxt = "n",
+     xlab = "Ration size (g)", ylab = "Growth (mm)")
+# points(1, mean(yy[i1]), col = "red", pch = "-", cex = 5)
+## med
+points(rep(2, nn), yy[i2], pch = 16, col = "blue")
+# points(2, mean(yy[i2]), col = "blue", pch = "-", cex = 5)
+## high
+points(rep(3, nn), yy[i3], pch = 16, col = "orange")
+# points(3, mean(yy[i3]), col = "orange", pch = "-", cex = 5)
+axis(1, at = seq(3), labels = c("Low (2)", "Med (6)", "High (10)"))
+```
+
+
+## Model 1: Group means
+
+Here we want to know if the mean growth of fish varies among the three ration sizes, such that
+
+$$
+\bar{g}_{\text{ration}_1} \overset{?}{=} \bar{g}_{\text{ration}_2} \overset{?}{=} \bar{g}_{\text{ration}_3}
+$$
+
+How would we write the model for this? Our model for a single observation $y_i$ is something like
+
+$$
+y_i = \mu_i + e_i \\
+~ \\
+\mu_i = 
+\left\{
+\begin{matrix}
+\mu_1 ~ \text{if fed ration 1} \\
+\mu_2 ~ \text{if fed ration 2} \\
+\mu_3 ~ \text{if fed ration 3}
+\end{matrix}
+\right.
+$$
+
+but there is no straightforward way to code this model in terms of a design matrix. Instead, we can use binary 0/1 coding to represent if/then constructs along the lines of
+
+$$
+y_i = \mu_1 x_{1,i} + \mu_2 x_{2,i} + \mu_3 x_{3,i} + e_i \\
+~ \\
+x_{1,i} = 1 ~ \text{if fed ration 1 and 0 otherwise} \\
+x_{2,i} = 1 ~ \text{if fed ration 2 and 0 otherwise} \\
+x_{3,i} = 1 ~ \text{if fed ration 3 and 0 otherwise}
+$$
+
+Now we need to specify the design matrix $\mathbf{X}$ for this model. Let's rewrite our model as
+
+$$
+y_i = \beta_1 x_{1,i} + \beta_2 x_{2,i} + \beta_3 x_{3,i} + e_i \\
+\Downarrow \\
+\mathbf{y} = \mathbf{X} \boldsymbol{\beta} + \mathbf{e}
+$$
+
+And define $\mathbf{X}$ as
+
+$$
+\mathbf{X} = 
+\begin{bmatrix}
+x_{1,1} & x_{2,1} & x_{3,1} \\
+x_{1,2} & x_{2,2} & x_{3,2} \\
+\vdots & \vdots & \vdots \\
+x_{1,n} & x_{2,n} & x_{3,n} 
+\end{bmatrix}
+$$
+
+Let's now re-order all of the observations into their three groups, such that $j_1 + j_2 + j_3 = n$.
+
+$$
+\mathbf{y} = 
+\begin{bmatrix}
+y_{1,1} \\
+\vdots  \\
+y_{1,j_1} \\ \hline
+y_{2,1} \\
+\vdots  \\
+y_{2,j_2} \\ \hline
+y_{3,1} \\
+\vdots  \\
+y_{3,j_3} 
+\end{bmatrix}
+$$
+
+We can now define $\mathbf{X}$ and $\boldsymbol{\beta}$ as
+
+$$
+\mathbf{X} = 
+\begin{bmatrix}
+1 & 0 & 0 \\
+\vdots & \vdots & \vdots \\
+1 & 0 & 0 \\ \hline
+0 & 1 & 0 \\
+\vdots & \vdots & \vdots \\
+0 & 1 & 0 \\ \hline
+0 & 0 & 1 \\
+\vdots & \vdots & \vdots \\
+0 & 0 & 1 
+\end{bmatrix}
+~~~
+\boldsymbol{\beta} =
+\begin{bmatrix}
+\beta_1 \\
+\beta_2 \\
+\beta_3
+\end{bmatrix}
+$$
+
+```{r inspect_design, echo = TRUE}
+## we defined the design matrix above; let's inspect it
+head(ration)
+```
+
+Wait--this doesn't look like the $\mathbf{X}$ that we defined above! That's because I had to use some indexing for the group ID's to simulate the full ANCOVA model. Nevertheless, this will work because the observations in $\mathbf{y}$ match the same ordering.
+
+Let's fit our ANOVA model and examine the results.
+
+```{r fit_anova, echo = TRUE}
+## fit ANOVA w/ `- 1` to remove intercept
+m1 <- lm(yy ~ ration - 1)
+coef(m1)
+```
+
+Now let's estimate the mean growth rates of our 3 groups of fish to confirm that we have fit a model of means.
+
+```{r check_means, echo = TRUE}
+## mean of grp 1
+round(mean(yy[i1]), 1)
+## mean of grp 2
+round(mean(yy[i2]), 1)
+## mean of grp 3
+round(mean(yy[i3]), 1)
+```
+
+It looks like everything is correct. Let's now overlay the estimates of the $\hat{\beta}_i$ onto our plot of the data.
+
+```{r plot_means_only, echo = TRUE, fig.align='center', fig.height=4.5, fig.width=5}
+## plot all data
+par(mai = c(0.9,0.9,0.6,0.1),
+    omi = c(0, 0, 0, 0.2),
+    cex = 1.1)
+## low
+plot(rep(1, nn), yy[i1], pch = 16, col = "red", las = 1,
+     xlim = c(0.5,3.5), ylim = range(yy),
+     xaxt = "n",
+     xlab = "Ration size (g)", ylab = "Growth (mm)")
+abline(h = mean(yy[i1]), col = "red", lty = "dashed", cex = 5)
+## med
+points(rep(2, nn), yy[i2], pch = 16, col = "blue")
+abline(h = mean(yy[i2]), col = "blue", lty = "dashed", cex = 5)
+## high
+points(rep(3, nn), yy[i3], pch = 16, col = "orange")
+abline(h = mean(yy[i3]), col = "orange", lty = "dashed", cex = 5)
+## labels
+text(x = 1.03 * par("usr")[2], y = mean(yy[i1]),
+     expression(beta[1]), xpd = NA, col = "red")
+text(x = 1.03 * par("usr")[2], y = mean(yy[i2]),
+     expression(beta[2]), xpd = NA, col = "blue")
+text(x = 1.03 * par("usr")[2], y = mean(yy[i3]),
+     expression(beta[3]), xpd = NA, col = "orange")
+axis(1, at = seq(3), labels = c("Low (2)", "Med (6)", "High (10)"))
+```
+
+
+## Model 2: Grand mean
+
+Now let's reframe our model to instead include the effect of ration relative to the overall "grand mean" for growth rate $(\mu)$
+
+$$
+y_i = \mu + \beta_1 x_{1,i} + \beta_2 x_{2,i} + \beta_3 x_{3,i} + e_i
+$$
+
+and calculate the groups means as
+
+$$
+\bar{y}_{j=1} = \mu + \beta_1 \\
+\bar{y}_{j=2} = \mu + \beta_2 \\
+\bar{y}_{j=3} = \mu + \beta_3
+$$
+
+We would then define $\mathbf{X}$ and $\boldsymbol{\beta}$ as
+
+$$
+\mathbf{X} = 
+\begin{bmatrix}
+1 & 1 & 0 & 0 \\
+\vdots & \vdots & \vdots & \vdots \\
+1 & 1 & 0 & 0 \\ \hline
+1 & 0 & 1 & 0 \\
+\vdots & \vdots & \vdots & \vdots \\
+1 & 0 & 1 & 0 \\ \hline
+1 & 0 & 0 & 1 \\
+\vdots & \vdots & \vdots & \vdots \\
+1 & 0 & 0 & 1 
+\end{bmatrix}
+~~~
+\boldsymbol{\beta} =
+\begin{bmatrix}
+\mu \\
+\beta_1 \\
+\beta_2 \\
+\beta_3
+\end{bmatrix}
+$$
+
+And here are the results of our ANOVA model
+
+```{r fit_anova_gm, echo = TRUE}
+## design matrix
+X <- cbind(rep(1,nn*pp), ration)
+## fit ANOVA w/ `- 1` to remove intercept
+m2 <- lm(yy ~ X - 1)
+coef(m2)
+```
+
+Oops, something went wrong here. Can you spot the problem in our design matrix?
+
+$$
+\mathbf{X} = 
+\begin{bmatrix}
+1 & 1 & 0 & 0 \\
+\vdots & \vdots & \vdots & \vdots \\
+1 & 1 & 0 & 0 \\ \hline
+1 & 0 & 1 & 0 \\
+\vdots & \vdots & \vdots & \vdots \\
+1 & 0 & 1 & 0 \\ \hline
+1 & 0 & 0 & 1 \\
+\vdots & \vdots & \vdots & \vdots \\
+1 & 0 & 0 & 1 
+\end{bmatrix}
+$$
+
+Let's try to estimate the parameters in $\boldsymbol{\beta}$ by hand and see what went wrong.
+
+```{r singular_X, echo = TRUE, eval = FALSE}
+## solve for beta by hand
+beta <- solve(t(X) %*% X) %*% t(X) %*% yy
+```
+
+```
+Error in solve.default(t(X) %*% X) : system is computationally singular:
+ reciprocal condition number = 1.4803e-17
+```
+
+It turns out that $\mathbf{X}$ is not *full rank*, in that the first column is a linear combination of columns 2-4.
+
+$$
+\mathbf{X} = 
+\begin{bmatrix}
+1 & 1 & 0 & 0 \\
+\vdots & \vdots & \vdots & \vdots \\
+1 & 1 & 0 & 0 \\ \hline
+1 & 0 & 1 & 0 \\
+\vdots & \vdots & \vdots & \vdots \\
+1 & 0 & 1 & 0 \\ \hline
+1 & 0 & 0 & 1 \\
+\vdots & \vdots & \vdots & \vdots \\
+1 & 0 & 0 & 1 
+\end{bmatrix}
+$$
+
+OK, let's think about our model again from the viewpoint of the overall mean of $\mathbf{y}$ in terms of the group means
+
+$$
+\bar{y} = \frac{\bar{y}_{j=1} + \bar{y}_{j=2} + \bar{y}_{j=3}}{3} \\
+\Downarrow \\
+\mu = \frac{(\mu + \beta_1) + (\mu + \beta_2) + (\mu + \beta_3)}{3} \\
+\Downarrow \\
+3 \mu = (\mu + \beta_1) + (\mu + \beta_2) + (\mu + \beta_3) \\
+\Downarrow \\
+3 \mu = 3 \mu + (\beta_1 + \beta_2 + \beta_3) \\
+\Downarrow \\
+\beta_1 + \beta_2 + \beta_3 = 0
+$$
+
+This tells us that all of the $\beta_i$ must sum to 1. Now we can rewrite our model as
+
+$$
+y_i = \mu + \beta_1 x_{1,i} + \beta_2 x_{2,i} + (\text{-} \beta_1 + \text{-} \beta_2) x_{3,i} + e_i
+$$
+
+and calculate the group means as
+
+$$
+\begin{aligned}
+\bar{y}_{j=1} &= \mu + \beta_1 \\
+\bar{y}_{j=2} &= \mu + \beta_2 \\
+\bar{y}_{j=3} &= \mu - (\beta_1 + \beta_2)
+\end{aligned}
+$$
+
+We would then define $\mathbf{X}$ and $\boldsymbol{\beta}$ as
+
+$$
+\mathbf{X} = 
+\begin{bmatrix}
+1 & 1 & 0 \\
+\vdots & \vdots & \vdots \\
+1 & 1 & 0 \\ \hline
+1 & 0 & 1 \\
+\vdots & \vdots & \vdots \\
+1 & 0 & 1 \\ \hline
+1 & -1 & -1 \\
+\vdots & \vdots & \vdots \\
+1 & -1 & -1 
+\end{bmatrix}
+~~~
+\boldsymbol{\beta} =
+\begin{bmatrix}
+\mu \\
+\beta_1 \\
+\beta_2
+\end{bmatrix}
+$$
+
+Let's fit our model and check our estimates.
+
+```{r fit_global_mean, echo = TRUE}
+## empty design matrix
+XX <- matrix(NA, nn*pp, pp)
+## for mu
+XX[i1,] <- matrix(c(1,  1,  0), nn, pp, byrow = TRUE)
+## for beta_1
+XX[i2,] <- matrix(c(1,  0,  1), nn, pp, byrow = TRUE)
+## for beta_2
+XX[i3,] <- matrix(c(1, -1, -1), nn, pp, byrow = TRUE)
+## fit model & get parameters
+Bvec <- coef(lm(yy ~ XX - 1))
+names(Bvec) <- c("mu", "beta_1", "beta_2")
+Bvec
+```
+
+From these $\hat{\beta}_i$ we can now estimate the means for each group.
+
+```{r global_mean_est, echo = TRUE, results='hold'}
+## mean of ration 1
+Bvec["mu"] + Bvec["beta_1"]
+## mean of ration 2
+Bvec["mu"] + Bvec["beta_2"]
+## mean of ration 3
+Bvec["mu"] - (Bvec["beta_1"] + Bvec["beta_2"])
+```
+
+### Removing the mean
+
+We saw in lecture that we could also fit our grand mean model after some simple algebra, such that
+
+$$
+y_i = \mu + \beta_1 x_{1,i} + \beta_2 x_{2,i} + \beta_3 x_{3,i} + e_i \\
+\Downarrow \\
+y_i - \mu = \beta_1 x_{1,i} + \beta_2 x_{2,i} + \beta_3 x_{3,i} + e_i \\
+\Downarrow \\
+y_i - \bar{y} = \beta_1 x_{1,i} + \beta_2 x_{2,i} + \beta_3 x_{3,i} + e_i
+$$
+
+Here it is in **R**
+
+```{r grand_mean_anova, echo = TRUE}
+## fit anova with implicit grand mean
+m2 <- lm((yy - mean(yy)) ~ ration - 1)
+coef(m2)
+```
+
+and here are the estimates of the group means
+
+```{r solve_grand_mean, echo = TRUE}
+## do we recover our means?
+coef(m2) + mean(yy)
+coef(m1)
+```
+
+Let's overlay these estimates of the $\hat{\beta}_i$ onto our plot of the data
+
+```{r plot_anova_gm, echo = TRUE, fig.align='center', fig.height=4.5, fig.width=5}
+## plot all data
+par(mai = c(0.9,0.9,0.6,0.1),
+    omi = c(0, 0, 0, 0.2),
+    cex = 1.1)
+## plot space
+plot(rep(1, nn), yy[i1], type = "n", las = 1,
+     xlim = c(0.5,3.5), ylim = range(yy),
+     xaxt = "n",
+     xlab = "Ration size (g)", ylab = "Growth (mm)")
+## grand mean
+abline(h = mean(yy), lty = "dashed")
+## low
+points(rep(1, nn), yy[i1], pch = 16, col = "red")
+abline(h = mean(yy[i1]), col = "red", lty = "dashed")
+segments(1.2, mean(yy), 1.2, coef(m1)[1], col = "red", lwd = 2)
+## med
+points(rep(2, nn), yy[i2], pch = 16, col = "blue")
+abline(h = mean(yy[i2]), col = "blue", lty = "dashed")
+points(x = 2.36, y = mean(yy) + 0.5*coef(m2)[2],
+       pch = 19, col = "white", cex = 3)
+segments(2.2, mean(yy), 2.2, coef(m1)[2], col = "blue", lwd = 2)
+## high
+points(rep(3, nn), yy[i3], pch = 16, col = "orange")
+abline(h = mean(yy[i3]), col = "orange", lty = "dashed")
+segments(3.2, mean(yy), 3.2, coef(m1)[3], col = "orange", lwd = 2)
+## labels
+text(x = 1.15, y = mean(yy) + 0.5*coef(m2)[1], pos = 4,
+     expression(beta[1]), xpd = NA, col = "red")
+text(x = 2.15, y = mean(yy) + 0.5*coef(m2)[2], pos = 4,
+     expression(beta[2]), xpd = NA, col = "blue")
+text(x = 3.15, y = mean(yy) + 0.5*coef(m2)[3], pos = 4,
+     expression(beta[3]), xpd = NA, col = "orange")
+text(x = 1.03 * par("usr")[2], y = mean(yy),
+     expression(mu), xpd = NA)
+axis(1, at = seq(3), labels = c("Low (2)", "Med (6)", "High (10)"))
+```
+
+# Analysis of covariance (ANCOVA)
+
+Now let's turn our attention to ANCOVA model, which combine categorical and continuous predictors. For example, let's assume the data from the fish growth experiment really look like this:
+
+```{r plot_ancova, fig.align='center', fig.height=4, fig.width=5}
+## plot all data
+par(mai = c(0.9,0.9,0.1,0.1),
+    omi = c(0, 0, 0, 0.2),
+    cex = 1.1)
+## plot all data
+plot(x_cov[1:nn], yy[1:nn], pch = 16, col = "red", ylim = range(yy),
+     las = 1, xlab = "Ration size (g)", ylab = "Growth (mm)")
+points(x_cov[1:nn+nn], yy[1:nn+nn], pch = 16, col = "blue")
+points(x_cov[1:nn+nn*2], yy[1:nn+nn*2], pch = 16, col = "orange")
+```
+
+Here we want to fit a model with the categorical effect of lineage (designated by the three colors) & the continuous effect of ration
+
+$$
+\text{growth}_i = \alpha + \beta_{1,\text{lineage}} + \beta_2 \text{ration}_i + \epsilon_i
+$$
+
+We'll drop the global intercept $(\alpha)$ & write out the lineage effects to get
+
+$$
+\text{growth}_i = \underbrace{\beta_1 x_{1,i} + \beta_2 x_{2,i} + \beta_3 x_{3,i}}_{\text{lineage}} + \underbrace{\beta_4 x_{4,i}}_{\text{ration}} + e_i
+$$
+
+From this we would then define $\mathbf{X}$ and $\boldsymbol{\beta}$ as (where again the $j_i$ denote the number of fish in group $i$ and $\sum j_i = n$).
+
+$$
+\mathbf{X} = 
+\begin{bmatrix}
+1 & 0 & 0 & r_1 \\
+\vdots & \vdots & \vdots & \vdots \\
+1 & 0 & 0 & r_{j_1} \\ \hline
+0 & 1 & 0 & r_{j_1+1} \\
+\vdots & \vdots & \vdots & \vdots \\
+0 & 1 & 0 & r_{j_2+j_2} \\ \hline
+0 & 0 & 1 & r_{j_1+j_2+1} \\
+\vdots & \vdots & \vdots & \vdots \\
+0 & 0 & 1 & r_n 
+\end{bmatrix}
+~~~
+\boldsymbol{\beta} =
+\begin{bmatrix}
+\beta_1 \\
+\beta_2 \\
+\beta_3 \\
+\beta_4
+\end{bmatrix}
+$$
+
+Now we can build our design matrix.
+
+```{r fit_ancova, echo = TRUE}
+## create design matrix
+XX <- cbind(L1 = rep(c(1,0,0), ea = nn), # effect of lineage 1
+            L2 = rep(c(0,1,0), ea = nn), # effect of lineage 2
+            L3 = rep(c(0,0,1), ea = nn), # effect of lineage 3
+            RA = x_cov)                  # effect of ration
+## fit model
+Bvec <- coef(lm(yy ~ XX - 1))
+names(Bvec) <- c("beta_1", "beta_2", "beta_3", "beta_4")
+Bvec
+```
+
+and plot the fits with our data.
+
+```{r plot_ancova_fit, fig.align='center', fig.height=4, fig.width=5}
+## plot all data
+par(mai = c(0.9,0.9,0.1,0.1),
+    omi = c(0, 0, 0, 0.2),
+    cex = 1.1)
+## blank plot
+plot(x_cov[1:nn], yy[1:nn], type = "n", ylim = range(yy),
+     las = 1, xlab = "Ration size (g)", ylab = "Growth (mm)")
+## add fits
+abline(a = Bvec[1], b = Bvec[4], col = "red")
+abline(a = Bvec[2], b = Bvec[4], col = "blue")
+abline(a = Bvec[3], b = Bvec[4], col = "orange")
+## add intercepts
+abline(h = Bvec[1], lty = "dashed", col = "red")
+abline(h = Bvec[2], lty = "dashed", col = "blue")
+abline(h = Bvec[3], lty = "dashed", col = "orange")
+## add data
+points(x_cov[1:nn], yy[1:nn], pch = 16, col = "red")
+points(x_cov[1:nn+nn], yy[1:nn+nn], pch = 16, col = "blue")
+points(x_cov[1:nn+nn*2], yy[1:nn+nn*2], pch = 16, col = "orange")
+## add labels
+text(x = 1.03 * par("usr")[2], y = Bvec[1],
+     expression(beta[1]), xpd = NA, col = "red")
+text(x = 1.03 * par("usr")[2], y = Bvec[2],
+     expression(beta[2]), xpd = NA, col = "blue")
+text(x = 1.03 * par("usr")[2], y = Bvec[3],
+     expression(beta[3]), xpd = NA, col = "orange")
+```
+
+
+# Using `model.matrix()`
+
+Here are a number of examples of using `factor()` with `model.matrix()` to create appropriate design matrices for use in our linear models. Recall that `factor(x)` tells **R** to treat `x` as a categorical variable rather than continuous.
+
+```{r factor_1, echo = TRUE}
+## 2 groups with 2 obs each
+groups <- factor(c(1, 1, 2, 2))
+## inspect them
+groups
+```
+
+Also recall that `model.matrix(~ x)` uses a right-hand side formula construct `~ x`
+
+```{r mod_mat_1, echo = TRUE}
+## create design matrix from `groups`
+model.matrix(~ groups)
+```
+
+What if we don't use `factor()`?
+
+```{r mod_mat_2, echo = TRUE}
+## 2 groups with 2 obs each
+groups <- c(1, 1, 2, 2)
+## create design matrix from `groups`
+model.matrix(~ groups)
+```
+
+You can drop the intercept term by including `- 1` in the call to `model.natrix()`.
+
+```{r mod_mat_3, echo = TRUE}
+## 2 groups with 2 obs each
+groups <- factor(c(1, 1, 2, 2))
+## create design matrix from `groups`
+model.matrix(~ groups - 1)
+```
+
+Note that the names or categories are irrelevant for `factor()`, in that it will convert characters into integers.
+
+```{r mod_mat_4, echo = TRUE}
+## 2 groups with 2 obs each
+groups <- factor(c("ref", "ref", "exp", "exp"))
+## create design matrix from `groups`
+model.matrix(~ groups)
+```
+
+By default, **R** assigns factors in alphabetical order, such that the *reference* category is first in this example:
+
+```{r mod_mat_5, echo = TRUE}
+## 2 groups with 2 obs each
+groups <- factor(c("ref", "ref", "exp", "exp"))
+## create design matrix from `groups`
+model.matrix(~ groups)
+```
+
+We can change reorder cases with `relevel()`, which tells **R** which group to assign the `0` category to
+
+```{r mod_mat_6, echo = TRUE}
+## 2 groups with 2 obs each
+groups <- relevel(groups, "ref")
+## create design matrix from `groups`
+model.matrix(~ groups)
+```
+
+For ANOVA designs with more that one factor, we can add multiple factors with `+` inside the call to `model.matrix()`.
+
+```{r mod_mat_7, echo = TRUE}
+diet <- factor(c(1, 1, 2, 2))
+sex <- factor(c("f", "m", "f", "m"))
+model.matrix(~ diet + sex)
+```
+
+
+
+
+
