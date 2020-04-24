@@ -51,5 +51,17 @@ diagnostics <- list(
   data = "homework/week_03/usfws_bull_trout.csv",
   key = ""
 )
+
+## pvalues
+pvalues <- list(
+  title = "Considering significance tests",
+  topics = c("Thinking about significance tests"),
+  pdf = "homework/week_04/hw_04_pvalues_revisited.pdf",
+  rmd = "homework/week_04/hw_04_pvalues_revisited.Rmd",
+  html = "",
+  data = "references/Wasserstein_2019_world_beyond_p05.pdf",
+  key = ""
+)
+
 ```
 
