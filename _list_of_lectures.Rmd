@@ -124,15 +124,15 @@ review <- list(
   rmd = c(""),
   html = c(""),
   background = "",
-  zoom = ""
+  zoom = "https://washington.zoom.us/rec/share/1MlbNpvAxmFLaIHNuG7OdIsRPZb9T6a80HdPr6AJyFEad35Ebc-ybkRWNtet45c"
 )
 
 max_likelihood <- list(
-  title = "Maximum likelihood",
-  topics = c("<b>Maximum likelihood</b>", "Relationship to probability", "Estimation", "Ratio tests"),
-  pdf = c(""),
-  rmd = c(""),
-  html = c(""),
+  title = "Maximum likelihood estimation",
+  topics = c("<b>Maximum likelihood estimation</b>", "Relationship to probability", "Estimation", "Characteristics of MLE"),
+  pdf = "lectures/week_04/lec_12_max_likelihood.pdf",
+  rmd = "lectures/week_04/lec_12_max_likelihood.Rmd",
+  html = "lectures/week_04/lec_12_max_likelihood.html",
   background = "",
   zoom = ""
 )
