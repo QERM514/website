@@ -159,8 +159,8 @@ model_selection_2 <- list(
 
 mixed_models_1 <- list(
   title = c("Mixed effects models", "<br><b>Project plan due</b>"),
-  topics = c("<b>Mixed effects models</b>", "Fixed vs Random effects", "Costs/benefits", "Restricted maximum likelihood",
-             "<br><b>Project plan due</b>"),
+  topics = c("<b>Mixed effects models</b>", "Fixed vs Random effects", "Costs/benefits",
+             "Restricted maximum likelihood"),
   pdf = c(""),
   rmd = c(""),
   html = c(""),
@@ -200,7 +200,8 @@ intro_GLM <- list(
 
 binary_GLM <- list(
   title = "Modeling binary data",
-  topics = c("<b>Modeling binary data</b>", "Logistic regression", "Model selection", "Diagnostics"),
+  topics = c("<b>Modeling binary data</b>", "Logistic regression", "Model selection",
+             "Diagnostics", "<br><b>Project plan due</b>"),
   pdf = c(""),
   rmd = c(""),
   html = c(""),
