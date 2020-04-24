@@ -63,10 +63,11 @@ design_matrices <- list(
   title = "Design matrices",
   topics = c("Design matrices for", "regression, ANOVA, ANCOVA"),
   pdf = c(""),
-  rmd = c(""),
-  html = c(""),
+  rmd = c("labs/week_04/design_matrices.Rmd"),
+  html = c("labs/week_04/design_matrices.html"),
   zoom = "",
-  data = "",
+  data = c("labs/week_04/mauna_loa_co2.csv",
+           "labs/week_04/mauna_loa_co2_mon.csv"),
   background = c("")
   )
 
