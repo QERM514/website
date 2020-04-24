@@ -1,0 +1,28 @@
+---
+title: "Thinking critically about p-values and statistical significance"
+subtitle: "QERM 514 - Homework 4"
+date: "24 April 2020"
+output:
+  pdf_document:
+    highlight: haddock
+fontsize: 11pt
+geometry: margin=1in
+urlcolor: blue
+header-includes:
+  \usepackage{float}
+  \floatplacement{figure}{H}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Background
+
+There have been several recent critiques of the use and misuse of null hypothesis testing in the sciences. Many authors have pointed to problems in setting up the tests (eg, weak or nonsensical null hypotheses), interpretation of the results (eg, correct understanding of a confidence interval), and so-called "$p$-hacking", where researchers collect or select data, or conduct many different statistical analyses, until non-significant results become significant, and those are the only results that are ultimately reported. So far in class we have seen a variety of different null hypothesis tests that we can use to evaluate the evidence for or against the inclusion of parameters in a model, for checking the homoscedasticity of residuals, and looking for autocorrelation in data or residuals. As we move forward, however, we will turn our attention to other methods for evaluating evidence, selecting a "best" model from a set, and even averaging the results of multiple models.
+
+# Assignment
+
+Your assignment this week is to read the paper by Wasserstein et al. (2019) titled "[Moving to a world beyond 'p < 0.05']("references/Wasserstein_2019_world_beyond_p05.pdf")" and provide a summary of things we should and should not do with respect to statistical analysis in a frequentist framework. In particular, think about how the topics in the paper fit into your research and experiences you have had so far. Your comment should be 500-700 words.
+
+
