@@ -1,8 +1,8 @@
 ---
-title: "Model selection and multimodel inference"
+title: "Introduction to maximum likelihood estimation"
 subtitle: "Analysis of Ecological and Environmental Data<br>QERM 514"
 author: "Mark Scheuerell"
-date: "27 April 2020"
+date: "24 April 2020"
 output:
   ioslides_presentation:
     css: lecture_slides.css
@@ -13,4 +13,619 @@ knitr::opts_chunk$set(echo = FALSE)
 ```
 
 ## Goals for today
+
+* Understand the concept of a likelihood function
+
+> - Understand the difference between probability and likelihood
+
+> - Understand maximum likelihood estimation
+
+> - Understand the characteristics of maximum likelihood estimates
+
+
+## Maximum likelihood estimation (MLE)
+
+What is maximum likelihood estimation?
+
+A method used to estimate the parameter(s) of a model given some data
+
+As the name suggests, the goal is to *maximize* the likelihood
+
+
+## The likelihood function
+
+Here we are referring to the likelihood of some parameters given some data, which can be written as
+
+$$
+\mathcal{L}(\theta | y) ~~ \text{or} ~~ \mathcal{L}(\boldsymbol{\theta} | \mathbf{y})
+$$
+
+
+## The likelihood function
+
+Here we are referring to the likelihood of some parameters given some data, which can be written as
+
+$$
+\mathcal{L}(\theta | y) ~~ \text{or} ~~ \mathcal{L}(\boldsymbol{\theta} | \mathbf{y})
+$$
+
+We'll write this as 
+
+$$
+\mathcal{L}(y; \theta) ~~ \text{or} ~~ \mathcal{L}(\mathbf{y}; \boldsymbol{\theta})
+$$
+
+to avoid confusion with the "|" meaning *conditional* probability
+
+
+## The likelihood function
+
+Let's define the likelihood function to be
+
+$$
+\mathcal{L}(y; \theta) = f_{\theta}(y)
+$$
+
+where $f_{\theta}(y)$ is a model for $y$ with parameter(s) $\theta$ 
+
+
+## The likelihood function
+
+For *discrete* data, $f_{\theta}(y)$ is the *probability mass function* (pmf)
+
+
+## The likelihood function
+
+For *discrete* data, $f_{\theta}(y)$ is the *probability mass function* (pmf)
+
+For *continuous* data, $f_{\theta}(y)$ is the *probability density function* (pdf)
+
+The pmf of pdf can be for *any* distribution
+
+
+## Gaussian likelihood function
+
+Let's begin with the pdf for a Gaussian (normal) distribution
+
+$$
+f(y ; \mu, \sigma^{2}) \sim \text{N}(\mu, \sigma^{2}) \\
+~ \\
+f(y ; \mu, \sigma^{2}) = \left( \frac{1}{2 \pi \sigma^{2}} \right)^{1/2} \exp \left[ - \frac{(y - \mu)^2}{2 \sigma^2} \right]
+$$
+
+
+## Gaussian likelihood function
+
+```{r plot_normals, fig.align='center', fig.height=4.5, fig.width=5.5}
+## set plot area
+par(mai = c(0.9,0.9,0.1,0.1),
+    cex = 1.1)
+## plot pdf's with different params
+curve(dnorm(x, mean = -1, sd = 0.5), -5, 5, lwd = 2, las = 1, col = "red",
+      ylab = expression(italic(f)[mu*","*sigma^2](italic(y))),
+      xlab = expression(italic(y)))
+curve(dnorm(x, mean = 0, sd = 1), -5, 5, lwd = 2, col = "blue", add = TRUE)
+curve(dnorm(x, mean = 0, sd = 2), -5, 5, lwd = 2, col = "orange", add = TRUE)
+curve(dnorm(x, mean = 2, sd = 1), -5, 5, lwd = 2, col = "purple", add = TRUE)
+legend("topright", bty ="n", cex = 0.9, lty = "solid",
+       col =c("red", "blue", "orange", "purple"),
+       c(expression(mu==`-1`*","~sigma^2==0.5),
+         expression(mu==0*","~~sigma^2==1),
+         expression(mu==0*","~~sigma^2==2),
+         expression(mu==2*","~~sigma^2==1)))
+```
+
+
+## Gaussian likelihood function
+
+Note that $f(y ; \mu, \sigma^{2})$ is **_not_** a probability!
+
+The pdf gives you *densities* for given values of $y$, $\mu$ & $\sigma^{2}$
+
+It's only constraint is
+
+$$
+\int^{+\infty}_{-\infty} f(y) dy = 1
+$$
+
+
+## Beta likelihood function
+
+For example, many densities of $\text{Beta}(\alpha, \beta)$ > 1
+
+```{r plot_beta, fig.align='center', fig.height=4, fig.width=5}
+## set plot area
+par(mai = c(0.9,0.9,0.1,0.1),
+    cex = 1.1)
+## plot pdf's with different params
+curve(dbeta(x, 0.5, 0.5), 0, 1, lwd = 2, las = 1, col = "red",
+      ylab = expression(italic(f)[alpha*","*beta](italic(y))),
+      xlab = expression(italic(y)))
+curve(dbeta(x, 2, 2), 0, 1, lwd = 2, col = "blue", add = TRUE)
+curve(dbeta(x, 2, 5), 0, 1, lwd = 2, col = "orange", add = TRUE)
+legend("top", bty ="n", cex = 0.9, lty = "solid",
+       col =c("red", "blue", "orange", "purple"),
+       c(expression(alpha==0.5*","~beta==0.5),
+         expression(alpha==2*","~~beta==2),
+         expression(alpha==2*","~~beta==5)))
+```
+
+
+## Likelihood vs probability
+
+Probability is linked to *possible results*
+
+Possible results are mutually exclusive and exhaustive
+
+
+## Likelihood vs probability
+
+Probability is linked to *possible results*
+
+Likelihood is linked to *hypotheses*
+
+Hypotheses are neither mutually exclusive nor exhaustive
+
+
+## Likelihood vs probability | An example
+
+* Suppose I ask you to predict the outcomes of 10 tosses of a fair coin
+
+> - There are 11 *possible results* (0 to 10 correct predictions)
+
+> - The *actual result* will always be only 1 of 11 possible results
+
+> - Thus, the probabilities for each of the 11 possible results must sum to 1
+
+
+## Likelihood vs probability | An example
+
+* Suppose you predict 7 of 10 tosses correctly
+
+> - I might hypothesize that you just guessed, but someone else might hypothesize that you are a psychic
+
+> - These are different hypotheses, but they are not mutually exclusive (you might be a psychic who likes to guess)
+
+> - We would say that my hypothesis is nested within the other
+
+
+## Likelihood vs probability | An example
+
+* Importantly, there is no limit to the hypotheses we (or others) might generate
+
+> - Because we don't generally consider the entire suite of *all* possible hypotheses, the likelihoods of our hypotheses do not have any absolute meaning 
+
+> - Only the *relative likelihoods* ("likelihood ratios") have meaning
+
+
+## Maximizing the likelihood
+
+What does it mean to maximize $\mathcal{L}(y; \theta)$?
+
+We want to find the parameter(s) $\theta$ of our model $f_{\theta}(y)$ which are most likely to have generated our observed data $y$
+
+
+## Maximizing the likelihood
+
+More formally, we can write this as
+
+$$
+\begin{aligned}
+\hat{\theta} &= \max_{\theta} \mathcal{L}(y; \theta)) \\
+&= \max_{\theta} f_{\theta}(y)
+\end{aligned}
+$$
+
+
+## Maximizing the likelihood
+
+In practice, we have multiple observations $y = \{y_1, y_2, \dots, y_n\}$, so we need the *joint distribution* for $y$
+
+$$
+\hat{\theta} = \max_{\theta} f_{\theta}(y_1, y_2, \dots, y_n)
+$$
+
+
+## Maximizing the likelihood
+
+Remember *independent and identically distributed* (IID) errors?
+
+If the data $Y$ are independent, we can make use of
+
+$$
+f_{\theta}(y_1, y_2, \dots, y_n) = \prod_{i = 1}^n f_{\theta}(y_i)
+$$
+
+The joint probability of all of the $y_i$ is the product of their marginal probabilities
+
+
+## Maximizing the likelihood
+
+If the data $Y$ are identically distributed, we can use the same distribution and parameterization for $f_{\theta}(y)$
+
+
+## Maximizing the likelihood
+
+If the data $Y$ are both independent and identically distributed, then we have
+
+$$
+\hat{\theta} = \max_{\theta} \prod_{i = 1}^n f_{\theta}(y_i)
+$$
+
+(This assumption isn't necessary, but it makes our lives easier)
+
+
+## Maximum likelihood estimates
+
+The value(s) of $\hat{\theta}$ that maximizes the likelihood function is/are called the *maximum likelihod estimate(s)* (MLE) of $\theta$
+
+
+## Binomial distribution
+
+Let's begin with a simple example of coin tossing
+
+Assume we have a "fair" coin with equal chance of coming up heads or tails
+
+$\Pr(H) = \Pr(T)$
+
+
+## Binomial distribution
+
+If we flip the coin 2 times, what is the probability that we get exactly 1 heads?
+
+Our 4 possible outcomes are
+
+1. $\{H, H\}$
+2. $\{H, T\}$
+3. $\{T, H\}$
+4. $\{T, T\}$
+
+2 of 4 flips are heads, so $\Pr(H = 1) = 2/4 = 0.5$
+
+## Binomial distribution
+
+Let's think about this in terms of the probabilities
+
+1. $\{H, H\}: \Pr(H) \times \Pr(H) = 0.5 \times 0.5 = 0.25$ <b>X</b>
+2. $\{H, T\}: \Pr(H) \times \Pr(T) = 0.5 \times 0.5 = 0.25$ <b>&#10003;</b>
+3. $\{T, H\}: \Pr(T) \times \Pr(H) = 0.5 \times 0.5 = 0.25$ <b>&#10003;</b>
+4. $\{T, T\}: \Pr(T) \times \Pr(T) = 0.5 \times 0.5 = 0.25$ <b>X</b>
+
+$\Pr(H = 1) = 0.25 + 0.25 = 0.5$
+
+
+## Binomial distribution
+
+We can generalize this by 
+
+1. $\{H, H\}: \Pr(H) \times \Pr(H)$
+2. $\{H, T\}: \Pr(H) \times (1 - \Pr(H))$
+3. $\{T, H\}: (1 - \Pr(H)) \times \Pr(H)$
+4. $\{T, T\}: (1 - \Pr(H)) \times (1 - \Pr(H)))$
+
+<br>
+
+$$
+\begin{aligned}
+\Pr(H = 1) &= \Pr(H)(1 - \Pr(H)) + (1 - \Pr(H)) \Pr(H) \\
+  &= 2 [\Pr(H) (1 - \Pr(H))]
+\end{aligned}
+$$
+
+
+## Binomial distribution
+
+Now consider the probability of exactly 1 heads in 3 coin tosses
+
+<div class="columns-2">
+
+$\{H, H, H\}$ <b>X</b>
+
+$\{H, H, T\}$ <b>X</b>
+ 
+$\{H, T, H\}$ <b>X</b>
+
+$\{T, H, H\}$ <b>X</b>
+
+$\{H, T, T\}$ <b>&#10003;</b>
+
+$\{T, H, T\}$ <b>&#10003;</b>
+
+$\{T, T, H\}$ <b>&#10003;</b>
+
+$\{T, T, T\}$ <b>X</b>
+
+</div>
+
+$$
+\begin{aligned}
+\Pr(H = 1) &= \Pr(H) (1 - \Pr(H)) (1 - \Pr(H)) \\
+& ~~~~~ + (1 - \Pr(H)) \Pr(H) (1 - \Pr(H)) \\
+& ~~~~~ + (1 - \Pr(H)) (1 - \Pr(H)) \Pr(H) \\
+  &= 3 [\Pr(H) (1 - \Pr(H))^2]
+\end{aligned}
+$$
+
+
+## Binomial distribution
+
+Let's define $k$ to be the number of "successes" out of $n$ "trials" and $p$ to be the probability of a success
+
+We can generalize our probability statement to be
+
+$$
+\Pr(k; n, p) = \left( \begin{array}{c} n \\ k \end{array} \right) p^k (1 - p)^{n - k} \\
+~ \\
+\left( \begin{array}{c} n \\ k \end{array} \right) = \frac{n!}{k!(n - k)!}
+$$
+
+
+## Binomial distribution
+
+What is the probability of getting 1 heads in 3 tosses?
+
+```{r dbinom, echo = TRUE}
+## trials
+n <- 3
+## successes
+k <- 1
+## probability of success
+p <- 0.5
+## Pr(k = 1)
+choose(n, k) * p^k * (1 - p)^(n-k)
+```
+
+
+## Binomial distribution
+
+What is the probability of getting 1 heads in 3 tosses?
+
+```{r dbinom_2, echo = TRUE}
+## trials
+n <- 3
+## successes
+k <- 1
+## probability of success
+p <- 0.5
+## Pr(k = 1)
+dbinom(k, n, p)
+```
+
+
+## Binomial likelihood
+
+What if we don't know what $p$ is?
+
+For example, we tag 100 juvenile fish in June and 20 are alive the following year
+
+What is the probability of surviving?
+
+
+## Binomial likelihood
+
+We need to find $p$ that maximizes the likelihood
+
+$$
+\mathcal{L}(k; n, p) = \left( \begin{array}{c} n \\ k \end{array} \right) p^k (1 - p)^{n - k} \\
+\Downarrow \\
+\max_p \mathcal{L}(20; 100, p) = \left( \begin{array}{c} 100 \\ 20 \end{array} \right) p^{20} (1 - p)^{100 - 20}
+$$
+
+
+## Binomial likelihood
+
+Let's try some different values for $p$
+
+$$
+\small{
+\mathcal{L}(20; 100, 0.3) = \left( \begin{array}{c} 100 \\ 20 \end{array} \right) 0.3^{20} (1 - 0.3)^{100 - 20} \approx 0.0076 \\ 
+\mathcal{L}(20; 100, 0.25) = \left( \begin{array}{c} 100 \\ 20 \end{array} \right) 0.25^{20} (1 - 0.25)^{100 - 20} \approx 0.049 \\ 
+\mathcal{L}(20; 100, 0.2) = \left( \begin{array}{c} 100 \\ 20 \end{array} \right) 0.2^{20} (1 - 0.2)^{100 - 20} \approx 0.099 \\ 
+\mathcal{L}(20; 100, 0.15) = \left( \begin{array}{c} 100 \\ 20 \end{array} \right) 0.15^{20} (1 - 0.15)^{100 - 20} \approx 0.040 }
+$$
+
+
+## Binomial likelihood
+
+The maximum likelihood occurs at $p = 0.2$
+
+```{r plot_dbinom, fig.height=4, fig.width=5, fig.align='center'}
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    cex = 1.1)
+xx <- seq(0,40)/100
+plot(xx, dbinom(20, 100, xx), pch = 16, las = 1,
+     ylab = "Likelihood", xlab = expression(italic(p)))
+```
+
+
+## Maximum likelihood estimates
+
+In practice, finding the MLE is not so trivial
+
+We will use numerical optimization methods to find the MLE
+
+
+## Maximizing the likelihood
+
+Let's return to our general statement for the MLE
+
+$$
+\hat{\theta} = \max_{\theta} \prod_{i = 1}^n f_{\theta}(y_i)
+$$
+
+If the densities are small and/or $n$ is large, the product will become increasingly tiny
+
+
+## Log-likelihood
+
+To address this, we can make use of the logarithm function, which has 2 nice properties:
+
+1. it's a monotonically increasing function
+
+2. $\log (ab) = \log(a) + \log(b)$
+
+
+## Log-likelihood
+
+We thereby transform our likelihood into a *log-likelihood*
+
+$$
+\begin{aligned}
+\hat{\theta} &= \max_{\theta} \prod_{i = 1}^n f_{\theta}(y_i) \\
+  &= \max_{\theta} \sum_{i = 1}^n \log f_{\theta}(y_i)
+\end{aligned}
+$$
+
+
+## Maximizing the likelihood
+
+If the data $y$ are both independent and identically distributed, we can average over the log-likelihoods and remove the dependency on the number of observations
+
+$$
+\begin{aligned}
+\hat{\theta} &= \max_{\theta} \sum_{i = 1}^n \log f_{\theta}(y_i) \\
+  &= \max_{\theta} \frac{1}{n} \sum_{i = 1}^n \log f_{\theta}(y_i)
+\end{aligned}
+$$
+
+
+## Minimizing the log-likelihood
+
+Lastly, we have been focused on minimizing functions, so we'll minimize the *negative log-likelihood*
+
+$$
+\hat{\theta} = \max_{\theta} \frac{1}{n} \sum_{i = 1}^n \log f_{\theta}(y_i) \\
+\Downarrow \\
+\hat{\theta}= \min_{\theta} -\frac{1}{n} \sum_{i = 1}^n \log f_{\theta}(y_i)
+$$
+
+
+## Gaussian likelihood function
+
+Let's return to the pdf for a normal distribution
+
+$$
+f(y ; \mu, \sigma^{2}) = \left( \frac{1}{2 \pi \sigma^{2}} \right)^{1/2} \exp \left[ - \frac{(y - \mu)^2}{2 \sigma^2} \right] \\
+$$
+
+
+## Gaussian likelihood function
+
+Let's return to the pdf for a normal distribution
+
+$$
+f(y ; \mu, \sigma^{2}) = \left( \frac{1}{2 \pi \sigma^{2}} \right)^{1/2} \exp \left[ - \frac{(y - \mu)^2}{2 \sigma^2} \right] \\
+\Downarrow \\
+\begin{align}
+f(y_1, \dots, y_n ; \mu, \sigma^{2}) &= \prod_{i = 1}^n f(y_i ; \mu, \sigma^{2}) \\
+ &= \left( \frac{1}{2 \pi \sigma^{2}} \right)^{n/2}  \exp \left[ -  \frac{\sum_{i = 1}^n (y_i - \mu)^2}{2 \sigma^2}  \right]
+\end{align}
+$$
+
+
+## Gaussian log-likelihood function
+
+The log-likelihood is then
+
+$$
+f(y ; \mu, \sigma^{2}) = \left( \frac{1}{2 \pi \sigma^{2}} \right)^{1/2} \exp \left[ - \frac{(y - \mu)^2}{2 \sigma^2} \right]\\
+\Downarrow \\
+\log f(y ; \mu, \sigma^{2}) = -\frac{n}{2} \log(2 \pi \sigma^{2}) -\frac{1}{2 \sigma^2} \sum_{i = 1}^n (y_i - \mu)^2
+$$
+
+
+## Gaussian MLE
+
+What values of $\mu$ and $\sigma$ maximize the log-likelihood?
+
+We need to take some derivatives!
+
+
+## Gaussian MLE | Mean
+
+$$
+\frac{\partial}{\partial \mu} \log f(y ; \mu, \sigma^{2}) = 0 - \frac{-2 n (\bar{y} - \mu)}{2 \sigma^2} = 0 \\
+\Downarrow \\
+\frac{-2 n (\bar{y} - \mu)}{2 \sigma^2} = 0 \\
+\Downarrow \\
+\hat{\mu} = \bar{y} = \frac{1}{n} \sum_{i = 1}^n y_i
+$$
+
+
+## Gaussian MLE | Variance
+
+$$
+\frac{\partial}{\partial \sigma} \log f(y ; \mu, \sigma^{2}) = -\frac{n}{\sigma} - \frac{1}{\sigma^3} \sum_{i = 1}^n (y_i - \mu) = 0 \\
+\Downarrow \\
+\frac{n}{\sigma} = \frac{1}{\sigma^3} \sum_{i = 1}^n (y_i - \mu) \\
+\Downarrow \\
+\hat{\sigma}^2 = \frac{1}{n} \sum_{i = 1}^n (y_i - \bar{y}) \\
+$$
+
+
+## Gaussian MLE | Variance
+
+Recall from earlier lectures that we defined
+
+$$
+\hat{\sigma}^2 = \frac{1}{n-1} \sum_{i = 1}^n (y_i - \bar{y}) \\
+$$
+
+but our MLE is
+
+$$
+\hat{\sigma}^2_{MLE} = \frac{1}{n} \sum_{i = 1}^n (y_i - \bar{y}) \\
+$$
+
+
+## Gaussian MLE | Variance
+
+Hence, our MLE for the variance is *biased* low
+
+$$
+\begin{aligned}
+(n-1) \hat{\sigma}^2 &= \sum_{i = 1}^n (y_i - \bar{y}) \\
+n \hat{\sigma}^2_{MLE} &= \sum_{i = 1}^n (y_i - \bar{y}) 
+\end{aligned} \\
+\Downarrow \\
+\hat{\sigma}^2_{MLE} = \frac{n - 1}{n} \hat{\sigma}^2
+$$
+
+
+## Gaussian MLE | General properties
+
+Asymptotically, as $n \rightarrow \infty$
+
+* estimates are *unbiased* 
+
+> - estimates are normally distributed
+
+> - variance of estimate is minimized
+
+
+## Gaussian MLE | General properties
+
+Invariance: if $\hat{\theta}$ is MLE of $\theta$ then $f(\hat{\theta})$ is MLE of $f(\theta)$
+
+
+## Gaussian MLE | Least squares estimates are MLEs
+
+For cases where $\mathbf{y} \sim \text{N}(\mathbf{X} \boldsymbol{\beta}, \Sigma)$ then
+
+$\hat{\boldsymbol{\beta}} = (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^{\top} \mathbf{y}$
+
+is also the MLE for $\boldsymbol{\beta}$
+
+
+## Maximum likelihood estimation | Summary
+
+Maximum likelihood estimation is much more general than least squares, which means we can use it for
+
+* mixed effects models
+
+* generalized linear models
+
+* Bayesian inference
+
+
 
