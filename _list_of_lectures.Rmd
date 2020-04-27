@@ -134,15 +134,15 @@ max_likelihood <- list(
   rmd = "lectures/week_04/lec_12_max_likelihood.Rmd",
   html = "lectures/week_04/lec_12_max_likelihood.html",
   background = "",
-  zoom = ""
+  zoom = "https://washington.zoom.us/rec/share/3t5OJb3s12pLW4Xr4nPQY-koMILZaaa82iEd_vUFmRor1fLzHGyGWoiDTegm06_C"
 )
 
 model_selection_1 <- list(
   title = "Model selection",
   topics = c("<b>Model selection</b>", "Bias-Variance trade-offs", "In-sample selection", "AIC"),
-  pdf = c(""),
-  rmd = c(""),
-  html = c(""),
+  pdf = c("lectures/week_05/lec_13_model_selection.pdf"),
+  rmd = c("lectures/week_05/lec_13_model_selection.Rmd"),
+  html = c("lectures/week_05/lec_13_model_selection.html"),
   background = "",
   zoom = ""
 )
