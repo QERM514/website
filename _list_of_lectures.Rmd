@@ -145,7 +145,7 @@ model_selection_1 <- list(
   html = c("lectures/week_05/lec_13_model_selection.html"),
   background = c("[Burnham & Anderson (2002)](references/Burnham_Anderson_2002_model_selection.pdf)",
                  "[Hobbs & Hilborn (2006)](references/Hobbs_Hilborn_2006_alternatives_nht.pdf)"),
-  zoom = ""
+  zoom = "https://washington.zoom.us/rec/share/yv5uHYHBz31OGdbzxW3_d4oQJ5zHX6a80SRMrqZcmR0_HGJaqvCMwCm8pIreHtwM"
 )
 
 model_selection_2 <- list(
