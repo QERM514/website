@@ -1,0 +1,316 @@
+---
+title: "Examining model diagnostics"
+subtitle: "QERM 514 - Homework 3 Answer Key"
+date: "17 April 2020"
+output:
+  pdf_document:
+    highlight: haddock
+fontsize: 11pt
+geometry: margin=1in
+urlcolor: blue
+header-includes:
+  \usepackage{float}
+  \floatplacement{figure}{H}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# R Markdown file
+
+You can find the R Markdown file used to create this answer key [here](homework/week_03/hw_03_diagnostics_key.Rmd).
+
+
+# Background
+
+Section 7 of the U.S. Endangered Species Act (ESA) regulates situations in which a federal agency funds, permits, or otherwise has a "federal nexus" on any project that may influence a protected species. Federal agencies must seek a "consultation" on the project with either the U.S. Fish and Wildlife Service (USFWS) or the National Marine Fisheries Service (NMFS), depending on the species, and USFWS or NMFS must assure that any project does not cause "jeopardy" (a relatively high legal standard) for a protected species. A major conservation value of Section 7 consultation is the opportunity for USFWS and NMFS biologists to negotiate changes to projects that could minimize any negative impacts on species (or maximize any positive benefits).
+
+The USFWS office in Lacey, Washington wanted to identify the characteristics of projects that would make them worthwhile for focused consultation time, with an emphasis on projects potentially impacting ESA-listed bull trout (*Salvelinus confluentus*). Experts developed assessments of the potential improvement(s) in a project that could be realized from negotiating changes to projects such as nearshore construction, culvert improvements, and riparian restoration. These assessment generated a unitless score of the potential value for 38 projects.
+
+At this point the USFWS would like your assistance in evaluating a statistical model they hope to use for prioritizing project consultations. The accompanying data file `usfws_bull_trout.csv` contains 9 columns of information. They are
+
+1. `score`: a project's potential value (numerical score on a scale of 0-15)
+
+2. `stage`: 1 of 3 life history stage(s) occurring in the project area
+
+    * adults (`A`)
+    * juveniles/adults (`JA`)
+    * eggs/juveniles (`EJ`)
+
+3. `form`: 1 of 2 life history form(s) occurring in the project area
+
+    * anadromous (`An`)
+    * fluvial/anadromous (`FlAn`)
+
+4. `cond`: 1 of 3 habitat conditions in the project area
+
+    * pristine (`P`)
+    * degraded (`D`)
+    * highly degraded (`H`)
+
+5. `risk`: 1 of 4 levels of extinction risk of the core population occurring in the project area
+
+    * outside core area (`OC`)
+    * low (`L`)
+    * medium (`M`)
+    * high (`H`)
+
+6. `unit`: 1 of 4 habitat unit types in the project area
+
+    * inside a core area (`IC`)
+    * outside a core area in freshwater (`OF`)
+    * marine (`M`)
+    * other (`OT`)
+
+7. `prog`: whether or not the set of detailed management guidelines for projects of that type have been established
+
+    * `Yes`
+    * `No`
+
+8. `BMP`: whether or not established best management practices will be followed in the project
+
+    * `Yes`
+    * `No`
+
+9. `degflex`: the degree of flexibility in project design, timing, and location
+
+    * low (`L`)
+    * medium (`M`)
+
+As you work through the following problems, make sure to explain your thought process and show all of your **R** code, so Mark can give you partial credit, if necessary.
+
+# Problems
+
+a) Fit a linear model to the dataset that includes all 8 predictor variables. What is the $R^2$ for the model? Does is seem like a promising model?
+
+```{r get_data, echo = TRUE}
+## get data
+dat <- read.csv("usfws_bull_trout.csv")
+## fit model wit all 8 predictors
+fmod <- lm(score ~ stage + form + cond + risk + unit + prog + BMP + degflex, data = dat)
+## summary
+summary(fmod)
+```
+
+The $R^2$ for this model is `r round(summary(fmod)$r.squared, 2)` and the adjusted $R^2$ is `r round(summary(fmod)$adj.r.squared, 2)`. These $R^2$ values are pretty high, so this does indeed seem like a promising model.
+
+***
+
+b) Make a plot of the residuals against the model predictions. Name at least two things you should be looking for in a plot like this. What do you see?
+
+Here is a plot of the residuals $(e)$ versus the fitted values $(\hat{y})$.
+
+```{r plot_resids, echo = TRUE, fig.align='center', fig.width=4, fig.height=4.5}
+## get residuals
+res <- resid(fmod)
+## get fitted values
+yhat <- fitted(fmod)
+## plot them
+par(mai = c(0.9, 0.9, 0.6, 0.1),
+    omi = c(0, 0, 0, 0))
+plot(yhat, res, las = 1, pch = 16,
+     xlab = "Fitted values", ylab = "Residuals")
+```
+
+\vspace{0.2in}
+
+We should be looking for signs of non-constant variance in $e$ (heteroscedasticity), possible nonlinear patterns in $e$ (eg, skewness), and possible problems with the model design (outliers and leverage points). The sample size is somewhat small here, but there does appear to be some evidence of increasing variance in $e$ with increasing $\hat{y}$.
+
+***
+
+c) Make a plot of the residuals against the predictor variable `stage`. Do you find this plot useful? Why or why not?
+
+(**Note**: the default option with `plot()` generates a box-and-whisker plot, which is okay for our purposes here.) 
+
+```{r plot_resids_stage, echo = TRUE, fig.align='center', fig.width=4, fig.height=4.5}
+## plot them
+par(mai = c(0.9, 0.9, 0.6, 0.1),
+    omi = c(0, 0, 0, 0))
+## default box-and-whisker plot
+plot(dat$stage, res, las = 1,
+     xlab = "Life stage", ylab = "Residuals")
+```
+
+\vspace{0.2in}
+
+(**Note**: If you were really keen, you could replace this with `plot.default()`, which treats the categorical variable `stage` as a number.)
+
+```{r plot_resids_stage_2, echo = TRUE, fig.align='center', fig.width=4, fig.height=4.5}
+## plot them
+par(mai = c(0.9, 0.9, 0.6, 0.1),
+    omi = c(0, 0, 0, 0))
+## plot with actual points
+plot.default(dat$stage, res, las = 1, pch = 16, xlim = c(0,4),
+     xaxt = "n", xlab = "Life stage", ylab = "Residuals")
+axis(1, at = c(1, 2, 3), labels = c("A", "EJ", "JA"))
+```
+
+\vspace{0.2in}
+
+I do not find either of these plots particularly useful because of the limited range in `stage` against which to compare the residuals. We might try Levene's Test for homoscedasticity, but the unbalanced design leaves few residuals for the `EJ` and `JA` life stages.
+
+***
+
+d) Produce a $Q$-$Q$ plot of the model residuals and include a $Q$-$Q$ line. Describe what you would hope to see here. Do you?
+
+```{r qq_plot, echo = TRUE, fig.align='center', fig.width=4, fig.height=4.5}
+par(mai = c(0.9, 0.9, 0.6, 0.1),
+    omi = c(0, 0, 0, 0))
+## Q-Q plot
+qqnorm(res, las = 1, pch = 16, main = "")
+## Q-Q line
+qqline(res)
+```
+
+\vspace{0.2in}
+
+If the residuals are indeed normally distributed, then all of the points would fall along the $Q$-$Q$ line here. In this case, however, there is some evidence of leptokurtosis (heavy-tailedness) because the sample quantiles are wider than expected at the tails of the distribution.
+
+***
+
+e) Would it make sense to plot $e_t$ against $e_{t+1}$ for this model? Explain why or why not.
+
+We would typically use a plot of $e_t$ against $e_{t+1}$ to help diagnose whether the residuals were independently distributed (ie, temporally autocorrelated). In this case, however, the data were not collected sequentially in time, so we would have very little reason to believe that autocorrelation in the residuals is a potential problem.
+
+***
+
+f) Which projects have the 3 largest leverages? Briefly explain what this tells us.
+
+We can use the `hatvalues()` function to get the leverages from our fitted model.
+
+```{r leverage}
+## get leverages
+hv <- hatvalues(fmod)
+## assign their names
+names(hv) <- dat$ProjectName
+## find the 3 largest leverages
+rev(sort(hv))[1:3]
+```
+
+\vspace{0.2in}
+
+The projects with the 3 highest leverages are Vernon $(h = 1)$, Gail $(h = 1)$ and Turner $(h = 0.73)$.
+
+The leverage tells us how extreme a point is in predictor $(X)$ space. We have seen many examples for regression models, but this concept is harder to think about with categorical predictors. Here these high leverages indicate that several predictors are rare in the dataset, or it may be that the particular combination of values rarely occur together across responses. If we look into this more carefully, we will find perfect collinearity in the dataset if either the `Vernon` or `Gail` projects are removed from the analysis. That is, without either of these points, one of the predictors is a combination of the other predictors, and hence one or more estimates would become unidentifiable.
+
+***
+
+g) What rule of thumb could you use to assess whether any leverages are particularly large? Under this rule of thumb, do you have any particularly large leverages? If yes, which projects?
+
+In general, we look to see if $h > h_{\text{threshold}}$, where our threshold value for the leverages is given by 
+
+$$
+h_{\text{threshold}} = 2 \frac{k}{n}
+$$
+
+We can check this as follows.
+
+```{r chk_leverages}
+## number of estimated params
+k <- sum(hv) # = length(coef(fmod))
+## sample size
+n <- nrow(dat)
+## threshold value for h
+(ht <- 2 * k / n)
+## suspect leverages
+hv[hv > ht]
+```
+
+\vspace{0.2in}
+
+It looks like 2 of the projects (Gail and Vernon) have leverages greater than our threshold value of ~`r round(ht, 2)`.
+
+***
+
+h) Calculate the studentized residuals to look for outliers. Remember to use a Bonferroni correction, and explain why you should use it. What did you find? Which project has the largest studentized residual?
+
+Recall that we can use the leverages to scale the residuals so their variance is 1, such that
+
+$$
+r_i = \frac{\hat{e}_i}{\hat{\sigma} \sqrt{1 - h_i} }
+$$
+
+We can also make use of an alternative formulation given by
+
+$$
+r_i =  e_i \sqrt{ \frac{n - k - 1}{n - k - e_i^2} }
+$$
+
+In **R**, we can use the `rstudent()` function to avoid doing these calculations by hand. We will use a Bonferroni-corrected $\alpha$ to because we are going to conduct `r n` different null hypothesis tests, and we want to guard against rejecting an $H_0$ when it's true.
+
+```{r student_e}
+## get studentized residuals
+(stud_e <- rstudent(fmod))
+## get sample size
+n <- nrow(dat)
+## Bonferroni correction: alpha / n
+alpha <- 0.05 / n
+## critical t value
+df <- n - length(coef(fmod)) - 1
+t_crit <- qt(1 - alpha/2, df)
+## compare t_stud to t_crit
+sum(stud_e > t_crit, na.rm = TRUE)
+```
+
+\vspace{0.2in}
+
+This analysis indicates that none of the studentized residuals were greater than the critical value of `r round(t_crit, 3)`, but 2 of the projects had studentized residuals equal to `NaN` (`Gail` and `Vernon`). Those are the same 2 projects with leverages equal to 1, which means dividing by 0 in the $r_i$ calculations (ie, $r_i = \infty$).
+
+***
+
+i) Calculate Cook's Distances and produce a halfnormal plot of them. Label the 3 largest $D_i$ in the plot with the project names. Are these the same sites as the top 3 projects you identified in (g)? Briefly explain why or why not.
+
+Recall that Cook's Distance $(D)$ is given by
+
+$$
+D_i = e_i^2 \frac{1}{k} \left( \frac{h_i}{1 - h_i} \right).
+$$
+
+Note that we will encounter the same problem as part (h) with respect to the 2 projects with leverages equal to 1, in that we will be dividing by 0 and hence $D_i = \infty$ for those 2 projects.
+
+We can calculate the $D_i$ in **R** with `cooks.distance()` and use a slightly modified `halfnorm()` function from the **Faraway** package to plot them.
+
+```{r cooks_d, echo = TRUE, fig.align='center', fig.width=6, fig.height=4.5}
+## modifed `halfnorm()` function from faraway
+halfnorm <- function (x, nlab = 2, labs = NULL, ylab = "Sorted Data", ...) {
+  x <- abs(x)
+  labord <- order(x)
+  x <- sort(x)
+  i <- order(x)
+  n <- length(x)
+  ui <- qnorm((n + 1:n)/(2 * n + 1))
+  plot(ui, x[i], xpd = NA,
+       xlab = "Half-normal quantiles", ylab = ylab, 
+       ylim = c(0, max(x)), type = "n", ...)
+  if(nlab < n) {
+    points(ui[1:(n - nlab)], x[i][1:(n - nlab)], pch = 16)
+  }
+  if(is.null(labs)) {
+    labs <- as.character(1:length(x))
+  }
+  text(ui[(n - nlab + 1):n], x[i][(n - nlab + 1):n],
+       labs[labord][(n - nlab + 1):n], cex = 0.7)
+}
+## Cook's D
+cook <- cooks.distance(fmod)
+names(cook) <- dat$ProjectName
+## 3 largest Cook's D
+round(rev(sort(cook)), 3)[1:3]
+## half-normal plot
+par(mai = c(0.9,0.9,0.6,0.1),
+    omi = c(0, 0, 0, 0),
+    cex = 1)
+halfnorm(cook, nlab = 3,
+         labs = dat$ProjectName, ylab = "Cook's Distance")
+```
+
+\vspace{0.2in}
+
+***
+
+j) In a few sentences, summarize what you have learned about this analysis in terms of heteroscedasticity, normality, and influential observations.
+
+There is some evidence of heteroscedasticity, but it is not very strong (ie, the variance of the residuals seems to increase with $\hat{y}$. There is good evidence that the errors are long-tailed, meaning we should probably not rely on distributional assumptions for null hypothesis tests or confidence intervals (but we could use bootstrap methods). There are two observations with (the maximum possible) leverage equal to 1 (`Gail` and `Vernon`), and there is one observation (`Lummi`) that is particularly influential. Thus, we may want to check whether there were any errors when entering those data points, or perhaps they might tell us something about the system that we didn't know.
+
+
