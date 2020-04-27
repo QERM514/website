@@ -65,13 +65,13 @@ design_matrices <- list(
   pdf = c(""),
   rmd = c("labs/week_04/design_matrices.Rmd"),
   html = c("labs/week_04/design_matrices.html"),
-  zoom = "",
+  zoom = "https://washington.zoom.us/rec/share/xMd7Ne7O83hJRdLSz1nHS60aIKnsX6a8gSEY-KAOzRu4mgpPzxCV--BMSZ50p61F",
   data = c("labs/week_04/mauna_loa_co2.csv",
            "labs/week_04/mauna_loa_co2_mon.csv"),
   background = c("")
   )
 
-## model diagnostics & non-IID errors
+## model selection
 model_selection <- list(
   title = "Model selection",
   topics = c("Model selection", "Multimodel inference"),
