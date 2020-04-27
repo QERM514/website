@@ -143,7 +143,8 @@ model_selection_1 <- list(
   pdf = c("lectures/week_05/lec_13_model_selection.pdf"),
   rmd = c("lectures/week_05/lec_13_model_selection.Rmd"),
   html = c("lectures/week_05/lec_13_model_selection.html"),
-  background = "",
+  background = c("[Burnham & Anderson (2002)](references/Burnham_Anderson_2002_model_selection.pdf)",
+                 "[Hobbs & Hilboran (2006)](references/Hobbs_Hilborn_2006_alternatives_nht.pdf)"),
   zoom = ""
 )
 
