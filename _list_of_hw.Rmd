@@ -49,7 +49,7 @@ diagnostics <- list(
   rmd = "homework/week_03/hw_03_diagnostics.Rmd",
   html = "",
   data = "homework/week_03/usfws_bull_trout.csv",
-  key = ""
+  key = "homework/week_03/hw_03_diagnostics_key.pdf"
 )
 
 ## pvalues
