@@ -20,7 +20,7 @@ knitr::opts_chunk$set(echo = TRUE, fig.pos = 'h')
 
 # R Markdown file
 
-You can find the R Markdown file used to create this answer key [here](homework/week_01/hw_01_intro_to_markdown_key.Rmd).
+You can find the R Markdown file used to create this answer key [here](hw_01_intro_to_markdown_key.Rmd).
 
 
 # 1) Who am I? (6 points)
