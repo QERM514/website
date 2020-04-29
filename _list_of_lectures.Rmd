@@ -160,7 +160,7 @@ model_selection_2 <- list(
                  "[Cade (2015)](references/Cade_2015_muddled_multimodel.pdf)",
                  "[Hooten & Hobbs (2015)](references/Hooten_Hobbs_2015_Bayesian_model_avg.pdf)",
                  "[Link & Barber (2006)](references/Link_Barber_2006_model_weights.pdf)"),
-  zoom = ""
+  zoom = "https://washington.zoom.us/rec/share/wcV8Epar6llIWafA1FHBUYIhLpr1X6a8gHNL-PIPmk6O-6oNBp9nsDryFJd34LO2"
 )
 
 mixed_models_1 <- list(
