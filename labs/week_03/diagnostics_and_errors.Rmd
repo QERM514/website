@@ -505,7 +505,7 @@ t_stud <- rstudent(m1)
 alpha <- 0.05 / n_m1
 ## critical t value
 df <- n_m1 - length(coef(m1)) - 1 
-t_crit <- qt(1 - alpha, df)
+t_crit <- qt(1 - alpha/2, df)
 ## compare t_stud to t_crit
 t_stud > t_crit
 ```
