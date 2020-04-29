@@ -1,6 +1,6 @@
 ---
 title: "Fitting linear models"
-subtitle: "Homework 2 Answer Key"
+subtitle: "QERM 514 - Homework 2 Answer Key"
 date: "10 April 2020"
 output:
   pdf_document:
