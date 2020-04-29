@@ -151,10 +151,15 @@ model_selection_1 <- list(
 model_selection_2 <- list(
   title = "Model selection",
   topics = c("<b>Model selection</b>", "Out-of-sample selection", "Cross-validation", "Multi-model inference"),
-  pdf = c(""),
-  rmd = c(""),
-  html = c(""),
-  background = "",
+  pdf = c("lectures/week_05/lec_14_model_selection.pdf"),
+  rmd = c("lectures/week_05/lec_14_model_selection.Rmd"),
+  html = c("lectures/week_05/lec_14_model_selection.html"),
+  background = c("[Aho et al (2014)](references/Aho_2014_model_selection.pdf)",
+                 "[Banner & Higgs (2017)](references/Banner_Higgs_2017_model_averaging.pdf)",
+                 "[Burnham & Anderson (2002)](references/Burnham_Anderson_2002_model_selection.pdf)",
+                 "[Cade (2015)](references/muddled_multimodel.pdf)",
+                 "[Hooten & Hobbs (2015)](references/Hooten_Hobbs_2015_Bayesian_model_avg.pdf)",
+                 "[Link & Barber (2006)](references/Link_Barber_2006_model_weights.pdf)"),
   zoom = ""
 )
 
