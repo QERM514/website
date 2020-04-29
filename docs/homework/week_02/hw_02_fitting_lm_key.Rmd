@@ -28,7 +28,7 @@ knitr::knit_hooks$set(chunk = function(x, options) {
 
 # R Markdown file
 
-You can find the R Markdown file used to create this answer key [here](homework/week_02/hw_02_fitting_lm_key.Rmd).
+You can find the R Markdown file used to create this answer key [here](hw_02_fitting_lm_key.Rmd).
 
 
 # Background

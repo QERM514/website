@@ -19,7 +19,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # R Markdown file
 
-You can find the R Markdown file used to create this answer key [here](homework/week_03/hw_03_diagnostics_key.Rmd).
+You can find the R Markdown file used to create this answer key [here](hw_03_diagnostics_key.Rmd).
 
 
 # Background
