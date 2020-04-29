@@ -190,7 +190,7 @@ rev(sort(hv))[1:3]
 
 \vspace{0.2in}
 
-The projects with the 3 highest leverages are Vernon $(h = 1)$, Gail $(h = 1)$ and Turner $(h = 0.73)$.
+There are two projects with $h = 1$ (Vernon , Gail) and two projects with $h = 0.73$ (Turner, Forgotten). 
 
 The leverage tells us how extreme a point is in predictor $(X)$ space. We have seen many examples for regression models, but this concept is harder to think about with categorical predictors. Here these high leverages indicate that several predictors are rare in the dataset, or it may be that the particular combination of values rarely occur together across responses. If we look into this more carefully, we will find perfect collinearity in the dataset if either the `Vernon` or `Gail` projects are removed from the analysis. That is, without either of these points, one of the predictors is a combination of the other predictors, and hence one or more estimates would become unidentifiable.
 
