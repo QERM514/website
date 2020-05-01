@@ -76,8 +76,8 @@ model_selection <- list(
   title = "Model selection",
   topics = c("Model selection", "Multimodel inference"),
   pdf = c(""),
-  rmd = c(""),
-  html = c(""),
+  rmd = c("labs/week_05/model_selection.Rmd"),
+  html = c("labs/week_05/model_selection.html"),
   zoom = "",
   data = "",
   background = c("")
