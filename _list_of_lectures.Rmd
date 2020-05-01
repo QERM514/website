@@ -173,7 +173,7 @@ mixed_models_1 <- list(
   background = c("[Freeman's visualization](http://mfviz.com/hierarchical-models/)",
                  "[Harrison et al (2018)](references/Harrison_2018_intro_mixed_models.pdf)",
                  "[Zuur et al (2009) Chap 5](references/Zuur_2009_mixed_effects_models_in_R.pdf)"),
-  zoom = ""
+  zoom = "https://washington.zoom.us/rec/share/2NNldrX5xGNIHpXt2GHHWoNxPbz_T6a8gSYb_fsMyR1MEILtneDfjWYVc1qc6lfw"
 )
 
 mixed_models_2 <- list(
