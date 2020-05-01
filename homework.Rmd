@@ -30,6 +30,7 @@ week_hw$L1 <- markdown
 week_hw$L2 <- linear_models
 week_hw$L3 <- diagnostics
 week_hw$L4 <- pvalues
+week_hw$L5 <- model_selection
 ```
 
 ```{r topics, include = FALSE}

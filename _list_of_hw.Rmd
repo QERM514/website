@@ -63,5 +63,16 @@ pvalues <- list(
   key = ""
 )
 
+## model selection
+model_selection <- list(
+  title = "Model selection & multimodel inference",
+  topics = "Model selection & multimodel inference",
+  pdf = "homework/week_05/hw_05_model_selection.pdf",
+  rmd = "homework/week_05/hw_05_model_selection.Rmd",
+  html = "",
+  data = "homework/week_05/soil_nitrogen.csv",
+  key = ""
+)
+
 ```
 
