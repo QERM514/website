@@ -165,12 +165,14 @@ model_selection_2 <- list(
 
 mixed_models_1 <- list(
   title = c("Mixed effects models", "<br><b>Project plan due</b>"),
-  topics = c("<b>Mixed effects models</b>", "Fixed vs Random effects", "Costs/benefits",
-             "Restricted maximum likelihood"),
-  pdf = c(""),
-  rmd = c(""),
-  html = c(""),
-  background = "",
+  topics = c("<b>Mixed effects models</b>", "Fixed vs Random effects", "Shrinkage",
+             "Costs/benefits"),
+  pdf = "lectures/week_05/lec_15_intro_mixed_effects.pdf",
+  rmd = "lectures/week_05/lec_15_intro_mixed_effects.Rmd",
+  html = "lectures/week_05/lec_15_intro_mixed_effects.html",
+  background = c("[Freeman's visualization](http://mfviz.com/hierarchical-models/)",
+                 "[Harrison et al (2018)](references/Harrison_2018_intro_mixed_models.pdf)",
+                 "[Zuur et al (2009) Chap 5](references/Zuur_2009_mixed_effects_models_in_R.pdf)"),
   zoom = ""
 )
 
