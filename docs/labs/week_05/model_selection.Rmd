@@ -1,0 +1,398 @@
+---
+title: "Model selection and multi-model inference"
+author: "Mark Scheuerell"
+date: "1 May 2020"
+output:
+  html_document:
+    theme: journal
+    highlight: textmate
+    toc: true
+    toc_float: true
+    toc_depth: 4
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE)
+```
+
+# Background
+
+These lab exercises will demonstrate some of the options for model selection that we discussed in lecture, which include both in-sample and out-of-sample methods. We will return to the plant species richness data from the Galapagos Archipelago contained in the `gala` dataset in the **Faraway** package. As a reminder, here are the variables:
+
+* `Species`: the number of plant species found on the island
+
+* `Endemics`: the number of endemic species
+
+* `Area`: the area of the island (km$^2$)
+
+* `Elevation`: the highest elevation of the island (m)
+
+* `Nearest`: the distance from the nearest island (km)
+
+* `Scruz`: the distance from Santa Cruz island (km)
+
+* `Adjacent`: the area of the adjacent island (km$^2$)
+
+We will ignore the number of endemic species (`Endemics`) and focus on possible models to explain the total number of species (`Species`) as a function of the 5 covariates (predictors). Before diving right in, let's consider the possible correlations among these covariates, as we want to avoid including any two covariates in the same model if theyare highly correlated.
+
+```{r check_data}
+## get data
+data(gala, package = "faraway")
+dat <- gala
+head(dat)
+## check correlations
+round(cor(dat[,3:7]), 2)
+```
+
+There appears to be high correlation between `Area` and `Elevation` ($\rho$ = `r round(cor(gala[,3:4]), 2)[1,2]`), and reasonably high correlation between `Nearest` and `Scruz` ($\rho$ = `r round(cor(gala[,5:6]), 2)[1,2]`), so let's be careful to keep those variables separate from one another in our models.
+
+## Creating a model set
+
+We need to create a set of all the models we'd like to fit and evaluate for their data support. To do so, we can make use of the `expand.grid()` function in **R**, which will create a data frame from all of the combinations of a supplied vector or data frame. We can then use the rows of this data frame as a set of indices for which covariates to include/exclude from our models. 
+
+For example, say we had 2 covariates ($A$ and $B$) that we wanted to use as predictors, and we wanted all possible combinations of them in our models. To do so, we create a Boolean indicator (T/F) for the inclusion/exclusion of each covariate.
+
+```{r demo_expandgrid}
+## possible covariates
+## listing FALSE first builds from fewest to most
+df <- data.frame(A = c(FALSE, TRUE), B = c(FALSE, TRUE))
+## all possible combinations
+expand.grid(df)
+```
+
+Here you can see that there are 4 possible combinations of the 2 predictors: none (intercept-only), only `A`, only `B`, both `A` & `B`.
+
+## Model set for species diversity
+
+Let's go ahead and create the set of all possible combinations of our 5 covariates in the `gala` data. Afterwards, we can remove those rows where both `Area` and `Elevation` or `Nearest` and `Scruz` occur in the same model.
+
+```{r create_model_sets}
+## data frame specifying predictors to include
+df <- as.data.frame(matrix(c(FALSE, TRUE), 2, 5))
+## add col names
+cov_names <- colnames(df) <- colnames(gala)[3:7]
+
+## create set of all possible combinations
+full_set <- expand.grid(df)
+
+## rows with (`Area` and `Elevation` = 1) or (`Nearest` and `Scruz` = 1)
+ii <- which(full_set$Area + full_set$Elevation == 2 |
+              full_set$Nearest + full_set$Scruz == 2)
+## create reduced set of models
+## converting to a matrix for easier indexing
+use_set <- as.matrix(full_set[-ii,])
+
+## number of models in our set
+(n_mods <- nrow(use_set))
+```
+
+
+# In-sample selection
+
+We saw in class that we could use AIC, BIC, or both for in-sample model selection. We can set up a routine to do the following:
+
+* loop over all possible model combinations  
+    * fit each model  
+    * calculate and store the information criteria
+
+To fit each model, we need to pass `lm()` a `formula` object, which we can build from the covariate names in our data frame of possible models.
+
+## Fit models
+
+```{r fit_model_set}
+## empty matrix for storing results
+mod_res <- matrix(NA, n_mods, 2)
+colnames(mod_res) <- c("AIC", "BIC")
+
+## fit models & store AIC & BIC
+for(i in 1:n_mods) {
+  if(i == 1) {
+    fmla <- "Species ~ 1"
+  } else {
+    fmla <- paste("Species ~", paste(cov_names[use_set[i,]], collapse = " + "))
+  }
+  mod_fit <- lm(as.formula(fmla), data = gala)
+  mod_res[i,"AIC"] <- AIC(mod_fit)
+  mod_res[i,"BIC"] <- BIC(mod_fit)
+}
+```
+
+## Calculate $\Delta$IC
+
+We saw in class that it's easier to interpret the information criteria if we adjust them to $\Delta$IC values, such that
+
+$$
+\Delta IC = IC - \min IC
+$$
+
+```{r delta_IC}
+## empty matrix for storing results
+delta_res <- matrix(NA, n_mods, 2)
+colnames(delta_res) <- c("deltaAIC", "deltaBIC")
+
+## convert IC to deltaIC
+delta_res[,"deltaAIC"] <- mod_res[,"AIC"] - min(mod_res[,"AIC"])
+delta_res[,"deltaBIC"] <- mod_res[,"BIC"] - min(mod_res[,"BIC"])
+
+## round them for easier viewing
+(delta_res <- round(delta_res, 2))
+```
+
+Based on AIC, model 12 is the best of the set, but model 18 has nearly identical support from the data, and model 15 is within 2 units as well. Based on BIC, model 12 is the best of the set, with model 18 being within 2 units as well. Let's see which predictors are in these models.
+
+```{r check_set, results='hold'}
+## "best" models from our set
+cov_names[use_set[12,]]
+cov_names[use_set[15,]]
+cov_names[use_set[18,]]
+```
+
+All 3 of these models include both `Elevation` and `Adjacent` as predictors, so they are clearly important. There is some evidence that `Nearest` and `Scruz` are also important, but they were pretty highly correlated, so they appear to be trading off with one another. Although models 15 and 18 are within 2-3 units of model 12, here we would choose model 12 over the others because it only has 2 regression parameters, making it the most parsimonious.
+
+### Best model
+
+Let's take a look at the summary information for model 12 with `Elevation` and `Adjacent` as predictors.
+
+```{r check_best}
+m12 <- lm(Species ~ Elevation + Adjacent, data = gala)
+faraway::sumary(m12)
+```
+
+This looks like a pretty good model based upon its $R^2$ value, but we should really check our model residuals for possible violations of our model assumptions, check leverages, look for outliers, etc.
+
+## Akaike weights
+
+We saw in lecture that we can compute the likelihood of a given model as
+
+$$
+\mathcal{L}(y; f_i) \propto \exp \left( - \frac{1}{2} \Delta_i \right)
+$$
+
+Because the model likelihoods are all relative (just as with other likelihoods), we can create a set of normalized Akaike weights that sum to 1
+
+$$
+w_i = \frac{\exp \left( - \frac{1}{2} \Delta_i \right)}{\sum_{s = 1}^S \exp \left( - \frac{1}{2} \Delta_i \right)}
+$$
+
+We can then compare the support for any model $i$ over another model $j$ via evidence ratios
+
+$$
+ER_{ij} = \frac{\mathcal{L}(y; f_i)}{\mathcal{L}(y; f_j)} = \frac{w_i}{w_j}
+$$
+
+Most often, we want to compare lower ranked models to the best, which we can simplify to
+
+$$
+\begin{aligned}
+ER_{1j} &=  \frac{\exp \left( - \frac{1}{2} 0 \right)}{\exp \left( - \frac{1}{2} \Delta_j \right)} \\
+  &= \frac{1}{\exp \left( - \frac{1}{2} \Delta_j \right)}  \\
+  &= \exp \left( \frac{1}{2} \Delta_j \right)
+\end{aligned}
+$$
+
+Let's go ahead and calculate our model weights and the evidence ratios compared to our best model (#12).
+
+```{r model_weights}
+## numerator
+num <- exp(-0.5 * delta_res[,"deltaAIC"])
+## denominator
+dem <- sum(num)
+## Akaike weights
+wts <- num / dem
+## evidence ratios
+ER <- exp(0.5 * delta_res[,"deltaAIC"])
+## data frame with our results
+data.frame(model = seq(n_mods),
+           weights = round(wts, 3),
+           ER = floor(ER))
+```
+
+Clearly the evidence against most of the models is very strong, as their weights are ~0 and the evidence ratios in favor of model #12 are enormous.
+
+## Corrected AIC
+
+We learned in lecture that AIC is biased when the sample size is small, but we can account for this by using a corrected form (AICc) given by
+
+$$
+AICc = AIC + \frac{2 k (k + 1)}{n - k - 1}
+$$
+
+Our sample size for this analysis is `r nrow(gala)`, so it's worth seeing how the results would differ if we used AICc instead.
+
+```{r aicc}
+## number of parameters in each model
+k <- 1 + apply(use_set, 1, sum)
+## calculate penalty term
+pterm <- (2 * k * (k + 1)) / (nrow(gala) - k - 1)
+## calculate AICc
+aicc <- mod_res[,"AIC"] + pterm
+## compare delta-values for both
+data.frame(deltaAIC = round(delta_res[,"deltaAIC"], 1),
+           deltaAICc = round(aicc - min(aicc), 1))
+```
+
+Here we see very little difference between the $\Delta$-values.
+
+
+# Out-of-sample selection
+
+We saw in lecture that we can use different forms of cross-validation for out-of-sample model selection, which include exhaustive and non-exhaustive methods. Let's repeat our evaluation of the models in our candidate set using both of these approaches. Before doing so, we also need to choose one of the options for evaluating our predictions. Here we'll use the mean squared prediction error (MSPE), which is perhaps the most common. Recall that for a model fit to $n - q$ data points, the MSPE for the remaining $q$ data points it
+
+$$
+MSPE = \frac{\sum_{i = 1}^q (y_i - \hat{y}_i)^2}{q}
+$$
+
+## Exhaustive cross-validation
+
+Recall that exhaustive cross-validation works via a "leave-$q$-out" procedure, where we treat $n - q$ data points as the "training" (fitting) data and the remaining $q$ data points for evaluating the predictions. If $q > 1$ and $n$ even somewhat large, this can be prohibitively slow because there are $\left( \begin{matrix} n \\ q \end{matrix} \right)$ combinations. For example, if $q = 3$ and $n = 20$ there are $\left( \begin{matrix} 20 \\ 3 \end{matrix} \right)$ = `r choose(20, 3)` different permutations. Therefore, here we'll use $q = 1$, which gives us the familiar "leave-one-out" (LOO) method and results in $n$ different models being fit.
+
+### Leave-one-out
+
+The general idea here is to set up a routine to do the following:
+
+* loop over all possible model combinations  
+    * for each model form, loop over the number of observations
+        * drop one observation and fit the model
+        * predict the missing value
+        * calculate the MSPE for the predictions
+
+```{r LOO_by_hand}
+## sample size
+nn <- nrow(gala)
+## empty vector for predictions
+loo_res <- rep(NA, nn)
+## empty vector for MSPE
+mspe_l <- rep(NA, n_mods)
+
+## loop over all possible model combinations
+for(i in 1:n_mods) {
+  ## create model formula
+  if(i == 1) {
+    fmla <- "Species ~ 1"
+  } else {
+    fmla <- paste("Species ~", paste(cov_names[use_set[i,]], collapse = " + "))
+  }
+  ## loop over number of observations
+  for(j in 1:nn) {
+    ## drop one observation and fit the model
+    fm <- lm(as.formula(fmla), gala[-j,])
+    ## predict the missing value
+    loo_res[j] <- predict(fm, newdata = data.frame(gala[j,]))
+  }
+  ## calculate MSPE for the predictions
+  mspe_l[i] <- sum((gala$Species - loo_res)^2) / nn
+}
+```
+
+Let's check to see if these results match those from our in-sample comparisons via AIC and BIC.
+
+```{r chk_methods}
+data.frame(AIC = order(mod_res[,"AIC"]),
+           BIC = order(mod_res[,"BIC"]),
+           LOO = order(mspe_l))
+```
+
+It looks like all 3 methods agree on the top 3 models, but then the results from the leave-one-out cross-validation start to diverge from the in-sample results.
+
+## Non-exhaustive cross-validation
+
+Let's now try a non-exhaustive method where we don't use every combination of the $n - q$ training data.
+
+### $k$-fold
+
+Here we'll use $k$-fold cross-validation where the data are randomly partitioned into $k$ equal sized groups. We'll retain one of the $k$ sub-samples for validation while the remaining $k − 1$ groups are used for fitting. This process is then repeated $k$ times, with each of the $k$ sub-samples used exactly once for validation.
+
+We have `r nn` observations in our dataset, so let's use 5 groups of `r nn/5` observations each. The rest of the analysis will proceed as above for the leave-one-out method.
+
+```{r kfold_hand}
+## number of groups
+kk <- 5
+## grop size
+gs <- nn / kk
+## empty vector for predictions
+kf_res <- rep(NA, nn)
+## empty vector for MSPE
+mspe_k <- rep(NA, n_mods)
+
+## loop over all possible model combinations
+for(i in 1:n_mods) {
+  ## create model formula
+  if(i == 1) {
+    fmla <- "Species ~ 1"
+  } else {
+    fmla <- paste("Species ~", paste(cov_names[use_set[i,]], collapse = " + "))
+  }
+  ## loop over folds
+  for(fold in 1:kk) {
+    ## group index
+    grp <- seq(gs) + gs*(fold - 1)
+    ## drop one group and fit the model
+    fm <- lm(as.formula(fmla), gala[-grp,])
+    ## predict the missing values
+    kf_res[grp] <- predict(fm, newdata = data.frame(gala[grp,]))
+  }
+  ## calculate MSPE for the predictions
+  mspe_k[i] <- sum((gala$Species - kf_res)^2) / nn
+}
+```
+
+Now we can compare these results to the other model selection results from above.
+
+```{r compare_all_results}
+data.frame(AIC = order(mod_res[,"AIC"]),
+           BIC = order(mod_res[,"BIC"]),
+           LOO = order(mspe_l),
+           kfold = order(mspe_k))
+```
+
+Here we see that all four methods come up with the same rankings for the top 3 models, and that both of the out-of-sample methods are nearly identical, too. It's also important to recognize that we likely would have found a somewhat different result if we had chosen a differet number of groups for the $k$-fold cross-validation.
+
+
+# Multi-model inference
+
+We saw in lecture that we can use the Akaike weights to average parameters from different models as a means of addressing uncertainty in our model structures. Recall that for a given parameter $\theta$, it's model averaged estimate is
+
+$$
+\bar{\hat{\theta}} = \sum_{i = 1}^S w_i \hat{\theta}_i
+$$
+
+where $S$ is the total number of models in the set. Usually a given parameter $\theta$ does not appear in all models, so we can use an indicator function to compute the average estimate
+
+$$
+\bar{\hat{\theta}} = \frac{\sum_{i = 1}^S I(f_i) w_i \hat{\theta}_i}{\sum_{i = 1}^S I(f_i) w_i} \\
+~ \\
+I(f_i) = 
+\left\{
+\begin{array} {ll}
+1 & \text{if} ~ \theta ~\text{is in} ~ f_i \\
+0 & \text{otherwise}
+\end{array}
+\right.
+$$
+
+Here we saw that 2 or 3 of our models had very similar support from the data, so it might be worth averaging our coefficients across all of the models. In this case, however, the top 3 models contain `r round(sum(rev(sort(wts))[1:3]), 3)*100`% of the total weights, so the remaining models will have very little influence on the results. (Also, it would have been more efficient to do all of this the first time we fit our models, but that's okay.)
+
+```{r mod_avg}
+## empty matrix for storing coefficients
+## we'll fill it with 0's and replace them with the param estimates
+mod_coef <- matrix(0, n_mods, 1 + ncol(df))
+colnames(mod_coef) <- c("Intercept", colnames(df))
+
+## fit models & store AIC & BIC
+for(i in 1:n_mods) {
+  if(i == 1) {
+    fmla <- "Species ~ 1"
+  } else {
+    fmla <- paste("Species ~", paste(cov_names[use_set[i,]], collapse = " + "))
+  }
+  mod_fit <- lm(as.formula(fmla), data = gala)
+  mod_coef[i, c(TRUE, use_set[i,])] <- coef(mod_fit)
+}
+
+## calculate weighted coefs
+wtd_coef <- mod_coef * wts
+(avg_coef <- colSums(wtd_coef))
+```
+
+It's important to note here that using this model in practice isn't a good idea because of the high correlation between `Area` and `Elevation` and between `Nearest` and `Scruz`. An alternative approach would be to use each of the `r n_mods` models to make a prediction for a given $\mathbf{X}$ and then weight those predictions to come up with a model-averaged predictions.
+
