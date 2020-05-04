@@ -15,4 +15,852 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ## Goals for today
 
+* Understand types of random effects structures
+
+> - Understand how random effects are estimated
+
+> - Understand restricted maximum likelihood
+
+> - Understand approaches to make inference from mixed models
+
+
+## Model for means
+
+Imagine we are interested in modeling the mass of fish measured in several different lakes
+
+We have 3 hypotheses about the variation in fish sizes
+
+1. differences in mass are due mostly to individual fish with no differences among lakes
+
+
+## Model for means
+
+Imagine we are interested in modeling the mass of fish measured in several different lakes
+
+We have 3 hypotheses about the variation in fish sizes
+
+1. differences in mass are due mostly to individual fish with no differences among lakes
+
+2. differences in mass are due mostly to *specific* factors that differ among lakes
+
+
+## Model for means
+
+Imagine we are interested in modeling the mass of fish measured in several different lakes
+
+We have 3 hypotheses about the variation in fish sizes
+
+1. differences in mass are due mostly to individual fish with no differences among lakes
+
+2. differences in mass are due mostly to *specific* factors that differ among lakes
+
+3. differences in mass are due mostly to *general* factors that are shared among lakes
+
+
+## Model for means
+
+Our first model simply treats all of the fish $i$ in the different lakes $j$ as one large group
+
+$$
+y_{ij} = \mu + \epsilon_{ij} \\
+\epsilon_{ij} \sim \text{N}(0, \sigma^2_{\epsilon}) \\
+$$
+
+where $\mu$ is the mean mass of fish across *all* lakes & our primary interest is the size of $\sigma_{\epsilon}^2$
+
+
+## Model for means
+
+In essence, we are *pooling* all of fish from the different lakes together so we can drop the $j$ subscript
+
+$$
+y_{ij} = \mu + \epsilon_{ij} \\
+\epsilon_{ij} \sim \text{N}(0, \sigma^2_{\epsilon}) \\
+\Downarrow \\
+y_{i} = \mu + \epsilon_{i} \\
+\epsilon_{i} \sim \text{N}(0, \sigma^2_{\epsilon})
+$$
+
+
+
+## Model for means
+
+Our second model separates all of the fish $i$ into groups based on the *specific* lake $j$ from which they were caught
+
+$$
+y_{ij} = \mu + \alpha_j + \epsilon_{ij} \\
+\epsilon_{ij} \sim \text{N}(0, \sigma^2_{\epsilon})
+$$
+
+<br>
+
+where $\alpha_j$ is the *specific* effect of lake $j$
+
+
+## Model for means
+
+Here there is *no pooling* of fish from different lakes and the $j$ subscript tells us about a *specific* lake
+
+$$
+y_{ij} = \mu + \alpha_j + \epsilon_{ij} \\
+\epsilon_{ij} \sim \text{N}(0, \sigma^2_{\epsilon})
+$$
+
+
+
+## Model for means
+
+Our last model treats differences in fish mass among lakes as similar to one another (correlated)
+
+$$
+y_{ij} = \mu + \alpha_j + \epsilon_{ij} \\
+\epsilon_{ij} \sim \text{N}(0, \sigma^2_{\epsilon}) \\
+\alpha_j \sim \text{N}(0, \sigma^2_{\alpha})
+$$
+
+<br>
+
+where $\alpha_j$ is the effect of lake $j$ as though it were *randomly* chosen
+
+
+## Model for means
+
+The degree of correlation among lakes $(\rho)$ is determined by the relative sizes of $\sigma^2_{\alpha}$ and $\sigma^2_{\epsilon}$ 
+
+$$
+y_{ij} = \mu + \alpha_j + \epsilon_{ij} \\
+\epsilon_{ij} \sim \text{N}(0, \sigma^2_{\epsilon}) \\
+\alpha_j \sim \text{N}(0, \sigma^2_{\alpha}) \\
+\Downarrow \\
+\rho = \frac{\sigma^2_{\alpha}}{\sigma^2_{\alpha} + \sigma^2_{\epsilon}}
+$$
+
+
+## Model for means
+
+Here we could say that the lakes are *partially pooled* together by formally addressing correlations among lakes 
+
+$$
+y_{ij} = \mu + \alpha_j + \epsilon_{ij} \\
+\epsilon_{ij} \sim \text{N}(0, \sigma^2_{\epsilon}) \\
+\alpha_j \sim \text{N}(0, \sigma^2_{\alpha})
+$$
+
+with
+
+$$
+\rho = \frac{\sigma^2_{\alpha}}{\sigma^2_{\alpha} + \sigma^2_{\epsilon}}
+$$
+
+
+## Model for means
+
+```{r dist_of_means, fig.width=5, fig.height=4.5, fig.align='center'}
+## normal pdf + constant
+kk <- 1
+npdf <- function(x, k = kk) {
+  k + dnorm(x)
+}
+## set plot area
+par(mai = c(0.1, 0.1, 0.1, 0.1),
+    omi = c(0.6, 0, 0, 0))
+## grand mean
+plot(c(-8, 8), c(2, 2), type = "l", lwd = 2, ylim = c(0,2.4),
+     xaxt = "n", yaxt = "n", bty = "n",
+     xlab = "", ylab = "")
+abline(v = 0, lty = "dashed")
+points(0, 2, pch = 16, col = "blue", cex = 1.5)
+text(-8, 2.4, "no effects", pos = 4, cex = 1.2)
+text(8, 2.4, "complete pooling", pos = 2, cex = 1.2)
+## random means
+curve(npdf, -8, 8, lwd = 2, add = TRUE, col = "gray",
+      xaxt = "n", yaxt = "n", bty = "n",
+      xlab = expression(alpha[j]), ylab = "")
+lines(c(-8, 8), c(kk, kk), lwd = 2,
+     xaxt = "n", yaxt = "n", bty = "n")
+points(rnorm(7), rep(kk, 7), pch = 16, col = "blue", cex = 1.5)
+text(-8, 1.4, "random effects", pos = 4, cex = 1.2)
+text(8, 1.4, "partial pooling", pos = 2, cex = 1.2)
+## fixed means
+lines(c(-8, 8), c(0, 0), lwd = 2,
+     xaxt = "n", yaxt = "n", bty = "n")
+points(runif(7, -8, 8), rep(0, 7), pch = 16, col = "blue", cex = 1.5)
+text(-8, 0.4, "fixed effects", pos = 4, cex = 1.2)
+text(8, 0.4, "no pooling", pos = 2, cex = 1.2)
+## x-axis
+mtext("0", 1, line = 0.5, cex = 1.3, adj = c(1,1)/2)
+mtext(expression(alpha[italic(j)]), 1, line = 2.5, cex = 1.5)
+```
+
+
+## Fish mass across lakes
+
+```{r sim_ancova, fig.width=6, fig.height=4.5, fig.align='center'}
+set.seed(514)
+## number of lakes
+nl <- 12
+## number of fish per lake
+nf <- sample(seq(2, 24), nl)
+## lake ID's
+ID <- vector("list", nl)
+for(i in 1:nl) {
+  ID[[i]] <- rep(i, nf[[i]])
+}
+IDs <- unlist(ID)
+## total number of fish
+tf <- sum(sapply(nf, sum))
+## fish lengths
+fl <- sapply(nf, rnorm, mean = 4, sd = 0.8)
+lfl <- unlist(fl)
+## y-intercepts
+b0 <- rnorm(nl, -4, 0.4)
+## slopes
+b1 <- rnorm(nl, 1.5, 0.4)
+## errors
+ee <- sapply(nf, rnorm, mean = 0, sd = 0.3)
+## fish mass
+fm <- vector("list", nl)
+for(i in 1:nl) {
+  fm[[i]] <- b0[i] + b1[i] * fl[[i]] + ee[[i]]
+}
+lfm <- unlist(fm)
+
+## colors
+clr <- viridis::plasma(nl, alpha = 0.7, begin = 0.2, end = 0.8)
+
+## set plot area
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0))
+
+## plot fish mass by lake
+plot(rep(1, nf[[1]]), fm[[1]], pch = 16, las = 1, col = clr[1],
+     xlim = c(1, nl), ylim = range(unlist(fm)),
+     ylab = "log(fish mass)", xlab = "Lake ID",
+     xaxt = "n", cex.lab = 1.2)
+axis(1, seq(nl))
+for(i in 2:nl) {
+  points(rep(i, nf[[i]]), fm[[i]], pch = 16,  col = clr[i])
+}
+```
+
+
+## Fish mass across lakes
+
+Simple model with complete pooling
+
+```{r complete_pool, echo = TRUE}
+## log of fish mass (lfm) as grand mean
+m1 <- lm(lfm ~ 1)
+```
+
+
+## Fish mass across lakes
+
+```{r complete_pool_plot, fig.width=6, fig.height=4.5, fig.align='center'}
+## set plot area
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0))
+
+## plot fish mass by lake
+plot(rep(1, nf[[1]]), fm[[1]], pch = 16, las = 1, col = clr[1],
+     xlim = c(1, nl), ylim = range(unlist(fm)),
+     ylab = "log(fish mass)", xlab = "Lake ID",
+     xaxt = "n", cex.lab = 1.2)
+axis(1, seq(nl))
+for(i in 2:nl) {
+  points(rep(i, nf[[i]]), fm[[i]], pch = 16,  col = clr[i])
+}
+abline(h = coef(m1), lty = "dashed")
+```
+
+
+## Fish mass across lakes
+
+Fixed effects model with no pooling across lakes
+
+```{r no_pool, echo = TRUE, results='hold'}
+## log of fish mass (lfm) with lake-level means
+m2 <- lm(lfm ~ 1 + as.factor(IDs))
+```
+
+
+## Fish mass across lakes
+
+```{r no_pool_plot, fig.width=6, fig.height=4.5, fig.align='center'}
+## set plot area
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0))
+
+## plot fish mass by lake
+plot(rep(1, nf[[1]]), fm[[1]], pch = 16, las = 1, col = clr[1],
+     xlim = c(1, nl), ylim = range(unlist(fm)),
+     ylab = "log(fish mass)", xlab = "Lake ID",
+     xaxt = "n", cex.lab = 1.2)
+abline(h = coef(m1), lty = "dashed", col = "gray")
+points(1, mean(fm[[1]]), pch = "-", cex = 4)
+axis(1, seq(nl))
+for(i in 2:nl) {
+  points(rep(i, nf[[i]]), fm[[i]], pch = 16, col = clr[i])
+  points(i, mean(fm[[i]]), pch = "-", cex = 4)
+}
+```
+
+
+## Fish mass across lakes
+
+Random effects model with partial pooling across lakes
+
+```{r partial_pool, echo = TRUE, results='hold', message=FALSE}
+## load lme4 package
+library(lme4)
+## log of fish mass (lfm) with lake-level effects
+m3 <- lmer(lfm ~ 1 + (1|IDs))
+```
+
+
+## Fish mass across lakes
+
+```{r partial_pool_plot, fig.width=6, fig.height=4.5, fig.align='center'}
+## random intercepts
+m3_coef <- unlist(coef(m3))
+
+## set plot area
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0))
+
+## plot fish mass by lake
+plot(rep(1, nf[[1]]), fm[[1]], pch = 16, las = 1, col = clr[1],
+     xlim = c(1, nl), ylim = range(unlist(fm)),
+     ylab = "log(fish mass)", xlab = "Lake ID",
+     xaxt = "n", cex.lab = 1.2)
+abline(h = coef(m1), lty = "dashed", col = "gray")
+points(1, mean(fm[[1]]), pch = "-", cex = 4,  col = "gray")
+points(1, m3_coef[1], pch = "-", cex = 4)
+axis(1, seq(nl))
+for(i in 2:nl) {
+  points(rep(i, nf[[i]]), fm[[i]], pch = 16,  col = clr[i])
+  points(i, mean(fm[[i]]), pch = "-", cex = 4,  col = "gray")
+  points(i, m3_coef[i], pch = "-", cex = 4)
+}
+```
+
+
+## Shrinkage of group means
+
+In fixed effects models, the group means are
+
+$$
+\alpha_j = \bar{y} - \mu
+$$
+
+<br>
+
+In random effects models, the group means "shrink" towards the mean
+
+$$
+\alpha_j = (\bar{y} - \mu) \left( \frac{\sigma^2_{\alpha}}{\sigma^2_{\alpha} + \sigma^2_{\epsilon}} \right)
+$$
+
+
+# QUESTIONS?
+
+
+## Fish mass across lakes
+
+Let's return to our model for fish mass across different lakes
+
+Now we want to include the effect of fish length as well
+
+
+## Fish mass versus length
+
+```{r length_mass, fig.width=5, fig.height=4.5, fig.align='center'}
+## set plot area
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0))
+
+## plot fish mass vs length
+plot(fl[[1]], fm[[1]], pch = 16, las = 1, col = clr[1],
+     xlim = range(unlist(fl)), ylim = range(unlist(fm)),
+     ylab = "log(fish mass)", xlab = "log(fish length)",
+     cex.lab = 1.2)
+for(i in 2:nl) {
+  points(fl[[i]], fm[[i]], pch = 16,  col = clr[i])
+}
+```
+
+
+## A global regression model
+
+Fish mass as a function of its length (no lake effects)
+
+$$
+y_{i} = \underbrace{\beta x_{i} + \alpha}_{\text{fixed}} + \underbrace{\epsilon_{i,j}}_{\text{random}} 
+$$
+
+$\epsilon_{i,j} \sim \text{N}(0,\sigma_\epsilon)$
+
+
+## A global regression model
+
+Fish mass as a function of its length (no lake effects)
+
+```{r fit_regr, echo = TRUE}
+## fit global regression model
+a1 <- lm (lfm ~ lfl)
+```
+
+
+## A global regression model
+
+```{r plot_regr_fit, fig.width=5, fig.height=4.5, fig.align='center'}
+## set plot area
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0))
+
+## plot fish mass vs length
+plot(fl[[1]], fm[[1]], pch = 16, las = 1, col = clr[1],
+     xlim = range(unlist(fl)), ylim = range(unlist(fm)),
+     ylab = "log(fish mass)", xlab = "log(fish length)",
+     cex.lab = 1.2)
+for(i in 2:nl) {
+  points(fl[[i]], fm[[i]], pch = 16,  col = clr[i])
+}
+## regr line
+abline(coef(a1))
+```
+
+
+## A global regression model
+
+```{r plot_regr_resid, fig.width=5, fig.height=4.5, fig.align='center'}
+e1 <- f1 <- fm
+## get lake-specific resids
+for(i in 1:nl){
+  f1[[i]] <- predict(a1, newdata = data.frame(lfl = fl[[i]]))
+  e1[[i]] <- fm[[i]] - f1[[i]] 
+}
+
+## set plot area
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0))
+
+## plot fish mass vs length
+plot(f1[[1]], e1[[1]], pch = 16, las = 1, col = clr[1],
+     xlim = range(unlist(f1)), ylim = range(unlist(e1)),
+     ylab = "Residuals", xlab = "Fitted values",
+     cex.lab = 1.2)
+for(i in 2:nl) {
+  points(f1[[i]], e1[[i]], pch = 16,  col = clr[i])
+}
+## zero line
+abline(h = 0, lty = "dashed")
+```
+
+
+## A global regression model
+
+```{r plot_regr_resid_ID, fig.width=5, fig.height=4.5, fig.align='center'}
+## set plot area
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0))
+
+## plot fish mass vs length
+plot(rep(1, nf[[1]]), e1[[1]], pch = 16, las = 1, col = clr[1],
+     xlim = c(1,12), ylim = range(unlist(e1)),
+     ylab = "Residuals", xlab = "Lake ID",
+     cex.lab = 1.2, xaxt = "n")
+for(i in 2:nl) {
+  points(rep(i, nf[[i]]), e1[[i]], pch = 16,  col = clr[i])
+}
+## zero line
+abline(h = 0, lty = "dashed")
+axis(1, seq(nl))
+```
+
+
+## Unique regression models
+
+Fish mass as a function of its length for *each* lake
+
+$$
+y_{i,j} = \underbrace{\beta_j x_{i,j} + \alpha_{j}}_{\text{fixed}} + \underbrace{\epsilon_{i,j}}_{\text{random}} 
+$$
+
+$\epsilon_{i,j} \sim \text{N}(0,\sigma_\epsilon)$
+
+
+## Unique regression models
+
+Fish mass as a function of its length for *each* lake
+
+```{r fit_unique_regr, echo = TRUE}
+## matrix for coefs
+cf <- matrix(NA, nl, 2)
+## fit regression unique to each lake
+for(i in 1:nl) {
+  cf[i,] <- coef(lm(fm[[i]] ~ fl[[i]]))
+}
+```
+
+
+## Unique regression models
+
+```{r plot_unique_regr, fig.width=5, fig.height=4.5, fig.align='center'}
+## set plot area
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0))
+
+## plot fish mass vs length
+plot(fl[[1]], fm[[1]], pch = 16, las = 1, col = clr[1],
+     xlim = range(unlist(fl)), ylim = range(unlist(fm)),
+     ylab = "log(fish mass)", xlab = "log(fish length)",
+     cex.lab = 1.2)
+## regr line
+abline(a = cf[1,1], b = cf[1,2], col = clr[i])
+for(i in 2:nl) {
+  points(fl[[i]], fm[[i]], pch = 16,  col = clr[i])
+  ## regr line
+  abline(a = cf[i,1], b = cf[i,2], col = clr[i])
+}
+```
+
+
+## A linear mixed model
+
+Fish mass as a function of its length for a *random* lake
+
+$$
+y_{i,j} = \underbrace{\beta x_{i,j}}_{\text{fixed}} + \underbrace{\alpha_{j} + \epsilon_{i,j}}_{\text{random}} 
+$$
+
+$\epsilon_{i,j} \sim \text{N}(0,\sigma_\epsilon)$
+
+$\alpha_{j} \sim \text{N}(0,\sigma_\alpha)$
+
+
+## A linear model (ANCOVA)
+
+Fish mass as a function of its length and *random* lake
+
+```{r fit_ancova_rdm_int, echo = TRUE}
+## fit ANCOVA with fixed factor for length & rdm factor for lake
+a2 <- lmer(lfm ~ lfl + (1|IDs))
+```
+
+
+## Fish mass versus length
+
+```{r plot_ancova_rdm_fit, fig.width=5, fig.height=4.5, fig.align='center'}
+## get coefs
+ints <- coef(a2)$IDs[,1]
+
+## set plot area
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0))
+
+## plot fish mass vs length
+plot(fl[[1]], fm[[1]], pch = 16, las = 1, col = clr[1],
+     xlim = range(unlist(fl)), ylim = range(unlist(fm)),
+     ylab = "log(fish mass)", xlab = "log(fish length)",
+     cex.lab = 1.2)
+## regr line
+abline(a = ints[1], b = coef(a2)$IDs[1,2], col = clr[i])
+for(i in 2:nl) {
+  points(fl[[i]], fm[[i]], pch = 16,  col = clr[i])
+  ## regr line
+  abline(a = ints[i], b = coef(a2)$IDs[1,2], col = clr[i])
+}
+```
+
+
+## A random effects model
+
+Fish mass as a function of its length for a *random* fish *and* lake
+
+$$
+y_{i,j} = \underbrace{ \beta_j x_{i,j} + \alpha_{j} + \epsilon_{i,j}}_\text{random}
+$$
+
+$\epsilon_{i,j} \sim \text{N}(0,\sigma_\epsilon)$
+
+$\beta_{j} \sim \text{N}(0,\sigma_\beta)$
+
+$\alpha_{j} \sim \text{N}(0,\sigma_\alpha)$
+
+
+## A random effects model
+
+Fish mass as a function of its length for a *random* fish *and* lake
+
+```{r fit_ancova_rdm_both, echo = TRUE}
+## fit ANCOVA with random effects for length & lake
+a3 <- lmer(lfm ~ lfl + (lfl|IDs))
+```
+
+
+## A random effects model
+
+```{r plot_ancova_rdm_both, fig.width=5, fig.height=4.5, fig.align='center'}
+## get coefs
+ints <- coef(a3)$IDs[,1]
+slps <- coef(a3)$IDs[,2]
+
+## set plot area
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0))
+
+## plot fish mass vs length
+plot(fl[[1]], fm[[1]], pch = 16, las = 1, col = clr[1],
+     xlim = range(unlist(fl)), ylim = range(unlist(fm)),
+     ylab = "log(fish mass)", xlab = "log(fish length)",
+     cex.lab = 1.2)
+## regr line
+abline(a = ints[1], b = slps[1], col = clr[i])
+for(i in 2:nl) {
+  points(fl[[i]], fm[[i]], pch = 16,  col = clr[i])
+  ## regr line
+  abline(a = ints[i], b = slps[i], col = clr[i])
+}
+```
+
+
+## Model diagnostics
+
+```{r re_diagnostics, fig.width=8, fig.height=3.5, fig.align='center'}
+## set plot area
+par(mai = c(0.9, 0.9, 0.4, 0.1),
+    omi = c(0, 0, 0, 0),
+    mfrow = c(1,3), cex.lab = 1.5)
+
+## qq resids
+qqnorm(residuals(a3), main = "QQ plot (residuals)", pch = 16)
+qqline(residuals(a3))
+## qq RE's
+qqnorm(unlist(ranef(a3)), main = "QQ plot (RE's)", pch = 16)
+qqline(unlist(ranef(a3)))
+## resids vs fitted
+plot(fitted(a3), residuals(a3), pch = 16,
+     xlab = "Fitted", ylab = "Residuals",
+     main = "Residuals vs fitted")
+abline(h=0, lty = "dashed")
+```
+
+
+# QUESTIONS?
+
+
+## General linear model
+
+We have seen how to write a general linear model as
+
+$$
+\mathbf{y} = \mathbf{X} \boldsymbol{\beta} + \mathbf{e}
+$$
+
+where $\mathbf{X}$ is the design matrix and $\boldsymbol{\beta}$ contains the *fixed effects* of $\mathbf{X}$ on $\mathbf{y}$ 
+
+
+## General linear mixed model
+
+We can extend the general linear model to include both of fixed and random effects (a *mixed effects model*)
+
+$$
+\mathbf{y} = \mathbf{X} \boldsymbol{\beta} + \mathbf{Z} \boldsymbol{\alpha} + \mathbf{e}
+$$
+
+where $\mathbf{Z}$ is also a design matrix and $\mathbf{Z}$ contains a mix of $z \in \{-1,0,1\}$ and $z \in \mathbb{R}$
+
+
+## General linear mixed model
+
+We can extend the general linear model to include both of fixed and random effects (a *mixed effects model*)
+
+$$
+\mathbf{y} = \mathbf{X} \boldsymbol{\beta} + \mathbf{Z} \boldsymbol{\alpha} + \mathbf{e} \\
+~ \\
+\mathbf{e} \sim \text{MVN}(\mathbf{0}, \sigma^2 \mathbf{I}) \\
+~ \\
+\boldsymbol{\alpha} \sim \text{MVN}(\mathbf{0}, \sigma^2 \mathbf{D})
+$$
+
+where $\mathbf{I}$ is the identity matrix and $\mathbf{D}$ is a square matrix of constants
+
+
+## General linear mixed model
+
+Variance decomposition
+
+$$
+\mathbf{y} = \mathbf{X} \boldsymbol{\beta} + \mathbf{Z} \boldsymbol{\alpha} + \mathbf{e} \\
+\Downarrow \\
+\text{Var}(\mathbf{y}) = \text{Var}(\mathbf{\mathbf{X} \boldsymbol{\beta}}) + \text{Var}(\mathbf{Z} \boldsymbol{\alpha}) + \text{Var}(\mathbf{e})
+$$
+
+
+## General linear mixed model
+
+Variance of random components
+
+$$
+\text{Var}(\mathbf{y} | \mathbf{\mathbf{X} \boldsymbol{\beta}}) = \text{Var}(\mathbf{Z} \boldsymbol{\alpha}) + \text{Var}(\mathbf{e}) \\
+\Downarrow \\
+\begin{aligned}
+\mathbf{V} &= \mathbf{Z} \text{Var} (\boldsymbol{\alpha}) \mathbf{Z}^\top + \text{Var}(\mathbf{e}) \\
+&= \mathbf{Z} (\sigma^2 \mathbf{D}) \mathbf{Z}^\top + \sigma^2 \mathbf{I} \\
+&= \sigma^2 (\mathbf{Z} \mathbf{D} \mathbf{Z}^\top + \mathbf{I})
+\end{aligned}
+$$
+
+
+## Log-likelihood for fixed effects
+
+Recall that we think of likelihoods in terms of the *observed data*
+
+But the random effects in our model are *unobserved* random variables, so we need to integrate them out of the likelihood
+
+
+## Log-likelihood for fixed effects
+
+The log-likelihood for the fixed effects $\boldsymbol{\beta}$
+
+$$
+\log \mathcal{L}(\mathbf{y}; \boldsymbol{\beta}, \sigma^2) = - \frac{1}{2} \log \left| \mathbf{V} \right| - \frac{1}{2}( \mathbf{y} - \mathbf{X} \boldsymbol{\beta})^\top \mathbf{V}^{-1} (\mathbf{y} - \mathbf{X} \boldsymbol{\beta})
+$$
+
+
+## Estimate of fixed effects
+
+This leads us to our familiar statement for the weighted least squares estimate for $\boldsymbol{\beta}$
+
+$$
+\begin{aligned}
+\hat{\boldsymbol{\beta}} &= \min ~ (\mathbf{y} - \mathbf{X} \boldsymbol{\beta})^{\top} \mathbf{V}^{-1} (\mathbf{y} - \mathbf{X} \boldsymbol{\beta}) \\
+  &= (\mathbf{X}^{\top} \mathbf{V}^{-1} \mathbf{X}) \mathbf{X}^{\top} \mathbf{V}^{-1} \mathbf{y}
+\end{aligned}
+$$
+
+
+## Variance of fixed effects
+
+Our variance estimate for $\boldsymbol{\beta}$ is then
+
+$$
+\text{Var}(\hat{\boldsymbol{\beta}}) = (\mathbf{X}^{\top} \mathbf{V}^{-1} \mathbf{X})^{-1}
+$$
+
+
+## Log-likelihood for random effects
+
+The log-likelihood for the random effects is given by
+
+$$
+\begin{aligned}
+\log \mathcal{L}(\mathbf{y}; \boldsymbol{\beta}, \sigma^2) = 
+- \frac{\sigma^2}{2} &- 
+\frac{1}{2 \sigma^2}( \mathbf{y} - \mathbf{X} \boldsymbol{\beta} - \mathbf{Z} \boldsymbol{\alpha})^\top  (\mathbf{y} - \mathbf{X} \boldsymbol{\beta} - \mathbf{Z} \boldsymbol{\alpha}) \\
+&- \frac{1}{2} \left| \mathbf{Z} \mathbf{D} \mathbf{Z}^\top\right| - \frac{1}{2} \boldsymbol{\alpha}^\top (\mathbf{Z} \mathbf{D} \mathbf{Z}^\top)^{-1} \boldsymbol{\alpha}
+\end{aligned}
+$$
+
+
+## Estimate of random effects
+
+This leads to the *best linear unbiased predictor* for $\boldsymbol{\alpha}$
+
+$$
+\hat{\boldsymbol{\alpha}} = \sigma^2 (\mathbf{Z} \mathbf{D} \mathbf{Z}^\top) \mathbf{Z}^\top \mathbf{V}^{-1} (\mathbf{y} - \mathbf{X} \boldsymbol{\beta})
+$$
+
+
+## Restricted maximum likelihood
+
+Estimating the parameters in a mixed effects model requires *restricted maximum likelihood* (REML)
+
+REML works by
+
+1. estimating the fixed effects $(\hat{\boldsymbol{\beta}})$ via ML
+
+2. using the $\hat{\boldsymbol{\beta}}$ to estimate the $\hat{\boldsymbol{\alpha}}$
+
+**lme4** makes this easy for us
+
+
+## Inference for mixed models
+
+With random effects models, we can't use our standard inference tools because we don't know the distributions for our test statistic
+
+(**lme4** won't give $p$-values)
+
+
+## Inference for mixed models | Likelihood ratio test
+
+We can use a likelihood ratio test for nested models, but the assumption of a $\chi^2$ distribution can be poor
+
+
+## Inference for mixed models | $F$ test
+
+We can also use $F$-tests to evaluate a single fixed effect, but again the assumption of a $F$ distribution can be poor
+
+
+## Inference for mixed models | Bootstrapping
+
+We can use bootstrapping to conduct likelihood ratio tests
+
+1. simulate data from the simple model
+
+2. fit simple & full model and calculate likelihood ratio
+
+3. see where test statistic falls within estimated distribution from (2)
+
+
+## Inference for mixed models
+
+We can report parameter estimates and CI's via bootstrapping
+
+We can generate predictions given fixed and random effects and estimate their uncertainty via bootstrapping
+
+
+## Model selection
+
+Recall that $AIC = 2 k - 2 \log \mathcal{L}$
+
+The problem with mixed effects models is that it's not clear what $k$ equals
+
+It works well to select among fixed effects if random effects are held constant
+
+
+## Model selection
+
+To use AIC, we can follow these steps
+
+1. Fit a model with *all* of the possible fixed-effects included
+
+2. Keep the fixed effects constant and search for random effects
+
+3. Keep random effects as is and fit different fixed effects
+
+
+## Model selection
+
+Other options include
+
+* BIC
+
+* cross-validation
+
+
+## Summary
+
+* Think hard about your question and data
+    - are there groups or levels?
+    - are the temporal or spatial components?   
+
+* Decide what random effects make sense
+
+* Once random effects are chosen, select fixed effects
+
+* Inference will generally require bootstrapping
+
+
 
