@@ -92,8 +92,7 @@ mixed_models <- list(
   html = c(""),
   zoom = "",
   data = "",
-  background = c("[Bates et al (2015)](references/Bates_2015_lme4_package.pdf)",
-                 "[Oehlert (2012)](references/Oehlert_2012_reml.pdf)"),
+  background = ""
   )
 
 ## fitting glms
