@@ -179,10 +179,11 @@ mixed_models_1 <- list(
 mixed_models_2 <- list(
   title = "Mixed effects models",
   topics = c("<b>Mixed effects models</b>", "Inference", "Diagnostics", "Model selection"),
-  pdf = c(""),
-  rmd = c(""),
-  html = c(""),
-  background = "",
+  pdf = "lectures/week_06/lec_16_mixed_effects.pdf",
+  rmd = "lectures/week_06/lec_16_mixed_effects.Rmd",
+  html = "lectures/week_06/lec_16_mixed_effects.html",
+  background = c("[Gurka (2006)](references/Gurka_2006_reml.pdf)",
+                 "[Harrison et al (2018)](references/Harrison_2018_intro_mixed_models.pdf)"),
   zoom = ""
 )
 
