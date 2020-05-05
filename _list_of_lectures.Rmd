@@ -184,7 +184,7 @@ mixed_models_2 <- list(
   html = "lectures/week_06/lec_16_mixed_effects.html",
   background = c("[Gurka (2006)](references/Gurka_2006_reml.pdf)",
                  "[Harrison et al (2018)](references/Harrison_2018_intro_mixed_models.pdf)"),
-  zoom = ""
+  zoom = "https://washington.zoom.us/rec/share/y-VsJrTr-l9IW8-SwRnjYIR8PLq_eaa8hCcY-aVYyEfv1v9UgD04udzwXsEt5Jrc"
 )
 
 guest_lec_01 <- list(
