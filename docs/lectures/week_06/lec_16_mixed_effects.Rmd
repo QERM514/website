@@ -395,10 +395,10 @@ for(i in 2:nl) {
 Fish mass as a function of its length (no lake effects)
 
 $$
-y_{i} = \underbrace{\beta x_{i} + \alpha}_{\text{fixed}} + \underbrace{\epsilon_{i,j}}_{\text{random}} 
+y_{i} = \underbrace{\beta_0 + \beta_1 x_{i}}_{\text{fixed}} + \epsilon_{ij} 
 $$
 
-$\epsilon_{i,j} \sim \text{N}(0,\sigma_\epsilon)$
+$\epsilon_{ij} \sim \text{N}(0,\sigma_\epsilon)$
 
 
 ## A global regression model
@@ -484,10 +484,10 @@ axis(1, seq(nl))
 Fish mass as a function of its length for *each* lake
 
 $$
-y_{i,j} = \underbrace{\beta_j x_{i,j} + \alpha_{j}}_{\text{fixed}} + \underbrace{\epsilon_{i,j}}_{\text{random}} 
+y_{ij} = \underbrace{\beta_{0j} + \beta_{1j} x_{ij}}_{\text{fixed}} + \epsilon_{ij}
 $$
 
-$\epsilon_{i,j} \sim \text{N}(0,\sigma_\epsilon)$
+$\epsilon_{ij} \sim \text{N}(0,\sigma_\epsilon)$
 
 
 ## Unique regression models
@@ -531,10 +531,10 @@ for(i in 2:nl) {
 Fish mass as a function of its length for a *random* lake
 
 $$
-y_{i,j} = \underbrace{\beta x_{i,j}}_{\text{fixed}} + \underbrace{\alpha_{j} + \epsilon_{i,j}}_{\text{random}} 
+y_{ij} = \underbrace{\beta_{0j} + \beta_1 x_{ij}}_{\text{fixed}} + \underbrace{\alpha_{j}}_\text{random} + \epsilon_{ij} 
 $$
 
-$\epsilon_{i,j} \sim \text{N}(0,\sigma_\epsilon)$
+$\epsilon_{ij} \sim \text{N}(0,\sigma_\epsilon)$
 
 $\alpha_{j} \sim \text{N}(0,\sigma_\alpha)$
 
@@ -579,14 +579,15 @@ for(i in 2:nl) {
 Fish mass as a function of its length for a *random* fish *and* lake
 
 $$
-y_{i,j} = \underbrace{ \beta_j x_{i,j} + \alpha_{j} + \epsilon_{i,j}}_\text{random}
+y_{ij} = (\beta_{0j} + \alpha_{j}) + (\beta_{1j} + \delta_j) x_{ij} + \epsilon_{ij} \\
+y_{ij} = \underbrace{\beta_{0j} + \beta_{1j} x_{ij}}_\text{fixed} + \underbrace{\alpha_{j} + \delta_j x_{ij}}_\text{random} + \epsilon_{ij}
 $$
 
-$\epsilon_{i,j} \sim \text{N}(0,\sigma_\epsilon)$
-
-$\beta_{j} \sim \text{N}(0,\sigma_\beta)$
+$\epsilon_{ij} \sim \text{N}(0,\sigma_\epsilon)$
 
 $\alpha_{j} \sim \text{N}(0,\sigma_\alpha)$
+
+$\delta_{j} \sim \text{N}(0,\sigma_\delta)$
 
 
 ## A random effects model
