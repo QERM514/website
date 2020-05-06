@@ -12,5 +12,22 @@ output:
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
+## Biosketch | Dr. Staci Amburgey
 
+* BS: Colorado State University
+
+* MS: Colorado State University
+
+* PhD: Penn State University
+
+* Present: postdoc with Sarah Converse at UW in the WACFWRU
+
+
+## Biosketch | Dr. Staci Amburgey
+
+* background working with herpetofauna
+
+* currently working on invasive species management of brown treesnakes on the island of Guam
+
+* enjoys cooking, brewing her own beer, hiking, and spending time either looking under logs or looking in trees for cool animals
 
