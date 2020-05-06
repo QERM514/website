@@ -190,11 +190,13 @@ mixed_models_2 <- list(
 guest_lec_01 <- list(
   title = "Guest lecture - Dr. Staci Amburgey",
   topics = c("<b>Guest lecture:</b>", "<b>Dr. Staci Amburgey</b>", "<i>Using quantitative ecology for<br>species conservation in the<br>face of anthropogenic change</i>"),
-  pdf = c(""),
+  pdf = "lectures/week_06/lec_17_guest_lec_amburgey.pdf",
   rmd = "",
   html = "lectures/week_06/lec_17_guest_lec_amburgey.html",
-  background = "",
-  zoom = ""
+  background = c("[Amburgey et al (2017)](references/Amburgey_2017_GCB)",
+                 "[Amburgey et al (2019)](references/Amburgey_2019_Ecosphere)",
+                 "[Amburgey et al (2020)](references/Amburgey_2020_JHerp)"),
+  zoom = "https://washington.zoom.us/rec/share/xsd6Lp_7_WZIWLP9w1jndvJmEMfCaaa8hiYeq6BbmE4Ng_ypPA34e6C-bUD_m1eQ"
 )
 
 intro_GLM <- list(
