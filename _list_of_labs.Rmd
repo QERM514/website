@@ -88,10 +88,10 @@ mixed_models <- list(
   title = "Fitting mixed models",
   topics = c("Fitting mixed models"),
   pdf = c("references/Bates_2015_lme4_package.pdf"),
-  rmd = c(""),
-  html = c(""),
+  rmd = c("labs/week_06/mixed_models.Rmd"),
+  html = c("labs/week_06/mixed_models.html"),
   zoom = "",
-  data = "",
+  data = "labs/week_06/seabirds.csv",
   background = ""
   )
 
