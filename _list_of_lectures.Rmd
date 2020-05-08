@@ -206,7 +206,7 @@ intro_GLM <- list(
   rmd = c("lectures/week_06/lec_18_intro_GLMs.Rmd"),
   html = c("lectures/week_06/lec_18_intro_GLMs.html"),
   background = "[Nelder & Wedderburn (1972)](references/Nelder_Wedderburn_1972_GLM.pdf)",
-  zoom = ""
+  zoom = "https://washington.zoom.us/rec/share/6tFVHq3LzlxJWoHk1nPVcIQPFIe1eaa81HVPq_YPzUyachFUiIEpeFir4p9njow8"
 )
 
 binary_GLM <- list(
