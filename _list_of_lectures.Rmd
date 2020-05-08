@@ -201,11 +201,11 @@ guest_lec_01 <- list(
 
 intro_GLM <- list(
   title = "Introduction to GLMs",
-  topics = c("<b>Introduction to GLMs</b>", "Data distribution", "Links", "Linear predictors"),
-  pdf = c(""),
-  rmd = c(""),
-  html = c(""),
-  background = "",
+  topics = c("<b>Introduction to GLMs</b>", "Data distributions", "Link functions", "Linear predictors"),
+  pdf = c("lectures/week_06/lec_18_intro_GLMs.pdf"),
+  rmd = c("lectures/week_06/lec_18_intro_GLMs.Rmd"),
+  html = c("lectures/week_06/lec_18_intro_GLMs.html"),
+  background = "[Nelder & Wedderburn (1972)](references/Nelder_Wedderburn_1972_GLM.pdf)",
   zoom = ""
 )
 
