@@ -1,0 +1,568 @@
+---
+title: "Fitting linear mixed models"
+author: "Mark Scheuerell"
+date: "8 May 2020"
+output:
+  html_document:
+    theme: journal
+    highlight: textmate
+    toc: true
+    toc_float: true
+    toc_depth: 4
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE)
+```
+
+# Background
+
+These lab exercises focus on fitting and evaluating linear mixed models. We will be working with some hypothetical survey data on the abundance of seabirds and waterfowl in Puget Sound with the intention of estimating trends among locations over time. The data consist of an aggregate index of abundance for 50+ species, which is based upon counts of birds per unit effort at each of 9 sites (ie, 3 surveys each in the north, central, and south basins). The surveys were conducted from 2000-2018.
+
+## Data ingest
+
+The data are contained in the accompanying file `seabirds.csv`, which consists of a column for year plus 9 more columns with the abundance index at each site. Thus, we will need to reshape the data from its "wide" format into a "long" format where each row of the data frame consists of a single record for year, site, and index.
+
+```{r data_import}
+## get raw data
+raw_data <- read.csv("seabirds.csv")
+
+## seq of years of data
+years <- raw_data$year
+
+## number of years of data
+n_yrs <- length(years)
+
+## number of sites
+n_sites <- ncol(raw_data) - 1
+
+## take a peek
+head(raw_data)
+```
+
+Let's plot the index for each of the sites over time.
+
+```{r plot_raw_data, fig.height=4.5, fig.width=6, fig.align='center', fig.cap="Figure 1. Time series of abundance of Puget Sound seabirds at 9 different sites."}
+## set color Palette
+clr <- viridis::plasma(n_sites, begin = 0.2, end = 0.8)
+
+## plot the raw data
+par(mai = c(0.9, 0.9, 0.6, 0.1),
+    omi = c(0, 0, 0, 0))
+matplot(raw_data[,1], raw_data[,-1], pch = 16, las = 1, col = clr,
+        ylab = "Seabird abundance index", xlab = "Year")
+```
+
+## Data formatting
+
+To reshape the data, we'll use `pivot_longer()` from the [**tidyr**](https://tidyr.tidyverse.org/) package (see `?tidyr::pivot_longer` for more info). Before doing so, however, we'll replace the actual years with a simple time index that runs from 1 to `r n_yrs`, which will adjust our model intercept term to be relative to the year `r years[1]` instead of the year 0 AD.
+
+```{r tidy_data}
+## tidy the data
+## replace years with time index from 1:n_yrs
+raw_data[,"year"] <- seq(n_yrs)
+
+## convert from wide to long
+df <- tidyr::pivot_longer(as.data.frame(raw_data), -year,
+                          names_to = "site", values_to = "index")
+
+## convert the tibble to a data frame
+df <- as.data.frame(df)
+
+## inspect our tidy data
+head(df, 10)
+```
+
+# Fitting models with `lmer()`
+
+As we saw briefly in lecture, we cannot fit mixed models with our standard `lm()` function. Instead, we will use the `lmer()` function in the [**lme4**](https://cran.r-project.org/web/packages/lme4/) package by [Bates et al. (2015)]("references/Bates_2015_lme4_package.pdf").
+
+As with other statistical models, `lmer()` uses a standard `formula` notation with the response and expression separated by `~`.
+
+```
+response ~ expression
+```
+
+The expression includes any fixed effects (FE) and random effects (RE) separated by `+`. However, each RE term is of the form `(RE_expr | factor)`, where the vertical bar `|` indicates that the random effects given by `RE_expr` should be nested within `factor`.
+
+## Random effects for group means
+
+Consider a simple one-way ANOVA model for an observation $i$ from group $j$ $(y_{ij})$ that includes a global mean $\mu$ plus the group-level means $\alpha_j$, such that
+
+$$
+y_{ij} = \mu + \alpha_j + \epsilon_{ij} \\
+\alpha_{j} \sim \text{N}(0, \sigma_\alpha^2) \\
+\epsilon_{ij} \sim \text{N}(0, \sigma_\epsilon^2)
+$$
+
+Assuming the data `y` and group ID `group` are contained in `data_frame`, we would fit this model using
+
+```
+lmer(y ~ 1 + (1 | group), data = data_frame)
+```
+
+where the first `1` represents $\mu$ and `(1 | group)` represents the $\alpha_j$ (ie, a random effect for each group). Just as with `lm()`, we can drop the leading `1 +` to make the global mean implicit, such that
+
+```
+lmer(y ~ (1 | group), data = data_frame)
+```
+
+## Random intercepts & fixed slope
+
+Now consider an ANCOVA model for an observation $i$ from group $j$ $(y_{ij})$ that includes a fixed effect (slope) $\beta_1$ of a predictor $x$ plus group-level offsets $\alpha_j$ to the overall intercept $\beta_0$, such that
+
+$$
+y_{ij} = (\beta_0 + \alpha_j) + \beta_1 x_{ij} + \epsilon_{ij} \\
+\alpha_{j} \sim \text{N}(0, \sigma_\alpha^2) \\
+\epsilon_{ij} \sim \text{N}(0, \sigma_\epsilon^2)
+$$
+
+That is, each group has a common slope $\beta_1$ plus a y-intercept equal to $\beta_0 + \alpha_j$. To see the relationship between this model and its implementation in `lmer()`, let's separate the fixed effects and the random effect for group, such that
+
+$$
+y_{ij} = \beta_0 + \beta_1 x_{ij} + \alpha_j + \epsilon_{ij} \\
+$$
+
+Assuming the data `y`, predictor `x` and group ID `group` are contained in `data_frame`, we would fit this model using
+
+```
+lmer(y ~ 1 + x + (1 | group), data = data_frame)
+```
+
+where the leading `1 + x` represents the fixed intercept and slope $(\beta_0, \beta_1)$ and `(1 | group)` represents the group-level offset $\alpha_j$. Just as with `lm()`, we can drop the leading `1 +` to make the global intercept implicit, such that
+
+```
+lmer(y ~ x + (1 | group), data = data_frame)
+```
+
+## Random intercepts & slopes
+
+Now consider a model for an observation $i$ from group $j$ $(y_{ij})$ that includes random effects for both the effect (slope) of $x$ $(\beta_1 + \delta_j)$ and the group-level intercepts $(\beta_0 + \alpha_j)$, such that
+
+$$
+y_{ij} = (\beta_0 + \alpha_j) + (\beta_1 + \delta_j) x_{ij} + \epsilon_{ij} \\
+\alpha_{j} \sim \text{N}(0, \sigma_\alpha^2) \\
+\delta_{j} \sim \text{N}(0, \sigma_\delta^2) \\
+\epsilon_{ij} \sim \text{N}(0, \sigma_\epsilon^2)
+$$
+
+Here again, rewriting this model by separating the fixed and random terms makes it easier to see how it aligns with the `lmer()` notation.
+
+$$
+\begin{aligned}
+y_{ij} &= (\beta_0 + \alpha_j) + (\beta_1 + \delta_j) x_{ij} + \epsilon_{ij} \\
+       &= \beta_0 + \alpha_j + \beta_1 x_{ij} + \delta_j x_{ij} + \epsilon_{ij} \\
+       &= \beta_0 + \beta_1 x_{ij} + (\alpha_j + \delta_j x_{ij}) + \epsilon_{ij} \\
+\end{aligned}
+$$
+
+Assuming the data `y`, predictor `x` and group ID `group` are contained in `data_frame`, we would fit this model using
+
+```
+lmer(y ~ 1 + x + (1 + x | group), data = data_frame)
+```
+
+where the `1 + x` represents the fixed intercept and slope and `(1 + x | group)` represents the $\alpha_j$ and $\delta_j$ (ie, random intercepts and slopes for each group). Just as with `lm()`, we can drop the `1 +` for both the FE and RE terms, such that
+
+```
+lmer(y ~ x + (x | group), data = data_frame)
+```
+
+# Model fitting & evaluation
+
+Before we fit any models, let's begin by thinking about the data. In this case we have surveys from different locations around Puget Sound, and those locations are but a few of the possible sites that might have been surveyed (ie, they do not represent the entirety of available habitat). Thus, it sounds like we should treat `site` as a random effect.
+
+These data were also collected over time, which suggests that perhaps a model with an explicit accounting for time would be good. One option would be to treat `year` as a random effect, as we're not particularly interested in the specific effect of any one year. 
+
+## Random effect of site
+
+Let's first fit a model with a random effect for site only $s$ and ignore the temporal aspect of the data. This is akin to the ANOVA model above, such that
+
+$$
+y_{s,t} = \mu + \alpha_s + \epsilon_{s,t} \\
+\alpha_{s} \sim \text{N}(0, \sigma_\alpha^2) \\
+\epsilon_{s,t} \sim \text{N}(0, \sigma_\epsilon^2)
+$$
+
+and $\alpha_j$ is the random effect of `site`.
+
+```{r fit_re_site}
+## load lme4 package
+library(lme4)
+
+## fit model with RE for site
+mod_site <- lmer(index ~ 1 + (1 | site), data = df)
+
+## model summary
+summary(mod_site)
+```
+
+Notice that this model summary info is somewhat different that what we've been seeing from `lm()`. In particular, there are 2 different blocks of results: one for the random effect of `site` and the residual errors, and another for the fixed effect of a global mean `(Intercept)`.
+
+Also notice that there are no $p$-values in this output. As we discussed in lecture, this is because any assumptions about the distributional form of our null hypothesis tests are likely to be violated when including random effects in the model.
+
+### Estimates of random effects
+
+Normally we would use `coef()` to extract the estimated coefficients, but it will return the sum of $\mu + \alpha_j$. If we just want the $\alpha_j$, we can instead use `ranef()`.
+
+```{r mod_site_coef}
+## mu + alpha
+coef(mod_site)$site
+## alpha only
+ranef(mod_site)$site
+```
+
+### Correlation among random effects
+
+As we learned in lecture, we can estimate the correlation among the random effects as
+
+$$
+\rho = \frac{\sigma_\alpha^2}{\sigma_\alpha^2 + \sigma_\epsilon^2}
+$$
+
+which we can compute from the estimates in the above table. The function `VarCorr()` will return the results, but they are a bit hard to access directly, so we can embed that call inside of `as.data.frame()`.
+
+```{r fit_re_site_cor}
+## get var(RE)
+(var_re_site <- as.data.frame(VarCorr(mod_site)))
+## variance of random effects
+sigma2_alpha <- var_re_site$vcov[1]
+## variance of residuals
+sigma2_epsilon <- var_re_site$vcov[2]
+## calculate the correlation among RE's
+rho <- sigma2_alpha / (sigma2_alpha + sigma2_epsilon)
+round(rho, 2)
+```
+
+It looks like there is not a lot of correlation among the random effects. We should also note that $\rho$ provides us with an estimate of the proportion of the variance explained by the random effects (similar to $R^2$ for the fixed effects).
+
+## Random effect of year
+
+Now let's fit another model that only includes the random effect of `year` $t$, where
+
+$$
+y_{s,t} = \mu + \alpha_t + \epsilon_{s,t} \\
+\alpha_{t} \sim \text{N}(0, \sigma_\alpha^2) \\
+\epsilon_{s,t} \sim \text{N}(0, \sigma_\epsilon^2)
+$$
+
+and $\alpha_t$ is now the random effect of `year`.
+
+```{r fit_re_year}
+## fit model with RE for year
+mod_year <- lmer(index ~ 1 + (1 | year), data = df)
+
+## model summary
+summary(mod_year)
+```
+
+### Estimates of random effects
+
+Here are the estimates of the $\alpha_t$.
+
+```{r mod_year_coef}
+## alpha only
+ranef(mod_year)$year
+```
+
+Do you notice anything about these random effects for year? The appear to be increasing over time, such that the estimate for 2000 is `r round(ranef(mod_year)$year[1,1], 2)` and the estimate for 2018 is `r round(ranef(mod_year)$year[n_yrs,1], 2)`.
+
+### Correlation among random effects
+
+Here is the correlation among the random effects for year.
+
+```{r fit_re_year_cor}
+## get var(RE)
+(var_re_year <- as.data.frame(VarCorr(mod_year)))
+## variance of random effects
+sigma2_alpha <- var_re_year$vcov[1]
+## variance of residuals
+sigma2_epsilon <- var_re_year$vcov[2]
+## calculate the correlation among RE's
+rho <- sigma2_alpha / (sigma2_alpha + sigma2_epsilon)
+round(rho, 2)
+```
+
+Here, too, there is not a lot of correlation among the random effects.
+
+
+## Random effects for site & year
+
+Now let's fit a model that includes random effects for both `site` and `year`, where
+
+$$
+y_{s,t} = \mu + \alpha_s + \alpha_t + \epsilon_{s,t} \\
+\alpha_{s} \sim \text{N}(0, \sigma_{\alpha_s}^2) \\
+\alpha_{t} \sim \text{N}(0, \sigma_{\alpha_t}^2) \\
+\epsilon_{s,t} \sim \text{N}(0, \sigma_\epsilon^2)
+$$
+
+and $\alpha_t$ is now the random effect of `year`.
+
+```{r fit_site_year}
+## model with RE's for both site and year
+mod_site_year <- lmer(index ~ 1 + (1 | site) + (1 | year), df)
+
+## model summary
+summary(mod_site_year)
+```
+
+Here we can see that the residual variance $\sigma^2$ has decreased quite a bit compared to our other models. We can check how much of the total variance is explained by the combination of the two random effects as follows:
+
+```{r fit_re_site_year_cor}
+## get var(RE)
+var_re_site_year <- as.data.frame(VarCorr(mod_site_year))
+## variance of site random effects
+sigma2_alpha_s <- var_re_site_year$vcov[1]
+## variance of year random effects
+sigma2_alpha_t <- var_re_site_year$vcov[2]
+## variance of residuals
+sigma2_epsilon <- var_re_site_year$vcov[3]
+## calculate the correlation among RE's
+rho <- (sigma2_alpha_s + sigma2_alpha_t) / 
+       (sigma2_alpha_s + sigma2_alpha_t + sigma2_epsilon)
+round(rho, 2)
+```
+
+### Estimates of random effects
+
+Here are the estimates of the $\alpha_s$ and $\alpha_t$.
+
+```{r mod_site_year_coef}
+## alpha only
+ranef(mod_site_year)
+```
+
+# Likelihood ratio tests
+
+We can use likelihood ratio tests to determine whether there is support for any given random effect in a model. These tests require a simulation-based approach that involves a search over a large gridded space of ratios of $\sigma_\alpha^2 / \sigma_\epsilon^2$. For more information, see [Crainiceanu & Ruppert (2004)](https://doi.org/10.1111/j.1467-9868.2004.00438.x).
+
+To conduct these tests, we'll use the `exactRLRT()` function from the [**RLRsim**](https://cran.r-project.org/web/packages/RLRsim/index.html) package.
+
+## Single random effect
+
+The first option compares a model with a *single* random effect to an identical model that lacks the random effect. The null hypothesis for this test is $H_0 : \text{Var}(\alpha) = \sigma_\alpha^2 = 0$. The test statistic is given by
+
+$$
+\lambda = 2 \log \mathcal{L}(\sigma_\alpha^2 \neq 0) - 2 \log \mathcal{L}(\sigma_\alpha^2 = 0)
+$$
+
+Let's go ahead and test our 2 models with random effects for `site` and `year`. To compare our models with a single random effect, we will compare them against a full model with both random effects. To do so, we need 3 different models:
+
+1) model with single RE of interest to be tested (`model_A`)
+
+2) full model with 2+ RE's (`model_AB`)
+
+3) full model minus the RE in model (1) (`model_B`)
+
+To conduct the test we use `extractRLRT(model_A, model_AB, model_B)`.
+
+```{r LRT_site, warning=FALSE}
+## load RLRsim package
+library(RLRsim)
+
+## test `site` model
+exactRLRT(mod_site, mod_site_year, mod_year)
+```
+
+We can clearly reject $H_0 : \sigma_{\alpha_s}^2 = 0$ and conclude that there is support for inclusion of the `site` random effect.
+
+Now let's go ahead and test the model with a single random effect for `year`.
+
+```{r LRT_year, warning=FALSE}
+## test `year` model
+exactRLRT(mod_year, mod_site_year, mod_site)
+```
+
+We can clearly reject $H_0 : \sigma_{\alpha_t}^2 = 0$ and conclude that there is support for inclusion of the `year` random effect.
+
+## Multiple random effects
+
+We can use a bootstrapping approach to test for evidence against including multiple random effects in the same model. Our approach follows this pseudo-code:
+
+1. fit null model with no random effects
+
+2. calculate likelihood ratio statistic
+
+3. simulate data from the null model in (1)
+
+4. fit simple & full model to data from (3)
+
+5. calculate likelihood ratio (difference in log-likelihood)
+
+6. repeats steps 3-5 *many* times
+
+7. see where statistic from (2) falls within estimated distribution from (3-6)
+
+
+Importantly, too, we need to specify that the random effects model be fit using maximum likelihood (ML) instead of the default *restricted* maximum likelihood (REML).
+
+```{r bootstrapping, warning = FALSE}
+## set random seed to make it reproducible
+set.seed(514)
+
+## Step 1: fit null model with no RE's using `lm()`
+null_model <- lm(index ~ 1, data = df)
+
+## Step 2: calculate likelihood ratio (ie, difference in log-likelihood)
+lambda <- 2 * (logLik(mod_site_year) - logLik(null_model))
+
+## number of bootstrapped samples
+nb <- 1000
+## empty vector for storing LRT statistics
+LRT_boot <- rep(NA, nb)
+## do bootstrapping
+for(i in 1:nb) {
+  ## Step 3: simulate data from null model
+  sim_data <- unlist(simulate(null_model))
+  ## Step 4: fit null and RE models to sim data
+  m_null <- lm(sim_data ~ 1)
+  m_alt <- lmer(sim_data ~ 1 + (1 | site) + (1 | year), data = df, REML = FALSE)
+  ## Step 5: calculate likelihood ratio
+  LRT_boot[i] <- as.numeric(2*(logLik(m_alt) - logLik(m_null)))
+  ## Step 6: repeat this `nb` times
+}
+## Step 7: calculate approximate p-value
+mean(LRT_boot > lambda)
+```
+
+Here it appears as though none of the `r nb` bootstrapped samples had a test statistic larger than the original value of `r round(lambda,1)`.
+
+# Model diagnostics
+
+We would be remiss if we did not do some diagnostic checks on our model. One of our assumptions is that the residuals $\epsilon$ and random effects $\alpha$ are normally distributed, which we can check with Q-Q plots. Let's do some diagnostic checks for the model with random effects for both `site` and `year`.
+
+## Q-Q plots
+
+```{r re_diagnostics, fig.width=7, fig.height=4, fig.align='center'}
+## set plot area
+par(mai = c(0.9, 0.9, 0.6, 0.1),
+    omi = c(0, 0, 0, 0),
+    mfrow = c(1,2), cex.lab = 1.2)
+
+## qq resids
+qqnorm(residuals(mod_site_year), main = "QQ plot (residuals)", las = 1, pch = 16)
+qqline(residuals(mod_site_year))
+
+## qq RE's
+qqnorm(unlist(ranef(mod_site_year)), main = "QQ plot (RE's)", las = 1, pch = 16)
+qqline(unlist(ranef(mod_site_year)))
+```
+
+These plots both look pretty good. Perhaps there is some deviation from normality for the random effects, but there are not many values from which to ascertain whether or not the assumption of normality has been violated.
+
+## Residuals versus fitted
+
+We can also plot the model residuals against the fitted values to look for evidence of heteroscedasticity or non-linearity in the residuals.
+
+```{r re_diagnostics_2, fig.width=4, fig.height=4.5, fig.align='center'}
+## resids vs fitted
+plot(fitted(mod_site_year), residuals(mod_site_year), las = 1, pch = 16,
+     xlab = "Fitted", ylab = "Residuals",
+     main = "Residuals vs fitted")
+abline(h=0, lty = "dashed")
+```
+
+This residual plot looks promising in that there are no obvious patterns to the residuals.
+
+## Autocorrelation
+
+Because these data were collected over time, we should be aware of possible autocorrelation among the residuals. It would be a bit messy to create plots for all 9 of the time series, so we'll just get a table of the results from `acf()` and see whether any of them exceed the critical value given by
+
+$$
+0 \pm \frac{z_{\alpha/2}}{\sqrt{n}}
+$$
+
+where $z_{\alpha/2}$ is the $1-\alpha/2$ quantile of the standard normal distribution. For example, if $\alpha$ = 0.05, then $z_{\alpha/2}$ = 1.96. Here we'll only examine correlations out to a lag of 5 years because it's unlikely that counts in this year would be related to counts 6 or more years in the past (and hopefully not at any years in the past).
+
+```{r acf}
+## Type-I error
+alpha_crit <- 0.05
+
+## threshold value for rho (correlation)
+(rho_crit <- qnorm(1 - alpha_crit/2) / sqrt(n_yrs))
+
+## rearrange residuals into matrix
+rr <- matrix(residuals(mod_site_year), n_yrs, n_sites)
+
+## get ACF
+ACF <- apply(rr, 2, acf, lag.max = 5, plot = FALSE)
+ACF <- lapply(ACF, function(x) x$acf)
+## convert list to matrix; don't need row 1 b/c rho_0 = 1
+ACF <- do.call(cbind, ACF)[-1,]
+
+## check if any values > rho_crit
+any(ACF > rho_crit)
+```
+
+It looks like the random effect for year $\alpha_t$ must have done an adequate job of accounting for any autocorrelation in the data.
+
+# Mixed model with a trend
+
+Both our plot of the raw data and the random effects for year showed evidence of an increasing trend in the index of abundance. Let's now fit a model that includes a *fixed* effect for year to account for this apparent trend, plus random effects for both site and year. At first glance, it might seem problematic to include both a fixed and random effect for year, but we have multiple sites sampled per year, so the fixed effect will give us the overall linear trend across all sites, and the random effect will allow for additional variation among years (ie, all sites in a given year may be greater or less than the long-term average). Specifically, the model we want to fit is
+
+$$
+y_{s,t} = \beta_0 + \beta_1 t + \alpha_s + \alpha_t + \epsilon_{s,t} \\
+\alpha_{s} \sim \text{N}(0, \sigma_{\alpha_s}^2) \\
+\alpha_{t} \sim \text{N}(0, \sigma_{\alpha_t}^2) \\
+\epsilon_{s,t} \sim \text{N}(0, \sigma_\epsilon^2)
+$$
+
+Let's fit this model and compare it to the comparable model we fit earlier without a fixed effect of `year`.
+
+```{r fit_site_year_f}
+## model with RE's for both site and year
+mod_site_year_f <- lmer(index ~ 1 + year + (1 | site) + (1 | year), df)
+
+## model summary
+summary(mod_site_year_f)
+```
+
+You can see from the summary info above that the fixed effect of `year` is ~0.39, which means the index of abundance is increasing by ~4 units per decade.
+
+## Model comparison
+
+In this case we can use AIC to directly compare these models because they only differ with respect to the fixed effect for `year`. However, before doing so, we need to refit both of the models using ML rather than REML. 
+
+```{r compare_full_models, results = 'hold'}
+## refit site & year model
+mod_sy_ml <- lmer(index ~ 1 + (1 | site) + (1 | year), df, REML = FALSE)
+## refit 
+mod_syf_ml <- lmer(index ~ 1 + year + (1 | site) + (1 | year), df, REML = FALSE)
+## get AIC for both models
+AIC(mod_sy_ml)
+AIC(mod_syf_ml)
+```
+
+The AIC for the model with a fixed effect of year is ~24 units lower than the more simple model, which is indeed strong evidence for the inclusion of `year` as a fixed effect. Another option for comparing nested models with the same random effects structure is a $\chi^2$ test via `anova()`, which has the added advantage of also providing AIC and BIC values as well. To do so, we use `anova(reduced model, full model)`.
+
+```{r test_via_anova}
+## LRT for fixed effect of `year`
+anova(mod_sy_ml, mod_syf_ml)
+```
+
+# General considerations
+
+Here are some general guidelines to follow when fitting and evaluating mixed effects models.
+
+## Fixed effects
+
+You should use maximum likelihood (ML) when comparing models with different fixed effects, as ML doesn’t rely on the coefficients of the fixed effects, whereas REML assumes that the fixed effects are all set and correct. That said, you should ultimately use the parameter estimates from your final "best" model as obtained via REML because ML estimates of the variances of the random effects tend to be biased low.
+
+## Random effects
+
+You can use model selection to help you decide which random effects to retain, but in general, **random effects should be based upon your knowledge of the system**. For example, is there pseudoreplication? Are the data part of a time series or spatial sampling design? As we saw above, we use REML estimators to compare models with different random effects.
+
+## Entire model selection
+
+The most important thing is to **not** vary both random and fixed effects at the same time. You should address one of the components and then the other, often in a back-and-forth-manner. Here is the model selection process recommended by [Zuur et al. (2009)](references/Zuur_2009_mixed_effects_models_in_R.pdf):
+
+* fit the most complex model you can envision based on your possible covariates and random effects
+
+* sort out the random effects structure using REML-based inference via AIC or likelihood ratio tests
+
+* sort out the fixed effects structure *while keeping your random effects constant* using REML and $F$- or $t$-tests, or compare nested ML models via AIC
+
+* present the results of your final model using REML estimation
+
+
