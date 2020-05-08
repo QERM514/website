@@ -90,7 +90,7 @@ mixed_models <- list(
   pdf = c("references/Bates_2015_lme4_package.pdf"),
   rmd = c("labs/week_06/mixed_models.Rmd"),
   html = c("labs/week_06/mixed_models.html"),
-  zoom = "",
+  zoom = "https://washington.zoom.us/rec/share/4fwtcrDf3EFOYLf9707vCpc7E4rbaaa80SEerPZfzxnoWuXjDVwi57Iiho6u3gKC",
   data = "labs/week_06/seabirds.csv",
   background = ""
   )
