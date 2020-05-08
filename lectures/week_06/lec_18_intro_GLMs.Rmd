@@ -239,11 +239,7 @@ Are they counts, proportions?
 
 2. Link function $g$
 
-Specifies the relationship between the linear predictor $\eta = \mathbf{X} \boldsymbol{\beta}$ and the mean $\mu$ of the distribution
-
-$$
-g(\mu) = \eta
-$$
+Specifies the relationship between mean of the distribution and some linear predictor(s)
 
 
 ## Generalized linear models (GLMs)
@@ -263,9 +259,16 @@ $\eta = \mathbf{X} \boldsymbol{\beta}$
 
 | Distribution | Link function | Mean function |
 |:------------:|:-------------:|:-------------:|
-| Identity | $1(\mu) = \mathbf{X} \boldsymbol{\beta}$ | $\mu = \mathbf{X} \boldsymbol{\beta}$ |
-| Log  | $\log (\mu) = \mathbf{X} \boldsymbol{\beta}$ | $\mu = \exp (\mathbf{X} \boldsymbol{\beta})$ |
-| Logit  | $\log \left( \frac{\mu}{1 - \mu} \right) = \mathbf{X} \boldsymbol{\beta}$ | $\mu = \frac{\exp (\mathbf{X} \boldsymbol{\beta})}{1 + \exp (\mathbf{X} \boldsymbol{\beta})}$ |
+| Normal | $1(\mu) = \mathbf{X} \boldsymbol{\beta}$ | $\mu = \mathbf{X} \boldsymbol{\beta}$ |
+| Poisson  | $\log (\mu) = \mathbf{X} \boldsymbol{\beta}$ | $\mu = \exp (\mathbf{X} \boldsymbol{\beta})$ |
+| Binomial  | $\log \left( \frac{\mu}{1 - \mu} \right) = \mathbf{X} \boldsymbol{\beta}$ | $\mu = \frac{\exp (\mathbf{X} \boldsymbol{\beta})}{1 + \exp (\mathbf{X} \boldsymbol{\beta})}$ |
+
+
+## Common link functions
+
+```{r link_funcs}
+
+```
 
 
 ## Canonical links
