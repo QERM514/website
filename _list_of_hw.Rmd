@@ -71,7 +71,7 @@ model_selection <- list(
   rmd = "homework/week_05/hw_05_model_selection.Rmd",
   html = "",
   data = "homework/week_05/soil_nitrogen.csv",
-  key = ""
+  key = "homework/week_05/hw_05_model_selection_key.pdf"
 )
 
 ## 6 mixed models
