@@ -159,13 +159,13 @@ $$
 Assuming the data `y`, predictor `x` and group ID `group` are contained in `data_frame`, we would fit this model using
 
 ```
-lmer(y ~ 1 + x + (1 + x | group), data = data_frame)
+lmer(y ~ 1 + x + (1 + x || group), data = data_frame)
 ```
 
-where the `1 + x` represents the fixed intercept and slope and `(1 + x | group)` represents the $\alpha_j$ and $\delta_j$ (ie, random intercepts and slopes for each group). Just as with `lm()`, we can drop the `1 +` for both the FE and RE terms, such that
+where the `1 + x` represents the fixed intercept and slope and `(1 + x || group)` represents the $\alpha_j$ and $\delta_j$ (ie, random intercepts and slopes for each group). Here we use the double pipe `||` in the random effect because we don't want the intercept and slope to be correlated with one another. Just as with `lm()`, we can drop the `1 +` for both the FE and RE terms, such that
 
 ```
-lmer(y ~ x + (x | group), data = data_frame)
+lmer(y ~ x + (x || group), data = data_frame)
 ```
 
 # Model fitting & evaluation
@@ -491,8 +491,8 @@ ACF <- lapply(ACF, function(x) x$acf)
 ## convert list to matrix; don't need row 1 b/c rho_0 = 1
 ACF <- do.call(cbind, ACF)[-1,]
 
-## check if any values > rho_crit
-any(ACF > rho_crit)
+## check if any |values| > rho_crit
+any(abs(ACF) > rho_crit)
 ```
 
 It looks like the random effect for year $\alpha_t$ must have done an adequate job of accounting for any autocorrelation in the data.
