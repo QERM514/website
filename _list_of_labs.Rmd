@@ -20,7 +20,7 @@ matrixlab <- list(
   background = c("")
   )
 
-## overview of R Markdown
+## 1 overview of R Markdown
 markdown <- list(
   title = "R Markdown",
   topics = c("Authoring reports with R Markdown"),
@@ -34,7 +34,7 @@ markdown <- list(
                  "[LaTeX math codes](labs/week_01/latex_math_sheet.pdf)")
 )
 
-## fitting linear models
+## 2 fitting linear models
 fitting_LMs <- list(
   title = "Fitting linear models",
   topics = c("Fitting linear models"),
@@ -46,7 +46,7 @@ fitting_LMs <- list(
   background = c("")
   )
 
-## model diagnostics & non-IID errors
+## 3 model diagnostics & non-IID errors
 diagnostics_and_errors <- list(
   title = "Model diagnostics",
   topics = c("Model diagnostics", "Non-IID errors"),
@@ -58,7 +58,7 @@ diagnostics_and_errors <- list(
   background = c("")
   )
 
-## design matrices
+## 4 design matrices
 design_matrices <- list(
   title = "Design matrices",
   topics = c("Design matrices for", "regression, ANOVA, ANCOVA"),
@@ -71,7 +71,7 @@ design_matrices <- list(
   background = c("")
   )
 
-## model selection
+## 5 model selection
 model_selection <- list(
   title = "Model selection",
   topics = c("Model selection", "Multimodel inference"),
@@ -83,7 +83,7 @@ model_selection <- list(
   background = c("")
   )
 
-## mixed models
+## 6 mixed models
 mixed_models <- list(
   title = "Fitting mixed models",
   topics = c("Fitting mixed models"),
@@ -95,7 +95,7 @@ mixed_models <- list(
   background = ""
   )
 
-## fitting glms
+## 7 fitting glms
 fitting_glms <- list(
   title = "Fitting GLMs",
   topics = c("Fitting GLMs"),
@@ -107,7 +107,7 @@ fitting_glms <- list(
   background = c("")
   )
 
-## fitting glmms
+## 8 fitting glmms
 fitting_glmms <- list(
   title = "Fitting GLMMs",
   topics = c("Fitting GLMMs"),
