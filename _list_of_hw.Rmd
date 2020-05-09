@@ -19,7 +19,7 @@ matrixlab <- list(
   key = ""
   )
 
-## overview of R Markdown
+## 1 overview of R Markdown
 markdown <- list(
   title = "R Markdown",
   topics = c("Authoring reports with R Markdown"),
@@ -30,7 +30,7 @@ markdown <- list(
   key = "homework/week_01/hw_01_intro_to_markdown_key.pdf"
 )
 
-## fitting linear models
+## 2 fitting linear models
 linear_models <- list(
   title = "Fitting linear models",
   topics = c("Fitting linear models"),
@@ -41,7 +41,7 @@ linear_models <- list(
   key = "homework/week_02/hw_02_fitting_lm_key.pdf"
 )
 
-## diagnostics
+## 3 diagnostics
 diagnostics <- list(
   title = "Checking model diagnostics",
   topics = c("Checking model diagnostics"),
@@ -52,7 +52,7 @@ diagnostics <- list(
   key = "homework/week_03/hw_03_diagnostics_key.pdf"
 )
 
-## pvalues
+## 4 pvalues
 pvalues <- list(
   title = "Considering significance tests",
   topics = c("Thinking about significance tests"),
@@ -63,7 +63,7 @@ pvalues <- list(
   key = "homework/week_04/hw_04_pvalues_revisited_key.pdf"
 )
 
-## model selection
+## 5 model selection
 model_selection <- list(
   title = "Model selection & multimodel inference",
   topics = "Model selection & multimodel inference",
@@ -71,6 +71,17 @@ model_selection <- list(
   rmd = "homework/week_05/hw_05_model_selection.Rmd",
   html = "",
   data = "homework/week_05/soil_nitrogen.csv",
+  key = ""
+)
+
+## 6 mixed models
+mixed_models <- list(
+  title = "Fitting mixed models",
+  topics = "Fitting mixed models",
+  pdf = "homework/week_06/hw_06_mixed_models.pdf",
+  rmd = "homework/week_06/hw_06_mixed_models.Rmd",
+  html = "",
+  data = "homework/week_06/ps_chinook.csv",
   key = ""
 )
 
