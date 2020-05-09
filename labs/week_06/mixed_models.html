@@ -1685,9 +1685,9 @@ y_{ij} &amp;= (\beta_0 + \alpha_j) + (\beta_1 + \delta_j) x_{ij} + \epsilon_{ij}
 \end{aligned}
 \]</span></p>
 <p>Assuming the data <code>y</code>, predictor <code>x</code> and group ID <code>group</code> are contained in <code>data_frame</code>, we would fit this model using</p>
-<pre><code>lmer(y ~ 1 + x + (1 + x | group), data = data_frame)</code></pre>
-<p>where the <code>1 + x</code> represents the fixed intercept and slope and <code>(1 + x | group)</code> represents the <span class="math inline">\(\alpha_j\)</span> and <span class="math inline">\(\delta_j\)</span> (ie, random intercepts and slopes for each group). Just as with <code>lm()</code>, we can drop the <code>1 +</code> for both the FE and RE terms, such that</p>
-<pre><code>lmer(y ~ x + (x | group), data = data_frame)</code></pre>
+<pre><code>lmer(y ~ 1 + x + (1 + x || group), data = data_frame)</code></pre>
+<p>where the <code>1 + x</code> represents the fixed intercept and slope and <code>(1 + x || group)</code> represents the <span class="math inline">\(\alpha_j\)</span> and <span class="math inline">\(\delta_j\)</span> (ie, random intercepts and slopes for each group). Here we use the double pipe <code>||</code> in the random effect because we don’t want the intercept and slope to be correlated with one another. Just as with <code>lm()</code>, we can drop the <code>1 +</code> for both the FE and RE terms, such that</p>
+<pre><code>lmer(y ~ x + (x || group), data = data_frame)</code></pre>
 </div>
 </div>
 <div id="model-fitting-evaluation" class="section level1">
@@ -2090,8 +2090,8 @@ ACF &lt;- lapply(ACF, function(x) x$acf)
 ## convert list to matrix; don't need row 1 b/c rho_0 = 1
 ACF &lt;- do.call(cbind, ACF)[-1,]
 
-## check if any values &gt; rho_crit
-any(ACF &gt; rho_crit)</code></pre>
+## check if any |values| &gt; rho_crit
+any(abs(ACF) &gt; rho_crit)</code></pre>
 <pre><code>## [1] FALSE</code></pre>
 <p>It looks like the random effect for year <span class="math inline">\(\alpha_t\)</span> must have done an adequate job of accounting for any autocorrelation in the data.</p>
 </div>
