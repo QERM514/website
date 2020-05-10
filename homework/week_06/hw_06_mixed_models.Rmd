@@ -71,8 +71,6 @@ The data for this assignment come from 21 populations of Chinook salmon (*Oncorh
 
 * `recruits`: total number of surviving offspring that "recruit" to the fishery (1000s)
 
-* `prop_wild`: the proportion of spawners that are of wild origin (ie, not hatchery fish)
-
 # Problems
 
 As you work through the following problems, be sure to show all of the code necessary to produce your answers. (Hint: You will need to define a new response variable before you can do any model fitting.)
