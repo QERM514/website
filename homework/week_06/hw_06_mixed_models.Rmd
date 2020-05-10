@@ -112,7 +112,7 @@ d) Fit the following model and report your estimates for $\alpha$, each of the $
 
 \vspace{0.25in}
 
-e) Fit the following model and report your estimates for $\alpha$, each of the $\delta_i$, $\beta$, and each of the $\eta_i$. Also report your estimate of $\sigma_\epsilon^2$, $\sigma_\delta^2$, and $\sigma_\eta^2$. Based on the $R^2$ value, how does this model compare to that from part (d)? (Hint: Refer back to the beginning of [Lab 6](https://qerm514.github.io/website/labs/week_06/mixed_models.html#fitting_models_with_lmer()) for how to fit uncorrelated random effects for both intercept and slope.)
+e) Fit the following model and report your estimates for $\alpha$, each of the $\delta_i$, $\beta$, and each of the $\eta_i$. Also report your estimate of $\sigma_\epsilon^2$, $\sigma_\delta^2$, and $\sigma_\eta^2$. Based on the $R^2$ value, how does this model compare to that from part (d)?
 
 \begin{equation}
 \begin{gathered} \nonumber 
