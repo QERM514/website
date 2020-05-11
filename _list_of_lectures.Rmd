@@ -213,10 +213,10 @@ binary_GLM <- list(
   title = "Modeling binary data",
   topics = c("<b>Modeling binary data</b>", "Logistic regression", "Model selection",
              "Diagnostics", "<br><b>Project plan due</b>"),
-  pdf = c(""),
-  rmd = c(""),
-  html = c(""),
-  background = "",
+  pdf = "lectures/week_07/lec_19_modeling_binary_data.pdf",
+  rmd = "lectures/week_07/lec_19_modeling_binary_data.Rmd",
+  html = "lectures/week_07/lec_19_modeling_binary_data.html",
+  background = "[Faraway (2016) Chap 2](references/Faraway_2016_Extending_the_Linear_Models_with_R.pdf)",
   zoom = ""
 )
 
