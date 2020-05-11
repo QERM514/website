@@ -13,6 +13,710 @@ knitr::opts_chunk$set(echo = FALSE)
 ```
 
 
+## Reminder
+
+__Your project plan is due today__
+
+
 ## Goals for today
+
+* Understand the characteristics of binary data and the Bernoulli distribution
+
+> - Understand how to model binary data with logistic regression
+
+> - Understand approaches to inference in logistic regression
+
+> - Understand diagnostic measures for logistic regression
+
+
+## Bernoulli distribution
+
+The Bernoulli distribution describes the probability of a single "event" $y_i$ occurring
+
+* present (1/1) or absent (0/1)
+
+* alive (1/1) or dead (0/1)
+
+* mature (1/1) or immature (0/1)
+
+
+## Binomial distribution
+
+The binomial distribution is closely related to the Bernoulli
+
+It describes the number of $k$ "successes" in a sequence of $n$ independent Bernoulli "trials"
+
+For example, the number of heads in 4 coin tosses
+
+
+## Binomial distribution
+
+For a population, these could be
+
+* $k$ survivors out of $n$ tagged individuals
+
+* $k$ infected individuals out of $n$ susceptible individuals
+
+* $k$ counts of allele A in $n$ total chromosomes
+
+
+## Binomial distribution
+
+The probability mass function
+
+$$
+\Pr(k; n, p) = \left( \begin{array}{c} n \\ k \end{array} \right) p^k (1 - p)^{n - k} \\
+~ \\
+\left( \begin{array}{c} n \\ k \end{array} \right) = \frac{n!}{k!(n - k)!}
+$$
+
+
+## Bernoulli distribution
+
+Special case of binomial with $n = 1$
+
+$$
+\Pr(k; n, p) = \left( \begin{array}{c} n \\ k \end{array} \right) p^k (1 - p)^{n - k} \\
+\Downarrow \\
+\Pr(k; p) = p^k (1 - p)^{(1 - k)} \\
+\Downarrow \\
+k = \left\{ \begin{array}{l} 1 ~ \text{if success (T, Y) with probability }p \\ 0  ~ \text{if failure (F, N) with probability }(1 - p) \end{array} \right.
+$$
+ 
+
+## Bernoulli distribution
+
+$$
+\Pr(k; p) = p^k (1 - p)^{(1 - k)} \\
+\Downarrow \\
+k = \left\{ \begin{array}{l} 1 ~ \text{if success (T, Y) with probability }p \\ 0  ~ \text{if failure (F, N) with probability }(1 - p) \end{array} \right.
+$$
+ 
+where
+
+$$
+\text{Mean}(k) = p ~ ~ ~ ~ ~ \text{Var}(k) = p(1 - p)
+$$
+
+
+## Bernoulli distribution | Likelihood
+
+$$
+\mathcal{L}(k; p) = \prod_{i = 1}^n p^{k_i} (1 - p)^{(1 - k_i)} \\
+\Downarrow \\
+\log \mathcal{L}(k; p) = \log p \sum_{i = 1}^{n} k_{i} + \log (1-p) \sum_{i = 1}^{n} \left( 1 - k_{i} \right)
+$$
+ 
+
+## Bernoulli distribution
+
+Canonical link is the logit
+
+$$
+\log \left( \frac{\mu}{1 - \mu} \right) = \mathbf{X} \boldsymbol{\beta} \\
+\Downarrow \\
+\mu = \frac{\exp (\mathbf{X} \boldsymbol{\beta})}{1 + \exp (\mathbf{X} \boldsymbol{\beta})}
+$$
+
+
+## Logit link
+
+```{r logit_link, fig.height=4.5, fig.width=5.5, fig.align='center'}
+## set plot area
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0),
+    cex.lab = 1.5)
+
+## logit link
+plot(seq(-100,100)/10, plogis(seq(-100,100)/10), las = 1, type = "l", lwd = 2, col = "blue",
+     ylab = expression(italic(g(mu))), xlab = expression(italic(mu)),
+     main = "")
+```
+
+
+## Logistic regression
+
+Similar to other regression in that we assume
+ 
+* the predictors are linear
+
+* the observations are independent of one another
+
+* no(ish) multicollinearity among predictors
+
+
+## Logistic regression
+
+Different from other regression in that
+ 
+* the response is binary
+
+* the relationship between response and predictors is often non-linear
+
+* the errors can be non-normal
+
+* the errors can be heteroscedastic
+
+
+## Logistic regression is a GLM
+
+We need 3 things to specify our GLM
+
+1. Distribution of the data: $y \sim \text{Bernoulli}(p)$
+
+2. Link function: $\text{logit}(p) = \log \left( \frac{p}{1 - p} \right) = \eta$
+
+3. Linear predictor: $\eta = \mathbf{X} \boldsymbol{\beta}$
+
+
+## Logistic regression
+
+The probability of a success is given by
+
+$$
+\begin{align}
+p &= \frac{\exp(\mathbf{X} \boldsymbol{\beta})}{1 + \exp(\mathbf{X} \boldsymbol{\beta})} \\
+~ \\
+ &= \frac{1}{1 + \exp(\text{-} \mathbf{X} \boldsymbol{\beta})}
+\end{align}
+$$
+
+
+## Logistic regression | Example
+
+Sockeye salmon are born in freshwater and rear there for some time before migrating to the ocean as *smolts*
+
+The age at which sockeye smolt can vary from 1 to 2 years, which is thought to depend on their body size
+
+Let's examine the relationship between fish length and its probability of smolting at age-2 instead of age-1
+
+
+## Smolt age versus length
+
+```{r smolt_age, fig.height=4, fig.width=6, fig.align='center'}
+set.seed(514)
+## sample size
+nn <- 80
+## intercept
+b0 <- -16
+## slope
+b1 <- 0.2
+## lengths
+sl <- seq(40, 120)
+ll <- sample(sl, nn, replace = TRUE)
+## probability as function of length
+pp <- 1 / (1 + exp(-(b0 + b1*ll)))
+## sim smolt age {0,1}
+yy <- rep(NA, nn)
+for(i in 1:nn) {
+  yy[i] <- rbinom(1, 1, pp[i])
+}
+
+## make data frame for model fitting
+df <- data.frame(length = ll, age = yy)
+
+clr <- viridis::plasma(1, 0.8, 0.5, 0.5)
+## set plot area
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0),
+    cex.lab = 1.5)
+## plot age v
+plot(ll, yy + 1, las = 1, pch = 16, cex = 1.3, col = clr,
+     yaxt = "n", ylab = "Smolt age", xlab = "Length (mm)")
+axis(2, at = c(1,2), las = 1)
+```
+
+
+## Smolt age versus length
+
+In **R** we use `glm()` to fit logistic regression models (and other GLMs)
+
+```{r fit_model, echo = TRUE}
+## fit model with glm
+fit_mod <- glm(age ~ length, data = df,
+               family = binomial(link = "logit"))
+faraway::sumary(fit_mod)
+```
+
+
+## Smolt age versus length
+
+The probability of smolting at age-2 is given by
+
+$$
+\begin{align}
+p_i &= \frac{1}{1 + \exp(\text{-} \mathbf{X}_i \boldsymbol{\beta})} \\
+  &\approx \frac{1}{1 + \exp(14 - 0.17 L_i)}
+\end{align}
+$$
+
+
+## Smolt age versus length
+
+We can get the fitted values with `predict()`
+
+```{r smolt_age_pred, echo = TRUE}
+## get fitted values
+newdata <- data.frame(length = seq(40, 120))
+p_hat <- 1 / (1 + exp(-predict(fit_mod, newdata)))
+```
+
+
+## Smolt age versus length
+
+```{r smolt_age_pred_plot, fig.height=4, fig.width=6, fig.align='center'}
+clr <- viridis::plasma(1, 0.8, 0.5, 0.5)
+## set plot area
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0),
+    cex.lab = 1.5)
+## plot age v
+plot(ll, yy + 1, las = 1, pch = 16, cex = 1.3, col = clr,
+     yaxt = "n", ylab = "Smolt age", xlab = "Length (mm)")
+lines(sl, p_hat + 1, lwd = 2)
+axis(2, at = c(1,2), las = 1)
+```
+
+
+## Smolt age versus length
+
+The length at which the probability of smolting at age-2 is 0.5
+
+$$
+\begin{align}
+0.5 &= \frac{1}{1 + \exp(14 - 0.17 L_{0.5})} \\
+2 &= 1 + \exp(14 - 0.17 L_{0.5}) \\
+1 &= \exp(14 - 0.17 L_{0.5}) \\
+0 &= 14 - 0.17 L_{0.5} \\
+0.17L_{0.5} &= 14 \\
+L_{0.5} &\approx 82 ~ \text{mm}
+\end{align}
+$$
+
+
+## Logistic regression and odds
+
+We have talked a bit about odds with respect to evidence ratios
+
+Odds $o$ are an unbounded alternative to probability $p$
+
+If we represent the $k$-to-1 odds against something as $1 / k$, then the following holds
+
+$$
+o = \frac{1}{1 - p} ~ \Rightarrow ~ p = \frac{o}{1 + o}
+$$
+
+
+## Logistic regression and odds
+
+$$
+\log \left( \frac{p}{1 - p} \right) = \mathbf{X} \boldsymbol{\beta} \\
+\Downarrow \\
+\log ( \text{odds} ) = \mathbf{X} \boldsymbol{\beta} \\
+\Downarrow \\
+\text{odds} = \exp (\mathbf{X} \boldsymbol{\beta})
+$$
+
+
+## Smolt age versus length
+
+```{r model_coef, echo = TRUE}
+## our fitted model
+faraway::sumary(fit_mod)
+```
+
+
+## Smolt age versus length
+
+$$
+\log \left( \frac{p}{1 - p} \right) = \text{-}14 + 0.17 L \\
+\Downarrow \\
+\log ( \text{odds} ) = \text{-}14 + 0.17 L
+$$
+
+<br>
+
+A unit increase in $L$ increases the log-odds by 0.17
+
+
+## Smolt age versus length
+
+$$
+\log \left( \frac{p}{1 - p} \right) = \text{-}14 + 0.17 L \\
+\Downarrow \\
+\log ( \text{odds} ) = \text{-}14 + 0.17 L \\
+\Downarrow \\
+\text{odds} = \exp (\text{-}14 + 0.17 L)
+$$
+
+<br>
+
+A unit increase in $L$ increases odds by exp(0.17) $\approx$ 1.19 = 19%
+
+
+# QUESTIONS?
+
+
+## Inference
+
+Consider 2 models, A & B, such that B is a subset of A
+
+A = $f(x_1, x_2)$
+
+B = $g(x_1)$
+
+We have seen that we can compare A & B via a likelihood ratio test
+
+$$ 
+\lambda = \text{-}2 \log \frac{\mathcal{L}_A}{\mathcal{L}_B} \sim \chi^2_{df = k_A - k_B}
+$$
+
+
+## Log-likelihood
+
+The log-likelihood using a logit link is 
+
+$$
+\log \mathcal{L}(k; p) = \log p \sum_{i = 1}^{n} k_{i} + \log (1-p) \sum_{i = 1}^{n} \left( 1 - k_{i} \right)
+$$
+
+
+## Deviance
+
+Deviance $D$ is a goodness-of-fit statistic
+
+It's a generalization of using the sum-of-squares of residuals in ordinary least squares to cases where model-fitting is achieved by maximum likelihood
+
+$$
+D = \text{-}2 \log \mathcal{L}
+$$
+
+
+## Deviance for logistic regression
+
+$$
+\begin{align}
+D &= \text{-}2 \left[ \log p \sum_{i = 1}^{n} k_{i} + \log (1-p) \sum_{i = 1}^{n} \left( 1 - k_{i} \right) \right] \\
+&= \text{-}2 \sum_{i = 1}^{n} \left[ p_i \text{logit}(p_i) + \log (1 - p_i) \right]
+\end{align}
+$$
+
+
+## Likelihood ratio test
+
+$$ 
+\lambda = \text{-}2 \log \frac{\mathcal{L}_A}{\mathcal{L}_B} \sim \chi^2_{df = k_A - k_B} \\
+\Downarrow \\
+\lambda = \text{-}2 (\log \mathcal{L}_A - \log \mathcal{L}_B) \sim \chi^2_{df = k_A - k_B} \\
+\Downarrow \\
+\lambda = D(B) - D(A) \sim \chi^2_{df = k_A - k_B}
+$$
+
+
+## Smolt age versus length
+
+The output from `glm()` includes the deviances for the full model and a null model with no predictors
+
+```{r model_dev_tbl, echo = TRUE}
+## our fitted model
+faraway::sumary(fit_mod)
+```
+
+
+## Smolt age versus length
+
+Likelihood ratio test for $H_0 : \beta_1 = 0$
+
+```{r model_dev, echo = TRUE}
+## deviance of full model
+D_full <- summary(fit_mod)$deviance
+## deviance of null model
+D_null <- summary(fit_mod)$null.deviance
+## test statistic
+lambda <- D_null - D_full
+## LRT with df = 1
+(p_value <- pchisq(lambda, 1, lower.tail = FALSE))
+```
+
+
+## Model selection via AIC
+
+$$
+\begin{align}
+AIC &= 2 k - 2 \log \mathcal{L} \\
+    &= 2 k + D
+\end{align}
+$$
+
+```{r model_aic, echo = TRUE, results='hold'}
+## AIC
+AIC(fit_mod) 
+## AIC via likelihood
+(2 * 2) - 2 * logLik(fit_mod)
+## AIC via deviance
+(2 * 2) + summary(fit_mod)$deviance
+```
+
+
+## Smolt age versus length
+
+Compare to a null model with no predictors
+
+```{r fit_null_model, echo = TRUE}
+## fit null model
+fit_null <- glm(age ~ 1, data = df,
+                family = binomial(link = "logit"))
+faraway::sumary(fit_null)
+```
+
+
+## Model selection via AIC
+
+```{r aic_compare, echo = TRUE}
+## difference in AIC
+AIC(fit_null) - AIC(fit_mod)
+```
+
+## Significance test for $\beta_i$
+
+An alternative to the $\chi^2$ test is a $z$ test
+
+$$
+z = \frac{\hat{\beta_i}}{\text{SE}(\hat{\beta_i})} \sim z_{\alpha / 2}
+$$
+
+
+## Significance test for $\beta_i$
+
+```{r z_test, echo = TRUE}
+## summary table
+faraway::sumary(fit_mod)
+```
+
+
+## Confidence interval for $\beta_i$
+
+We can also compute a 100(1 - $\alpha$)% confidence interval
+
+$$
+\hat{\beta_i} \pm z_{\alpha / 2} \text{SE}(\hat{\beta_i})
+$$
+
+
+## Confidence interval for $\beta_i$
+
+```{r ci95, echo = TRUE}
+## beta
+beta_1 <- coef(fit_mod)[2]
+## SE of beta
+se_beta_1 <- sqrt(diag(vcov(fit_mod)))[2]
+## 95% CI
+beta_1 + c(-1,1) * 1.96 * se_beta_1
+```
+
+
+## Confidence interval for $\beta_i$
+
+Due to possible bias in $\text{SE}(\beta)$, we can compute CI's based on the *profile likelihood*
+
+```{r profile_LL, echo = TRUE}
+## number of points to profile
+nb <- 200
+## possible beta's
+beta_hat <- seq(0, 0.4, length = nb)
+## calculate neg-LL of possible beta's
+pl <- rep(NA, nb)
+for(i in 1:nb) {
+  mm <- glm(age ~ 1 + offset(beta_hat[i] * length), data = df,
+            family = binomial(link = "logit"))
+  pl[i] <- -logLik(mm)
+}
+```
+
+
+## Confidence interval for $\beta_i$
+
+```{r plot_profile, fig.height=4.5, fig.width=5.5, fig.align='center', message = FALSE}
+## set plot area
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0),
+    cex.lab = 1.5)
+
+## plot likelihood profile
+plot(beta_hat, pl, type = "l", las = 1,
+     ylab = "Negative log-likelihood", xlab = expression(beta))
+crit <- -(logLik(fit_mod) - qchisq(0.95, 1) / 2)
+abline(h = crit, lty = "dashed")
+points(confint(fit_mod)[2,], c(crit, crit), pch = 16, col = "blue")
+```
+
+## Confidence interval for $\beta_i$
+
+We can compute CI's based on the profile likelihood with `confint()`
+
+```{r ci95_profile, echo = TRUE}
+## 95% CI via profile likelihood
+confint(fit_mod)
+```
+
+
+## Model diagnostics
+
+As with other models, it's important to examine diagnostic checks for our fitted models
+
+
+## Residuals
+
+We usually think about residuals $e$ as
+
+$$
+e = y - \hat{y}
+$$
+
+With logistic regression, the response can take 1 of 2 possible values
+
+
+## Residuals
+
+```{r plot_std_resids, fig.height=4, fig.width=7.5, fig.align='center'}
+## raw residuals
+res_raw <- df$age - predict(fit_mod, type = "response")
+## equivalently
+res_raw <- residuals(fit_mod, type = "response")
+
+## set plot area
+par(mfrow = c(1, 2),
+    mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0),
+    cex.lab = 1.5)
+
+## plot resids vs eta
+plot(predict(fit_mod), res_raw, las = 1, pch = 16,
+     ylab = "Residuals", xlab = "Linear predictor",
+     main = "")
+## plot resids vs response
+plot(predict(fit_mod, type = "response"), res_raw, las = 1, pch = 16,
+     ylab = "Residuals", xlab = "Response",
+     main = "")
+```
+
+
+## Deviance residuals
+
+We can instead use the *deviance residuals*
+
+$$
+e_i = (2 y_i - 1) D_i
+$$
+
+$2 y - 1$ is 1 (-1) if y is 1 (0)
+
+<br>
+
+This is the default for `residuals()`
+
+
+## Deviance residuals
+
+We then place the deviance residuals into bins for easier inspection
+
+* Sensitive to the number of bins (~30/bin is good)
+
+* Mean of $e$ not constrained to 0
+
+* Check to see that ~95% of points fall within the CI
+
+<br>
+
+Can use `binnedplot()` from the **arm** package to do this
+
+
+## Deviance residuals
+
+```{r plot_dev_resids, fig.height=4.5, fig.width=4.5, fig.align='center', message = FALSE}
+library(arm)
+
+## set plot area
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0),
+    cex.lab = 1.5)
+
+## plot resids vs eta
+binnedplot(fitted(fit_mod), residuals(fit_mod), las = 1, pch = 16,
+     ylab = "Residuals", xlab = "Fitted values",
+     main = "")
+```
+
+
+## $Q$-$Q$ plots
+
+We can examine a $Q$-$Q$ plot, but there is no assumption that the $e$ are normal
+
+It can help to identify unusual points
+
+
+## $Q$-$Q$ plots
+
+```{r qq_plot, fig.height=4.5, fig.width=4.5, fig.align='center'}
+## set plot area
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0),
+    cex.lab = 1.5)
+## Q-Q plot
+qqnorm(residuals(fit_mod), las = 1, pch = 16, main = "")
+qqline(residuals(fit_mod))
+```
+
+
+## Leverage
+
+We can also calculate the leverages $h$ to look for unusual observation in *predictor space*
+
+Recall we are potentially concerned about $h > 2 \frac{k}{n}$
+
+<br>
+
+We can use `faraway::halfnorm()`
+
+
+## Leverage
+
+```{r leverage, fig.height=4.5, fig.width=4.5, fig.align='center'}
+## set plot area
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0),
+    cex.lab = 1.5)
+
+h_crit <- 2 * length(coef(fit_mod)) / nn
+
+## halfnormal plot
+faraway::halfnorm(hatvalues(fit_mod), las = 1)
+text(0, 0.92*par("usr")[4], substitute(italic(h[crit]) == h_crit, list(h_crit = h_crit)), pos = 4)
+```
+
+
+## Cook's Distance
+
+Recall that we can use Cook's $D$ to identify potentially influential points
+
+$$
+D_{i}=e_{i}^{2} \frac{1}{k}\left(\frac{h_{i}}{1-h_{i}}\right)
+$$
+
+## Cook's Distance
+
+```{r cooks, fig.height=4.5, fig.width=4.5, fig.align='center'}
+## set plot area
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0),
+    cex.lab = 1.5)
+
+## halfnormal plot
+faraway::halfnorm(cooks.distance(fit_mod), las = 1)
+```
+
+
+
+
 
 
