@@ -13,11 +13,6 @@ knitr::opts_chunk$set(echo = FALSE)
 ```
 
 
-## Reminder
-
-__Your project plan is due today__
-
-
 ## Goals for today
 
 * Understand the characteristics of binary data and the Bernoulli distribution
@@ -280,17 +275,14 @@ axis(2, at = c(1,2), las = 1)
 
 ## Smolt age versus length
 
-The length at which the probability of smolting at age-2 is 0.5
+What is the length at which the probability of smolting at age-2 is 0.5?
 
 $$
-\begin{align}
-0.5 &= \frac{1}{1 + \exp(14 - 0.17 L_{0.5})} \\
-2 &= 1 + \exp(14 - 0.17 L_{0.5}) \\
-1 &= \exp(14 - 0.17 L_{0.5}) \\
-0 &= 14 - 0.17 L_{0.5} \\
-0.17L_{0.5} &= 14 \\
-L_{0.5} &\approx 82 ~ \text{mm}
-\end{align}
+p_i = \frac{1}{1 + \exp(\text{-} \mathbf{X}_i \boldsymbol{\beta})} \\
+\Downarrow \\
+0.5 = \frac{1}{1 + \exp(14 - 0.17 L_{0.5})} \\
+\Downarrow \\
+L_{0.5} \approx 82 ~ \text{mm}
 $$
 
 
@@ -306,10 +298,16 @@ $$
 o = \frac{1}{1 - p} ~ \Rightarrow ~ p = \frac{o}{1 + o}
 $$
 
+<br>
+
+For example, if $p$ = 0.8, then $o = \frac{1}{1 - 0.8} = 5$
+
 
 ## Logistic regression and odds
 
 $$
+\text{logit}(p) = \mathbf{X} \boldsymbol{\beta} \\
+\Downarrow \\
 \log \left( \frac{p}{1 - p} \right) = \mathbf{X} \boldsymbol{\beta} \\
 \Downarrow \\
 \log ( \text{odds} ) = \mathbf{X} \boldsymbol{\beta} \\
@@ -705,15 +703,30 @@ $$
 
 ## Cook's Distance
 
-```{r cooks, fig.height=4.5, fig.width=4.5, fig.align='center'}
+```{r cooks, fig.height=4.5, fig.width=7.5, fig.align='center'}
 ## set plot area
-par(mai = c(0.9, 0.9, 0.1, 0.1),
+par(mfrow = c(1, 2),
+    mai = c(0.9, 0.9, 0.1, 0.1),
     omi = c(0, 0, 0, 0),
     cex.lab = 1.5)
 
+## Cook's D
+CD <- cooks.distance(fit_mod)
+
 ## halfnormal plot
-faraway::halfnorm(cooks.distance(fit_mod), las = 1)
+faraway::halfnorm(CD, las = 1)
+
+## plot age v
+plot(ll, yy + 1, las = 1, pch = 16, cex = 1.3, col = clr,
+     yaxt = "n", ylab = "", xlab = "Length (mm)")
+lines(sl, p_hat + 1, lwd = 2)
+points(df[43,"length"], df[43, "age"] + 1, pch = 1, cex = 2)
+text(df[43,"length"], df[43, "age"] + 1, "43", pos = 1, offset = 0.8)
+mtext(side = 2, "Smolt age", line = 1, cex = 1.5)
+axis(2, at = c(1,2), las = 1)
 ```
+
+
 
 
 
