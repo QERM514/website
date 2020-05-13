@@ -222,11 +222,11 @@ binary_GLM <- list(
 
 overdispersed_binary <- list(
   title = "Overdispersion in binary data",
-  topics = c("<b>Overdispersion in binary data</b>", "Variance inflation", "Beta-binomial models", "Quasi-likelihood"),
-  pdf = c(""),
-  rmd = c(""),
-  html = c(""),
-  background = "",
+  topics = c("Variance inflation", "Beta-binomial modes", "Quasi-likelihood"),
+  pdf = "lectures/week_07/lec_20_overdispersed_binary_data.pdf",
+  rmd = "lectures/week_07/lec_20_overdispersed_binary_data.Rmd",
+  html = "lectures/week_07/lec_20_overdispersed_binary_data.html",
+  background = c("[Faraway (2016) Chap 2 & 3](references/Faraway_2016_Extending_the_Linear_Models_with_R.pdf)"),
   zoom = ""
 )
 
