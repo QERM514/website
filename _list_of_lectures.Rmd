@@ -227,7 +227,7 @@ overdispersed_binary <- list(
   rmd = "lectures/week_07/lec_20_overdispersed_binary_data.Rmd",
   html = "lectures/week_07/lec_20_overdispersed_binary_data.html",
   background = c("[Faraway (2016) Chap 2 & 3](references/Faraway_2016_Extending_the_Linear_Models_with_R.pdf)"),
-  zoom = ""
+  zoom = "https://washington.zoom.us/rec/share/5JxKM7HvzztIHJH8yFHnWox8E6naeaa803MW-vILz0cJek0GnE-T2mjyxuq6WvGg"
 )
 
 count_GLM <- list(
