@@ -1,5 +1,5 @@
 ---
-title: "Overdispersed binary data"
+title: "Overdispersion in binary data"
 subtitle: "Analysis of Ecological and Environmental Data<br>QERM 514"
 author: "Mark Scheuerell"
 date: "13 May 2020"
@@ -14,5 +14,709 @@ knitr::opts_chunk$set(echo = FALSE)
 
 
 ## Goals for today
+
+* Understand how to evaluate goodness-of-fit for binomial data
+
+> - Understand the notion of *overdispersion* in binomial data
+
+> - Understand the options for modeling overdispersed binomial data
+
+> - Understand the pros & cons of the modeling options
+
+
+## Goodness-of-fit
+
+How well does our model fit the data?
+
+A simple check is a $\chi^2$ test for the *standardized residuals*
+
+$$
+e_i = \frac{y_i - \hat{y}_i}{\text{SD}(y_i)} = \frac{y_i - \hat{y}_i}{\sqrt{(\hat{y}_i (1 - \hat{y}_i))}} \\
+\Downarrow \\
+\sum_{i = 1}^n e_i \sim \chi^2_{(n - k - 1)}
+$$
+
+
+## Smolt age versus length
+
+```{r smolt_age, fig.height=4, fig.width=6, fig.align='center'}
+set.seed(514)
+## sample size
+nn <- 80
+## intercept
+b0 <- -16
+## slope
+b1 <- 0.2
+## lengths
+sl <- seq(40, 120)
+ll <- sample(sl, nn, replace = TRUE)
+## probability as function of length
+pp <- 1 / (1 + exp(-(b0 + b1*ll)))
+## sim smolt age {0,1}
+yy <- rep(NA, nn)
+for(i in 1:nn) {
+  yy[i] <- rbinom(1, 1, pp[i])
+}
+
+## make data frame for model fitting
+df <- data.frame(length = ll, age = yy)
+
+## fit model with glm
+fit_mod <- glm(age ~ length, data = df,
+               family = binomial(link = "logit"))
+
+## get fitted values
+newdata <- data.frame(length = seq(40, 120))
+p_hat <- 1 / (1 + exp(-predict(fit_mod, newdata)))
+
+clr <- viridis::plasma(1, 0.8, 0.5, 0.5)
+## set plot area
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0),
+    cex.lab = 1.5)
+## plot age v
+plot(ll, yy + 1, las = 1, pch = 16, cex = 1.3, col = clr,
+     yaxt = "n", ylab = "Smolt age", xlab = "Length (mm)")
+lines(seq(40, 120), p_hat + 1, lwd = 2)
+axis(2, at = c(1,2), las = 1)
+```
+
+
+## Smolt age versus length
+
+```{r chi_test, echo = TRUE}
+## residuals
+ee <- residuals(fit_mod, type = "response")
+## fitted values
+y_hat <- fitted(fit_mod)
+## standardized residuals
+rr <- ee / (y_hat * (1 - y_hat))
+## test stat
+x2 <- sum(rr)
+## chi^2 test
+pchisq(x2, nn - length(coef(fit_mod)) - 1, lower.tail = FALSE)
+```
+
+The $p$-value is large so we detect no lack of fit
+
+
+## Binned predictions
+
+It's hard to compare our predictions on the interval [0,1] to discrete binary outcomes {0,1}
+
+To help, we can compute $\hat{y}$ for *bins of data*
+
+
+## Binned predictions
+
+```{r smolt_age_binned, fig.height=4, fig.width=6, fig.align='center'}
+## set plot area
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0),
+    cex.lab = 1.5)
+## plot age v
+plot(ll, yy + 1, las = 1, pch = 16, cex = 1.3, col = clr,
+     yaxt = "n", ylab = "Smolt age", xlab = "Length (mm)")
+abline(v = c(seq(40, 120, 10)), lty = "dashed")
+axis(2, at = c(1,2), las = 1)
+```
+
+
+## Binned predictions
+
+```{r smolt_age_binned_2, fig.height=4, fig.width=6, fig.align='center'}
+## cut data
+l_cut <- cut(df$length, seq(40, 120, 10))
+y_bin <- by(df$age, l_cut, mean)
+y_cut <- cut(fitted(fit_mod), quantile(fitted(fit_mod), probs = seq(0, 1, 1/8)))
+p_bin <- by(fitted(fit_mod), y_cut, mean)
+  
+## set plot area
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0),
+    cex.lab = 1.5)
+## plot age v
+plot(ll, yy + 1, las = 1, pch = 16, cex = 1.3, col = clr,
+     yaxt = "n", ylab = "Smolt age", xlab = "Length (mm)")
+lines(seq(40, 120), p_hat + 1, lwd = 2, col = "gray")
+points(seq(45, 115, 10), y_bin + 1, pch = 16, cex = 1.2)
+abline(v = c(seq(40, 120, 10)), lty = "dashed")
+axis(2, at = c(1,2), las = 1)
+```
+
+
+## Binned predictions
+
+```{r bin_obs_pred, fig.height=4.5, fig.width=4.5, fig.align='center'}
+## set plot area
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0),
+    cex.lab = 1.5)
+## plot age v
+plot(p_bin, y_bin, las = 1, pch = 16, cex = 1.3,
+     ylab = "Predicted", xlab = "Observed")
+abline(a = 0, b = 1, col = "gray")
+```
+
+
+## Hosmer-Lemeshow test
+
+We can formalize this binned comparison with the Hosmer-Lemeshow test
+
+$$
+HL = \sum_{j = 1}^J \frac{(y_j - m_j \hat{p}_J)^2}{m_j \hat{p}_J(1 - \hat{p}_J)} \sim \chi^2_{(J - 1)}
+$$
+
+<br>
+
+where $J$ is the number of groups and $y_j = \sum y_{i = j}$
+
+
+## Hosmer-Lemeshow test
+
+We can perform the H-L test with `generalhoslem::logitgof()`
+
+```{r HL_test, echo = TRUE, warning = FALSE}
+## H-L test with 8 groups
+generalhoslem::logitgof(obs = df$age, exp = fitted(fit_mod), g = 8)
+```
+
+The $p$-value is large so we conclude an adequate fit
+
+
+## Classification scoring
+
+Another means for evaluating goodness-of-fit is *classification scoring*
+
+We can use our model to predict the outcome for each individual, such that
+
+* if $p_i < 0.5$ then $\hat{y}_i = 0$
+
+* if $p_i \geq 0.5$ then $\hat{y}_i = 1$
+
+
+## Classification scoring {.smaller}
+
+```{r xtab, echo = TRUE}
+## predicted ages
+pred_age <- ifelse(fitted(fit_mod) < 0.5, 1, 2)
+## observed ages
+obs_age = df$age + 1
+## contingency table
+(ct <- xtabs(~ obs_age + pred_age))
+## correct classification
+sum(diag(ct)) / nn
+```
+
+
+## Classification scoring | Specificity
+
+Ability to predict age-1 when fish *do* smolt at age-1
+
+```{r class_spec}
+xtabs(~ obs_age + pred_age)
+```
+
+35 / (35 + 5) = 87.5%
+
+
+## Classification scoring | Sensitivity
+
+Ability to predict age-2 when fish *do* smolt at age-2
+
+```{r class_sens}
+xtabs(~ obs_age + pred_age)
+```
+
+35 / (5 + 35) = 87.5%
+
+
+## Proportion of variance explained
+
+Calculating $R^2$ for logistic models is not the same as linear models
+
+Given the deviance $D_M$ for our model and a null model $D_0$,
+
+$$
+R^2 = \frac{1 - \exp \left( [D_M - D_0]/n \right)}{1 - \exp(\text{-}D_0 / n)}
+$$
+
+
+## Proportion of variance explained
+
+Here is the $R^2$ for our smolt-at-age model
+
+```{r R2, echo = TRUE}
+## deviances
+DM <- fit_mod$deviance
+D0 <- fit_mod$null.deviance
+# R^2
+R2 <- (1 - exp((DM - D0) / nn)) / (1 - exp(-D0 / nn))
+round(R2, 2)
+```
+
+
+# QUESTIONS?
+
+
+## Lack of fit
+
+If our model fits the data well, we expect the deviance $D$ to be $\chi^2$ distributed
+
+Sometimes, however, the deviance is larger than expected
+
+
+## Lack of fit
+
+What leads to a lack of fit?
+
+* model mis-specification
+
+* outliers
+
+* non-linear relationship between $x$ and $\eta$
+
+* non-independence in the observed data
+
+
+## Overdispersion
+
+Recall that the variance for a binomial of size $n$ is given by
+
+$$
+\text{Var}(y) = n p (1 - p)
+$$
+
+If $\text{Var}(y) > n p (1 - p)$ this is called *overdispersion* 
+
+
+## Overdispersion
+
+Overdispersion generally arises in 2 ways related to IID errors
+
+1) trials occur in groups & $p$ is not constant among groups
+
+2) trials are not independent
+
+
+## Overdispersion
+
+To address overdispersion, we can include the *dispersion* parameter $c$, such that
+
+$$
+\text{Var}(y) = c n p (1 - p)
+$$
+
+<br>
+
+$c$ is also called the *variance inflation factor*
+
+
+## Overdispersion
+
+We can estimate $c$ from the deviance $D$ as
+
+$$
+\hat{c} = \frac{D}{n - k}
+$$
+
+
+## Aside: Pearson's $\chi^2$ statistic
+
+Pearson's $\chi^2$ statistic is similar to the deviance
+
+$$
+X^2 = \sum_{i = 1}^n \frac{(O_i - E_i)^2}{E_i} \sim \chi^2_{(n - 1)}
+$$
+
+<br>
+
+where $O_i$ is the observed count and $E_i$ is the expected count
+
+
+## Aside: Pearson's $\chi^2$ statistic
+
+For a binomial distribution
+
+$$
+X^2 = \sum_{i = 1}^n \frac{(O_i - E_i)^2}{E_i} \\
+\Downarrow \\
+X^2 = \sum_{i = 1}^n \frac{(y_i - n_i \hat{p}_i)^2}{n_i \hat{p}_i (1 - \hat{p}_o)}
+$$
+
+
+## Overdispersion
+
+We can estimate $c$ as
+
+$$
+\hat{c} = \frac{X^2}{n - k}
+$$
+
+
+## Effects on parameter estimates
+
+The estimate of $\hat{\boldsymbol{\beta}}$ is *not* affected by overdispersion...
+
+but the variance of $\hat{\boldsymbol{\beta}}$ *is* affected, such that
+
+$$
+\text{Var}(\hat{\boldsymbol{\beta}}) = \hat{c} \left( \mathbf{X}^{\top} \hat{\mathbf{W}} \mathbf{X} \right)^{-1}
+$$
+
+$$
+\mathbf{W} = 
+\begin{bmatrix}
+y_1 & 0 & \dots & 0 \\
+0 & y_2 & \dots & 0 \\
+\vdots & \vdots & \ddots & \vdots \\
+0 & 0 & \dots & y_n 
+\end{bmatrix}
+$$
+
+## Elk in clear cuts
+
+Elk are known to use clear cuts for browsing
+
+In general, the probability of finding elk decreases with height of underbrush
+
+
+## &nbsp; {data-background=elk_clearcut.jpg data-background-size=100%}
+
+
+## Elk in clear cuts
+
+Consider an observational study to estimate the probability of finding elk as a function of underbrush height
+
+* 29 forest sections were sampled for elk pellets along line transects
+
+* mean height of underbrush recorded for each section
+
+* presence/absence of pellets recorded at 9-13 points per transect
+
+
+## Elk in clear cuts
+
+```{r elk_clear, fig.height=4.5, fig.width=6, fig.align='center'}
+set.seed(514)
+## sample size
+nn <- 29
+## intercept
+b0 <- 2
+## slope
+b1 <- -1
+## VIF
+vif <- 3
+## heights
+sl <- seq(90, 330)/100
+hh <- sample(sl, nn, replace = TRUE)
+## plots per forest section
+ll <- sample(seq(9, 13), nn, replace = TRUE)
+## probability as function of height
+pp <- 1 / (1 + exp(-(b0 + b1*hh)))
+## sim smolt age {0,1}
+yy <- rep(NA, nn)
+for(i in 1:nn) {
+  yy[i] <- rmutil::rbetabinom(1, ll[i], pp[i], vif)
+#  yy[i] <- rbinom(1, ll[i], pp[i])
+}
+
+## make data frame for model fitting
+df <- data.frame(veg_height = hh, plots = ll, pellets = yy)
+
+clr <- viridis::viridis(1, 0.8, 0.5, 0.5)
+## set plot area
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0),
+    cex.lab = 1.5)
+## plot age v
+plot(hh, yy/ll, las = 1, pch = 16, cex = 1.3, col = clr,
+     ylab = "Prop. of plots with pellets", xlab = "Mean underbrush height (m)")
+```
+
+
+## Elk in clear cuts
+
+A glimpse of the pellet data
+
+```{r elk_peek}
+head(df, 12)
+```
+
+
+## Elk in clear cuts
+
+```{r elk_model_binom, echo = TRUE}
+## fit model with glm
+elk_mod <- glm(cbind(pellets, plots - pellets) ~ veg_height, data = df,
+               family = binomial(link = "logit"))
+faraway::sumary(elk_mod)
+```
+
+## Elk in clear cuts {.smaller}
+
+```{r elk_model_over, echo = TRUE}
+## original fit
+faraway::sumary(elk_mod)
+## overdispersion parameter
+c_hat <- deviance(elk_mod) / (nn- 1)
+## re-scaled estimates
+faraway::sumary(elk_mod, dispersion = c_hat)
+```
+
+
+## Quasi-AIC
+
+For binomial models with overdispersion, we can modify AIC
+
+$$
+AIC = 2 k - 2 \log \mathcal{L}
+$$
+
+to be a *quasi*-AIC
+
+$$
+QAIC = 2 k - 2 \frac{\log \mathcal{L}}{\hat{c}}
+$$
+
+
+## Elk in clear cuts
+
+Model selection results
+
+```{r qaic}
+## fit null
+elk_null <- glm(cbind(pellets, plots - pellets) ~ 1, data = df,
+                family = binomial(link = "logit"))
+
+## model selection results
+tbl_mods <- matrix(NA, 2, 6)
+rownames(tbl_mods) <- c("intercept + slope  ", "intercept only  ")
+colnames(tbl_mods) <- c("k", "neg-LL", "AIC", "deltaAIC", "QAIC", "deltaQAIC")
+tbl_mods[,1] <- c(2,1)
+tbl_mods[,2] <- round(-c(logLik(elk_mod), logLik(elk_null)), 1)
+tbl_mods[,3] <- round(c(AIC(elk_mod), AIC(elk_null)), 1)
+tbl_mods[,4] <- round(tbl_mods[,3] - min(tbl_mods[,3]), 1)
+tbl_mods[,5] <- round(2 * tbl_mods[,1] + 2 * tbl_mods[,2] / c_hat, 1)
+tbl_mods[,6] <- round(tbl_mods[,5] - min(tbl_mods[,5]), 1)
+tbl_mods
+```
+
+
+## Quasi-binomial models
+
+When the data are overdispersed, we can relate the mean and variance of the response to the linear predictor *without* additional information about the binomial distribution
+
+However, this creates problems when we want to make inference via hypothesis tests or CI's
+
+
+## Quasi-likelihood
+
+So far we have been using likelihood methods for known distributions
+
+Without a formal distribution for the data, we can use a *quasi-likelihood*
+
+
+## Quasi-likelihood
+
+Recall that for many distributions we use a *score* $(U)$ as part of the log-likelihood, which can be thought of as
+
+$$
+U \approx \frac{(\text{observation} - \text{expectation})}{\text{scale}}
+$$
+
+
+## Quasi-likelihood
+
+Recall that for many distributions we use a *score* $(U)$ as part of the log-likelihood, which can be thought of as
+
+$$
+U = \frac{(\text{observation} - \text{expectation})}{\text{scale}}
+$$
+
+<br>
+
+For example, a normal distribution has a score of
+
+$$
+U_i = \frac{(y_i - \mu)^2}{2 \sigma^2}
+$$
+
+
+## Quasi-likelihood
+
+Let's define the following score
+
+$$
+U_i = \frac{(y_i - \mu_i)^2}{\sigma^2 V(\mu_i)} \\
+\Downarrow \\
+\text{mean}(U) = 0 \\
+\text{Var}(U) = \frac{1}{\sigma^2 V(\mu_i)} \\
+$$
+
+<br>
+
+where $V(\mu)$ is a function of the covariates
+
+
+## Quasi-likelihood
+
+We now define $Q_i$ to be integral over all possible $y_i$ and $\mu_i$
+
+$$
+Q_i = \int_{y_i}^{\mu_i} \frac{(y_i - z)^2}{\sigma^2 V(z)} dz \\
+$$
+
+<br>
+
+which behaves like a log-likelihood function, such that the *quasi-likelihood* for all $n$ is
+
+$$
+Q = \sum_{i = 1}^{n} Q_i
+$$
+
+
+## Quasi-likelihood
+
+We can estimate $\boldsymbol{\beta}$ by maximizing $Q$ as with other distributions
+
+But we need to estimate $\sigma^2$ separately as
+
+
+$$
+\sigma^2 = \frac{X^2}{n - k}
+$$
+
+<br>
+
+where $X^2$ are the Pearson residuals as defined on slide #26
+
+
+## Elk in clear cuts
+
+Fitting a quasi-binomial model
+
+```{r quasi_binom, echo = TRUE}
+## quasi-binomial
+elk_quasi <- glm(cbind(pellets, plots - pellets) ~ veg_height, data = df,
+                 family = quasibinomial)
+faraway::sumary(elk_quasi)
+```
+
+
+## Elk in clear cuts {.smaller}
+
+```{r quasi_binom_compare, echo = TRUE}
+## quasi-binomial
+faraway::sumary(elk_quasi)
+## variance inflation
+faraway::sumary(elk_mod, dispersion = c_hat)
+```
+
+
+## Beta-binomial models
+
+Another option for binomial data is the beta distribution
+
+$$
+f(y ; \mu, \phi)=\frac{\Gamma(\phi)}{\Gamma(\mu \phi) \Gamma((1-\mu) \phi)} y^{\mu \phi-1}(1-y)^{(1-\mu) \phi-1}
+$$
+
+<br>
+
+with
+
+$$
+\text{mean}(y) = \mu \\
+\text{Var}(y) = \frac{\mu(1 - \mu)}{1 + \phi}
+$$
+
+
+## Beta-binomial models
+
+```{r beta_ex, fig.height=4.5, fig.width=7.5, fig.align='center'}
+## set plot area
+par(mfrow = c(1, 2),
+    mai = c(0.9, 0.9, 0.6, 0.1),
+    omi = c(0, 0, 0, 0),
+    cex.lab = 1)
+
+dbeta2 <- function(x, mu, phi = 1) {
+  dbeta(x, mu * phi, (1 - mu) * phi)
+}
+
+x <- seq(from = 0.01, to = 0.99, length = 200)
+
+xx <- cbind(x, x, x, x, x)
+
+## plot with small phi
+yy <- cbind(
+  dbeta2(x, 0.10, 5),
+  dbeta2(x, 0.25, 5),
+  dbeta2(x, 0.50, 5),
+  dbeta2(x, 0.75, 5),
+  dbeta2(x, 0.90, 5)
+)
+matplot(xx, yy, type = "l", lty = 1, col = "black", ylim = c(0, 15),
+        xlab = expression(italic(y)), ylab = "Density", main = expression(phi == 5))
+text(0.05, 12, "0.10")
+text(0.95, 12, "0.90")
+text(0.22, 2.8, "0.25")
+text(0.78, 2.8, "0.75")
+text(0.50, 2.3, "0.50")
+
+## plot with big phi
+yy <- cbind(
+  dbeta2(x, 0.10, 100),
+  dbeta2(x, 0.25, 100),
+  dbeta2(x, 0.50, 100),
+  dbeta2(x, 0.75, 100),
+  dbeta2(x, 0.90, 100)
+)
+matplot(xx, yy, type = "l", lty = 1, col = "black", ylim = c(0, 15),
+        xlab = expression(italic(y)), ylab = "Density", main = expression(phi == 100))
+text(0.10, 14.5, "0.10")
+text(0.90, 14.5, "0.90")
+text(0.25, 9.8, "0.25")
+text(0.75, 9.8, "0.75")
+text(0.50, 8.6, "0.50")
+```
+
+
+## Beta-binomial models
+
+We can use `gam()` from the **mgcv** package to fit beta-binomial models
+
+```{r beta_binom, echo = TRUE, warning = FALSE, message = FALSE}
+## load mgcv
+library(mgcv)
+## `gam()` needs proportions for the response
+df$prop <- df$pellets / df$plots
+## weight by num of plots per section
+wts <- df$plots / sum(df$plots)
+## fit model
+elk_betabin <- gam(prop ~ veg_height, weights = wts, data = df,
+                   family = betar(link = "logit"))
+```
+
+
+## Beta-binomial models {.smaller}
+
+```{r beta_binom_2, echo = TRUE, warning = FALSE, message = FALSE}
+## inspect beta-binomial fit
+summary(elk_betabin)
+```
+
+
+## Summary
+
+There are several ways to model overdispersed binomial data, each with its own pros and cons
+
+| Model             | Pros | Cons |
+|:------------------|:-----|:-----|
+| binomial          | Easy | Underestimates variance |
+| binomial with VIF | Easy; estimate of variance | Ad hoc |
+| quasi-binomial    | Easy; estimate of variance | No distribution for inference |
+| beta-binomial     | Strong foundation | Somewhat hard to implement |
 
 
