@@ -3253,7 +3253,7 @@ generalhoslem::logitgof(obs = df$age, exp = fitted(fit_mod), g = 8)</pre>
 <li><p>if \(p_i \geq 0.5\) then \(\hat{y}_i = 1\)</p></li>
 </ul>
 
-</article></slide><slide class=""><hgroup><h2>Classification scoring</h2></hgroup><article  id="classification-scoring-1" class="smaller">
+</article></slide><slide class=""><hgroup><h2>Classification scoring</h2></hgroup><article  class="smaller" id="classification-scoring-1">
 
 <pre class = 'prettyprint lang-r'>## predicted ages
 pred_age &lt;- ifelse(fitted(fit_mod) &lt; 0.5, 1, 2)
@@ -3479,7 +3479,7 @@ faraway::sumary(elk_mod)</pre>
 ## n = 29 p = 2
 ## Deviance = 60.28535 Null Deviance = 110.19068 (Difference = 49.90534)</pre>
 
-</article></slide><slide class=""><hgroup><h2>Elk in clear cuts</h2></hgroup><article  id="elk-in-clear-cuts-5" class="smaller">
+</article></slide><slide class=""><hgroup><h2>Elk in clear cuts</h2></hgroup><article  class="smaller" id="elk-in-clear-cuts-5">
 
 <pre class = 'prettyprint lang-r'>## original fit
 faraway::sumary(elk_mod)</pre>
@@ -3624,7 +3624,7 @@ faraway::sumary(elk_quasi)</pre>
 ## n = 29 p = 2
 ## Deviance = 60.28535 Null Deviance = 110.19068 (Difference = 49.90534)</pre>
 
-</article></slide><slide class=""><hgroup><h2>Elk in clear cuts</h2></hgroup><article  id="elk-in-clear-cuts-8" class="smaller">
+</article></slide><slide class=""><hgroup><h2>Elk in clear cuts</h2></hgroup><article  class="smaller" id="elk-in-clear-cuts-8">
 
 <pre class = 'prettyprint lang-r'>## quasi-binomial
 faraway::sumary(elk_quasi)</pre>
@@ -3678,31 +3678,33 @@ library(mgcv)
 ## `gam()` needs proportions for the response
 df$prop &lt;- df$pellets / df$plots
 ## weight by num of plots per section
-wts &lt;- df$plots / sum(df$plots)
+wts &lt;- df$plots / mean(df$plots)
 ## fit model
 elk_betabin &lt;- gam(prop ~ veg_height, weights = wts, data = df,
                    family = betar(link = &quot;logit&quot;))</pre>
 
-</article></slide><slide class=""><hgroup><h2>Beta-binomial models</h2></hgroup><article  id="beta-binomial-models-3" class="smaller">
+</article></slide><slide class=""><hgroup><h2>Beta-binomial models</h2></hgroup><article  class="smaller" id="beta-binomial-models-3">
 
 <pre class = 'prettyprint lang-r'>## inspect beta-binomial fit
 summary(elk_betabin)</pre>
 
 <pre >## 
-## Family: Beta regression(0.947) 
+## Family: Beta regression(1.466) 
 ## Link function: logit 
 ## 
 ## Formula:
 ## prop ~ veg_height
 ## 
 ## Parametric coefficients:
-##             Estimate Std. Error z value Pr(&gt;|z|)
-## (Intercept)    2.496      4.381   0.570    0.569
-## veg_height    -1.539      1.714  -0.898    0.369
+##             Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)   2.9214     0.7678   3.805 0.000142 ***
+## veg_height   -1.8090     0.3028  -5.974 2.32e-09 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
 ## 
-## R-sq.(adj) =   0.48   Deviance explained = -38.5%
-## -REML = -6.2244  Scale est. = 1         n = 29</pre>
+## R-sq.(adj) =  0.455   Deviance explained = -135%
+## -REML = -106.52  Scale est. = 1         n = 29</pre>
 
 </article></slide><slide class=""><hgroup><h2>Summary</h2></hgroup><article  id="summary">
 

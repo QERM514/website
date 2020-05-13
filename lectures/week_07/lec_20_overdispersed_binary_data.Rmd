@@ -693,7 +693,7 @@ library(mgcv)
 ## `gam()` needs proportions for the response
 df$prop <- df$pellets / df$plots
 ## weight by num of plots per section
-wts <- df$plots / sum(df$plots)
+wts <- df$plots / mean(df$plots)
 ## fit model
 elk_betabin <- gam(prop ~ veg_height, weights = wts, data = df,
                    family = betar(link = "logit"))
