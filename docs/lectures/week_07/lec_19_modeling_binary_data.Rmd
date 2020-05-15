@@ -193,9 +193,9 @@ set.seed(514)
 ## sample size
 nn <- 80
 ## intercept
-b0 <- -16
+b0 <- 16
 ## slope
-b1 <- 0.2
+b1 <- -0.2
 ## lengths
 sl <- seq(40, 120)
 ll <- sample(sl, nn, replace = TRUE)
@@ -216,9 +216,9 @@ par(mai = c(0.9, 0.9, 0.1, 0.1),
     omi = c(0, 0, 0, 0),
     cex.lab = 1.5)
 ## plot age v
-plot(ll, yy + 1, las = 1, pch = 16, cex = 1.3, col = clr,
+plot(ll, yy, las = 1, pch = 16, cex = 1.3, col = clr,
      yaxt = "n", ylab = "Smolt age", xlab = "Length (mm)")
-axis(2, at = c(1,2), las = 1)
+axis(2, at = c(0,1), labels = c(1,2), las = 1)
 ```
 
 
@@ -266,10 +266,10 @@ par(mai = c(0.9, 0.9, 0.1, 0.1),
     omi = c(0, 0, 0, 0),
     cex.lab = 1.5)
 ## plot age v
-plot(ll, yy + 1, las = 1, pch = 16, cex = 1.3, col = clr,
+plot(ll, yy, las = 1, pch = 16, cex = 1.3, col = clr,
      yaxt = "n", ylab = "Smolt age", xlab = "Length (mm)")
 lines(sl, p_hat + 1, lwd = 2)
-axis(2, at = c(1,2), las = 1)
+axis(2, at = c(0,1), labels = c(1,2), las = 1)
 ```
 
 
@@ -521,7 +521,7 @@ Due to possible bias in $\text{SE}(\beta)$, we can compute CI's based on the *pr
 ## number of points to profile
 nb <- 200
 ## possible beta's
-beta_hat <- seq(0, 0.4, length = nb)
+beta_hat <- seq(-0.4, 0, length = nb)
 ## calculate neg-LL of possible beta's
 pl <- rep(NA, nb)
 for(i in 1:nb) {
@@ -717,13 +717,13 @@ CD <- cooks.distance(fit_mod)
 faraway::halfnorm(CD, las = 1)
 
 ## plot age v
-plot(ll, yy + 1, las = 1, pch = 16, cex = 1.3, col = clr,
+plot(ll, yy, las = 1, pch = 16, cex = 1.3, col = clr,
      yaxt = "n", ylab = "", xlab = "Length (mm)")
-lines(sl, p_hat + 1, lwd = 2)
-points(df[43,"length"], df[43, "age"] + 1, pch = 1, cex = 2)
-text(df[43,"length"], df[43, "age"] + 1, "43", pos = 1, offset = 0.8)
+lines(sl, p_hat, lwd = 2)
+points(df[43,"length"], df[43, "age"], pch = 1, cex = 2)
+text(df[43,"length"], df[43, "age"], "43", pos = 3, offset = 0.8)
 mtext(side = 2, "Smolt age", line = 1, cex = 1.5)
-axis(2, at = c(1,2), las = 1)
+axis(2, at = c(0,1), labels = c(1,2), las = 1)
 ```
 
 

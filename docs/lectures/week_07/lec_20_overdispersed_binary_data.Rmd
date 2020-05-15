@@ -44,9 +44,9 @@ set.seed(514)
 ## sample size
 nn <- 80
 ## intercept
-b0 <- -16
+b0 <- 16
 ## slope
-b1 <- 0.2
+b1 <- -0.2
 ## lengths
 sl <- seq(40, 120)
 ll <- sample(sl, nn, replace = TRUE)
@@ -75,10 +75,10 @@ par(mai = c(0.9, 0.9, 0.1, 0.1),
     omi = c(0, 0, 0, 0),
     cex.lab = 1.5)
 ## plot age v
-plot(ll, yy + 1, las = 1, pch = 16, cex = 1.3, col = clr,
+plot(ll, yy, las = 1, pch = 16, cex = 1.3, col = clr,
      yaxt = "n", ylab = "Smolt age", xlab = "Length (mm)")
-lines(seq(40, 120), p_hat + 1, lwd = 2)
-axis(2, at = c(1,2), las = 1)
+lines(seq(40, 120), p_hat, lwd = 2)
+axis(2, at = c(0,1), labels = c(1,2), las = 1)
 ```
 
 
@@ -115,10 +115,10 @@ par(mai = c(0.9, 0.9, 0.1, 0.1),
     omi = c(0, 0, 0, 0),
     cex.lab = 1.5)
 ## plot age v
-plot(ll, yy + 1, las = 1, pch = 16, cex = 1.3, col = clr,
+plot(ll, yy, las = 1, pch = 16, cex = 1.3, col = clr,
      yaxt = "n", ylab = "Smolt age", xlab = "Length (mm)")
 abline(v = c(seq(40, 120, 10)), lty = "dashed")
-axis(2, at = c(1,2), las = 1)
+axis(2, at = c(0,1), labels = c(1,2), las = 1)
 ```
 
 
@@ -136,12 +136,12 @@ par(mai = c(0.9, 0.9, 0.1, 0.1),
     omi = c(0, 0, 0, 0),
     cex.lab = 1.5)
 ## plot age v
-plot(ll, yy + 1, las = 1, pch = 16, cex = 1.3, col = clr,
+plot(ll, yy, las = 1, pch = 16, cex = 1.3, col = clr,
      yaxt = "n", ylab = "Smolt age", xlab = "Length (mm)")
-lines(seq(40, 120), p_hat + 1, lwd = 2, col = "gray")
-points(seq(45, 115, 10), y_bin + 1, pch = 16, cex = 1.2)
+lines(seq(40, 120), p_hat, lwd = 2, col = "gray")
+points(seq(45, 115, 10), y_bin, pch = 16, cex = 1.2)
 abline(v = c(seq(40, 120, 10)), lty = "dashed")
-axis(2, at = c(1,2), las = 1)
+axis(2, at = c(0,1), labels = c(1,2), las = 1)
 ```
 
 
@@ -153,8 +153,8 @@ par(mai = c(0.9, 0.9, 0.1, 0.1),
     omi = c(0, 0, 0, 0),
     cex.lab = 1.5)
 ## plot age v
-plot(p_bin, y_bin, las = 1, pch = 16, cex = 1.3,
-     ylab = "Predicted", xlab = "Observed")
+plot(y_bin, rev(p_bin), las = 1, pch = 16, cex = 1.3,
+     ylab = "Observed", xlab = "Predicted")
 abline(a = 0, b = 1, col = "gray")
 ```
 
@@ -217,7 +217,7 @@ Ability to predict age-1 when fish *do* smolt at age-1
 xtabs(~ obs_age + pred_age)
 ```
 
-35 / (35 + 5) = 87.5%
+35 / (35 + 6) = 85.4%
 
 
 ## Classification scoring | Sensitivity
@@ -228,7 +228,7 @@ Ability to predict age-2 when fish *do* smolt at age-2
 xtabs(~ obs_age + pred_age)
 ```
 
-35 / (5 + 35) = 87.5%
+34 / (5 + 34) = 87.1%
 
 
 ## Proportion of variance explained
