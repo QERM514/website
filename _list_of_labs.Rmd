@@ -98,10 +98,10 @@ mixed_models <- list(
 ## 7 fitting glms
 fitting_glms <- list(
   title = "Fitting GLMs",
-  topics = c("Fitting GLMs"),
+  topics = c("Logistic regression models"),
   pdf = c(""),
-  rmd = c(""),
-  html = c(""),
+  rmd = c("labs/week_06/fitting_glms.Rmd"),
+  html = c("labs/week_06/fitting_glms.pdf"),
   zoom = "",
   data = "",
   background = c("")
