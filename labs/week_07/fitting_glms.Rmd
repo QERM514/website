@@ -1,0 +1,892 @@
+---
+title: "Working with logistc regression models"
+author: "Mark Scheuerell"
+date: "15 May 2020"
+output:
+  html_document:
+    theme: journal
+    highlight: textmate
+    toc: true
+    toc_float: true
+    toc_depth: 4
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE)
+```
+
+# Background
+
+These lab exercises focus on fitting and evaluating generalized linear models (GLMs). We'll use the examples we saw in lecture to demonstrate the various options in **R** for fitting models, evaluating their goodness-of-fit, and examining model diagnostics. In particular, we'll focus on logistic regression for binary data and Poisson regression for count data.
+
+## Components of a GLM
+
+As we saw in lecture, there are 3 important components to a GLM:
+
+1. Distribution of the data: $y \sim f_{\theta}(y)$
+
+2. Link function: $g(\eta)$
+
+3. Linear predictor: $\eta = \mathbf{X} \boldsymbol{\beta}$
+
+We are interested in the so-called *canonical links* for GLMs. Here is a summary table of the canonical links, and their mean functions, for three common distributions.
+
+| Distribution | Link name | Link function | Mean function |
+|:------------:|:-------------:|:-------------:|:-------------:|
+| Normal | Identity | $1(\mu) = \mathbf{X} \boldsymbol{\beta}$ | $\mu = \mathbf{X} \boldsymbol{\beta}$ |
+| Binomial | Logit | $\log \left( \frac{\mu}{1 - \mu} \right) = \mathbf{X} \boldsymbol{\beta}$ | $\mu = \frac{\exp (\mathbf{X} \boldsymbol{\beta})}{1 + \exp (\mathbf{X} \boldsymbol{\beta})}$ |
+| Poisson | Log | $\log (\mu) = \mathbf{X} \boldsymbol{\beta}$ | $\mu = \exp (\mathbf{X} \boldsymbol{\beta})$ |
+
+***
+
+# Logistic regression
+
+Logistic regression is used to model data consisting of binary (0/1) outcomes. The basis for these models is the binomial distribution, which has a probability mass function given by
+
+$$
+\Pr(k; n, p) = \left( \begin{array}{c} n \\ k \end{array} \right) p^k (1 - p)^{n - k} \\
+~ \\
+\left( \begin{array}{c} n \\ k \end{array} \right) = \frac{n!}{k!(n - k)!}
+$$
+
+When we have individual-level information on presence/absence, alive/dead, mature/immature, etc, the binomial is reduced to the special case where $n = 1$. Specifically, this is known as the Bernoulli distribution, where
+
+$$
+\Pr(k; n, p) = \left( \begin{array}{c} n \\ k \end{array} \right) p^k (1 - p)^{n - k} \\
+\Downarrow \\
+\Pr(k; p) = p^k (1 - p)^{(1 - k)} \\
+\Downarrow \\
+k = \left\{ \begin{array}{l} 1 ~ \text{if success (T, Y) with probability }p \\ 0  ~ \text{if failure (F, N) with probability }(1 - p) \end{array} \right.
+$$
+
+The mean and variance of the Bernoulli distribution are given by
+
+$$
+\text{Mean}(k) = p \\
+\text{Var}(k) = p(1 - p)
+$$
+
+## Model components
+
+The three components of a logistic regression model are
+
+$$
+\begin{aligned}
+\text{data distribution:} & ~~ y_i \sim \text{Bernoulli}(p_i) \\ \\
+\text{link function:} & ~~ \text{logit}(p_i) = \text{log}\left(\frac{p_i}{1-p_i}\right) = \eta_i \\ \\
+\text{linear predictor:} & ~~ \eta_i = \mathbf{X} \boldsymbol{\beta}
+\end{aligned}
+$$
+
+## Model for smolt age
+
+Sockeye salmon are born in freshwater and rear there for some time before migrating to the ocean as *smolts*. The age at which sockeye smolt can vary from 1 to 2 years, which is thought to depend on their body size. Let's examine the relationship between fish length and its probability of smolting at age-2 instead of age-1. Here are the data we saw in lecture.
+
+```{r smolt_age, fig.height=3, fig.width=6, fig.align='center'}
+set.seed(514)
+## sample size
+nn <- 80
+## intercept
+b0 <- -16
+## slope
+b1 <- 0.2
+## lengths
+sl <- seq(40, 120)
+ll <- sample(sl, nn, replace = TRUE)
+## probability as function of length
+pp <- 1 / (1 + exp(-(b0 + b1*ll)))
+## sim smolt age {0,1}
+yy <- rep(NA, nn)
+for(i in 1:nn) {
+  yy[i] <- rbinom(1, 1, pp[i])
+}
+
+## make data frame for model fitting
+df <- data.frame(length = ll, age = yy)
+
+clr <- viridis::plasma(1, 0.8, 0.5, 0.5)
+## set plot area
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0),
+    cex.lab = 1.5)
+## plot age v
+plot(ll, yy + 1, las = 1, pch = 16, cex = 1.3, col = clr,
+     yaxt = "n", ylab = "Smolt age", xlab = "Length (mm)")
+axis(2, at = c(1,2), las = 1)
+```
+
+
+### Fitting the model
+
+In **R** we use `glm()` to fit logistic regression models. To do so, we need to specify the three components of a GLM. As with regular linear models, we specify the linear predictors as `~ predictors`. The distribution is given by the argument `family = distribution` and the link is specified parenthetically within the distribution name `family = distribution(link = "link_name")`. Here is our model for smolt age as a function of length using a binomial distribution with a logit link.
+
+```{r fit_model, echo = TRUE}
+## fit model with glm
+fit_mod <- glm(age ~ length, data = df,
+               family = binomial(link = "logit"))
+faraway::sumary(fit_mod)
+```
+
+The probability of a "success" (i.e., a smolt of age-2) is given by
+
+$$
+\begin{align}
+p &= \frac{\exp(\mathbf{X} \boldsymbol{\beta})}{1 + \exp(\mathbf{X} \boldsymbol{\beta})} \\
+~ \\
+ &= \frac{1}{1 + \exp(\text{-} \mathbf{X} \boldsymbol{\beta})}
+\end{align}
+$$
+
+We can get the fitted values *on the scale of the linear predictor* with `predict()` and overlay the fit on the data.
+
+```{r smolt_age_pred, fig.height=3, fig.width=6, fig.align='center'}
+## get fitted values
+newdata <- data.frame(length = seq(40, 120))
+eta <- predict(fit_mod, newdata)
+p_hat <- 1 / (1 + exp(-eta))
+
+## set plot area
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0),
+    cex.lab = 1.5)
+
+## plot age vs length
+plot(ll, yy, pch = 16, cex = 1.3, col = clr,
+     yaxt = "n", ylab = "Smolt age", xlab = "Length (mm)")
+axis(2, at = c(0,1), labels = c(1,2), las = 1)
+## add model fit
+lines(sl, p_hat, lwd = 2)
+```
+
+#### Confidence interval on the fit
+
+We can estimate a confidence interval around our model fit using the `se.fit = TRUE` argument in the `predict()` function to obtain the standard errors on the model coefficients and then estimating the 100(1 - $\alpha$)% CI. Note, however, that one must be careful when doing so, such that we obtain the errors on the predictions with respect to the linear predictor, and not the response.
+
+Here is an example of how *not* to do it. By specifying `type = "response"` we are asking for the standard errors in the response space.
+
+```{r fit_CI_wrong, fig.height=3, fig.width=6, fig.align='center'}
+## get the SE of the response
+se_wrong <- predict(fit_mod, newdata, type = "response", se.fit = TRUE)$se.fit
+## wrong upper 95% CI
+wrong_up <- p_hat + 1.96*se_wrong
+## wrong lower 95% CI
+wrong_lo <- p_hat - 1.96*se_wrong
+
+## set plot area
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0),
+    cex.lab = 1.5)
+
+## plot age vs length
+plot(ll, yy, pch = 16, cex = 1.3, col = clr, ylim = c(-0.1, 1.1),
+     yaxt = "n", ylab = "Smolt age", xlab = "Length (mm)")
+axis(2, at = c(0,1), labels = c(1,2), las = 1)
+## add model fit
+lines(sl, p_hat, lwd = 2)
+## add wrong CI's
+lines(sl, wrong_up, lwd = 1, col = "gray")
+lines(sl, wrong_lo, lwd = 1, col = "gray")
+```
+
+Notice that the CI's overlap 0 and 1, which necessarily violates our constraint that probability must lie between 0 and 1.
+
+Now here's how to estimate the CI's properly.
+
+```{r fit_CI_right, fig.height=3, fig.width=6, fig.align='center'}
+## get the SE of the response
+se_right <- predict(fit_mod, newdata, type = "link", se.fit = TRUE)$se.fit
+## right upper 95% CI
+right_up <- 1 / (1 + exp(-(eta + 1.96*se_right)))
+## right lower 95% CI
+right_lo <- 1 / (1 + exp(-(eta - 1.96*se_right)))
+
+## set plot area
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0),
+    cex.lab = 1.5)
+
+## plot age vs length
+plot(ll, yy, pch = 16, cex = 1.3, col = clr, ylim = c(-0.1, 1.1),
+     yaxt = "n", ylab = "Smolt age", xlab = "Length (mm)")
+axis(2, at = c(0,1), labels = c(1,2), las = 1)
+## add model fit
+lines(sl, p_hat, lwd = 2)
+## add right CI's
+lines(sl, right_up, lwd = 1, col = "gray")
+lines(sl, right_lo, lwd = 1, col = "gray")
+```
+
+#### Finding the probability of 0.5
+
+Sometimes we would like to know at which level of the predictor variable do we expect an equal probability of obtaining a 0 or 1. In this case we can ask, "What is the length at which the probability of smolting at age-2 is 0.5?"
+
+$$
+p_i = \frac{1}{1 + \exp(\text{-} \mathbf{X}_i \boldsymbol{\beta})} \\
+\Downarrow \\
+0.5 = \frac{1}{1 + \exp(14 - 0.17 L_{0.5})} \\
+\Downarrow \\
+L_{0.5} \approx 82 ~ \text{mm}
+$$
+
+#### Computing the odds
+
+We have seen that we can express the results from a logistic regression in terms of the *odds*. The odds $o$ are an unbounded alternative to probability $p$, such that if we represent the $k$-to-1 odds against something as $1 / k$, then the following holds
+
+$$
+o = \frac{1}{1 - p} ~ \Rightarrow ~ p = \frac{o}{1 + o}
+$$
+
+So, for example, if $p$ = 0.8, then $o = \frac{1}{1 - 0.8} = 5$. In a logistic regression model, the logit function gives us the log odds, such that 
+
+$$
+\text{logit}(p) = \mathbf{X} \boldsymbol{\beta} \\
+\Downarrow \\
+\log \left( \frac{p}{1 - p} \right) = \mathbf{X} \boldsymbol{\beta} \\
+\Downarrow \\
+\log ( \text{odds} ) = \mathbf{X} \boldsymbol{\beta} \\
+\Downarrow \\
+\text{odds} = \exp (\mathbf{X} \boldsymbol{\beta})
+$$
+
+For our smolt age model, the log(odds) are
+
+$$
+\log \left( \frac{p}{1 - p} \right) = \text{-}14 + 0.17 L \\
+\Downarrow \\
+\log ( \text{odds} ) = \text{-}14 + 0.17 L
+$$
+
+which mean that a 1 mm increase in length $L$ increases the log-odds by 0.17. By the same reasoning, the odds themselves as given by
+
+$$
+\log \left( \frac{p}{1 - p} \right) = \text{-}14 + 0.17 L \\
+\Downarrow \\
+\log ( \text{odds} ) = \text{-}14 + 0.17 L \\
+\Downarrow \\
+\text{odds} = \exp (\text{-}14 + 0.17 L)
+$$
+
+such that a 1 mm increase in length $L$ increases the odds by exp(0.17) $\approx$ 1.19 = 19%.
+
+
+### Inference
+
+We have seen many ways to conduct inference on linear models. For GLMs, deviance $D$ is a goodness-of-fit statistic that is  a generalization of using the sum-of-squares of residuals in ordinary least squares to cases where model-fitting is achieved by maximum likelihood. The deviance is defined as 
+
+$$
+D = \text{-}2 \log \mathcal{L}
+$$
+
+We can use the deviance as part of a likelihood ratio test, such that
+
+$$ 
+\lambda = \text{-}2 \log \frac{\mathcal{L}_A}{\mathcal{L}_B} \sim \chi^2_{df = k_A - k_B} \\
+\Downarrow \\
+\lambda = \text{-}2 (\log \mathcal{L}_A - \log \mathcal{L}_B) \sim \chi^2_{df = k_A - k_B} \\
+\Downarrow \\
+\lambda = D(B) - D(A) \sim \chi^2_{df = k_A - k_B}
+$$
+
+The output from `glm()` includes the deviances for the full model and a null model with no predictors.
+
+```{r model_dev_tbl, echo = TRUE}
+## our fitted model
+faraway::sumary(fit_mod)
+```
+
+We can use a likelihood ratio test to evaluate the data support for the length predictor in our smolt model, where $H_0 : \beta_1 = 0$.
+
+```{r model_dev, echo = TRUE}
+## deviance of full model
+D_full <- summary(fit_mod)$deviance
+## deviance of null model
+D_null <- summary(fit_mod)$null.deviance
+## test statistic
+lambda <- D_null - D_full
+## LRT with df = 1
+(p_value <- pchisq(lambda, 1, lower.tail = FALSE))
+```
+
+This $p$-value is very small so we can reject $H_0$ and conclude that the effect of length is indeed non-zero.
+
+#### Significance test for $\beta_i$
+
+An alternative to the likelihood ratio test is a $z$ test, where
+
+$$
+z = \frac{\hat{\beta_i}}{\text{SE}(\hat{\beta_i})} \sim z_{\alpha / 2}
+$$
+
+The `summary()` output from a fitted GLM includes this the results of this test.
+
+```{r z_test, echo = TRUE}
+## summary table
+faraway::sumary(fit_mod)
+```
+
+As you can see, the $p$-value for the $z$ test is also very small.
+
+#### Confidence interval for $\beta_i$
+
+We can also compute a 100(1 - $\alpha$)% confidence interval on the regression coefficient as
+
+$$
+\hat{\beta_i} \pm z_{\alpha / 2} \text{SE}(\hat{\beta_i})
+$$
+
+which we do in **R** via
+
+```{r ci95, echo = TRUE}
+## beta
+beta_1 <- coef(fit_mod)[2]
+## SE of beta
+se_beta_1 <- sqrt(diag(vcov(fit_mod)))[2]
+## 95% CI
+beta_1 + c(-1,1) * 1.96 * se_beta_1
+```
+
+We can also compute CI's based on the profile likelihood with `confint()`
+
+```{r ci95_profile, echo = TRUE}
+## 95% CI via profile likelihood
+confint(fit_mod)
+```
+
+Due to possible bias in $\text{SE}(\beta)$, however, we can also compute CI's based on the *profile likelihood*, which we obtain by evaluating the likelihood along a sequence of possible parameter values.
+
+```{r profile_LL, fig.height=4.5, fig.width=5.5, fig.align='center', message = FALSE}
+## number of points to profile
+nb <- 200
+## possible beta's
+beta_hat <- seq(0, 0.4, length = nb)
+## calculate neg-LL of possible beta's
+pl <- rep(NA, nb)
+for(i in 1:nb) {
+  mm <- glm(age ~ 1 + offset(beta_hat[i] * length), data = df,
+            family = binomial(link = "logit"))
+  pl[i] <- -logLik(mm)
+}
+
+## set plot area
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0),
+    cex.lab = 1.5)
+
+## plot likelihood profile
+plot(beta_hat, pl, type = "l", las = 1,
+     ylab = "Negative log-likelihood", xlab = expression(beta))
+crit <- -(logLik(fit_mod) - qchisq(0.95, 1) / 2)
+abline(h = crit, lty = "dashed")
+points(confint(fit_mod)[2,], c(crit, crit), pch = 16, col = "blue")
+```
+
+#### Model selection via AIC
+
+As with other linear models, we can use AIC to help select among possible models. 
+
+$$
+\begin{align}
+AIC &= 2 k - 2 \log \mathcal{L} \\
+    &= 2 k + D
+\end{align}
+$$
+
+Here are three different ways to compute the AIC for our smolt age model.
+
+```{r model_aic, echo = TRUE, results='hold'}
+## AIC
+AIC(fit_mod) 
+## AIC via likelihood
+(2 * 2) - 2 * logLik(fit_mod)
+## AIC via deviance
+(2 * 2) + summary(fit_mod)$deviance
+```
+
+We can compare our model with length as a predictor to a null model with no predictors via the following code.
+
+```{r fit_null_model, echo = TRUE}
+## fit null model
+fit_null <- glm(age ~ 1, data = df,
+                family = binomial(link = "logit"))
+faraway::sumary(fit_null)
+
+## difference in AIC
+AIC(fit_null) - AIC(fit_mod)
+```
+
+### Diagnostics
+
+#### Residuals
+
+As with other models, it's important to examine diagnostic checks for our fitted models. One of the first things we can do is inspect the model residuals. We usually think about residuals $e$ as
+
+$$
+e = y - \hat{y}
+$$
+
+but with logistic regression, the response can take 1 of 2 possible values. Let's plot them to see how they look.
+
+```{r plot_std_resids, fig.height=4, fig.width=7.5, fig.align='center'}
+## raw residuals
+res_raw <- df$age - predict(fit_mod, type = "response")
+## equivalently
+res_raw <- residuals(fit_mod, type = "response")
+
+## set plot area
+par(mfrow = c(1, 2),
+    mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0),
+    cex.lab = 1.5)
+
+## plot resids vs eta
+plot(predict(fit_mod), res_raw, las = 1, pch = 16,
+     ylab = "Residuals", xlab = "Linear predictor",
+     main = "")
+## plot resids vs response
+plot(predict(fit_mod, type = "response"), res_raw, las = 1, pch = 16,
+     ylab = "Residuals", xlab = "Response",
+     main = "")
+```
+
+
+#### Deviance residuals
+
+We can instead use the *deviance residuals*, which we define as
+
+$$
+e_i = (2 y_i - 1) D_i
+$$
+
+where $2 y - 1 = 1$ if y is 1, and $2 y - 1 = -1$ if y is 0. These are the default residuals returned by `residuals()`. We then place the deviance residuals into bins for easier inspection, noting that 
+
+* it's sensitive to the number of bins (~30/bin is good)
+
+* the mean of $e$ is not constrained to be 0
+
+* ~95% of points should fall within the CI
+
+We can use `binnedplot()` from the **arm** package to do this automatically for us.
+
+```{r plot_dev_resids, fig.height=4.5, fig.width=4.5, fig.align='center', message = FALSE}
+library(arm)
+
+## set plot area
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0),
+    cex.lab = 1.5)
+
+## plot resids vs eta
+binnedplot(fitted(fit_mod), residuals(fit_mod), las = 1, pch = 16,
+     ylab = "Residuals", xlab = "Fitted values",
+     main = "")
+```
+
+
+#### Leverage
+
+We can also calculate the leverages $h$ to look for unusual observation in *predictor space*. Recall we are potentially concerned about any
+
+$$
+h_i > 2 \frac{k}{n}
+$$
+
+We can use `hatvalues()` to calculate the leverages and `faraway::halfnorm()` to plot them.
+
+```{r leverage, fig.height=4.5, fig.width=4.5, fig.align='center'}
+## set plot area
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0),
+    cex.lab = 1.5)
+
+## leverages
+levs <- hatvalues(fit_mod)
+
+## threshhold value
+h_crit <- 2 * length(coef(fit_mod)) / nn
+
+## halfnormal plot
+faraway::halfnorm(levs, las = 1)
+text(0, 0.92*par("usr")[4], substitute(italic(h[crit]) == h_crit, list(h_crit = h_crit)), pos = 4)
+```
+
+
+#### Cook's Distance
+
+Recall that we can also use Cook's $D$ to identify potentially influential points. Cook's $D$ is defined as
+
+$$
+D_{i}=e_{i}^{2} \frac{1}{k}\left(\frac{h_{i}}{1-h_{i}}\right)
+$$
+
+In general, we should be concerned about an $D_i > F^{(0.5)}_{n, n - k} \approx 1$. We can compute the $D_i$ with `cooks.distance()` and again use `faraway::halfnorm()` to plot them.
+
+```{r cooks, fig.height=3.5, fig.width=7.5, fig.align='center'}
+## set plot area
+par(mfrow = c(1, 2),
+    mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0),
+    cex.lab = 1.5)
+
+## Cook's D
+CD <- cooks.distance(fit_mod)
+
+## halfnormal plot
+faraway::halfnorm(CD, las = 1)
+
+## plot age v
+plot(ll, yy + 1, las = 1, pch = 16, cex = 1.3, col = clr,
+     yaxt = "n", ylab = "", xlab = "Length (mm)")
+lines(sl, p_hat + 1, lwd = 2)
+points(df[43,"length"], df[43, "age"] + 1, pch = 1, cex = 2)
+text(df[43,"length"], df[43, "age"] + 1, "43", pos = 1, offset = 0.8)
+mtext(side = 2, "Smolt age", line = 1, cex = 1.5)
+axis(2, at = c(1,2), las = 1)
+```
+
+The plot on the right shows the data, model fit, and the point with the largest $D$.
+
+### Goodness of fit
+
+Once we've fit a model, it's natural to ask, "How well does our model fit the data?" One simple check is a $\chi^2$ test on the *standardized residuals*
+
+$$
+e_i = \frac{y_i - \hat{y}_i}{\text{SD}(y_i)} = \frac{y_i - \hat{y}_i}{\sqrt{(\hat{y}_i (1 - \hat{y}_i))}} \\
+\Downarrow \\
+\sum_{i = 1}^n e_i \sim \chi^2_{(n - k - 1)}
+$$
+
+This is easy to do in **R**.
+
+```{r chi_test, echo = TRUE}
+## residuals
+ee <- residuals(fit_mod, type = "response")
+## fitted values
+y_hat <- fitted(fit_mod)
+## standardized residuals
+rr <- ee / (y_hat * (1 - y_hat))
+## test stat
+x2 <- sum(rr)
+## chi^2 test
+pchisq(x2, nn - length(coef(fit_mod)) - 1, lower.tail = FALSE)
+```
+
+The $p$-value is large so we detect no lack of fit
+
+
+#### Binned predictions
+
+It's hard to compare our predictions on the real interval [0,1] to discrete binary outcomes that take a value of 0 or 1. To help, we can compute $\hat{y}$ for *bins of data*. Here are the smolt age data split into 8 equal sized bins along the length predictor. 
+
+```{r smolt_age_binned_2, fig.height=4, fig.width=6, fig.align='center'}
+## cut data
+l_cut <- cut(df$length, seq(40, 120, 10))
+y_bin <- by(df$age, l_cut, mean)
+y_cut <- cut(fitted(fit_mod), quantile(fitted(fit_mod), probs = seq(0, 1, 1/8)))
+p_bin <- by(fitted(fit_mod), y_cut, mean)
+  
+## set plot area
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0),
+    cex.lab = 1.5)
+## plot age v
+plot(ll, yy + 1, las = 1, pch = 16, cex = 1.3, col = clr,
+     yaxt = "n", ylab = "Smolt age", xlab = "Length (mm)")
+lines(seq(40, 120), p_hat + 1, lwd = 2, col = "gray")
+points(seq(45, 115, 10), y_bin + 1, pch = 16, cex = 1.2)
+abline(v = c(seq(40, 120, 10)), lty = "dashed")
+axis(2, at = c(1,2), las = 1)
+```
+
+The black points are the estimated proportion of smolts, which seem to agree rather well with the model fit (gray line). We can now compare them to one another.
+
+```{r bin_obs_pred, fig.height=4.5, fig.width=4.5, fig.align='center'}
+## set plot area
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0),
+    cex.lab = 1.5)
+## plot age v
+plot(p_bin, y_bin, las = 1, pch = 16, cex = 1.3,
+     ylab = "Predicted", xlab = "Observed")
+abline(a = 0, b = 1, col = "gray")
+```
+
+
+#### Hosmer-Lemeshow test
+
+We can formalize this binned comparison with the Hosmer-Lemeshow test, which is given by
+
+$$
+HL = \sum_{j = 1}^J \frac{(y_j - m_j \hat{p}_J)^2}{m_j \hat{p}_J(1 - \hat{p}_J)} \sim \chi^2_{(J - 1)}
+$$
+
+where $J$ is the number of groups and $y_j = \sum y_{i = j}$. We can perform the Hosmer-Lemeshow test with `generalhoslem::logitgof()`. The null hypothesis is the model fits the data well.
+
+```{r HL_test, echo = TRUE, warning = FALSE}
+## H-L test with 8 groups
+generalhoslem::logitgof(obs = df$age, exp = fitted(fit_mod), g = 8)
+```
+
+The $p$-value is large so we conclude an adequate fit.
+
+#### Proportion of variance explained
+
+Calculating $R^2$ for logistic models is not the same as linear models. Given the deviance $D_M$ for our model and a null model $D_0$, we define
+
+$$
+R^2 = \frac{1 - \exp \left( [D_M - D_0]/n \right)}{1 - \exp(\text{-}D_0 / n)}
+$$
+
+Here is the $R^2$ for our smolt-at-age model.
+
+```{r R2, echo = TRUE}
+## deviances
+DM <- fit_mod$deviance
+D0 <- fit_mod$null.deviance
+# R^2
+R2 <- (1 - exp((DM - D0) / nn)) / (1 - exp(-D0 / nn))
+round(R2, 2)
+```
+
+
+
+
+***
+
+# Overdispersion
+
+If our model fits the data well, we expect the deviance $D$ to be $\chi^2$ distributed, but sometimes the deviance is larger than expected. There are several things that can lead to this so-called *overdispersion*:
+
+* model mis-specification
+
+* outliers
+
+* non-linear relationship between $x$ and $\eta$
+
+* non-independence in the observed data
+
+
+## Elk in clear cuts
+
+Let's return to the example we saw in lecture concerning elk use of clear cuts for browsing where the probability of finding elk generally decreases with height of underbrush. We consider data from an observational study designed to estimate the probability of finding elk as a function of underbrush height. Specifically, the study involved
+
+* 29 forest sections that were sampled for elk pellets along line transects
+
+* estimates of the mean height of underbrush for each section
+
+* recordings of the presence or absence of pellets at 9-13 points per transect
+
+Here are the data.
+
+```{r elk_clear, fig.height=4.5, fig.width=6, fig.align='center'}
+set.seed(514)
+## sample size
+nn <- 29
+## intercept
+b0 <- 2
+## slope
+b1 <- -1
+## VIF
+vif <- 3
+## heights
+sl <- seq(90, 330)/100
+hh <- sample(sl, nn, replace = TRUE)
+## plots per forest section
+ll <- sample(seq(9, 13), nn, replace = TRUE)
+## probability as function of height
+pp <- 1 / (1 + exp(-(b0 + b1*hh)))
+## sim smolt age {0,1}
+yy <- rep(NA, nn)
+for(i in 1:nn) {
+  yy[i] <- rmutil::rbetabinom(1, ll[i], pp[i], vif)
+#  yy[i] <- rbinom(1, ll[i], pp[i])
+}
+
+## make data frame for model fitting
+df <- data.frame(veg_height = hh, plots = ll, pellets = yy)
+
+clr <- viridis::viridis(1, 0.8, 0.5, 0.5)
+## set plot area
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0),
+    cex.lab = 1.5)
+## plot age v
+plot(hh, yy/ll, las = 1, pch = 16, cex = 1.3, col = clr,
+     ylab = "Prop. of plots with pellets", xlab = "Mean underbrush height (m)")
+```
+
+
+## Binomial model
+
+For these data, we'll use a logistic regression model based on the proportions of plots where elk pellets were found. Here, $y_i$ is the number of pellets recorded in transect $i$, $N_i$ is the total number of plots along transect $i$, $p_i$ is the probability of finding elk pellets, and $H_i$ is the mean height of underbrush in forest section $i$. Let's specify the following three components for our GLM.
+
+$$
+\begin{aligned}
+\text{data distribution:} & ~~ y_i \sim \text{Binomial}(N_i, p_i) \\ \\
+\text{link function:} & ~~ \text{logit}(p_i) = \text{log}\left(\frac{p_i}{1-p_i}\right) = \eta_i \\ \\
+\text{linear predictor:} & ~~ \eta_i = \alpha + \beta H_i
+\end{aligned}
+$$
+
+### Variance inflation factor
+
+Recall that the variance for a binomial of size $n$ is given by
+
+$$
+\text{Var}(y) = n p (1 - p)
+$$
+
+If $\text{Var}(y) > n p (1 - p)$ then we have overdispersion. To address overdispersion, we can include the *dispersion* parameter (or "variance inflation factor") $c$, such that
+
+$$
+\text{Var}(y) = c n p (1 - p)
+$$
+
+We can estimate $c$ from the deviance $D$ as
+
+$$
+\hat{c} = \frac{D}{n - k}
+$$
+
+### Pearson's $\chi^2$ statistic
+
+Sometimes the deviance is biased, however, so we can turn to Pearson's $\chi^2$ statistic is similar to the deviance
+
+$$
+X^2 = \sum_{i = 1}^n \frac{(O_i - E_i)^2}{E_i} \sim \chi^2_{(n - 1)}
+$$
+
+where $O_i$ is the observed count and $E_i$ is the expected count. For a binomial distribution, we have
+
+$$
+X^2 = \sum_{i = 1}^n \frac{(O_i - E_i)^2}{E_i} \\
+\Downarrow \\
+X^2 = \sum_{i = 1}^n \frac{(y_i - n_i \hat{p}_i)^2}{n_i \hat{p}_i (1 - \hat{p}_o)}
+$$
+
+We can then estimate $c$ as
+
+$$
+\hat{c} = \frac{X^2}{n - k}
+$$
+
+### An overdispersed model
+
+Let's fit our GLM to the elk data and compare the results with and without the assumption that $\hat{c}$ = 1.
+
+```{r elk_model_binom, echo = TRUE}
+## fit model with glm
+elk_mod <- glm(cbind(pellets, plots - pellets) ~ veg_height, data = df,
+               family = binomial(link = "logit"))
+## original fit
+faraway::sumary(elk_mod)
+## overdispersion parameter
+c_hat <- deviance(elk_mod) / (nn- 1)
+## re-scaled estimates
+faraway::sumary(elk_mod, dispersion = c_hat)
+```
+
+Notice how the standard errors of the parameters have increased, which means the $z$ values decrease and their corresponding $p$-values increased.
+
+### Quasi-AIC
+
+For binomial models with overdispersion, we can modify the regular equation for AIC
+
+$$
+AIC = 2 k - 2 \log \mathcal{L}
+$$
+
+to be a *quasi*-AIC
+
+$$
+QAIC = 2 k - 2 \frac{\log \mathcal{L}}{\hat{c}}
+$$
+
+Here is a comparison of the results of our elk model to a model with only an intercept using both forms of AIC.
+
+```{r qaic}
+## fit null
+elk_null <- glm(cbind(pellets, plots - pellets) ~ 1, data = df,
+                family = binomial(link = "logit"))
+
+## model selection results
+tbl_mods <- matrix(NA, 2, 6)
+rownames(tbl_mods) <- c("intercept + slope  ", "intercept only  ")
+colnames(tbl_mods) <- c("k", "neg-LL", "AIC", "deltaAIC", "QAIC", "deltaQAIC")
+tbl_mods[,1] <- c(2,1)
+tbl_mods[,2] <- round(-c(logLik(elk_mod), logLik(elk_null)), 1)
+tbl_mods[,3] <- round(c(AIC(elk_mod), AIC(elk_null)), 1)
+tbl_mods[,4] <- round(tbl_mods[,3] - min(tbl_mods[,3]), 1)
+tbl_mods[,5] <- round(2 * tbl_mods[,1] + 2 * tbl_mods[,2] / c_hat, 1)
+tbl_mods[,6] <- round(tbl_mods[,5] - min(tbl_mods[,5]), 1)
+tbl_mods
+```
+
+
+### Quasi-binomial models
+
+When the data are overdispersed, we can relate the mean and variance of the response to the linear predictor *without* any additional information about the binomial distribution. However, this creates problems when we want to make inference via hypothesis tests or CI's. Without a formal distribution for the data, we can use a *quasi-likelihood*.
+
+We can fit a quasi-binomial with `glm()` by specifying `family = quasibinomial(link = "logit")`
+
+```{r quasi_binom, echo = TRUE}
+## quasi-binomial
+elk_quasi <- glm(cbind(pellets, plots - pellets) ~ veg_height, data = df,
+                 family = quasibinomial(link = "logit"))
+```
+
+and compare these results to those from above based on estimating the overdispersion parameter and using it for inference.
+
+```{r quasi_binom_compare, echo = TRUE}
+## variance inflation
+faraway::sumary(elk_mod, dispersion = c_hat)
+## quasi-binomial
+faraway::sumary(elk_quasi)
+```
+
+These results are quite similar to one another.
+
+### Beta-binomial models
+
+Another option for binomial data is the beta distribution
+
+$$
+f(y ; \mu, \phi)=\frac{\Gamma(\phi)}{\Gamma(\mu \phi) \Gamma((1-\mu) \phi)} y^{\mu \phi-1}(1-y)^{(1-\mu) \phi-1}
+$$
+
+with
+
+$$
+\text{mean}(y) = \mu \\
+\text{Var}(y) = \frac{\mu(1 - \mu)}{1 + \phi}
+$$
+
+We can use `gam()` from the **mgcv** package to fit beta-binomial models.
+
+```{r beta_binom, echo = TRUE, warning = FALSE, message = FALSE}
+## load mgcv
+library(mgcv)
+## `gam()` needs proportions for the response
+df$prop <- df$pellets / df$plots
+## weight by num of plots per section
+wts <- df$plots / mean(df$plots)
+## fit model
+elk_betabin <- gam(prop ~ veg_height, weights = wts, data = df,
+                   family = betar(link = "logit"))
+```
+
+Let's compare these estimates to those from our two models above.
+
+```{r beta_binom_2, echo = TRUE, warning = FALSE, message = FALSE}
+## beta-binomial
+summary(elk_betabin)
+## variance inflation
+faraway::sumary(elk_mod, dispersion = c_hat)
+## quasi-binomial
+faraway::sumary(elk_quasi)
+```
+
+
+
+
+
+
