@@ -15,4 +15,595 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ## Goals for today
 
+* Understand the application of Poisson regression to count data
+
+> - Understand how to fit Poisson regression models in **R**
+
+> - Understand how to evaluate model fits and diagnostics for Poisson regression
+
+
+## Count data
+
+Counts form the basis for much of our data in environmental sciences
+
+* Number of adult salmon returning to spawn in a river
+
+* Number of days of rain in a year
+
+* Number of bees visiting a flower
+
+
+## Counts vs proportions
+
+We have seen how to model proportional data with GLMs
+
+* $k$ survivors out of $n$ tagged individuals
+
+* $k$ infected individuals out of $n$ susceptible individuals
+
+* $k$ counts of allele A in $n$ total chromosomes
+
+
+## Counts vs proportions
+
+With count data, we only know the *frequency of occurrence*
+
+That is, how often something occurred without knowing how often it *did not occur*
+
+
+## Modeling count data
+
+Standard regression models are inappropriate for count data for 4 reasons:
+
+1) linear model might lead to predictions of negative counts
+
+2) variance of the response variable may increase with the mean
+
+3) errors are not normally distributed
+
+4) zeros are difficult to transform
+
+
+## Distribution for discrete counts
+
+The Poisson distribution is perhaps the best known
+
+It gives the probability of a given number of events occurring in a fixed interval of time or space
+
+
+## Poisson distribution | Examples
+
+* the number of Prussian soldiers killed by horse kicks per year from 1868 - 1931
+
+* the number of new COVID-19 infections per day in the US
+
+* the number of email messages I receive per week from students in QERM 514
+
+
+## Poisson distribution
+
+It's unique in that it has one parameter $\lambda$ to describe both the mean *and* variance
+
+$$
+y_i \sim \text{Poisson}(\lambda)
+$$
+$$
+\text{Mean}(y) = \text{Var}(y) = \lambda
+$$
+
+
+## Poisson distribution
+
+As $\lambda \rightarrow \infty$ the Poisson $\rightarrow$ Normal
+
+```{r pois_normal, fig.height = 4, fig.width = 8, fig.align = 'center'}
+set.seed(514)
+
+par(mfrow = c(1, 3),
+    mai = c(0.7, 0.2, 0.3, 0.1),
+    omi = c(0, 0.6, 0, 0), bg = NA,
+    cex.main = 1.5, cex.lab = 1.5)
+
+nn <- 1e6
+
+hist(rpois(nn, 5), las = 1, breaks = 20,
+     col = "dodgerblue", border = "gray",
+     yaxt = "n", ylab = "", xlab = expression(italic(y)),
+     main = expression(lambda == 5))
+mtext("Frequency", side = 2, line = 1.5)
+
+hist(rpois(nn, 20), las = 1, breaks = 20,
+     col = "dodgerblue", border = "gray",
+     yaxt = "n", ylab = "", xlab = expression(italic(y)),
+     main = expression(lambda == 20))
+
+hist(rpois(nn, 100), las = 1, breaks = 20,
+     col = "dodgerblue", border = "gray",
+     yaxt = "n", ylab = "", xlab = expression(italic(y)),
+     main = expression(lambda == 100))
+```
+
+
+## Poisson distribution
+
+$$
+f(y; \theta, \phi) = \exp \left( \frac{y \theta - b(\theta)}{a(\phi)} - c(y, \phi)\right) \\
+\Downarrow \\
+f(y; \mu) = \frac{\exp (- \mu) \mu^y}{y!} \\
+$$
+
+with $\theta = \log (\mu)$ and $\phi = 1$
+
+$a(\phi) = 1 ~~~~~~ b(\theta) = \exp (\theta) ~~~~~~ c(y, \phi) = - \log (y!)$
+
+
+## Poisson distribution
+
+An interesting property of the Poisson is that
+
+$$
+y_i \sim \text{Poisson}(\lambda) \\
+\Downarrow \\
+\sum_i y_i \sim \text{Poisson}(\sum_i \lambda_i)
+$$
+
+<br>
+
+This means we can use aggregated data if we lack individual-level data
+
+
+## Poisson and binomial
+
+The Poisson distribution can also approximate a binomial distribution if $n$ is large and $p$ is small
+
+As $p \rightarrow 0$, $\text{logit}(p) \rightarrow \log(p)$
+
+Binomial with logit link $\rightarrow$ Poisson with log link
+
+
+## Poisson and binomial
+
+An example with $p$ = 0.05 and $n$ = 1000
+
+```{r pois_binom, fig.height = 4, fig.width = 7, fig.align = 'center'}
+par(mfrow = c(1, 2),
+    mai = c(0.9, 0.2, 0.3, 0.1),
+    omi = c(0, 0.6, 0, 0), bg = NA,
+    cex.main = 1.2, cex.lab = 1.2)
+
+nd <- 1e6
+
+pp <- 0.05
+nn <- 1000
+mu <- nn* pp
+
+binom <- rbinom(nd, nn, pp)
+poiss <- rpois(nd, mu)
+
+lims <- range(c(binom, poiss))
+xm <- do.call(floor, list(lims[1]/2)) * 2
+xx <- do.call(ceiling, list(lims[2]/2)) * 2
+  
+hist(binom, las = 1, breaks = seq(xm, xx, 2),
+     col = "dodgerblue", border = "gray",
+     yaxt = "n", ylab = "", xlab = expression(italic(y)),
+     main = "Binomial")
+mtext("Frequency", side = 2, line = 1.5, cex = 1.3)
+
+hist(poiss, las = 1, breaks = seq(xm, xx, 2),
+     col = "indianred", border = "gray",
+     yaxt = "n", ylab = "", xlab = expression(italic(y)),
+     main = "Poisson")
+```
+
+
+## Rethinking density
+
+We have been considering (log) density itself as a response
+
+$$
+\text{Density}_i = f (\text{Count}_i, \text{Area}_i) \\
+\Downarrow \\
+\text{Density}_i = \frac{\text{Count}_i}{\text{Area}_i} \\
+$$
+
+
+## Rethinking density
+
+We have been considering (log) density itself as a response
+
+$$
+\text{Density}_i = f (\text{Count}_i, \text{Area}_i) \\
+\Downarrow \\
+\text{Density}_i = \frac{\text{Count}_i}{\text{Area}_i} \\
+$$
+
+With GLMs, we can shift our focus to
+
+$$
+\text{Count}_i = f (\text{Area}_i)
+$$
+
+
+## &nbsp; {data-background=mark_shrimping.jpg data-background-size=100%}
+
+
+## Example of a Poisson regression
+
+Catches of spot prawns $y_i$ as a function of bait type $C_i$ and water temperature $T_i$
+
+$$
+\begin{aligned}
+\text{data distribution:} & ~~ y_i \sim \text{Poisson}(\lambda_i) \\ \\
+\text{link function:} & ~~ \text{log}(\lambda_i) = \mu_i \\ \\
+\text{linear predictor:} & ~~ \mu_i = \alpha + \beta_1 C_i + \beta_2 T_i
+\end{aligned}
+$$
+
+
+## Catches of spot prawns
+
+```{r prawns, fig.height = 4.5, fig.width = 8, fig.align = 'center'}
+nn <- 113
+## average catch
+b0 = 3.5
+## effect of chicken as bait
+b_bait <- 0.1
+## effect of temperature
+b_temp <- 0.03
+## bait type
+fish <- sample(c(0, 1), nn, replace = TRUE)
+## water temp
+temp <- runif(nn, 7, 13)
+## linear predictor
+eta <- exp(b0 + b_bait * fish + b_temp * temp)
+## catches
+catch <- rep(NA, length(eta)) 
+for(i in 1:nn) {
+  catch[i] <- rpois(1, eta[i])
+}
+## combine data
+prawns <- data.frame(cbind(catch, fish, temp))
+
+## set plot area
+par(mfrow = c(1, 2),
+    mai = c(0.9, 0.4, 0.1, 0.1),
+    omi = c(0, 0.7, 0, 0), bg = NA,
+    cex.main = 1.2, cex.lab = 1.2)
+## plot temp vs catch
+plot(temp, catch, las = 1, pch = 16, xpd = NA,
+     xlab = "Temperature (C)", ylab = "Catch")
+## plot bait vs catch
+plot(fish + 1, catch, las = 1, pch = 16,
+     xlim = c(0.5, 2.5), xlab = "Bait type", xaxt = "n",
+     yaxt = "n", ylab = "")
+axis(1, at = c(1, 2), labels = c("Chicken", "Fish"))
+```
+
+
+## Catches of spot prawns
+
+```{r prawn_model, echo = TRUE}
+## Poisson regression
+cmod <- glm(catch ~ fish + temp, data = prawns,
+            family = poisson(link = "log"))
+faraway::sumary(cmod)
+```
+
+
+## Inference from Poisson regression
+
+We can easily estimate the CI's on the model parameters with `confint()`
+
+```{r ci_prawns, echo = TRUE, message = FALSE}
+## CI's for prawn model
+ci_prawns <- confint(cmod)
+ci_tbl <- cbind(ci_prawns[,1], coef(cmod), ci_prawns[,2])
+colnames(ci_tbl) <- c("Lower", "Estimate", "Upper")
+signif(ci_tbl, 3)
+```
+
+
+## Profile likelihood {.smaller}
+
+Due to possible bias in $\text{SE}(\beta)$, we can compute CI's based on the *profile likelihood*
+
+```{r profile_LL, echo = TRUE, eval = FALSE}
+## number of points to profile
+nb <- 200
+## possible beta's
+beta_bait <- seq(0, 0.2, length = nb)
+## calculate neg-LL of possible beta_bait
+## fix beta_temp at its MLE
+plb <- rep(NA, nb)
+for(i in 1:nb) {
+  mm <- glm(catch ~ 1 + offset(beta_bait[i] * fish 
+                               + offset(coef(cmod)[3] * temp)),
+            data = prawns,
+            family = poisson(link = "log"))
+  plb[i] <- -logLik(mm)
+}
+```
+
+
+## Confidence interval for $\beta_i$
+
+```{r plot_profile, fig.height=4.5, fig.width=7.5, fig.align='center', message = FALSE}
+## number of points to profile
+nb <- 200
+## possible beta's
+beta_bait <- seq(0, 0.2, length = nb)
+beta_temp <- seq(-0.02, 0.07, length = nb)
+## calculate neg-LL of possible beta_bait
+## fix beta_temp at its MLE
+plb <- rep(NA, nb)
+for(i in 1:nb) {
+  mm <- glm(catch ~ 1 + offset(beta_bait[i] * fish + offset(coef(cmod)[3] * temp)),
+            data = prawns,
+            family = poisson(link = "log"))
+  plb[i] <- -logLik(mm)
+}
+## calculate neg-LL of possible beta_temp
+## fix beta_bait at its MLE
+plt <- rep(NA, nb)
+for(i in 1:nb) {
+  mm <- glm(catch ~ 1 + offset(coef(cmod)[2] * fish) + offset(beta_temp[i] * temp),
+            data = prawns,
+            family = poisson(link = "log"))
+  plt[i] <- -logLik(mm)
+}
+
+## set plot area
+par(mfrow = c(1, 2),
+    mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0),
+    cex.lab = 1.5)
+
+## likelihood profile for bait
+plot(beta_bait, plb, type = "l", las = 1,
+     ylab = "Negative log-likelihood", xlab = expression(beta[bait]))
+crit <- -(logLik(cmod) - qchisq(0.95, 1) / 2)
+abline(h = crit, lty = "dashed")
+points(confint(cmod)[2,], c(crit, crit), pch = 16, col = "blue")
+
+## likelihood profile for temp
+plot(beta_temp, plt, type = "l", las = 1,
+     ylab = "", xlab = expression(beta[temp]))
+abline(h = crit, lty = "dashed")
+points(confint(cmod)[3,], c(crit, crit), pch = 16, col = "blue")
+```
+
+
+
+## Goodness of fit
+
+It's natural to ask how well a model fits the data
+
+As with binomial models, we can check the deviance $D$ against a $\chi^2$ distribution
+
+
+## Deviance for Poisson
+
+Recall that the deviance for any model is
+
+$$
+D_i = \text{-}2 \left[ \log \mathcal{L}(M_i) - \log \mathcal{L}(M_0) \right]
+$$
+
+where $M_i$ is the model of interest and $M_0$ is an intercept-only model
+
+
+## Deviance for Poisson
+
+The log-likelihood for a Poisson is
+
+$$
+\log \mathcal{L}(y; \lambda) = \sum_{i=1}^{n} \left[ y_{i} \log (\lambda)- \lambda - \log \left( y_{i}! \right)  \right]
+$$
+
+<br>
+
+The deviance for a Poisson is
+
+$$
+\log \mathcal{L}(y; \lambda) = \sum_{i=1}^{n} \left[ y_{i} \log (y_i / \hat{\lambda}) - (y_i - \hat{\lambda})  \right]
+$$
+
+
+## Goodness of fit for prawn model
+
+$H_0$: Our model is correctly specified
+
+```{r model_dev, echo = TRUE}
+## deviance of prawn model
+D_full <- summary(cmod)$deviance
+## LRT with df = 1
+(p_value <- pchisq(D_full, nn - length(coef(cmod)),
+                   lower.tail = FALSE))
+```
+
+We cannot reject the $H_0$
+
+
+## Goodness of fit for prawn model
+
+It turns out that the assumption of $D \sim \chi^2_{n - k}$ can be violated with Poisson models unless $\lambda$ is large
+
+Another option is Pearson's $X^2$ statistic we saw for binomial models
+
+
+## Pearson's goodness of fit
+
+Recall that Pearson's $X^2$ is 
+
+$$
+X^2 = \sum_{i = 1}^n \frac{(O_i - E_i)^2}{E_i} \sim \chi^2_{(n - k)} \\
+$$
+So for our Poisson model
+
+$$
+X^2 = \sum_{i=1}^{n} \frac{(y_i - \hat{\lambda}_i)^2}{\hat{\lambda}_i} \sim \chi^2_{n - k}
+$$
+
+
+
+## Pearson's goodness of fit
+
+$H_0$: Our model is correctly specified
+
+```{r pearson_gof, echo = TRUE}
+## numerator
+nm <- (prawns$catch - fitted(cmod))^2
+## denominator
+dm <- fitted(cmod)
+## Pearson's
+X2 <- sum(nm / dm)
+## test
+(p_value <- pchisq(X2, nn - length(coef(cmod)), lower.tail = FALSE))
+```
+
+We cannot reject the $H_0$
+
+
+## Fitted values & CI's
+
+```{r fitted_ci, fig.height=4.5, fig.width=4.5, fig.align='center'}
+## set plot area
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0),
+    cex.lab = 1.5)
+
+## fitted values
+tmp <- prawns[order(prawns[,3]),]
+fdat <- tmp[tmp$fish == 1,]
+cdat <- tmp[tmp$fish == 0,]
+fish <- predict(cmod, fdat, se.fit = TRUE, type = "response")
+chkn <- predict(cmod, cdat, se.fit = TRUE, type = "response")
+
+## t value
+t_crit <- qt(0.975, nn - length(coef(cmod)))
+
+## temp vs catch
+plot(temp, catch, pch = 16, las = 1,
+     ylab = "Catch", xlab ="Temperature (C)")
+## with fish bait
+lines(fdat$temp, fish$fit, lwd = 2, col = "blue")
+lines(fdat$temp, fish$fit + t_crit * fish$se.fit, lwd = 1, col = "blue")
+lines(fdat$temp, fish$fit - t_crit * fish$se.fit, lwd = 1, col = "blue")
+text(7, 65, "Fish bait", pos = 4, col = "blue")
+## with chicken bait
+lines(cdat$temp, chkn$fit, lwd = 2, col = "darkred")
+lines(cdat$temp, chkn$fit + t_crit * chkn$se.fit, lwd = 1, col = "darkred")
+lines(cdat$temp, chkn$fit - t_crit * chkn$se.fit, lwd = 1, col = "darkred")
+text(7, 30, "Chicken bait", pos = 4, col = "darkred")
+```
+
+
+## Model diagnostics
+
+As with other models, it's important to examine diagnostic checks for our fitted models
+
+
+## Residual plots
+
+```{r resids, fig.height=4.5, fig.width=4.5, fig.align='center'}
+## set plot area
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0),
+    cex.lab = 1.5)
+
+## resids vs fitted
+ee <- prawns$catch - fitted(cmod)
+plot(fitted(cmod), ee, pch = 16, las = 1,
+     ylab = "Residuals", xlab ="Fitted values")
+```
+
+
+
+## Leverage
+
+We can calculate the leverages $h$ to look for unusual observation in *predictor space*
+
+Recall we are potentially concerned about $h > 2 \frac{k}{n}$
+
+<br>
+
+We can use `faraway::halfnorm()`
+
+
+## Leverage
+
+```{r leverage, fig.height=4.5, fig.width=4.5, fig.align='center'}
+## set plot area
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0),
+    cex.lab = 1.5)
+
+h_crit <- 2 * length(coef(cmod)) / nn
+
+## halfnormal plot
+faraway::halfnorm(hatvalues(cmod), nlab = 0, labs = "", las = 1)
+text(0, 0.92*par("usr")[4], substitute(italic(h[crit]) == h_crit, list(h_crit = round(h_crit, 3))),
+     pos = 4)
+```
+
+
+## Cook's Distance
+
+Recall that we can use Cook's $D$ to identify potentially influential points
+
+$$
+D_{i}=e_{i}^{2} \frac{1}{k}\left(\frac{h_{i}}{1-h_{i}}\right)
+$$
+
+<br>
+
+In general we are concerned about $D_i > F^{(0.5)}_{n, n - k} \approx 1$
+
+
+## Cook's Distance
+
+```{r cooks, fig.height=4.5, fig.width=4.5, fig.align='center'}
+## set plot area
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0),
+    cex.lab = 1.5)
+
+## Cook's D
+CD <- cooks.distance(cmod)
+
+## halfnormal plot
+faraway::halfnorm(CD, nlab = 0, labs = "", las = 1)
+```
+
+
+## Model selection for prawn model
+
+We can use a likelihood ratio test to compare our model to an intercept-only model
+
+```{r LRT_dev, echo = TRUE}
+## deviance of full model
+D_full <- summary(cmod)$deviance
+## deviance of null model
+D_null <- summary(cmod)$null.deviance
+## test statistic
+lambda <- D_null - D_full
+## LRT with df = 2
+(p_value <- pchisq(lambda, 2, lower.tail = FALSE))
+```
+
+We reject $H_0$ (that the data come from the null model)
+
+
+## Summary
+
+* Lots of ecological data consists of counts
+
+> - We can use Poisson regression for count data instead of a log-transformation
+
+> - We can use many of the same goodness-of-fit measures and diagnostics as for other GLMs and LMs
+
+
+
+
 
