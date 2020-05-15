@@ -92,7 +92,7 @@ mixed_models <- list(
   html = c("labs/week_06/mixed_models.html"),
   zoom = "https://washington.zoom.us/rec/share/4fwtcrDf3EFOYLf9707vCpc7E4rbaaa80SEerPZfzxnoWuXjDVwi57Iiho6u3gKC",
   data = "labs/week_06/seabirds.csv",
-  background = ""
+  background = "[Bates et al (2015)](references/Bates_2015_lme4_package.pdf)"
   )
 
 ## 7 fitting glms
