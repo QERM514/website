@@ -233,10 +233,10 @@ $$
 We have seen that we can express the results from a logistic regression in terms of the *odds*. The odds $o$ are an unbounded alternative to probability $p$, such that if we represent the $k$-to-1 odds against something as $1 / k$, then the following holds
 
 $$
-o = \frac{1}{1 - p} ~ \Rightarrow ~ p = \frac{o}{1 + o}
+o = \frac{p}{1 - p} ~ \Rightarrow ~ p = \frac{o}{1 + o}
 $$
 
-So, for example, if $p$ = 0.8, then $o = \frac{1}{1 - 0.8} = 5$. In a logistic regression model, the logit function gives us the log odds, such that 
+So, for example, if $p$ = 0.8, then $o = \frac{0.8}{1 - 0.8} = 4$. In a logistic regression model, the logit function gives us the log odds, such that 
 
 $$
 \text{logit}(p) = \mathbf{X} \boldsymbol{\beta} \\
@@ -780,7 +780,7 @@ elk_mod <- glm(cbind(pellets, plots - pellets) ~ veg_height, data = df,
 ## original fit
 faraway::sumary(elk_mod)
 ## overdispersion parameter
-c_hat <- deviance(elk_mod) / (nn- 1)
+c_hat <- deviance(elk_mod) / (nn - 2)
 ## re-scaled estimates
 faraway::sumary(elk_mod, dispersion = c_hat)
 ```
