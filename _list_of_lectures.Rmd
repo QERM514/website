@@ -133,7 +133,7 @@ max_likelihood <- list(
   pdf = "lectures/week_04/lec_12_max_likelihood.pdf",
   rmd = "lectures/week_04/lec_12_max_likelihood.Rmd",
   html = "lectures/week_04/lec_12_max_likelihood.html",
-  background = "",
+  background = "[Faraway (2016) Appendix A](references/Faraway_2016_Extending_the_Linear_Models_with_R.pdf)",
   zoom = "https://washington.zoom.us/rec/share/3t5OJb3s12pLW4Xr4nPQY-koMILZaaa82iEd_vUFmRor1fLzHGyGWoiDTegm06_C"
 )
 
@@ -222,7 +222,7 @@ binary_GLM <- list(
 
 overdispersed_binary <- list(
   title = "Overdispersion in binary data",
-  topics = c("Variance inflation", "Beta-binomial modes", "Quasi-likelihood"),
+  topics = c("<b>Overdispersion in binary data</b>", "Variance inflation", "Beta-binomial modes", "Quasi-likelihood"),
   pdf = "lectures/week_07/lec_20_overdispersed_binary_data.pdf",
   rmd = "lectures/week_07/lec_20_overdispersed_binary_data.Rmd",
   html = "lectures/week_07/lec_20_overdispersed_binary_data.html",
@@ -233,10 +233,10 @@ overdispersed_binary <- list(
 count_GLM <- list(
   title = "Modeling count data",
   topics = c("<b>Modeling count data</b>", "Poisson regression", "Leverage and influence", "Diagnostics"),
-  pdf = c(""),
-  rmd = c(""),
-  html = c(""),
-  background = "",
+  pdf = c("lectures/week_07/lec_21_modeling_count_data.pdf"),
+  rmd = "lectures/week_07/lec_21_modeling_count_data.Rmd",
+  html = "lectures/week_07/lec_21_modeling_count_data.html",
+  background = c("[Faraway (2016) Chap 5](references/Faraway_2016_Extending_the_Linear_Models_with_R.pdf)", "[St-Pierre et al. (2017)](references/StPierre_2017_count_data_in_biology.pdf"),
   zoom = ""
 )
 
