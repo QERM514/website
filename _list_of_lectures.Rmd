@@ -205,7 +205,8 @@ intro_GLM <- list(
   pdf = c("lectures/week_06/lec_18_intro_GLMs.pdf"),
   rmd = c("lectures/week_06/lec_18_intro_GLMs.Rmd"),
   html = c("lectures/week_06/lec_18_intro_GLMs.html"),
-  background = "[Nelder & Wedderburn (1972)](references/Nelder_Wedderburn_1972_GLM.pdf)",
+  background = c("[Nelder & Wedderburn (1972)](references/Nelder_Wedderburn_1972_GLM.pdf)",
+                 "[Faraway (2016) Chap 8](references/Faraway_2016_Extending_the_Linear_Models_with_R.pdf)"),
   zoom = "https://washington.zoom.us/rec/share/6tFVHq3LzlxJWoHk1nPVcIQPFIe1eaa81HVPq_YPzUyachFUiIEpeFir4p9njow8"
 )
 
@@ -236,7 +237,7 @@ count_GLM <- list(
   pdf = c("lectures/week_07/lec_21_modeling_count_data.pdf"),
   rmd = "lectures/week_07/lec_21_modeling_count_data.Rmd",
   html = "lectures/week_07/lec_21_modeling_count_data.html",
-  background = c("[Faraway (2016) Chap 5](references/Faraway_2016_Extending_the_Linear_Models_with_R.pdf)", "[St-Pierre et al. (2017)](references/StPierre_2017_count_data_in_biology.pdf"),
+  background = c("[Faraway (2016) Chap 5](references/Faraway_2016_Extending_the_Linear_Models_with_R.pdf)", "[St-Pierre et al. (2017)](references/StPierre_2017_count_data_in_biology.pdf)"),
   zoom = ""
 )
 
