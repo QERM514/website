@@ -1781,9 +1781,9 @@ L_{0.5} \approx 82 ~ \text{mm}
 <h4>Computing the odds</h4>
 <p>We have seen that we can express the results from a logistic regression in terms of the <em>odds</em>. The odds <span class="math inline">\(o\)</span> are an unbounded alternative to probability <span class="math inline">\(p\)</span>, such that if we represent the <span class="math inline">\(k\)</span>-to-1 odds against something as <span class="math inline">\(1 / k\)</span>, then the following holds</p>
 <p><span class="math display">\[
-o = \frac{1}{1 - p} ~ \Rightarrow ~ p = \frac{o}{1 + o}
+o = \frac{p}{1 - p} ~ \Rightarrow ~ p = \frac{o}{1 + o}
 \]</span></p>
-<p>So, for example, if <span class="math inline">\(p\)</span> = 0.8, then <span class="math inline">\(o = \frac{1}{1 - 0.8} = 5\)</span>. In a logistic regression model, the logit function gives us the log odds, such that</p>
+<p>So, for example, if <span class="math inline">\(p\)</span> = 0.8, then <span class="math inline">\(o = \frac{0.8}{1 - 0.8} = 4\)</span>. In a logistic regression model, the logit function gives us the log odds, such that</p>
 <p><span class="math display">\[
 \text{logit}(p) = \mathbf{X} \boldsymbol{\beta} \\
 \Downarrow \\
@@ -2250,14 +2250,14 @@ faraway::sumary(elk_mod)</code></pre>
 ## n = 29 p = 2
 ## Deviance = 60.28535 Null Deviance = 110.19068 (Difference = 49.90534)</code></pre>
 <pre class="r"><code>## overdispersion parameter
-c_hat &lt;- deviance(elk_mod) / (nn- 1)
+c_hat &lt;- deviance(elk_mod) / (nn - 2)
 ## re-scaled estimates
 faraway::sumary(elk_mod, dispersion = c_hat)</code></pre>
 <pre><code>##             Estimate Std. Error z value  Pr(&gt;|z|)
-## (Intercept)  2.40035    0.68726  3.4926 0.0004783
-## veg_height  -1.29583    0.29178 -4.4411  8.95e-06
+## (Intercept)  2.40035    0.69987  3.4297 0.0006043
+## veg_height  -1.29583    0.29714 -4.3611 1.294e-05
 ## 
-## Dispersion parameter = 2.15305
+## Dispersion parameter = 2.23279
 ## n = 29 p = 2
 ## Deviance = 60.28535 Null Deviance = 110.19068 (Difference = 49.90534)</code></pre>
 <p>Notice how the standard errors of the parameters have increased, which means the <span class="math inline">\(z\)</span> values decrease and their corresponding <span class="math inline">\(p\)</span>-values increased.</p>
@@ -2289,8 +2289,8 @@ tbl_mods[,5] &lt;- round(2 * tbl_mods[,1] + 2 * tbl_mods[,2] / c_hat, 1)
 tbl_mods[,6] &lt;- round(tbl_mods[,5] - min(tbl_mods[,5]), 1)
 tbl_mods</code></pre>
 <pre><code>##                     k neg-LL   AIC deltaAIC QAIC deltaQAIC
-## intercept + slope   2   61.3 126.6      0.0 60.9       0.0
-## intercept only      1   86.2 174.5     47.9 82.1      21.2</code></pre>
+## intercept + slope   2   61.3 126.6      0.0 58.9       0.0
+## intercept only      1   86.2 174.5     47.9 79.2      20.3</code></pre>
 </div>
 <div id="quasi-binomial-models" class="section level3">
 <h3>Quasi-binomial models</h3>
@@ -2303,10 +2303,10 @@ elk_quasi &lt;- glm(cbind(pellets, plots - pellets) ~ veg_height, data = df,
 <pre class="r"><code>## variance inflation
 faraway::sumary(elk_mod, dispersion = c_hat)</code></pre>
 <pre><code>##             Estimate Std. Error z value  Pr(&gt;|z|)
-## (Intercept)  2.40035    0.68726  3.4926 0.0004783
-## veg_height  -1.29583    0.29178 -4.4411  8.95e-06
+## (Intercept)  2.40035    0.69987  3.4297 0.0006043
+## veg_height  -1.29583    0.29714 -4.3611 1.294e-05
 ## 
-## Dispersion parameter = 2.15305
+## Dispersion parameter = 2.23279
 ## n = 29 p = 2
 ## Deviance = 60.28535 Null Deviance = 110.19068 (Difference = 49.90534)</code></pre>
 <pre class="r"><code>## quasi-binomial
@@ -2364,10 +2364,10 @@ summary(elk_betabin)</code></pre>
 <pre class="r"><code>## variance inflation
 faraway::sumary(elk_mod, dispersion = c_hat)</code></pre>
 <pre><code>##             Estimate Std. Error z value  Pr(&gt;|z|)
-## (Intercept)  2.40035    0.68726  3.4926 0.0004783
-## veg_height  -1.29583    0.29178 -4.4411  8.95e-06
+## (Intercept)  2.40035    0.69987  3.4297 0.0006043
+## veg_height  -1.29583    0.29714 -4.3611 1.294e-05
 ## 
-## Dispersion parameter = 2.15305
+## Dispersion parameter = 2.23279
 ## n = 29 p = 2
 ## Deviance = 60.28535 Null Deviance = 110.19068 (Difference = 49.90534)</code></pre>
 <pre class="r"><code>## quasi-binomial
