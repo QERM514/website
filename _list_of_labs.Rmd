@@ -100,8 +100,8 @@ fitting_glms <- list(
   title = "Fitting GLMs",
   topics = c("Logistic regression models"),
   pdf = c(""),
-  rmd = c("labs/week_06/fitting_glms.Rmd"),
-  html = c("labs/week_06/fitting_glms.pdf"),
+  rmd = c("labs/week_07/fitting_glms.Rmd"),
+  html = c("labs/week_07/fitting_glms.pdf"),
   zoom = "",
   data = "",
   background = c("")
