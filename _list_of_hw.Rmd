@@ -85,5 +85,16 @@ mixed_models <- list(
   key = ""
 )
 
+## 7 logistic regr
+logistic_regr <- list(
+  title = "Fitting logistic regression models",
+  topics = "Fitting logistic regression models",
+  pdf = "homework/week_07/hw_07_logistic_regr.pdf",
+  rmd = "homework/week_07/hw_07_logistic_regr.Rmd",
+  html = "",
+  data = "homework/week_07/srss_chin_sar.csv",
+  key = ""
+)
+
 ```
 
