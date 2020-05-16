@@ -238,7 +238,7 @@ count_GLM <- list(
   rmd = "lectures/week_07/lec_21_modeling_count_data.Rmd",
   html = "lectures/week_07/lec_21_modeling_count_data.html",
   background = c("[Faraway (2016) Chap 5](references/Faraway_2016_Extending_the_Linear_Models_with_R.pdf)", "[St-Pierre et al. (2017)](references/StPierre_2017_count_data_in_biology.pdf)"),
-  zoom = ""
+  zoom = "https://washington.zoom.us/rec/share/wulbNerRz1hLaNbpt2judbQGXYbOX6a8hyAcqPFYzk8NCH1LQ_CHneHPkKJOP3_n"
 )
 
 overdispersed_count <- list(
