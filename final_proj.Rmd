@@ -46,7 +46,7 @@ Your presentation should include
 
 ## 3. Report
 
-#### Reports are due by 11:59 PM on June 7 and constitute 18% of your final grade.
+#### Reports are due by 11:59 PM on June 9 and constitute 18% of your final grade.
 
 Please use the RMarkdown report template for your final report, which will facilitate proper formatting of text, equations, code, figures, references, etc. Your report is restricted to 2000 words (exclusive of code chunks and figure/table captions) plus no more than 2 tables and 2 figures, although you should not feel obligated to hit that limit.
 
