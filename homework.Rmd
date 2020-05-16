@@ -32,6 +32,7 @@ week_hw$L3 <- diagnostics
 week_hw$L4 <- pvalues
 week_hw$L5 <- model_selection
 week_hw$L6 <- mixed_models
+week_hw$L7 <- logistic_regr
 ```
 
 ```{r topics, include = FALSE}
