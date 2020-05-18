@@ -457,11 +457,11 @@ faraway::sumary(elk_mod)
 
 ```{r elk_model_over, echo = TRUE}
 ## original fit
-faraway::sumary(elk_mod)
+signif(summary(elk_mod)$coefficients, 3)
 ## overdispersion parameter
 c_hat <- deviance(elk_mod) / (nn- 1)
 ## re-scaled estimates
-faraway::sumary(elk_mod, dispersion = c_hat)
+signif(summary(elk_mod, dispersion = c_hat)$coefficients, 3)
 ```
 
 
@@ -522,24 +522,7 @@ Without a formal distribution for the data, we can use a *quasi-likelihood*
 Recall that for many distributions we use a *score* $(U)$ as part of the log-likelihood, which can be thought of as
 
 $$
-U \approx \frac{(\text{observation} - \text{expectation})}{\text{scale}}
-$$
-
-
-## Quasi-likelihood
-
-Recall that for many distributions we use a *score* $(U)$ as part of the log-likelihood, which can be thought of as
-
-$$
-U = \frac{(\text{observation} - \text{expectation})}{\text{scale}}
-$$
-
-<br>
-
-For example, a normal distribution has a score of
-
-$$
-U_i = \frac{(y_i - \mu)^2}{2 \sigma^2}
+U = \frac{(\text{observation} - \text{expectation})}{\text{scale} \cdot \text{Var}}
 $$
 
 
@@ -578,6 +561,36 @@ $$
 
 ## Quasi-likelihood
 
+For example, a normal distribution has a score of
+
+$$
+U = \frac{y - \mu}{\sigma^2}
+$$
+
+and a quasi-likelihood of 
+
+$$
+Q = -\frac{(y - \mu)^2}{2}
+$$
+
+
+## Quasi-likelihood
+
+A binomial has a score of 
+
+$$
+U = \frac{y - \mu}{\mu(1 - \mu) \sigma^2}
+$$
+
+and a quasi-likelihood of 
+
+$$
+Q = y \log \left(\frac{\mu}{1-\mu}\right)+\log (1-\mu)
+$$
+
+
+## Quasi-likelihood
+
 We can estimate $\boldsymbol{\beta}$ by maximizing $Q$ as with other distributions
 
 But we need to estimate $\sigma^2$ separately as
@@ -598,8 +611,8 @@ Fitting a quasi-binomial model
 
 ```{r quasi_binom, echo = TRUE}
 ## quasi-binomial
-elk_quasi <- glm(cbind(pellets, plots - pellets) ~ veg_height, data = df,
-                 family = quasibinomial)
+elk_quasi <- glm(cbind(pellets, plots - pellets) ~ veg_height,
+                 data = df, family = quasibinomial)
 faraway::sumary(elk_quasi)
 ```
 
@@ -608,9 +621,9 @@ faraway::sumary(elk_quasi)
 
 ```{r quasi_binom_compare, echo = TRUE}
 ## quasi-binomial
-faraway::sumary(elk_quasi)
+signif(summary(elk_quasi)$coefficients, 3)
 ## variance inflation
-faraway::sumary(elk_mod, dispersion = c_hat)
+signif(summary(elk_quasi, dispersion = c_hat)$coefficients, 3)
 ```
 
 

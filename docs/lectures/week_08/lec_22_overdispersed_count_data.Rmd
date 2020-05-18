@@ -1,0 +1,647 @@
+---
+title: "Modeling count data with overdispersion"
+subtitle: "Analysis of Ecological and Environmental Data<br>QERM 514"
+author: "Mark Scheuerell"
+date: "18 May 2020"
+output:
+  ioslides_presentation:
+    css: lecture_slides.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+## Goals for today
+
+* Understand the importance and source of overdispersion in Poisson models
+
+> - Understand how to assess overdispersion in count data
+
+> - Understand the options for modeling overdispersed binomial data
+
+> - Understand the pros & cons of the modeling options
+
+
+## Overdispersion in counts
+
+We saw that logistic regression models based upon the binomial distribution can exhibit overdispersion if the deviance is larger than expected
+
+Poisson regression models are prone to the same because there is only one parameter specifying both the mean and the variance
+
+$$
+y_i \sim \text{Poisson}(\lambda)
+$$
+
+
+## Overdispersion in counts
+
+```{r pois_nbin, fig.height=4.5, fig.width=7.5, fig.align='center'}
+set.seed(514)
+
+nn <- 1e4
+
+pp <- rpois(nn, 20)
+nb <- rnbinom(nn, mu = 20, size = 8)
+
+lims <- range(c(pp, nb))
+xm <- do.call(floor, list(lims[1]/2)) * 2
+xx <- do.call(ceiling, list(lims[2]/2)) * 2
+
+par(mfrow = c(1, 2),
+    mai = c(0.9, 0.2, 0.6, 0.1),
+    omi = c(0, 0.6, 0, 0), bg = NA,
+    cex.main = 1.2, cex.lab = 1.2)
+## Poisson
+hist(pp, las = 1, breaks = seq(xm, xx, 2), ylim = c(0, 1800),
+     col = "dodgerblue", border = "gray",
+     yaxt = "n", ylab = "", xlab = expression(italic(y)),
+     main = "")
+mtext("Mean = 20, Var = 20", side = 3, cex = 1.3)
+mtext("Frequency", side = 2, line = 1.5, cex = 1.3)
+## neg binom
+hist(nb, las = 1, breaks = seq(xm, xx, 2), ylim = c(0, 1800),
+     col = "indianred", border = "gray",
+     yaxt = "n", ylab = "", xlab = expression(italic(y)),
+     main = "")
+mtext("Mean = 20, Var = 50", side = 3, cex = 1.3)
+```
+
+
+## Bycatch of green sea turtles
+
+Bycatch of sea turtles in trawl fisheries has been a conservation concern for a long time
+
+To reduce bycatch, some trawls have been outfitted with turtle excluder devices (TEDs)
+
+
+## Turtle excluder device {.smaller data-background=ted.png data-background-size=80%}
+
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+
+Image from Paul Probert (2017)
+
+
+## Bycatch of green sea turtles
+
+Let's examine some data on the effectiveness of TEDs in a shrimp fishery
+
+~50% of the fleet was outfitted with TEDS
+
+The number of turtles caught per 1000 trawl hours was recorded along with water temperature
+
+
+## Bycatch of green sea turtles
+
+
+```{r turtles, fig.height=4.5, fig.width=4.5, fig.align='center'}
+## number of obs
+nn <- 197
+## presence/absence of TED
+TED <- sample(c(0,1), nn, replace = TRUE)
+## temperature
+temp <- runif(nn, 15, 25)
+
+## mean bycatch
+beta_0 <- -1.5
+## effect of TED
+beta_1 <- -1.1
+## effect of temp
+beta_2 <- 0.085
+
+## variance inflation
+mu <- 1
+vif <- 3
+
+## expectation
+mean <- exp(beta_0 + beta_1 * TED + beta_2 * temp)
+
+## bycatch
+bycatch <- rnbinom(nn, mu = mean, size = mu^2 / (vif - mu))
+
+## data frame
+turtles <- data.frame(bycatch, TED, temp)
+
+## set plot area
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0),
+    cex.lab = 1.5)
+
+## histogram of catches
+hist(turtles$bycatch, las = 1, breaks = seq(0, max(bycatch)),
+     col = "seagreen", border = "gray",
+     xlab = "Bycatch", main = "")
+```
+
+
+## Our model for bycatch
+
+Bycatch of turtles $y_i$ as a function of TED presence/absence $T_i$ and water temperature $W_i$
+
+$$
+\begin{aligned}
+\text{data distribution:} & ~~ y_i \sim \text{Poisson}(\lambda_i) \\ \\
+\text{link function:} & ~~ \text{log}(\lambda_i) = \eta_i \\ \\
+\text{linear predictor:} & ~~ \eta_i = \alpha + \beta_1 T_i + \beta_2 W_i
+\end{aligned}
+$$
+
+
+## Bycatch of green sea turtles
+
+```{r ted_model, echo = TRUE}
+## Poisson regression
+ted_mod <- glm(bycatch ~ TED + temp, data = turtles,
+               family = poisson(link = "log"))
+## model summary
+faraway::sumary(ted_mod)
+```
+
+
+## Pearson's $\chi^2$ statistic
+
+Recall that we can use Pearson's $\chi^2$ statistic as a goodness-of-fit measure
+
+$$
+X^2 = \sum_{i = 1}^n \frac{(O_i - E_i)^2}{E_i} \sim \chi^2_{(n - k)}
+$$
+
+<br>
+
+where $O_i$ is the observed count and $E_i$ is the expected count
+
+
+## Pearson's $\chi^2$ statistic
+
+For $y_i \sim \text{Poisson}(\lambda_i)$
+
+$$
+X^2 = \sum_{i = 1}^n \frac{(O_i - E_i)^2}{E_i} \\
+\Downarrow \\
+X^2 = \sum_{i = 1}^n \frac{(y_i - \lambda_i)^2}{\lambda_i}
+$$
+
+
+## Goodness of fit
+
+$H_0$: Our model is correctly specified
+
+```{r ted_gof, echo = TRUE}
+## Pearson's X^2 statistic
+X2 <- sum((bycatch - fitted(ted_mod))^2 / fitted(ted_mod))
+## likelihood ratio test
+pchisq(X2, df = nn - length(coef(ted_mod)),
+       lower.tail = FALSE)
+```
+
+The $p$-value is small so we reject $H_0$
+
+
+## Variance of Poisson
+
+Recall that the variance for a Poisson is
+
+$$
+\text{Var}(y) = \text{Mean}(y) = \lambda
+$$
+
+
+## General variance for count data
+
+We can consider the possibility that the variance scales linearly with the mean
+
+$$
+\text{Var}(y) = c \lambda
+$$
+<br>
+
+If $c$ = 1 then $y \sim \text{Poisson}(\lambda)$
+
+If $c$ > 1 the data are *overdispersed*
+
+
+## Overdispersion
+
+We can estimate $c$ as
+
+$$
+\hat{c} = \frac{X^2}{n - k}
+$$
+
+<br>
+
+```{r ted_over, echo = TRUE}
+## overdispersion parameter
+(c_hat <- X2 / (nn - length(coef(ted_mod))))
+```
+
+
+## Effects on parameter estimates
+
+Recall that $\hat{\boldsymbol{\beta}}$ is *not* affected by overdispersion
+
+but the variance of $\hat{\boldsymbol{\beta}}$ *is* affected, such that
+
+$$
+\text{Var}(\hat{\boldsymbol{\beta}}) = \hat{c} \left( \mathbf{X}^{\top} \hat{\mathbf{W}} \mathbf{X} \right)^{-1}
+~ \\
+~ \\
+\hat{\mathbf{W}} = 
+\begin{bmatrix}
+\hat{\lambda}_1 & 0 & \dots & 0 \\
+0 & \hat{\lambda}_2 & \dots & 0 \\
+\vdots & \vdots & \ddots & \vdots \\
+0 & 0 & \dots & \hat{\lambda}_n 
+\end{bmatrix}
+$$
+
+
+## Bycatch of green sea turtles
+
+```{r ted_over_smry, echo = TRUE}
+## model summary
+faraway::sumary(ted_mod, dispersion = c_hat)
+```
+
+
+## Bycatch of green sea turtles
+
+```{r ted_both, echo = TRUE}
+## regular Poisson
+signif(summary(ted_mod)$coefficients, 3)
+## overdispersed Poisson
+signif(summary(ted_mod, dispersion = c_hat)$coefficients, 3)
+```
+
+
+## Effect of overdispersion
+
+```{r fitted_ci, fig.height=4.5, fig.width=7.5, fig.align='center'}
+## set plot area
+par(mfrow = c(1,2),
+    mai = c(0.9, 0.9, 0.6, 0.1),
+    omi = c(0, 0, 0, 0),
+    cex.lab = 1.4)
+
+## fitted values
+tmp <- turtles[order(turtles[,3]),]
+fdat <- tmp[tmp$TED == 1,]
+cdat <- tmp[tmp$TED == 0,]
+TED <- predict(ted_mod, fdat, se.fit = TRUE, type = "link")
+no_TED <- predict(ted_mod, cdat, se.fit = TRUE, type = "link")
+
+## t value
+t_crit <- qt(0.975, nn - length(coef(ted_mod)))
+
+## temp vs bycatch
+plot(temp, bycatch, pch = 16, las = 1,
+     ylab = "Bycatch", xlab ="Temperature (C)", main = "Without VIF")
+## with TED
+lines(fdat$temp, exp(TED$fit), lwd = 2, col = "blue")
+lines(fdat$temp, exp(TED$fit + t_crit * TED$se.fit), lwd = 1, col = "blue")
+lines(fdat$temp, exp(TED$fit - t_crit * TED$se.fit), lwd = 1, col = "blue")
+text(7, 65, "with TED", pos = 4, col = "blue")
+## without TED
+lines(cdat$temp, exp(no_TED$fit), lwd = 2, col = "darkred")
+lines(cdat$temp, exp(no_TED$fit + t_crit * no_TED$se.fit), lwd = 1, col = "darkred")
+lines(cdat$temp, exp(no_TED$fit - t_crit * no_TED$se.fit), lwd = 1, col = "darkred")
+text(7, 30, "w/o TED", pos = 4, col = "darkred")
+
+## VIF fitted values
+tmp2 <- turtles[order(turtles[,3]),]
+fdat2 <- tmp2[tmp2$TED == 1,]
+cdat2 <- tmp2[tmp2$TED == 0,]
+TED2 <- predict(ted_mod, fdat2, se.fit = TRUE, type = "link", dispersion = c_hat)
+no_TED2 <- predict(ted_mod, cdat2, se.fit = TRUE, type = "link", dispersion = c_hat)
+
+## temp vs bycatch
+plot(temp, bycatch, pch = 16, las = 1,
+     ylab = "", xlab ="Temperature (C)", main = "With VIF")
+## with TED
+lines(fdat2$temp, exp(TED2$fit), lwd = 2, col = "blue")
+lines(fdat2$temp, exp(TED2$fit + t_crit * TED2$se.fit), lwd = 1, col = "blue")
+lines(fdat2$temp, exp(TED2$fit - t_crit * TED2$se.fit), lwd = 1, col = "blue")
+text(7, 65, "with TED", pos = 4, col = "blue")
+## without TED
+lines(cdat$temp, exp(no_TED2$fit), lwd = 2, col = "darkred")
+lines(cdat$temp, exp(no_TED2$fit + t_crit * no_TED2$se.fit), lwd = 1, col = "darkred")
+lines(cdat$temp, exp(no_TED2$fit - t_crit * no_TED2$se.fit), lwd = 1, col = "darkred")
+text(7, 30, "w/o TED", pos = 4, col = "darkred")
+```
+
+
+## Effect of overdispersion
+
+```{r fitted_ci_2, fig.height=4.5, fig.width=7.5, fig.align='center'}
+## set plot area
+par(mfrow = c(1,2),
+    mai = c(0.9, 0.9, 0.6, 0.1),
+    omi = c(0, 0, 0, 0),
+    cex.lab = 1.4)
+
+## temp vs bycatch
+plot(temp, bycatch, pch = 16, las = 1, ylim = c(0,2.5),
+     ylab = "Bycatch", xlab ="Temperature (C)", main = "Without VIF")
+## with TED
+lines(fdat$temp, exp(TED$fit), lwd = 2, col = "blue")
+lines(fdat$temp, exp(TED$fit + t_crit * TED$se.fit), lwd = 1, col = "blue")
+lines(fdat$temp, exp(TED$fit - t_crit * TED$se.fit), lwd = 1, col = "blue")
+text(7, 65, "with TED", pos = 4, col = "blue")
+## without TED
+lines(cdat$temp, exp(no_TED$fit), lwd = 2, col = "darkred")
+lines(cdat$temp, exp(no_TED$fit + t_crit * no_TED$se.fit), lwd = 1, col = "darkred")
+lines(cdat$temp, exp(no_TED$fit - t_crit * no_TED$se.fit), lwd = 1, col = "darkred")
+text(7, 30, "w/o TED", pos = 4, col = "darkred")
+
+## temp vs bycatch
+plot(temp, bycatch, pch = 16, las = 1, ylim = c(0,2.5),
+     ylab = "", xlab ="Temperature (C)", main = "With VIF")
+## with TED
+lines(fdat2$temp, exp(TED2$fit), lwd = 2, col = "blue")
+lines(fdat2$temp, exp(TED2$fit + t_crit * TED2$se.fit), lwd = 1, col = "blue")
+lines(fdat2$temp, exp(TED2$fit - t_crit * TED2$se.fit), lwd = 1, col = "blue")
+text(7, 65, "with TED", pos = 4, col = "blue")
+## without TED
+lines(cdat$temp, exp(no_TED2$fit), lwd = 2, col = "darkred")
+lines(cdat$temp, exp(no_TED2$fit + t_crit * no_TED2$se.fit), lwd = 1, col = "darkred")
+lines(cdat$temp, exp(no_TED2$fit - t_crit * no_TED2$se.fit), lwd = 1, col = "darkred")
+text(7, 30, "w/o TED", pos = 4, col = "darkred")
+```
+
+
+## Quasi-Poisson models
+
+We saw with the case of overdisperse binomial models that we could use a  *quasi-likelihood* to estimate the parameters
+
+
+## Quasi-likelihood
+
+Recall that for many distributions we use a *score* $(U)$ as part of the log-likelihood, which can be thought of as
+
+$$
+U = \frac{(\text{observation} - \text{expectation})}{\text{scale} \cdot \text{Var}}
+$$
+
+
+## Quasi-likelihood
+
+For example, a normal distribution has a score of
+
+$$
+U = \frac{y - \mu}{\sigma^2}
+$$
+
+and a quasi-likelihood of 
+
+$$
+Q = -\frac{(y - \mu)^2}{2}
+$$
+
+
+## Quasi-likelihood
+
+A Poisson has a score of 
+
+$$
+U = \frac{y - \mu}{\mu \sigma^2}
+$$
+
+and a quasi-likelihood of 
+
+$$
+Q = y \log \mu - \mu
+$$
+
+
+## Quasi-Poisson for bycatch
+
+```{r ted_model_quasi, echo = TRUE}
+## Poisson regression
+ted_mod_q <- glm(bycatch ~ TED + temp, data = turtles,
+                 family = quasipoisson(link = "log"))
+## model summary
+faraway::sumary(ted_mod_q)
+```
+
+
+## Quasi-Poisson for bycatch {.smaller}
+
+```{r ted_model_quasi_compare, echo = TRUE}
+## quasi-Poisson
+signif(summary(ted_mod_q)$coefficients, 3)
+## overdispersed Poisson
+signif(summary(ted_mod, dispersion = c_hat)$coefficients, 3)
+```
+
+
+## Quasi-AIC
+
+Just as we di for binomial models, we can use a *quasi*-AIC to compare models
+
+$$
+QAIC = 2 k - 2 \frac{\log \mathcal{L}}{\hat{c}}
+$$
+
+
+## Comparison of bycatch model
+
+Here's a comparison of some models for bycatch
+
+```{r qaic}
+## fit null
+ted_null <- glm(bycatch ~ 1, data = turtles,
+                family = poisson(link = "log"))
+## fit reduced
+ted_ted <- glm(bycatch ~ TED, data = turtles,
+               family = poisson(link = "log"))
+ted_temp <- glm(bycatch ~ temp, data = turtles,
+                family = poisson(link = "log"))
+
+## model selection results
+tbl_mods <- matrix(NA, 4, 6)
+rownames(tbl_mods) <- c("B0 + TED + temp  ", "B0 + TED  ",
+                        "B0 + temp  ", "B0 only  ")
+colnames(tbl_mods) <- c("k", "neg-LL", "AIC", "deltaAIC", "QAIC", "deltaQAIC")
+tbl_mods[,1] <- c(3,2,2,1)
+tbl_mods[,2] <- round(-c(logLik(ted_mod), logLik(ted_ted),
+                         logLik(ted_temp), logLik(ted_null)), 1)
+tbl_mods[,3] <- round(c(AIC(ted_mod), AIC(ted_ted),
+                        AIC(ted_temp), AIC(ted_null)), 1)
+tbl_mods[,4] <- round(tbl_mods[,3] - min(tbl_mods[,3]), 1)
+tbl_mods[,5] <- round(2 * tbl_mods[,1] + 2 * tbl_mods[,2] / c_hat, 1)
+tbl_mods[,6] <- round(tbl_mods[,5] - min(tbl_mods[,5]), 1)
+tbl_mods
+```
+
+
+# QUESTIONS?
+
+
+## Negative binomial distribution
+
+The negative binomial distribution describes the *number of failure*s in a sequence of independent Bernoulli trials *before* obtaining a predetermined number of *successes*
+
+
+## Negative binomial distribution | Example
+
+How many times do we have to roll a single die before getting two 6's?
+
+$$
+y_i \sim \text{negBin}(k, p)
+$$
+
+with successes $k$ = 2 and probability $p$ = 1/6
+
+
+## Negative binomial distribution
+
+```{r plot_dice_ex, fig.height=4.5, fig.width=5.5, fig.align='center'}
+par(mai = c(0.9, 0.9, 0.6, 0.1),
+    omi = c(0, 0, 0, 0),
+    cex.lab = 1.4)
+
+labs <- seq(40)
+labs[labs %% 2 != 0] <- NA
+
+dnb <- dnbinom(seq(40), 2, 1/6)
+barplot(dnb, las = 1, col = "dodgerblue", border = "gray",
+        names.arg = labs, ylab = "Density", xlab = "Number of rolls before two 6's",
+        main = "Mean = 10; Var = 60")
+```
+
+
+## Negative binomial distribution
+
+The probability mass function is given by
+
+$$
+f(y; k, p) = \frac{(y+k-1) !}{(k-1) ! y !} p^{k}(1-p)^{y} \\
+~ \\
+~ \\
+\text{mean}(y)=\frac{k(1-p)}{p} \\
+~ \\
+\text{Var}(y)=\frac{k(1-p)}{p^{2}}
+$$
+
+
+## Negative binomial distribution
+
+The negative binomial distribution can also arise as a mixture of Poisson distributions, each with a mean that follows a gamma distribution
+
+$$
+y \sim \text{Poisson}(\lambda) \\
+\lambda \sim \text{Gamma} \left( r, \frac{p}{1-p} \right)
+$$
+
+## Negative binomial distribution
+
+In terms of the mean and variance
+
+$$
+f(y; k, \mu) = \frac{(y+k-1) !}{(k-1) ! y !} \left( \frac{\mu}{\mu + r} \right)^{k}\left( \frac{r}{\mu + r} \right)^{y} \\
+~ \\
+~ \\
+\text{mean}(y) = \mu \\
+~ \\
+\text{Var}(y) = \mu + \frac{\mu^2}{r}
+$$
+
+
+## Negative binomial distribution
+
+The extra parameter $r$ allows more variance than the Poisson, which allows us greater flexibility in fitting the data
+
+
+## Negative binomial distribution
+
+```{r pois_nbin_2, fig.height=4.5, fig.width=7.5, fig.align='center'}
+par(mfrow = c(1, 2),
+    mai = c(0.9, 0.2, 0.6, 0.1),
+    omi = c(0, 0.6, 0, 0), bg = NA,
+    cex.main = 1.2, cex.lab = 1.2)
+## Poisson
+hist(pp, las = 1, breaks = seq(xm, xx, 2), ylim = c(0, 1800),
+     col = "dodgerblue", border = "gray",
+     yaxt = "n", ylab = "", xlab = expression(italic(y)),
+     main = "")
+mtext("Mean = 20, Var = 20", side = 3, cex = 1.3)
+mtext("Frequency", side = 2, line = 1.5, cex = 1.3)
+## neg binom
+hist(nb, las = 1, breaks = seq(xm, xx, 2), ylim = c(0, 1800),
+     col = "indianred", border = "gray",
+     yaxt = "n", ylab = "", xlab = expression(italic(y)),
+     main = "")
+mtext("Mean = 20, Var = 50", side = 3, cex = 1.3)
+```
+
+
+## Poisson as limiting case
+
+Note that 
+
+$$
+\text{Var}(y) = \mu + \frac{\mu^2}{r} \\
+\Downarrow \\
+\lim_{r \rightarrow \infty} \text{Var}(y) = \mu
+$$
+
+As $r$ gets large, the negative binomial converges to the Poisson
+
+
+## Our model for bycatch
+
+Bycatch of turtles $y_i$ as a function of TED presence/absence $T_i$ and water temperature $W_i$
+
+$$
+\begin{aligned}
+\text{data distribution:} & ~~ y_i \sim \text{negBin}(k, \mu_i) \\ \\
+\text{link function:} & ~~ \text{log}(\mu_i) = \eta_i \\ \\
+\text{linear predictor:} & ~~ \eta_i = \alpha + \beta_1 T_i + \beta_2 W_i
+\end{aligned}
+$$
+
+
+## Bycatch of green sea turtles
+
+Let's model our bycatch data with a negative binomial using `glm.nb()` from the **MASS** package
+
+```{r ted_model_nb, echo = TRUE}
+## load MASS
+library(MASS)
+## neg binomial regression
+ted_mod_nb <- glm.nb(bycatch ~ TED + temp, data = turtles,
+                     link = "log")
+```
+
+
+## Bycatch of green sea turtles
+
+```{r ted_model_nb_smry, echo = TRUE}
+## model summary
+signif(summary(ted_mod_nb)$coefficients, 3)
+```
+
+
+## Bycatch of green sea turtles
+
+```{r ted_model_nb_smry_2, echo = TRUE}
+## overdispersed Poisson
+signif(summary(ted_mod, dispersion = c_hat)$coefficients, 3)
+## negative binomial
+signif(summary(ted_mod_nb)$coefficients, 3)
+```
+
+
+## Summary
+
+There are several ways to model overdispersed count data, each with its own pros and cons
+
+| Model             | Pros | Cons |
+|:------------------|:-----|:-----|
+| Poisson          | Easy | Underestimates variance |
+| Poisson with VIF | Easy; estimate of variance | Ad hoc |
+| quasi-Poisson    | Easy; estimate of variance | No distribution for inference |
+| negative-binomial     | Easy; estimate of variance | None |
+
+
