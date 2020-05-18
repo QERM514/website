@@ -243,7 +243,7 @@ count_GLM <- list(
 
 overdispersed_count <- list(
   title = "Overdispersion in count data",
-  topics = c("<b>Overdispersion in count data</b>", "Variance inflation", "QAIC", "Negative-binomial distribution", "Quasi-likelihood"),
+  topics = c("<b>Overdispersion in count data</b>", "Variance inflation", "Quasi-likelihood", "Negative-binomial distribution"),
   pdf = c("lectures/week_08/lec_22_overdispersed_count_data.pdf"),
   rmd = c("lectures/week_08/lec_22_overdispersed_count_data.Rmd"),
   html = c("lectures/week_08/lec_22_overdispersed_count_data.html"),
@@ -257,7 +257,7 @@ zero_models <- list(
   pdf = c(""),
   rmd = c(""),
   html = c(""),
-  background = c("[Faraway (2016) Chap 5](references/Faraway_2016_Extending_the_Linear_Models_with_R.pdf)", "[Zuur et al (2009) Chap 5](references/Zuur_2009_mixed_effects_models_in_R.pdf)"),
+  background = c(""),
   zoom = ""
 )
 
