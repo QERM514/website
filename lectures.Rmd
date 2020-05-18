@@ -48,8 +48,8 @@ week_lecs$L20 <- overdispersed_binary
 week_lecs$L21 <- count_GLM
 ## week 8
 week_lecs$L22 <- overdispersed_count
-week_lecs$L23 <- intro_GLMM_1
-week_lecs$L24 <- intro_GLMM_2
+week_lecs$L23 <- zero_models
+week_lecs$L24 <- intro_GLMM
 ## week 9
 week_lecs$L25 <- holiday
 week_lecs$L26 <- review_2
