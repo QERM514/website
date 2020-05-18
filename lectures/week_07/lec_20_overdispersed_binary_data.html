@@ -3482,27 +3482,20 @@ faraway::sumary(elk_mod)</pre>
 </article></slide><slide class=""><hgroup><h2>Elk in clear cuts</h2></hgroup><article  id="elk-in-clear-cuts-5" class="smaller">
 
 <pre class = 'prettyprint lang-r'>## original fit
-faraway::sumary(elk_mod)</pre>
+signif(summary(elk_mod)$coefficients, 3)</pre>
 
-<pre >##             Estimate Std. Error z value  Pr(&gt;|z|)
-## (Intercept)  2.40035    0.46838  5.1248 2.978e-07
-## veg_height  -1.29583    0.19885 -6.5165 7.195e-11
-## 
-## n = 29 p = 2
-## Deviance = 60.28535 Null Deviance = 110.19068 (Difference = 49.90534)</pre>
+<pre >##             Estimate Std. Error z value Pr(&gt;|z|)
+## (Intercept)      2.4      0.468    5.12 2.98e-07
+## veg_height      -1.3      0.199   -6.52 7.19e-11</pre>
 
 <pre class = 'prettyprint lang-r'>## overdispersion parameter
 c_hat &lt;- deviance(elk_mod) / (nn- 1)
 ## re-scaled estimates
-faraway::sumary(elk_mod, dispersion = c_hat)</pre>
+signif(summary(elk_mod, dispersion = c_hat)$coefficients, 3)</pre>
 
-<pre >##             Estimate Std. Error z value  Pr(&gt;|z|)
-## (Intercept)  2.40035    0.68726  3.4926 0.0004783
-## veg_height  -1.29583    0.29178 -4.4411  8.95e-06
-## 
-## Dispersion parameter = 2.15305
-## n = 29 p = 2
-## Deviance = 60.28535 Null Deviance = 110.19068 (Difference = 49.90534)</pre>
+<pre >##             Estimate Std. Error z value Pr(&gt;|z|)
+## (Intercept)      2.4      0.687    3.49 4.78e-04
+## veg_height      -1.3      0.292   -4.44 8.95e-06</pre>
 
 </article></slide><slide class=""><hgroup><h2>Quasi-AIC</h2></hgroup><article  id="quasi-aic">
 
@@ -3543,26 +3536,10 @@ QAIC = 2 k - 2 \frac{\log \mathcal{L}}{\hat{c}}
 <p>Recall that for many distributions we use a <em>score</em> \((U)\) as part of the log-likelihood, which can be thought of as</p>
 
 <p>\[
-U \approx \frac{(\text{observation} - \text{expectation})}{\text{scale}}
+U = \frac{(\text{observation} - \text{expectation})}{\text{scale} \cdot \text{Var}}
 \]</p>
 
 </article></slide><slide class=""><hgroup><h2>Quasi-likelihood</h2></hgroup><article  id="quasi-likelihood-2">
-
-<p>Recall that for many distributions we use a <em>score</em> \((U)\) as part of the log-likelihood, which can be thought of as</p>
-
-<p>\[
-U = \frac{(\text{observation} - \text{expectation})}{\text{scale}}
-\]</p>
-
-<p><br></p>
-
-<p>For example, a normal distribution has a score of</p>
-
-<p>\[
-U_i = \frac{(y_i - \mu)^2}{2 \sigma^2}
-\]</p>
-
-</article></slide><slide class=""><hgroup><h2>Quasi-likelihood</h2></hgroup><article  id="quasi-likelihood-3">
 
 <p>Let’s define the following score</p>
 
@@ -3577,7 +3554,7 @@ U_i = \frac{(y_i - \mu_i)^2}{\sigma^2 V(\mu_i)} \\
 
 <p>where \(V(\mu)\) is a function of the covariates</p>
 
-</article></slide><slide class=""><hgroup><h2>Quasi-likelihood</h2></hgroup><article  id="quasi-likelihood-4">
+</article></slide><slide class=""><hgroup><h2>Quasi-likelihood</h2></hgroup><article  id="quasi-likelihood-3">
 
 <p>We now define \(Q_i\) to be integral over all possible \(y_i\) and \(\mu_i\)</p>
 
@@ -3593,7 +3570,35 @@ Q_i = \int_{y_i}^{\mu_i} \frac{(y_i - z)^2}{\sigma^2 V(z)} dz \\
 Q = \sum_{i = 1}^{n} Q_i
 \]</p>
 
+</article></slide><slide class=""><hgroup><h2>Quasi-likelihood</h2></hgroup><article  id="quasi-likelihood-4">
+
+<p>For example, a normal distribution has a score of</p>
+
+<p>\[
+U = \frac{y - \mu}{\sigma^2}
+\]</p>
+
+<p>and a quasi-likelihood of</p>
+
+<p>\[
+Q = -\frac{(y - \mu)^2}{2}
+\]</p>
+
 </article></slide><slide class=""><hgroup><h2>Quasi-likelihood</h2></hgroup><article  id="quasi-likelihood-5">
+
+<p>A binomial has a score of</p>
+
+<p>\[
+U = \frac{y - \mu}{\mu(1 - \mu) \sigma^2}
+\]</p>
+
+<p>and a quasi-likelihood of</p>
+
+<p>\[
+Q = y \log \left(\frac{\mu}{1-\mu}\right)+\log (1-\mu)
+\]</p>
+
+</article></slide><slide class=""><hgroup><h2>Quasi-likelihood</h2></hgroup><article  id="quasi-likelihood-6">
 
 <p>We can estimate \(\boldsymbol{\beta}\) by maximizing \(Q\) as with other distributions</p>
 
@@ -3612,8 +3617,8 @@ Q = \sum_{i = 1}^{n} Q_i
 <p>Fitting a quasi-binomial model</p>
 
 <pre class = 'prettyprint lang-r'>## quasi-binomial
-elk_quasi &lt;- glm(cbind(pellets, plots - pellets) ~ veg_height, data = df,
-                 family = quasibinomial)
+elk_quasi &lt;- glm(cbind(pellets, plots - pellets) ~ veg_height,
+                 data = df, family = quasibinomial)
 faraway::sumary(elk_quasi)</pre>
 
 <pre >##             Estimate Std. Error t value  Pr(&gt;|t|)
@@ -3627,26 +3632,18 @@ faraway::sumary(elk_quasi)</pre>
 </article></slide><slide class=""><hgroup><h2>Elk in clear cuts</h2></hgroup><article  id="elk-in-clear-cuts-8" class="smaller">
 
 <pre class = 'prettyprint lang-r'>## quasi-binomial
-faraway::sumary(elk_quasi)</pre>
+signif(summary(elk_quasi)$coefficients, 3)</pre>
 
-<pre >##             Estimate Std. Error t value  Pr(&gt;|t|)
-## (Intercept)  2.40035    0.65694  3.6538  0.001097
-## veg_height  -1.29583    0.27891 -4.6461 7.884e-05
-## 
-## Dispersion parameter = 1.96723
-## n = 29 p = 2
-## Deviance = 60.28535 Null Deviance = 110.19068 (Difference = 49.90534)</pre>
+<pre >##             Estimate Std. Error t value Pr(&gt;|t|)
+## (Intercept)      2.4      0.657    3.65 1.10e-03
+## veg_height      -1.3      0.279   -4.65 7.88e-05</pre>
 
 <pre class = 'prettyprint lang-r'>## variance inflation
-faraway::sumary(elk_mod, dispersion = c_hat)</pre>
+signif(summary(elk_quasi, dispersion = c_hat)$coefficients, 3)</pre>
 
-<pre >##             Estimate Std. Error z value  Pr(&gt;|z|)
-## (Intercept)  2.40035    0.68726  3.4926 0.0004783
-## veg_height  -1.29583    0.29178 -4.4411  8.95e-06
-## 
-## Dispersion parameter = 2.15305
-## n = 29 p = 2
-## Deviance = 60.28535 Null Deviance = 110.19068 (Difference = 49.90534)</pre>
+<pre >##             Estimate Std. Error z value Pr(&gt;|z|)
+## (Intercept)      2.4      0.687    3.49 4.78e-04
+## veg_height      -1.3      0.292   -4.44 8.95e-06</pre>
 
 </article></slide><slide class=""><hgroup><h2>Beta-binomial models</h2></hgroup><article  id="beta-binomial-models">
 
