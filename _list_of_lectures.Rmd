@@ -253,11 +253,13 @@ overdispersed_count <- list(
 
 zero_models <- list(
   title = "Zero-truncated & zero-inflated models",
-  topics = c("<b>Zero-truncated & zero-inflated models</b>", "Zero truncation", "Zero inflation", "Hurdle models"),
-  pdf = c(""),
-  rmd = c(""),
-  html = c(""),
-  background = c(""),
+  topics = c("<b>Zero-truncated & zero-inflated models</b>", "Zero truncation", "Zero inflation", "Hurdle models", "Mixture models"),
+  pdf = c("lectures/week_08/lec_23_zero_models.pdf"),
+  rmd = c("lectures/week_08/lec_23_zero_models.Rmd"),
+  html = c("lectures/week_08/lec_23_zero_models.html"),
+  background = c("[Faraway (2016) Chap 5](references/Faraway_2016_Extending_the_Linear_Models_with_R.pdf)",
+                 "[Zuur et al (2009) Chap 11](references/Zuur_2009_mixed_effects_models_in_R.pdf)",
+                 "[Blasco-Moreno (2019)](references/Blasco-Moreno_2019_what_does_a_zero_mean.pdf.pdf)"),
   zoom = ""
 )
 
