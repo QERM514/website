@@ -248,7 +248,7 @@ overdispersed_count <- list(
   rmd = c("lectures/week_08/lec_22_overdispersed_count_data.Rmd"),
   html = c("lectures/week_08/lec_22_overdispersed_count_data.html"),
   background = c("[Faraway (2016) Chap 5](references/Faraway_2016_Extending_the_Linear_Models_with_R.pdf)", "[Ver Hoef & Boveng (2007)](references/VerHoef_Boveng_2007_quasiPois_vs_negbin.pdf)"),
-  zoom = ""
+  zoom = "https://washington.zoom.us/rec/share/-sBvAZD0pltLZIXf2nqcYqU7Qq7eeaa82iAf_foLmRmgKFBsGNakUbkuTtac_Tbc"
 )
 
 zero_models <- list(
@@ -260,7 +260,7 @@ zero_models <- list(
   background = c("[Faraway (2016) Chap 5](references/Faraway_2016_Extending_the_Linear_Models_with_R.pdf)",
                  "[Zuur et al (2009) Chap 11](references/Zuur_2009_mixed_effects_models_in_R.pdf)",
                  "[Blasco-Moreno (2019)](references/Blasco-Moreno_2019_what_does_a_zero_mean.pdf.pdf)"),
-  zoom = ""
+  zoom = "https://washington.zoom.us/rec/share/wd5cJLPapmFLeK_AxxnxfooCM9_dT6a8hHNKqfpbnUYiTXhG5IW2cH7KIloyx9Gd"
 )
 
 intro_GLMM <- list(
