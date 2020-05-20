@@ -1,0 +1,966 @@
+---
+title: "Modeling zero-truncated and zero-inflated data"
+subtitle: "Analysis of Ecological and Environmental Data<br>QERM 514"
+author: "Mark Scheuerell"
+date: "20 May 2020"
+output:
+  ioslides_presentation:
+    css: lecture_slides.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+```
+
+
+## Goals for today
+
+* Understand the difference between zero-truncated and zero-inflated data
+
+> * Understand how to model zero-truncated data
+
+> * Understand the differences between zero-altered and zero-inflated models
+
+
+## Zero-truncated data
+
+Zero-truncated data cannot take a value of 0
+
+Although somewhat rare in ecological studies, examples include
+
+* time a whale is at the surface before diving
+
+* herd size in elk
+
+* number of fin rays on a fish
+
+
+## Zero-truncated data
+
+Zero-truncated data are not necessarily a problem
+
+Rather, an underlying assumption of Poisson or neg binomial may be the problem
+
+
+## Zero-truncated data
+
+Both of these examples contain zeros
+
+```{r pois_nbin, fig.height=4.5, fig.width=7.5, fig.align='center'}
+set.seed(514)
+
+nn <- 1e4
+
+pp <- rpois(nn, 4)
+nb <- rnbinom(nn, mu = 4, size = 8)
+
+lims <- range(c(pp, nb))
+xm <- do.call(floor, list(lims[1]/2)) * 2
+xx <- do.call(ceiling, list(lims[2]/2)) * 2
+
+par(mfrow = c(1, 2),
+    mai = c(0.9, 0.2, 0.6, 0.1),
+    omi = c(0, 0.6, 0, 0), bg = NA,
+    cex.main = 1.2, cex.lab = 1.2)
+## Poisson
+hist(pp, las = 1, breaks = seq(xm, xx),
+     col = "dodgerblue", border = "gray",
+     yaxt = "n", ylab = "", xlab = expression(italic(y)),
+     main = "")
+mtext("Poisson", side = 3, line = 1, cex = 1.3)
+mtext("Frequency", side = 2, line = 1.5, cex = 1.3)
+## neg binom
+hist(nb, las = 1, breaks = seq(xm, xx),
+     col = "indianred", border = "gray",
+     yaxt = "n", ylab = "", xlab = expression(italic(y)),
+     main = "")
+mtext("Negative binomial", side = 3, line = 1, cex = 1.3)
+```
+
+
+## Poisson distribution
+
+Recall that for $y_i \sim \text{Poisson}(\lambda)$
+
+its probability mass function is
+
+$$
+f(y_i; \lambda_i) = \frac{\exp (\text{-} \lambda_i) \lambda_{i}^{y_i}}{y_i!}
+$$
+
+<br>
+
+$f(y_i; \lambda_i)$ gives the probability of $y_i \geq 0$
+
+
+## Poisson for zero-truncated data
+
+The probability that $y_i = 0$ is
+
+$$
+f(y_i; \lambda_i) = \frac{\exp (\text{-} \lambda_i) \lambda_{i}^{y_i}}{y_i!} \\
+\Downarrow \\
+\begin{align}
+f(y_i = 0; \lambda_i) &= \frac{\exp (\text{-} \lambda_i) \lambda_{i}^0}{0!} \\
+  &= \exp (\text{-} \lambda_i)
+\end{align}
+$$
+
+
+## Poisson for zero-truncated data
+
+The probability that $y_i \neq 0$ is therefore
+
+$$
+f(y_i = 0; \lambda_i) = \exp (\text{-} \lambda_i) \\
+\Downarrow \\
+f(y_i \neq 0; \lambda_i) = 1 - \exp (\text{-} \lambda_i)
+$$
+
+
+## Poisson for zero-truncated data
+
+We can now exclude the probability that $y_i = 0$ by dividing the pmf by the probability that $y_i \neq 0$
+
+$$
+f(y_i; \lambda_i) = \frac{\exp (\text{-} \lambda_i) \lambda_{i}^{y_i}}{y_i!} \\
+\Downarrow \\
+f(y_i; \lambda_i | y_i > 0) = \frac{\exp (\text{-} \lambda_i) \lambda_{i}^{y_i}}{y_i!} \cdot \frac{1}{1 - \exp (\text{-} \lambda_i)} \\
+\Downarrow \\
+\log \mathcal{L} = \left( y_i \log \lambda_i - \lambda_i \right) - \left( 1 - \exp (\text{-} \lambda_i) \right)
+$$
+
+
+## Zero-truncated data | Example
+
+Let's consider some data presented in Zuur et al. (2009), which detail the number of days that carcasses from road-killed snakes stay on roads
+
+The predictors are the total rainfall (mm) and an indicator of where on the pavement the snake was killed (lane or shoulder)
+
+
+## Longevity of road-killed snakes
+
+```{r snake_data, fig.height=4.5, fig.width=6, fig.align='center'}
+## read data
+snakes <- read.csv("snakes.csv", stringsAsFactors = FALSE)
+
+## set plot area
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0), bg = NA,
+    cex.lab = 1.3)
+## histogram
+hh <- hist(snakes$n_days, breaks = seq(0, max(snakes$n_days)), plot = FALSE)
+barplot(hh$counts, names.arg = seq(max(snakes$n_days)), las = 1,
+        ylab = "Count", xlab = "Number of days",
+        col = "dodgerblue", border = "gray")
+```
+
+
+## Longevity of road-killed snakes
+
+Let's first consider a regular Poisson regression model
+
+```{r snake_pois, echo = TRUE}
+## Poisson regression
+smod_pois <- glm(n_days ~ location + rain, data = snakes,
+                 family = poisson(link = "log"))
+```
+
+
+## Longevity of road-killed snakes {.smaller}
+
+```{r snake_pois_smry}
+summary(smod_pois)
+```
+
+
+## Longevity of road-killed snakes
+
+Now let's fit a zero-truncated Poisson regression model with `vglm()` from **VGAM**
+
+```{r snake_pois_pos, echo = TRUE}
+library(VGAM)
+## zero-truncated Poisson regression
+smod_ztpois <- vglm(n_days ~ location + rain, data = snakes,
+                    family = pospoisson)
+```
+
+
+## Longevity of road-killed snakes {.smaller}
+
+```{r snake_pois_pos_smry}
+summary(smod_ztpois)
+```
+
+
+## Longevity of road-killed snakes
+
+Here are the parameter estimates and SE's for both models
+
+```{r snake_pois_tbl}
+beta_hat_p <- cbind(coef(smod_pois), sqrt(diag(vcov(smod_pois))))
+beta_hat_ztp <- cbind(coef(smod_ztpois), sqrt(diag(vcov(smod_ztpois))))
+tbl_pois <- round(cbind(beta_hat_p, beta_hat_ztp), 3)
+colnames(tbl_pois) <- c("  Poisson", "  Poisson SE", "  +Poisson", "  +Poisson SE")
+tbl_pois
+```
+
+
+## Negative binomial distribution
+
+Recall that for $y_i \sim \text{negBinom}(r, \mu)$
+
+its probability mass function is
+
+$$
+f(y; \mu, r) = \frac{(y+r-1) !}{(r-1) ! y !} \left( \frac{r}{\mu + r} \right)^{r}\left( \frac{\mu}{\mu + r} \right)^{y}
+$$
+
+<br>
+
+$f(y_i; \mu, r)$ gives the probability of $y_i \geq 0$
+
+
+## Neg binomial for zero-truncated data
+
+The probability that $y_i = 0$ is
+
+$$
+f(y; r, \mu) = \frac{(y+r-1) !}{(r-1) ! y !} \left( \frac{r}{\mu + r} \right)^{r}\left( \frac{\mu}{\mu + r} \right)^{y} \\
+\Downarrow \\
+\begin{align}
+f(y_i = 0; r, \mu) &= \frac{(0+r-1) !}{(r-1) ! 0 !} \left( \frac{r}{\mu + r} \right)^{r} \left( \frac{\mu}{\mu + r} \right)^{0} \\
+  &= \left( \frac{r}{\mu + r} \right)^{r}
+\end{align}
+$$
+
+
+## Neg binomial for zero-truncated data
+
+The probability that $y_i \neq 0$ is therefore
+
+$$
+f(y_i = 0; r, \mu_i) = \left( \frac{r}{\mu + r} \right)^{r} \\
+\Downarrow \\
+f(y_i \neq 0; r, \mu_i) = 1 - \left( \frac{r}{\mu + r} \right)^{r}
+$$
+
+
+## Neg binomial for zero-truncated data
+
+We can now exclude the probability that $y_i = 0$ by dividing the pmf by the probability that $y_i \neq 0$
+
+$$
+f(y; r, \mu) = \frac{(y+r-1) !}{(r-1) ! y !} \left( \frac{r}{\mu + r} \right)^{r} \left( \frac{\mu}{\mu + r} \right)^{y} \\
+\Downarrow \\
+f(y_i; \lambda_i | y_i > 0) = \frac{ \frac{(y+r-1) !}{(r-1) ! y !} \left( \frac{r}{\mu + r} \right)^{r} \left( \frac{\mu}{\mu + r} \right)^{y} }{ 1 - \left( \frac{r}{\mu + r} \right)^{r} } \\
+\Downarrow \\
+\log \mathcal{L} = \log \mathcal{L}(\text{NB}) - \log \left( 1 - \left( \frac{r}{\mu + r} \right)^{r} \right)
+$$
+
+
+## Longevity of road-killed snakes
+
+Let's first consider a regular negative binomial regression model
+
+```{r snake_nb, echo = TRUE}
+## load MASS pkg
+library(MASS)
+## neg binomial regression
+smod_nb <- glm.nb(n_days ~ location + rain, data = snakes,
+                  link = "log")
+```
+
+
+## Longevity of road-killed snakes {.smaller}
+
+```{r snake_nb_smry}
+summary(smod_nb)
+```
+
+
+## Longevity of road-killed snakes
+
+Now let's fit a zero-truncated neg binomial regression model with `vglm()` from **VGAM**
+
+```{r snake_nb_pos, echo = TRUE}
+library(VGAM)
+## zero-truncated neg binomial regression
+smod_ztnb <- vglm(n_days ~ location + rain, data = snakes,
+                  family = posnegbinomial)
+```
+
+
+## Longevity of road-killed snakes {.smaller}
+
+```{r snake_nb_pos_smry}
+summary(smod_ztnb)
+```
+
+
+## Longevity of road-killed snakes
+
+Here are the parameter estimates and SE's for both models
+
+```{r snake_nb_tbl}
+beta_hat_nb <- cbind(coef(smod_nb), sqrt(diag(vcov(smod_nb))))
+beta_hat_ztnb <- cbind(coef(smod_ztnb)[-2], sqrt(diag(vcov(smod_ztnb))[-2]))
+tbl_nb <- round(cbind(beta_hat_nb, beta_hat_ztnb), 3)
+colnames(tbl_nb) <- c("  NB", "  NB SE", "      +NB", " +NB SE")
+tbl_nb
+```
+
+
+# QUESTIONS?
+
+
+## Zeros in ecological data
+
+Lots of count data are *zero-inflated*
+
+The data contain more zeros than would be expected under a Poisson or negative binomial distribution
+
+
+## Sources of zeros
+
+In general, there are 4 different types of errors that cause zeros
+
+1) Structural (an animal is absent because the habitat is unsuitable)
+
+
+## Sources of zeros
+
+In general, there are 4 different types of errors that cause zeros
+
+1) Structural (an animal is absent because the habitat is unsuitable)
+
+2) Design (sampling is limited temporally or spatially)
+
+
+## Sources of zeros
+
+In general, there are 4 different types of errors that cause zeros
+
+1) Structural (an animal is absent because the habitat is unsuitable)
+
+2) Design (sampling is limited temporally or spatially)
+
+3) Observer error (inexperience or difficult circumstances)
+
+
+## Sources of zeros
+
+In general, there are 4 different types of errors that cause zeros
+
+1) Structural (an animal is absent because the habitat is unsuitable)
+
+2) Design (sampling is limited temporally or spatially)
+
+3) Observer error (inexperience or difficult circumstances)
+
+4) Process error (habitat is suitable but unused)
+
+
+## Sources of zeros {.smaller data-background=zero_sources.png data-background-size=75%}
+
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+
+Image from [Blasco-Moreno et al (2019)](https://doi.org/10.1111/2041-210X.13185)
+
+
+## Approaches to zero-inflated data
+
+There are 2 general approaches for dealing with zero-inflated data
+
+1) Zero-altered ("hurdle") models
+
+2) Zero-inflated ("mixture") models
+
+
+## Hurdle models
+
+Hurdle models do not discriminate among the 4 types of zeros
+
+The data are treated as 2 distinct groups:
+
+1) Zeros
+
+2) Non-zero counts
+
+
+## Hurdle models {.smaller data-background=hippo_za.png data-background-size=75%}
+
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+
+Image from Zuur et al (2009)
+
+
+## Hurdle models
+
+Hurdle models consist of 2 parts
+
+1) Use a binomial model to determine the probability of a zero
+
+2) If non-zero ("over the hurdle"), use a truncated Poisson or negative binomial to model the positive counts
+
+
+## Zero-altered Poisson (ZAP) models
+
+A zero-altered Poisson (ZAP) model is given by
+
+$$
+f_{\text{ZAP}}(y; \pi, \lambda) = 
+\left\{
+\begin{array}{lc}
+f_{\text{binomial}}(y = 0; \pi) \\
+\left[1 - f_{\text{binomial}}(y = 0; \pi) \right] \times \left( \frac{f_{\text{Poisson}}(y = 0; \lambda)}{1 - f_{\text{Poisson}}(y = 0; \lambda)} \right) 
+\end{array}
+\right.
+$$
+
+<br>
+
+$\pi$ is the probability of finding *any* individuals
+
+$\lambda$ is the mean (and variance) of the *positive counts*
+
+
+## Zero-altered Poisson (ZAP) models
+
+We can model both parameters as functions of covariates
+
+Probability of detection
+
+$$
+\text{logit}(\pi) = \mathbf{X}_d \boldsymbol{\beta}_d
+$$
+
+<br>
+
+Mean and variance of the positive counts
+
+$$
+\log(\lambda) = \mathbf{X}_c \boldsymbol{\beta}_c
+$$
+
+
+## Counts of hippos
+
+Let's apply a ZAP model to survey data for hippos
+
+We'll assume the following
+
+* the probability of finding hippos increases with water availability
+
+* the number of hippos increases with tree density
+
+
+## Counts of hippos
+
+```{r hippo_data, fig.height=4.5, fig.width=6, fig.align='center'}
+## Hurdle model
+rtpois <- function(n, lambda, tol = 1e-10) {
+  ## Simulate from zero-truncated Poisson
+  ## Initialize output
+  x <- rep(NA, n)
+  ## Identify lambda values below tolerance
+  low <- which(lambda < tol)
+  nlow <- length(low)
+  if(nlow > 0) {
+    x[low] <- 1
+    if(nlow < n) {
+      x[-low] <- qpois(runif(n-nlow, dpois(0, lambda[-low]), 1), lambda[-low])
+    }
+  } else {
+    x <- qpois(runif(n-nlow, dpois(0, lambda), 1), lambda)
+  }
+  return(x)
+}
+
+set.seed(514)
+## sample size
+nn <- 200
+## parameters for detection model
+gamma_0 <- -2
+gamma_tree <- 3
+## parameters for count model
+beta_0 <- 2
+beta_tree <- 0.8
+## covariates
+water <- runif(nn, 0, 1)
+trees <- runif(nn, 0, 1)
+## expectation for Pr(detect)
+mu <- 1/(1+exp(-(gamma_0 + gamma_tree * water)))
+## detections (0/1)
+z <- rbinom(nn, 1, mu)
+## expectation for pos counts
+lambda <- exp(beta_0 + beta_tree * trees) 
+## pos counts
+pos_count <- rtpois(nn, lambda)
+## observations
+y <- z * pos_count
+
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0), bg = NA,
+    cex.main = 1.2, cex.lab = 1.2)
+## histogram of counts
+hist(y, breaks = seq(0, max(y)), las = 1, col = "dodgerblue", border = "gray",
+     main = "", xlab = "Number of hippos", ylab = "Frequency", )
+```
+
+
+## ZAP model for hippos
+
+Detection as a function of water availability $W$
+
+$$
+z_i \sim \text{Bernoulli}(\pi_i) \\
+\text{logit}(\pi) = \gamma_0 + \gamma_1 W_i
+$$
+
+Positive counts as a function of tree density $T$
+
+$$
+c_i \sim \text{Poisson}^+(\lambda_i) \\
+\log(\lambda) = \beta_0 + \beta_1 T_i
+$$
+
+
+Total counts as a function of detections and positive counts
+
+$$
+y_i = z_i c_i
+$$
+
+
+## ZAP model for hippos
+
+We can fit ZAP models in R with `hurdle()` from the **pscl** package
+
+The formula for ZAP models is specified as 
+
+`y ~ predictors_of_counts | predictors_for_detection`
+
+```{r hippo_zap, echo = TRUE}
+## load pscl
+library(pscl)
+## fit hurdle model
+hippo_zap <- hurdle(y ~ trees | water)
+```
+
+
+## ZAP model for hippos {.smaller}
+
+```{r hippo_zap_smry, echo = TRUE}
+summary(hippo_zap)
+```
+
+
+## ZAP model for hippos {.smaller}
+
+```{r hippo_zap_fitted, fig.height=4.5, fig.width=7.5, fig.align='center'}
+## fitted for detection prob (pi)
+water <- sort(water)
+gamma_hat_0 <- coef(hippo_zap)[3]
+gamma_hat_1 <- coef(hippo_zap)[4]
+pi_hat <- 1/(1+exp(-(gamma_hat_0 + gamma_hat_1*water)))
+
+#matrix of derivatives
+derivs <- matrix(NA,nrow=nn,ncol=4)
+derivs[,1] <- derivs[,2] <- 0
+derivs[,3] <- (exp(gamma_hat_0 + gamma_hat_1*water))/((exp(gamma_hat_0 + gamma_hat_1*water)+1)^2) 
+derivs[,4] <- (water*exp(gamma_hat_0 + gamma_hat_1*water))/((exp(gamma_hat_0 + gamma_hat_1*water)+1)^2) 
+se <- sqrt( diag ( derivs %*% vcov(hippo_zap) %*% t(derivs) ))
+lower <- pi_hat - se * qt(0.025, nn-2, lower.tail = FALSE)
+upper <- pi_hat + se * qt(0.025, nn-2, lower.tail = FALSE)
+
+## fitted for mean & var (lambda)
+trees <- sort(trees)
+beta_hat_0 <- coef(hippo_zap)[1]
+beta_hat_1 <- coef(hippo_zap)[2]
+lambda_hat <- exp(beta_hat_0 + beta_hat_1*trees)
+
+#matrix of derivatives
+derivs_2 <- matrix(NA,nrow=nn,ncol=4)
+derivs_2[,1] <- exp(beta_hat_0+beta_hat_1*trees)
+derivs_2[,2] <- trees*exp(beta_hat_0+beta_hat_1*trees) 
+derivs_2[,3] <- derivs_2[,4] <- 0
+se_2 <- sqrt( diag ( derivs_2 %*% vcov(hippo_zap) %*% t(derivs_2) ))
+lower_2 <- lambda_hat - se_2 * qt(0.025, nn-2, lower.tail = FALSE)
+upper_2 <- lambda_hat + se_2 * qt(0.025, nn-2, lower.tail = FALSE)
+
+## set plot area
+par(mfrow = c(1, 2),
+    mai = c(0.9, 0.9, 0.6, 0.1),
+    omi = c(0, 0, 0, 0), bg = NA,
+    cex.main = 1.2, cex.lab = 1.2)
+## detections
+plot(water, pi_hat, type = "l", las = 1, ylim = c(0, 1), lwd = 2, col = "dodgerblue",
+     xlab = "Water availability", ylab = expression(pi), main = "Detection")
+lines(water, lower, lty = 2,  col = "dodgerblue", lwd = 2)
+lines(water, upper, lty = 2,  col = "dodgerblue", lwd = 2)
+## counts
+plot(trees, lambda_hat, type = "l", las = 1, ylim = c(0, 20), lwd = 2, col = "darkgreen",
+     xlab = "Tree density", ylab = expression(lambda), main = "Counts")
+lines(trees, lower_2, lty = 2, col = "darkgreen", lwd = 2)
+lines(trees, upper_2, lty = 2, col = "darkgreen", lwd = 2)
+
+```
+
+
+## Zero-altered neg binomial (ZANB)
+
+A zero-altered negative binomial (ZANB) model is given by
+
+$$
+f_{\text{ZANB}}(y; \pi, \mu, r) = 
+\left\{
+\begin{array}{lc}
+f_{\text{binomial}}(y = 0; \pi) \\
+\left[1 - f_{\text{binomial}}(y = 0; \pi) \right] \times \left( \frac{f_{\text{NB}}(y = 0; \mu, r)}{1 - f_{\text{NB}}(y = 0; \mu, r)} \right) 
+\end{array}
+\right.
+$$
+
+<br>
+
+$\pi$ is the probability of finding *any* individuals
+
+$\mu$ is the mean the *positive counts*
+
+$r$ is the scale for the *positive counts*
+
+
+# QUESTIONS?
+
+
+## Zero-inflated (mixture) models
+
+Zero-inflated (mixture) models treat the zeros as coming from 2 sources
+
+1) observation errors (missed detections)
+
+2) ecological (function of environment)
+
+
+## Zero-inflated models {.smaller data-background=hippo_zi.png data-background-size=75%}
+
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+
+Image from Zuur et al (2009)
+
+
+## Mixture models
+
+Zero-inflated (mixture) models consist of 2 parts
+
+1) Use a binomial model to determine the probability of a zero
+
+2) Use a Poisson or negative binomial to model counts, which can include zeros
+
+
+## Zero-inflated Poisson (ZIP) models
+
+Probability of a zero count comes from 2 sources:
+
+1) false zeros (missed detections)
+
+2) true zeros (ecological reasons)
+
+Pr(zero) = Pr(false zero) + Pr(true zero) $\times$ Pr(count = 0)
+
+
+## Zero-inflated Poisson (ZIP) models
+
+A zero-inflated Poisson (ZIP) model is given by
+
+$$
+\begin{align}
+f_{\text{ZIP}}(y = 0) &= f_{\text{Binomial}}(\pi) + [1 - f_{\text{Binomial}}(\pi)] f_{\text{Poisson}}(y = 0; \lambda) \\
+~ \\
+f_{\text{ZIP}}(y | y > 0) &= [1 - f_{\text{Binomial}}(\pi)] f_{\text{Poisson}}(y; \lambda) \\
+\end{align}
+$$
+
+<br>
+
+$\pi$ is the probability of *false zeros* (missed detections)
+
+$\lambda$ is the mean (and variance) of *all counts* (including zeros)
+
+
+## Zero-inflated Poisson (ZIP) models
+
+We can model both parameters as functions of covariates
+
+Probability of detection
+
+$$
+\text{logit}(\pi) = \mathbf{X}_d \boldsymbol{\beta}_d
+$$
+
+<br>
+
+Mean and variance of the counts
+
+$$
+\log(\lambda) = \mathbf{X}_c \boldsymbol{\beta}_c
+$$
+
+
+## Counts of deer
+
+Let's apply a ZIP model to survey data for white tailed deer
+
+We'll assume the following
+
+* the probability of detecting deer decreases with tree density
+
+* the number of deer increases with tree density
+
+
+## Counts of deer
+
+```{r deer_data, fig.height=4.5, fig.width=6, fig.align='center'}
+set.seed(514)
+## sample size
+nn <- 200
+## parameters for detection model
+gamma_0 <- 0.01
+gamma_tree <- 3
+## parameters for count model
+beta_0 <- 1.5
+beta_tree <- 1.2
+## covariate
+trees <- runif(nn, 0, 1)
+## expectation for Pr(detect)
+mu <- 1 / (1 + exp(-(gamma_0 + gamma_tree * trees)))
+## missed detections (0/1)
+z <- rbinom(nn, 1, mu)
+## expectation for pos counts
+lambda <- exp(beta_0 + beta_tree * trees) 
+## pos counts
+pos_count <- rpois(nn, lambda)
+## observations
+y <- (1 - z) * pos_count
+
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0), bg = NA,
+    cex.main = 1.2, cex.lab = 1.2)
+## histogram of counts
+hist(y, breaks = seq(0, max(y)), las = 1, col = "brown", border = "gray",
+     main = "", xlab = "Number of deer", ylab = "Frequency", )
+```
+
+
+
+
+## ZIP model for deer
+
+Non-detection as a function of tree density $T$
+
+$$
+z_i \sim \text{Bernoulli}(\pi_i) \\
+\text{logit}(\pi) = \gamma_0 + \gamma_1 T_i
+$$
+
+Counts as a function of tree density $T$
+
+$$
+c_i \sim \text{Poisson}(\lambda_i) \\
+\log(\lambda) = \beta_0 + \beta_1 T_i
+$$
+
+
+Total counts as a function of detections and positive counts
+
+$$
+y_i = (1 - z_i) c_i
+$$
+
+
+## ZIP model for deer
+
+We can fit ZIP models in R with `zeroinfl()` from the **pscl** package
+
+The formula for ZIP models is specified as 
+
+`y ~ predictors_of_counts | predictors_for_detection`
+
+```{r deer_zip, echo = TRUE}
+## fit hurdle model
+deer_zip <- zeroinfl(y ~ trees | trees)
+```
+
+
+## ZIP model for deer {.smaller}
+
+```{r deer_zip_smry, echo = TRUE}
+summary(deer_zip)
+```
+
+
+## ZIP model for deer {.smaller}
+
+```{r deer_zip_fitted, fig.height=4.5, fig.width=7.5, fig.align='center'}
+## fitted for detection prob (pi)
+trees <- sort(trees)
+gamma_hat_0 <- coef(deer_zip)[3]
+gamma_hat_1 <- coef(deer_zip)[4]
+pi_hat <- 1/(1+exp(-(gamma_hat_0 + gamma_hat_1 * trees)))
+
+#matrix of derivatives
+derivs <- matrix(NA, nrow = nn, ncol = 4)
+derivs[,1] <- derivs[,2] <- 0
+derivs[,3] <- (exp(gamma_hat_0 + gamma_hat_1*trees))/((exp(gamma_hat_0 + gamma_hat_1*trees)+1)^2) 
+derivs[,4] <- (trees*exp(gamma_hat_0 + gamma_hat_1*trees))/((exp(gamma_hat_0 + gamma_hat_1*trees)+1)^2) 
+se <- sqrt( diag ( derivs %*% vcov(deer_zip) %*% t(derivs) ))
+lower <- pi_hat - se * qt(0.025, nn-2, lower.tail = FALSE)
+upper <- pi_hat + se * qt(0.025, nn-2, lower.tail = FALSE)
+
+## fitted for mean & var (lambda)
+beta_hat_0 <- coef(deer_zip)[1]
+beta_hat_1 <- coef(deer_zip)[2]
+lambda_hat <- exp(beta_hat_0 + beta_hat_1*trees)
+
+#matrix of derivatives
+derivs_2 <- matrix(NA, nrow = nn, ncol = 4)
+derivs_2[,1] <- exp(beta_hat_0+beta_hat_1*trees)
+derivs_2[,2] <- trees*exp(beta_hat_0+beta_hat_1*trees) 
+derivs_2[,3] <- derivs_2[,4] <- 0
+se_2 <- sqrt( diag ( derivs_2 %*% vcov(deer_zip) %*% t(derivs_2) ))
+lower_2 <- lambda_hat - se_2 * qt(0.025, nn-2, lower.tail = FALSE)
+upper_2 <- lambda_hat + se_2 * qt(0.025, nn-2, lower.tail = FALSE)
+
+## set plot area
+par(mfrow = c(1, 2),
+    mai = c(0.9, 0.9, 0.6, 0.1),
+    omi = c(0, 0, 0, 0), bg = NA,
+    cex.main = 1.2, cex.lab = 1.2)
+## detections
+plot(trees, pi_hat, type = "l", las = 1, ylim = c(0, 1), lwd = 2, col = "darkgreen",
+     xlab = "Tree density", ylab = expression(pi), main = "Missed detection")
+lines(trees, lower, lty = 2,  col = "darkgreen", lwd = 2)
+lines(trees, upper, lty = 2,  col = "darkgreen", lwd = 2)
+## counts
+plot(trees, lambda_hat, type = "l", las = 1, ylim = c(0, 20), lwd = 2, col = "darkgreen",
+     xlab = "Tree density", ylab = expression(lambda), main = "Counts")
+lines(trees, lower_2, lty = 2, col = "darkgreen", lwd = 2)
+lines(trees, upper_2, lty = 2, col = "darkgreen", lwd = 2)
+```
+
+
+## Zero-inflated neg binomial (ZINB)
+
+A zero-inflated negative binomial (ZINB) model is given by
+
+$$
+\begin{align}
+f_{\text{ZIP}}(y = 0) &= f_{\text{Binomial}}(\pi) + [1 - f_{\text{Binomial}}(\pi)] f_{\text{NB}}(y = 0; \mu, r) \\
+~ \\
+f_{\text{ZIP}}(y | y > 0) &= [1 - f_{\text{Binomial}}(\pi)] f_{\text{NB}}(y; \mu, r) \\
+\end{align}
+$$
+
+<br>
+
+$\pi$ is the probability of *false zeros* (missed detections)
+
+$\mu$ is the mean of *all counts* (including zeros)
+
+$r$ is the scale of the counts
+
+
+## ZA versus ZI models for counts
+
+```{r za_zi_compare, fig.height=4.5, fig.width=7.5, fig.align='center'}
+## ZAP
+set.seed(514)
+junk <- rpois(300, 3)
+junk1 <- rep(0, 50)
+all <- c(junk1, junk)
+ind <- ifelse(all > 0, 0, 1)
+all_zap <- table(all, ind)
+
+## ZIP
+set.seed(514)
+junk <- rpois(300,3)
+junk1 <- rep(0,50)
+ind <- c(rep(1,50),rep(0,300))
+all <- c(junk1, junk)
+all_zip <- table(all,ind)
+
+## set plot area
+par(mfrow = c(1, 2),
+    mai = c(0.9, 0.9, 0.6, 0.1),
+    omi = c(0, 0, 0, 0), bg = NA,
+    cex.main = 1.2, cex.lab = 1.2)
+barplot(t(all_zap), las = 1, col=c("dodgerblue","indianred"),
+        xlab = "Count", main = "Zero altered (hurdle)")
+barplot(t(all_zip), las = 1, col=c("dodgerblue","indianred"),
+        xlab = "Count", main = "Zero inflated (mixture)")
+```
+
+## Steps for modeling counts
+
+1) Understand the system of interest
+
+Formulate good hypotheses and create a robust study design
+
+
+## Steps for modeling counts
+
+1) Understand the system of interest
+
+2) Detect and classify zeros
+
+Remove false zeros due to design or observer errors
+
+
+## Steps for modeling counts
+
+1) Understand the system of interest
+
+2) Detect and classify zeros
+
+3) Identify suitable covariates for zeros & non-zeros
+
+What are the causes of zeros (non-zeros)
+
+
+## Steps for modeling counts
+
+1) Understand the system of interest
+
+2) Detect and classify zeros
+
+3) Identify suitable covariates for zeros & non-zeros
+
+4) Test for overdispersion
+
+
+## Steps for modeling counts
+
+1) Understand the system of interest
+
+2) Detect and classify zeros
+
+3) Identify suitable covariates for zeros & non-zeros
+
+4) Test for overdispersion
+
+5) Choose appropriate model
+
+
+## Sources of zeros and approaches
+
+| Source | Reason | Over-dispersion | Zero inflation | Approach |
+|:-------|:-------|:--------------:|:--------------:|:--------:|
+| Random | Sampling variability | No | No | Poisson |
+|   |   | Yes | No | Neg binomial |
+| Structural | Outside count process | No | Yes | ZAP or ZIP |
+|   |   | Yes | Yes | ZANB or ZINB |
+
+
+
+
