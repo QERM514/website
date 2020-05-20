@@ -3417,7 +3417,7 @@ faraway::sumary(ted_mod_q)</pre>
 ## n = 197 p = 3
 ## Deviance = 345.29336 Null Deviance = 369.77029 (Difference = 24.47693)</pre>
 
-</article></slide><slide class=""><hgroup><h2>Quasi-Poisson for bycatch</h2></hgroup><article  class="smaller" id="quasi-poisson-for-bycatch-1">
+</article></slide><slide class=""><hgroup><h2>Quasi-Poisson for bycatch</h2></hgroup><article  id="quasi-poisson-for-bycatch-1" class="smaller">
 
 <pre class = 'prettyprint lang-r'>## quasi-Poisson
 signif(summary(ted_mod_q)$coefficients, 3)</pre>
@@ -3478,12 +3478,12 @@ y_i \sim \text{negBin}(k, p)
 <p>The probability mass function is given by</p>
 
 <p>\[
-f(y; k, p) = \frac{(y+k-1) !}{(k-1) ! y !} p^{k}(1-p)^{y} \\
+f(y; r, p) = \frac{(y+r-1) !}{(r-1) ! y !} p^{r} (1-p)^{y} \\
 ~ \\
 ~ \\
-\text{mean}(y)=\frac{k(1-p)}{p} \\
+\text{mean}(y)=\frac{r(1-p)}{p} \\
 ~ \\
-\text{Var}(y)=\frac{k(1-p)}{p^{2}}
+\text{Var}(y)=\frac{r(1-p)}{p^{2}}
 \]</p>
 
 </article></slide><slide class=""><hgroup><h2>Negative binomial distribution</h2></hgroup><article  id="negative-binomial-distribution-3">
@@ -3500,12 +3500,12 @@ y \sim \text{Poisson}(\lambda) \\
 <p>In terms of the mean and variance</p>
 
 <p>\[
-f(y; k, \mu) = \frac{(y+k-1) !}{(k-1) ! y !} \left( \frac{\mu}{\mu + r} \right)^{k}\left( \frac{r}{\mu + r} \right)^{y} \\
+f(y; r, \mu) = \frac{(y+r-1) !}{(r-1) ! y !} \left( \frac{r}{\mu + r} \right)^{r}\left( \frac{\mu}{\mu + r} \right)^{y} \\
 ~ \\
 ~ \\
 \text{mean}(y) = \mu \\
 ~ \\
-\text{Var}(y) = \mu + \frac{\mu^2}{r}
+\text{Var}(y) = \mu + \frac{\mu^2}{k}
 \]</p>
 
 </article></slide><slide class=""><hgroup><h2>Negative binomial distribution</h2></hgroup><article  id="negative-binomial-distribution-5">
@@ -3534,7 +3534,7 @@ f(y; k, \mu) = \frac{(y+k-1) !}{(k-1) ! y !} \left( \frac{\mu}{\mu + r} \right)^
 
 <p>\[
 \begin{aligned}
-\text{data distribution:} &amp; ~~ y_i \sim \text{negBin}(k, \mu_i) \\ \\
+\text{data distribution:} &amp; ~~ y_i \sim \text{negBin}(r, \mu_i) \\ \\
 \text{link function:} &amp; ~~ \text{log}(\mu_i) = \eta_i \\ \\
 \text{linear predictor:} &amp; ~~ \eta_i = \alpha + \beta_1 T_i + \beta_2 W_i
 \end{aligned}
