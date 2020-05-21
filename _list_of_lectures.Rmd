@@ -266,10 +266,12 @@ zero_models <- list(
 intro_GLMM <- list(
   title = "Working with GLMMs",
   topics = c("<b>Working with GLMMs</b>", "Computing likelihoods", "Diagnostics", "Goodness-of-fit"),
-  pdf = c(""),
-  rmd = c(""),
-  html = c(""),
-  background = "",
+  pdf = c("lectures/week_08/lec_24_intro_GLMMs.pdf"),
+  rmd = c("lectures/week_08/lec_24_intro_GLMMs.Rmd"),
+  html = c("lectures/week_08/lec_24_intro_GLMMs.html"),
+  background = c("[Faraway (2016) Chap 13](references/Faraway_2016_Extending_the_Linear_Models_with_R.pdf)",
+                 "[Zuur et al (2009) Chap 13](references/Zuur_2009_mixed_effects_models_in_R.pdf)",
+                 "[Bolker et al (2009)](Bolker_2009_glmm_guide.pdf)"),
   zoom = ""
 )
 
