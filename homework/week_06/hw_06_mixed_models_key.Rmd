@@ -1,0 +1,453 @@
+---
+title: "Fitting mixed models and selecting among them"
+subtitle: "QERM 514 - Homework 6"
+date: "8 May 2020"
+output:
+  pdf_document:
+    highlight: haddock
+fontsize: 11pt
+geometry: margin=1in
+urlcolor: blue
+header-includes:
+  \usepackage{float}
+  \floatplacement{figure}{H}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE)
+```
+
+# R Markdown file
+
+You can find the R Markdown file used to create this answer key [here](homework/week_06/hw_06_mixed_models_key.Rmd).
+
+
+# Background
+
+This week's homework assignment focuses on fitting and evaluating linear mixed models. In particular, you will consider different forms for a stock-recruit relationship that describes the density-dependent relationship between fish spawning biomass in "brood year" $t$ $(S_t)$ and the biomass of fish arising from that brood year that subsequently "recruit" to the fishery $(R_t)$. 
+
+## Ricker model
+
+The Ricker model ([Ricker 1954](https://doi.org/10.1139%2Ff54-039)) is one of the classical forms for describing the stock-recruit relationship. The deterministic form of the model is given by
+
+$$
+R_t = S_t \exp \left[ r \left( 1 - \frac{S_t}{k} \right) \right]
+$$
+
+where $r$ is the intrinsic growth rate and $k$ is the carrying capacity of the environment. In fisheries science, the model is often rewritten as
+
+$$
+R_t = a S_t \exp \left( -b S_t \right)
+$$
+
+where $a = \exp r$ and $b = r / k$. We can make the model stochastic by including a multiplicative error term $\epsilon_t \sim \text{N}(0, \sigma^2)$, such that
+
+$$
+R_t = a S_t \exp \left( -b S_t \right) \exp(\epsilon_t)
+$$
+
+This model is clearly non-linear, but we can use a log-transform to linearize it. Specifically, we have
+
+$$
+\begin{aligned}
+\log R_t &= \log a + \log S_t - b S_t + \epsilon_t \\
+&\Downarrow \\
+\log R_t - \log S_t &= \log a - b S_t + \epsilon_t \\
+&\Downarrow \\
+\log (R_t / S_t) &= \log a - b S_t + \epsilon_t \\
+&\Downarrow \\
+y_t &= \alpha - \beta S_t + \epsilon_t
+\end{aligned}
+$$
+
+where $y_t =\log (R_t / S_t)$, $\alpha = \log a$, and $\beta = b$.
+
+## Data
+
+The data for this assignment come from 21 populations of Chinook salmon (*Oncorhynchus tshawytscha*) in Puget Sound. The original data come from the NOAA Fisheries Salmon Population Summary (SPS) [database](https://www.webapps.nwfsc.noaa.gov/apex/f?p=261:HOME::::::), which was subsequently cleaned and summarized for use in a recent paper by [Bal et al. (2019)](https://doi.org/10.1016/j.ecolmodel.2018.04.012). The data are contained in the accompanying file `ps_chinook.csv`, which contains the following columns:
+
+* `pop`: name of the population
+
+* `pop_n`: integer ID for population (1-21)
+
+* `year`: year of spawning
+
+* `spawners`: total number of spawning adults (1000s)
+
+* `recruits`: total number of surviving offspring that "recruit" to the fishery (1000s)
+
+# Problems
+
+As you work through the following problems, be sure to show all of the code necessary to produce your answers. (Hint: You will need to define a new response variable before you can do any model fitting.)
+
+```{r readdata}
+## load the data
+psc <- read.csv("ps_chinook.csv")
+
+## number of popns
+n_pops <- length(unique(psc$pop))
+
+## number of years
+n_yrs <- length(unique(psc$year))
+
+## new response variable: log(R/S)
+psc$logRS <- log(psc$recruits / psc$spawners)
+```
+
+\vspace{0.25in}
+
+***
+
+a) Plot the number of recruits by population $(y)$ against the number of spawners by population $(x)$, and add a line indicating the replacement level where recruits = spawners. Describe what you see.
+
+```{r plot_data, echo = TRUE, fig.height=4.5, fig.width=4, fig.align='center'}
+## set colors
+clrs <- viridis::plasma(n_pops, alpha = 0.7, begin = 0.2, end = 0.8)
+
+## set plot region
+par(mai = c(0.9, 0.9, 0.6, 0.1))
+
+## plot data
+plot(0, 0, type = "n", las = 1,
+     xlim = range(psc$spawners), ylim = range(psc$recruits),
+     ylab = "Recruits (1000s)", xlab = "Spawners (1000s)")
+abline(a = 0, b = 1)
+for(i in 1:n_pops) {
+  pdat <- psc[psc$pop_n == i,]
+  points(pdat$spawners, pdat$recruits, pch = 16, col = clrs[i])
+}
+```
+
+\vspace{0.25in}
+
+***
+
+b) Fit the following model and report your estimates for $\alpha$ and $\beta$. Also report your estimate of $\sigma_\epsilon^2$. Based on the $R^2$ value, does this seem like a promising model?
+
+\begin{equation}
+\begin{gathered} \nonumber 
+\log (R_{i,t} / S_{i,t}) = \alpha - \beta S_{i,t} + \epsilon_{i,t} \\
+\epsilon_{i,t} \sim \text{N}(0, \sigma_\epsilon^2)
+\end{gathered}
+\end{equation}
+
+\vspace{0.25in}
+
+```{r fit_base_model, echo = TRUE}
+## base model with global parameters
+mod_base <- lm(logRS ~ spawners, data = psc)
+summary(mod_base)
+```
+
+\vspace{0.25in}
+
+The estimate of $\alpha$ is `r round(coef(mod_base)[1], 2)` and $\beta$ is `r round(coef(mod_base)[2], 3)`. The estimate of $\sigma_\epsilon^2$ is `r round(summary(mod_base)$sigma^2, 2)`. The $R^2$ value is only `r round(summary(mod_base)$r.squared, 3)`, which is *very* small, so this does *not* seem to be a promising model.
+
+***
+
+c) Fit the following model and report your estimates for $\alpha$, each of the $\delta_i$, and $\beta$. Also report your estimate of $\sigma_\epsilon^2$ and $\sigma_\delta^2$. Based on the $R^2$ value, how does this model compare to that from part (b)?
+
+\begin{equation}
+\begin{gathered} \nonumber 
+\log (R_{i,t} / S_{i,t}) = (\alpha + \delta_i) - \beta S_{i,t} + \epsilon_{i,t} \\
+\delta_{i} \sim \text{N}(0, \sigma_\delta^2) \\
+\epsilon_{i,t} \sim \text{N}(0, \sigma_\epsilon^2)
+\end{gathered}
+\end{equation}
+
+\vspace{0.25in}
+
+```{r fit_RE_popn_alpha, echo = TRUE, message = FALSE}
+library(lme4)
+## RE for alpha
+mod_re_popn_alpha <- lmer(logRS ~ 1 + spawners + (1 | pop_n), data = psc)
+summary(mod_re_popn_alpha)
+```
+
+\vspace{0.25in}
+
+The estimate of $\alpha$ is `r round(summary(mod_re_popn_alpha)$coef[1,1], 2)` and $\beta$ is `r round(summary(mod_re_popn_alpha)$coef[2,1], 3)`. The estimates of the $\delta_i$ are
+
+```{r}
+round(ranef(mod_re_popn_alpha)$pop_n, 3)
+```
+
+```{r, results='hold'}
+## get Var(epsilon) & Var(delta)
+(var_re_site <- as.data.frame(VarCorr(mod_re_popn_alpha)))
+## variance of random effects
+sigma2_delta <- var_re_site$vcov[1]
+## variance of residuals
+sigma2_epsilon <- var_re_site$vcov[2]
+```
+
+The estimate of $\sigma_\epsilon^2$ is `r round(sigma2_epsilon, 2)` and the estimate of $\sigma_\delta^2$ is `r round(sigma2_delta, 2)`.
+
+```{r}
+## R^2
+SSE <- sum(residuals(mod_re_popn_alpha)^2)
+SSTO <- sum((psc$logRS - mean(psc$logRS))^2)
+(R2 <- 1 - SSE / SSTO)
+```
+
+The $R^2$ value for this model is only ~`r round(R2, 3)`, which is much better than that for (b), but still quite low.
+
+***
+
+d) Fit the following model and report your estimates for $\alpha$, each of the $\eta_i$, and $\beta$. Also report your estimate of $\sigma_\epsilon^2$ and $\sigma_\eta^2$. Based on the $R^2$ value, how does this model compare to that from part (c)?
+
+\begin{equation}
+\begin{gathered} \nonumber 
+\log (R_{i,t} / S_{i,t}) = \alpha - (\beta + \eta_i) S_{i,t} + \epsilon_{i,t} \\
+\eta_{i} \sim \text{N}(0, \sigma_\eta^2) \\
+\epsilon_{i,t} \sim \text{N}(0, \sigma_\epsilon^2)
+\end{gathered}
+\end{equation}
+
+\vspace{0.25in}
+
+The trick here is to recognize that you only want a random effect for the slope $\eta$, and not the intercept, which means you need to specify the random effect as `(-1 + spawners | pop_n)`.
+
+```{r fit_RE_popn_beta, echo = TRUE, message = FALSE}
+## RE for beta
+mod_re_popn_beta <- lmer(logRS ~ 1 + spawners + (-1 + spawners | pop_n), data = psc)
+summary(mod_re_popn_beta)
+```
+
+\vspace{0.25in}
+
+The estimate of $\alpha$ is `r round(summary(mod_re_popn_beta)$coef[1,1], 2)` and $\beta$ is `r round(summary(mod_re_popn_beta)$coef[2,1], 3)`. The estimates of the $\eta_i$ are
+
+```{r}
+round(ranef(mod_re_popn_beta)$pop_n, 3)
+```
+
+```{r, results='hold'}
+## get Var(epsilon) & Var(eta)
+(var_re_site <- as.data.frame(VarCorr(mod_re_popn_beta)))
+## variance of random effects
+sigma2_eta <- var_re_site$vcov[1]
+## variance of residuals
+sigma2_epsilon <- var_re_site$vcov[2]
+```
+
+The estimate of $\sigma_\epsilon^2$ is `r round(sigma2_epsilon, 2)` and the estimate of $\sigma_\eta^2$ is `r round(sigma2_eta, 2)`.
+
+```{r}
+## R^2
+SSE <- sum(residuals(mod_re_popn_beta)^2)
+(R2 <- 1 - SSE / SSTO)
+```
+
+The $R^2$ value for this model is only ~`r round(R2, 3)`, which is much better than that for (c), but still quite low.
+
+***
+
+e) Fit the following model and report your estimates for $\alpha$, each of the $\delta_i$, $\beta$, and each of the $\eta_i$. Also report your estimate of $\sigma_\epsilon^2$, $\sigma_\delta^2$, and $\sigma_\eta^2$. Based on the $R^2$ value, how does this model compare to that from part (d)? (Hint: Refer back to the beginning of [Lab 6](https://qerm514.github.io/website/labs/week_06/mixed_models.html#fitting_models_with_lmer()) for how to fit uncorrelated random effects for both intercept and slope.)
+
+\begin{equation}
+\begin{gathered} \nonumber 
+\log (R_{i,t} / S_{i,t}) = (\alpha + \delta_i) - (\beta + \eta_i) S_{i,t} + \epsilon_{i,t} \\
+\delta_{i} \sim \text{N}(0, \sigma_\delta^2) \\
+\eta_{i} \sim \text{N}(0, \sigma_\eta^2) \\
+\epsilon_{i,t} \sim \text{N}(0, \sigma_\epsilon^2)
+\end{gathered}
+\end{equation}
+
+\vspace{0.25in}
+
+Here you want *uncorrelated* random effects for both the intercept and slope, which means you need to specify the random effects as `(1 + spawners || pop_n)`.
+
+```{r mod_re_popn_both, echo = TRUE, message = FALSE}
+## RE for beta
+mod_re_popn_both <- lmer(logRS ~ 1 + spawners + (1 + spawners || pop_n), data = psc)
+summary(mod_re_popn_both)
+```
+
+\vspace{0.25in}
+
+The estimate of $\alpha$ is `r round(summary(mod_re_popn_both)$coef[1,1], 2)` and $\beta$ is `r round(summary(mod_re_popn_both)$coef[2,1], 3)`. The estimates of the $\delta_i$ and $\eta_i$ are
+
+```{r}
+REs <- round(ranef(mod_re_popn_both)$pop_n, 3)
+colnames(REs) <- c("delta", "eta")
+REs
+```
+
+```{r, results='hold'}
+## get Var(epsilon) & Var(delta)
+(var_re_site <- as.data.frame(VarCorr(mod_re_popn_both)))
+## variance of random effects
+sigma2_delta <- var_re_site$vcov[1]
+sigma2_eta <- var_re_site$vcov[2]
+## variance of residuals
+sigma2_epsilon <- var_re_site$vcov[3]
+```
+
+The estimate of $\sigma_\epsilon^2$ is `r round(sigma2_epsilon, 2)`, the estimate of $\sigma_\delta^2$ is `r round(sigma2_delta, 2)`, and the estimate of $\sigma_\eta^2$ is `r round(sigma2_eta, 2)`
+
+```{r}
+## R^2
+SSE <- sum(residuals(mod_re_popn_both)^2)
+(R2 <- 1 - SSE / SSTO)
+```
+
+The $R^2$ value for this model is only ~`r round(R2, 3)`, which is slightly worse than that for (c).
+
+***
+
+f) Based on the 3 models you fit in parts (c - e), test whether or not there is data support for including a random effect for population-level intercepts. Also test whether or not there is data support for including a random effect for population-level slopes. Make sure to specify your null hypothesis for both of the tests.
+
+To compare our models with a single random effect, we need to compare them against a full model with both random effects. To do so, we need 3 different models:
+
+1) model with single RE of interest to be tested (`model_A`)
+
+2) full model with 2+ RE's (`model_AB`)
+
+3) full model minus the RE in model (1) (`model_B`)
+
+To conduct the test we use `extractRLRT(model_A, model_AB, model_B)`.
+
+```{r LRT_site, warning=FALSE}
+## load RLRsim package
+library(RLRsim)
+
+## test RE for intercept
+exactRLRT(mod_re_popn_alpha, mod_re_popn_both, mod_re_popn_beta)
+```
+
+We can reject $H_0 : \sigma_{\delta}^2 = 0$ and conclude that there is support for inclusion of a population-level offset to the intercept.
+
+Here is the test for the population-level offset to the slope.
+
+```{r LRT_year, warning=FALSE}
+## test RE for slope
+exactRLRT(mod_re_popn_beta, mod_re_popn_both, mod_re_popn_alpha)
+```
+
+Here, too, we can reject $H_0 : \sigma_{\eta}^2 = 0$ and conclude that there is support for inclusion of the `year` random effect.
+
+
+g) Now fit the following model and report your estimates for $\alpha$, each of the $\delta_i$, $\beta$, each of the $\eta_i$, and each of the $\gamma_t$. Also report your estimate of $\sigma_\epsilon^2$, $\sigma_\delta^2$, $\sigma_\gamma^2$, and $\sigma_\eta^2$. Based on the $R^2$ value, how does this model compare to that from part (d)? 
+
+\begin{equation}
+\begin{gathered} \nonumber 
+\log (R_{i,t} / S_{i,t}) = (\alpha + \delta_i + \gamma_t) - (\beta + \eta_i) S_{i,t} + \epsilon_{i,t} \\
+\delta_{i} \sim \text{N}(0, \sigma_\delta^2) \\
+\gamma_{t} \sim \text{N}(0, \sigma_\gamma^2) \\
+\eta_{i} \sim \text{N}(0, \sigma_\eta^2) \\
+\epsilon_{i,t} \sim \text{N}(0, \sigma_\epsilon^2)
+\end{gathered}
+\end{equation}
+
+
+Here you want *uncorrelated* random effects for both the intercept and slope, plus a random effect for year, which means you need to specify the random effects as `(1 + spawners || pop_n) + (1 | year)`.
+
+```{r mod_re_popn_3, echo = TRUE, message = FALSE}
+## RE for beta
+mod_re_popn_3 <- lmer(logRS ~ 1 + spawners + (1 + spawners || pop_n)  + (1 | year), data = psc)
+summary(mod_re_popn_3)
+```
+
+\vspace{0.25in}
+
+The estimate of $\alpha$ is `r round(summary(mod_re_popn_both)$coef[1,1], 2)` and $\beta$ is `r round(summary(mod_re_popn_both)$coef[2,1], 3)`. The estimates of the $\delta_i$ (`pop_n$(Intercept)`), $\eta_i$ (`pop_n$spawners`), and $\gamma_t$ (`year$(Intercept)`) are
+
+```{r}
+# round(ranef(mod_re_popn_3), 3)
+lapply(ranef(mod_re_popn_3), round, 3)
+```
+
+```{r, results='hold'}
+## get Var(epsilon) & Var(delta)
+(var_re_site <- as.data.frame(VarCorr(mod_re_popn_3)))
+## variance of random effects
+sigma2_delta <- var_re_site$vcov[1]
+sigma2_eta <- var_re_site$vcov[2]
+sigma2_gamma <- var_re_site$vcov[3]
+## variance of residuals
+sigma2_epsilon <- var_re_site$vcov[4]
+```
+
+The estimate of $\sigma_\epsilon^2$ is `r round(sigma2_epsilon, 2)`, the estimate of $\sigma_\delta^2$ is `r round(sigma2_delta, 2)`, the estimate of $\sigma_\eta^2$ is `r round(sigma2_eta, 3)`, and the estimate of $\sigma_\gamma^2$ is `r round(sigma2_gamma, 2)`.
+
+```{r}
+## R^2
+SSE <- sum(residuals(mod_re_popn_3)^2)
+(R2 <- 1 - SSE / SSTO)
+```
+
+The $R^2$ value for this model is ~`r round(R2, 3)`, which is our best yet.
+
+***
+
+h) Conduct a diagnostic check of the model you fit in (g) to evaluate the adequacy of the model assumptions. Do you see any cause for concern?
+
+We should be checking a $Q$-$Q$ plot, a plot of the residuals versus the fitted values, and the degree of autocorrelation in the residuals for each population.
+
+## Q-Q plots
+
+```{r re_diagnostics, fig.width=7, fig.height=4, fig.align='center'}
+## set plot area
+par(mai = c(0.9, 0.9, 0.6, 0.1),
+    omi = c(0, 0, 0, 0),
+    mfrow = c(1,2), cex.lab = 1.2)
+
+## qq resids
+qqnorm(residuals(mod_re_popn_3), main = "QQ plot (residuals)", las = 1, pch = 16)
+qqline(residuals(mod_re_popn_3))
+
+## qq RE's
+qqnorm(unlist(ranef(mod_re_popn_3)), main = "QQ plot (RE's)", las = 1, pch = 16)
+qqline(unlist(ranef(mod_re_popn_3)))
+```
+
+These plots indicate some leptokurtosis (heavy tails) in the residuals, suggesting our model assumptions are somewhat questionable.
+
+## Residuals versus fitted
+
+We can also plot the model residuals against the fitted values to look for evidence of heteroscedasticity or non-linearity in the residuals.
+
+```{r re_diagnostics_2, fig.width=4, fig.height=4.5, fig.align='center'}
+## resids vs fitted
+plot(fitted(mod_re_popn_3), residuals(mod_re_popn_3), las = 1, pch = 16,
+     xlab = "Fitted", ylab = "Residuals",
+     main = "Residuals vs fitted")
+abline(h=0, lty = "dashed")
+```
+
+This residual plot looks pretty good with the exception of one outlier in the lower right.
+
+## Autocorrelation
+
+Because these data were collected over time, we should be aware of possible autocorrelation among the residuals. It would be a bit messy to create plots for all 9 of the time series, so we'll just get a table of the results from `acf()` and see whether any of them exceed the critical value given by
+
+$$
+0 \pm \frac{z_{\alpha/2}}{\sqrt{n}}
+$$
+
+where $z_{\alpha/2}$ is the $1-\alpha/2$ quantile of the standard normal distribution. For example, if $\alpha$ = 0.05, then $z_{\alpha/2}$ = 1.96. Here we'll only examine correlations out to a lag of 5 years because it's unlikely that counts in this year would be related to counts 6 or more years in the past (and hopefully not at any years in the past).
+
+```{r acf}
+## Type-I error
+alpha_crit <- 0.05
+
+## threshold value for rho (correlation)
+(rho_crit <- qnorm(1 - alpha_crit/2) / sqrt(n_yrs))
+
+## rearrange residuals into matrix
+rr <- matrix(residuals(mod_re_popn_3), n_yrs, n_pops)
+
+## get ACF
+ACF <- apply(rr, 2, acf, lag.max = 5, plot = FALSE)
+ACF <- lapply(ACF, function(x) x$acf)
+## convert list to matrix; don't need row 1 b/c rho_0 = 1
+ACF <- do.call(cbind, ACF)[-1,]
+
+## check if any values > rho_crit by popn
+bad_rho <- apply(ACF, 2, function(x) abs(x) > rho_crit)
+apply(bad_rho, 2, any)
+```
+
+It looks like the random effect for year $\gamma_t$ did *not* do an adequate job of accounting for all of the autocorrelation in the data. However, there are *a lot* of null hypothesis tests here, so some of the correlations should exceed the critical value by chance alone.
+
