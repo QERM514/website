@@ -1,0 +1,1246 @@
+---
+title: "Fitting models to count data"
+author: "Mark Scheuerell"
+date: "22 May 2020"
+output:
+  html_document:
+    theme: journal
+    highlight: textmate
+    toc: true
+    toc_float: true
+    toc_depth: 4
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+# Background
+
+These lab exercises focus on fitting and evaluating models for count data. These include regular Poisson and negative binomial regression models, and zero-truncated, zero-altered, and zero-inflated models. We'll use the examples we saw in lecture to demonstrate the various options in **R** for fitting models, evaluating their goodness-of-fit, and examining model diagnostics.
+
+Earlier in the course we modeled counts as (possibly log transformed) density, where
+
+$$
+\text{Density}_i = f (\text{Count}_i, \text{Area}_i) \\
+\Downarrow \\
+\text{Density}_i = \frac{\text{Count}_i}{\text{Area}_i} \\
+$$
+
+With GLMs for count data, we instead shift our focus to
+
+$$
+\text{Count}_i = f (\text{Area}_i, \dots)
+$$
+
+## Components of a GLM
+
+As we've seen for other GLMs, there are 3 important components to a regression model for count data:
+
+1. Distribution of the data: $y \sim f_{\theta}(y)$
+
+2. Link function: $g(\eta)$
+
+3. Linear predictor: $\eta = \mathbf{X} \boldsymbol{\beta}$
+
+We are interested in the so-called *canonical links* for GLMs. Here is a summary table of the canonical links, and their mean functions, for three common distributions. For Poisson and negative binomial models for counts, we use a *log link* given by 
+
+$$
+\log (\mu) = \mathbf{X} \boldsymbol{\beta}
+$$
+
+and its inverse mean function given by
+
+$$
+\mu = \exp (\mathbf{X} \boldsymbol{\beta})
+$$
+
+***
+
+# Regular counts
+
+Let's consider a regular Poisson regression model for catches of spot prawns $y_i$ as a function of bait type $C_i$ and water temperature $T_i$, such that
+
+$$
+\begin{aligned}
+\text{data distribution:} & ~~ y_i \sim \text{Poisson}(\lambda_i) \\ \\
+\text{link function:} & ~~ \text{log}(\lambda_i) = \mu_i \\ \\
+\text{linear predictor:} & ~~ \mu_i = \alpha + \beta_1 C_i + \beta_2 T_i
+\end{aligned}
+$$
+
+## Catches of spot prawns
+
+The first step is to simulate the catch data. We'll assume that catches of spot prawns increase with water temperature, and that catches are generally greater when using fish as bait compared to chicken.
+
+```{r prawns_data}
+set.seed(514)
+## sample size
+nn <- 113
+## average catch
+b0 = 3.5
+## effect of chicken as bait
+b_bait <- 0.1
+## effect of temperature
+b_temp <- 0.03
+## bait type
+fish <- sample(c(0, 1), nn, replace = TRUE)
+## water temp
+temp <- runif(nn, 7, 13)
+## linear predictor
+eta <- exp(b0 + b_bait * fish + b_temp * temp)
+## catches
+catch <- rep(NA, length(eta)) 
+for(i in 1:nn) {
+  catch[i] <- rpois(1, eta[i])
+}
+## combine data
+prawns <- data.frame(cbind(catch, fish, temp))
+```
+
+Here are plots of catch versus water temperature and bait type.
+
+```{r prawns_plots, fig.height = 4.5, fig.width = 8, fig.align = 'center'}
+## set plot area
+par(mfrow = c(1, 2),
+    mai = c(0.9, 0.4, 0.6, 0.1),
+    omi = c(0, 0.7, 0, 0), bg = NA,
+    cex.main = 1.2, cex.lab = 1.2)
+## plot temp vs catch
+plot(temp, catch, las = 1, pch = 16, xpd = NA,
+     xlab = "Temperature (C)", ylab = "Catch")
+## plot bait vs catch
+plot(fish + 1, catch, las = 1, pch = 16,
+     xlim = c(0.5, 2.5), xlab = "Bait type", xaxt = "n",
+     yaxt = "n", ylab = "")
+axis(1, at = c(1, 2), labels = c("Chicken", "Fish"))
+```
+
+<br>
+
+## Model fitting
+
+Fitting Poisson regression models proceeds as with other GLMs using `glm()`. Recall that we must specify both the `family` of the distribution and the `link` type. By default `glm()` assumes the canonical link once a family is specified, but it's good "defensive programming" to explicitly include it anyway. Here is our model for catch as a function of temperature and bait type.
+
+```{r prawn_model}
+## Poisson regression
+cmod <- glm(catch ~ temp + fish, data = prawns,
+            family = poisson(link = "log"))
+faraway::sumary(cmod)
+```
+
+All three model coefficients are "significant" at the $\alpha$ = 0.05 level. Recall that the true values are `(Intercept)` = `r b0`, `temp` = `r b_temp`, and `fish` = `r b_bait`, so our estimates are reasonably close to the true values. Also recall that because bait type is a categorical predictor with 2 levels, the effect of `fish` represents the case where the bait type is fish. If the bait type is chicken, then the effect is zero.
+
+We also get an estimate of the model deviance, which 
+
+## Inference
+
+Once we've fit out model, it's natural to wonder about parameter (un)certainty, goodness of fit, and whether model diagnostics reveal any possible problems with our model.
+
+### Confidence intervals for $\beta_i$
+
+We can easily estimate the CI's on the model parameters with `confint()`. Here are the upper and lower 95% CI's on our model parameters with the MLEs.
+
+```{r ci_prawns, message = FALSE}
+## CI's for prawn model
+ci_prawns <- confint(cmod)
+ci_tbl <- cbind(ci_prawns[,1], coef(cmod), ci_prawns[,2])
+colnames(ci_tbl) <- c("Lower", "MLE", "Upper")
+signif(ci_tbl, 3)
+```
+
+We saw in lecture that we can have possible biases in $\text{SE}(\beta)$, which means we may want to compute CI's based on the *profile likelihood*. To calculate the profile likelihoods, we simply evaluate the likelihood at each point along a sequence of possible parameter values. Here are the profile likelihoods for the effects of temperature and bait type.
+
+```{r profile_LL}
+## number of points to profile
+nb <- 200
+
+## possible beta's
+beta_bait <- seq(0, 0.2, length = nb)
+beta_temp <- seq(-0.01, 0.07, length = nb)
+
+## calculate neg-LL of possible beta_temp
+## fix beta_bait at its MLE
+plt <- rep(NA, nb)
+for(i in 1:nb) {
+  mm <- glm(catch ~ 1 + offset(beta_temp[i] * temp + offset(coef(cmod)[3] * fish)),
+            data = prawns,
+            family = poisson(link = "log"))
+  plt[i] <- -logLik(mm)
+}
+
+## calculate neg-LL of possible beta_bait
+## fix beta_temp at its MLE
+plb <- rep(NA, nb)
+for(i in 1:nb) {
+  mm <- glm(catch ~ 1 + offset(coef(cmod)[2] * temp + offset(beta_bait[i] * fish)),
+            data = prawns,
+            family = poisson(link = "log"))
+  plb[i] <- -logLik(mm)
+}
+```
+
+Here are plots of the profile likelihoods and the threshold value based upon the 95$^{th}$ percentile for a $\chi^2_{1}$ on one degree of freedom (i.e., the difference in the number of parameters between the model and a model without the parameter). The blue points are the estimated lower and upper 95% CI.
+
+```{r plot_profile, fig.height=4.5, fig.width=8, fig.align='center', message = FALSE}
+## set plot area
+par(mfrow = c(1, 2),
+    mai = c(0.9, 0.9, 0.6, 0.1),
+    omi = c(0, 0, 0, 0),
+    cex.lab = 1.5)
+
+## threshold value for CI
+crit <- -(logLik(cmod) - qchisq(0.95, 1) / 2)
+
+## likelihood profile for temp
+plot(beta_temp, plt, type = "l", las = 1,
+     ylab = "Negative log-likelihood", xlab = expression(beta[temp]))
+abline(h = crit, lty = "dashed")
+points(confint(cmod)[2,], c(crit, crit), pch = 16, col = "blue")
+
+## likelihood profile for bait
+plot(beta_bait, plb, type = "l", las = 1,
+     ylab = "", xlab = expression(beta[bait]))
+abline(h = crit, lty = "dashed")
+points(confint(cmod)[3,], c(crit, crit), pch = 16, col = "blue")
+```
+
+<br>
+
+### Goodness of fit
+
+It's natural to ask how well a model fits the data. As with logistic regression models based upon a binomial distribution, we can check the deviance $D$ against a $\chi^2$ distribution. Recall that the deviance for any model is
+
+$$
+D_i = \text{-}2 \left[ \log \mathcal{L}(M_i) - \log \mathcal{L}(M_0) \right]
+$$
+
+where $M_i$ is the model of interest and $M_0$ is an intercept-only model. The log-likelihood for a Poisson is given by
+
+$$
+\log \mathcal{L}(y; \lambda) = \sum_{i=1}^{n} \left[ y_{i} \log (\lambda)- \lambda - \log \left( y_{i}! \right)  \right]
+$$
+
+and hence the deviance for a Poisson is
+
+$$
+\log \mathcal{L}(y; \lambda) = \sum_{i=1}^{n} \left[ y_{i} \log (y_i / \hat{\lambda}) - (y_i - \hat{\lambda})  \right]
+$$
+
+The null hypothesis for our $chi^2$ test is that our model is correctly specified and it adequately fits the data. Here is the code for our test.
+
+```{r model_dev}
+## deviance of prawn model
+D_full <- summary(cmod)$deviance
+## LRT with df = n - k
+(p_value <- pchisq(D_full, nn - length(coef(cmod)),
+                   lower.tail = FALSE))
+```
+
+This $p$-value is rather small so we reject the $H_0$, and conclude that the model does not provide an adequate fit to the data. But wait--we simulated the data according to a Poisson distribution, so why did this test conclude a lack of fit? In this case the reason is because the use of a $\chi^2$ distribution for the likelihood ratio test relies on asymptotic properties of the distribution, in that a Poisson distribution approximates a normal distribution as the mean gets larger. Therefore, there are no guarantees, even when the sample size is large, that the test will be valid.
+
+Recall from lecture that the assumption of $D \sim \chi^2_{n - k}$ can be violated with Poisson models unless $\lambda$ is large. Another option is to use the same Pearson's $X^2$ statistic we saw for binomial models, where
+
+$$
+X^2 = \sum_{i = 1}^n \frac{(O_i - E_i)^2}{E_i} \sim \chi^2_{(n - k)} \\
+$$
+
+So for our Poisson model
+
+$$
+X^2 = \sum_{i=1}^{n} \frac{(y_i - \hat{\lambda}_i)^2}{\hat{\lambda}_i} \sim \chi^2_{n - k}
+$$
+
+Again our null hypothesis is that our model is correctly specified. Here is the code to conduct the test.
+
+```{r pearson_gof}
+## numerator
+nm <- (prawns$catch - fitted(cmod))^2
+## denominator
+dm <- fitted(cmod)
+## Pearson's
+X2 <- sum(nm / dm)
+## test
+(p_value <- pchisq(X2, nn - length(coef(cmod)), lower.tail = FALSE))
+```
+
+We again the $p$-value is rather small so we reject the $H_0$, and conclude that the model does not provide an adequate fit to the data (with the same caveat as above).
+
+
+### Fitted values & CI's
+
+We can obtain the fitted values and confidence intervals around the fits in a manner analogous to that for logistic regression models. The important thing here is to remember that we want to estimate the uncertainty in log-space and then back-transform the intervals into count space. For ease in interpretation, we also want to calculate the CI's for the fits with both bait types as a function of temperature.
+
+```{r fitted_ci}
+## sorted temp 
+tmp <- prawns[order(prawns[,3]),]
+## split data into bait types
+fdat <- tmp[tmp$fish == 1,]
+cdat <- tmp[tmp$fish == 0,]
+
+## fitted values
+fish <- predict(cmod, fdat, se.fit = TRUE, type = "link")
+chkn <- predict(cmod, cdat, se.fit = TRUE, type = "link")
+
+## t value
+t_crit <- qt(0.975, nn - length(coef(cmod)))
+
+## CI's for fish
+fish_fit <- exp(fish$fit)
+fish_lo <- exp(fish$fit - t_crit * fish$se.fit)
+fish_hi <- exp(fish$fit + t_crit * fish$se.fit)
+
+## CI's for chicken
+chkn_fit <- exp(chkn$fit)
+chkn_lo <- exp(chkn$fit - t_crit * chkn$se.fit)
+chkn_hi <- exp(chkn$fit + t_crit * chkn$se.fit)
+```
+
+Here is a plot of the catches versus temperature with overlays of the model fits for both bait types.
+
+```{r plot_fitted_ci, fig.height=4.5, fig.width=4.5, fig.align='center'}
+## set plot area
+par(mai = c(0.9, 0.9, 0.6, 0.1),
+    omi = c(0, 0, 0, 0),
+    cex.lab = 1.5)
+
+## temp vs catch
+plot(temp, catch, pch = 16, las = 1,
+     ylab = "Catch", xlab ="Temperature (C)")
+## with fish bait
+lines(fdat$temp, fish_fit, lwd = 2, col = "blue")
+lines(fdat$temp, fish_lo, lwd = 1, col = "blue")
+lines(fdat$temp, fish_hi, lwd = 1, col = "blue")
+text(7, 52, "Fish", pos = 4, col = "blue")
+## with chicken bait
+lines(cdat$temp, chkn_fit, lwd = 2, col = "darkred")
+lines(cdat$temp, chkn_lo, lwd = 1, col = "darkred")
+lines(cdat$temp, chkn_hi, lwd = 1, col = "darkred")
+text(7, 34, "Chicken", pos = 4, col = "darkred")
+```
+
+<br>
+
+## Model diagnostics
+
+As with other models, it's important to examine diagnostic checks for our fitted models. The first thing we can do is examine a plot of the model residuals.
+
+### Residuals
+
+```{r resids, fig.height=4.5, fig.width=4.5, fig.align='center'}
+## set plot area
+par(mai = c(0.9, 0.9, 0.6, 0.1),
+    omi = c(0, 0, 0, 0),
+    cex.lab = 1.5)
+
+## resids vs fitted
+ee <- prawns$catch - fitted(cmod)
+plot(fitted(cmod), ee, pch = 16, las = 1,
+     ylab = "Residuals", xlab ="Fitted values")
+```
+
+<br>
+
+These residuals look good in that there is no obvious pattern (linear, nonlinear), nor is there any evidence of heteroscedasticity.
+
+### Leverage
+
+We can calculate the leverages $h$ to look for unusual observation in *predictor space*. Recall that we are potentially concerned about $h > 2 \frac{k}{n}$. We can use `hatvalues()` to compute the leverages.
+
+```{r leverage}
+## leverages
+hat_values <- hatvalues(cmod)
+## threshold value
+h_crit <- 2 * length(coef(cmod)) / nn
+## check if any h_i > b_crit
+any(hat_values > h_crit)
+```
+
+None of these points has a leverage greater than our threshold value. We can also use `faraway::halfnorm()` to plot them.
+
+```{r plot_leverage, fig.height=4.5, fig.width=4.5, fig.align='center'}
+## set plot area
+par(mai = c(0.9, 0.9, 0.6, 0.1),
+    omi = c(0, 0, 0, 0),
+    cex.lab = 1.5)
+
+## halfnormal plot
+faraway::halfnorm(hat_values, nlab = 0, labs = "", las = 1)
+text(0, 0.92*par("usr")[4],
+     substitute(italic(h[crit]) == h_crit, list(h_crit = round(h_crit, 3))),
+     pos = 4)
+```
+
+<br>
+
+### Cook's Distance
+
+Recall that we can use Cook's $D$ to identify potentially influential points, where
+
+$$
+D_{i}=e_{i}^{2} \frac{1}{k}\left(\frac{h_{i}}{1-h_{i}}\right)
+$$
+
+In general we should be potentially concerned about $D_i > F^{(0.5)}_{n, n - k} \approx 1$.
+
+```{r cooks}
+## Cook's D
+CD <- cooks.distance(cmod)
+## Threshold value
+CD_crit <- qf(0.5, nn, nn - length(coef(cmod)))
+## check if any CD_i > CD_crit
+any(CD > CD_crit)
+```
+
+It looks like none of the Cook's $D$ values exceed our threshold value. Let's plot them with `faraway::halfnorm()`.
+
+```{r plot_cooks, fig.height=4.5, fig.width=4.5, fig.align='center'}
+## set plot area
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0),
+    cex.lab = 1.5)
+
+## halfnormal plot
+faraway::halfnorm(CD, nlab = 0, labs = "", las = 1)
+```
+
+<br>
+
+## Model selection
+
+We can use a likelihood ratio test to compare our model to an intercept-only model
+
+```{r LRT_dev}
+## deviance of full model
+D_full <- summary(cmod)$deviance
+## deviance of null model
+D_null <- summary(cmod)$null.deviance
+## test statistic
+lambda <- D_null - D_full
+## LRT with df = 2
+(p_value <- pchisq(lambda, 2, lower.tail = FALSE))
+```
+
+This $p$-value is very small so we reject $H_0$ (that the data come from the null model).
+
+***
+
+# Overdispersed counts
+
+We saw that logistic regression models based upon the binomial distribution can exhibit overdispersion if the deviance is larger than expected. Poisson regression models are also prone to overdispersion because there is only one parameter specifying both the mean and the variance.
+
+$$
+y_i \sim \text{Poisson}(\lambda)
+$$
+
+## Bycatch of green sea turtles
+
+In lecture we used some example data indicative of bycatch of sea turtles in trawl fisheries. Here are the simulated data wherein ~50% of the fleet was outfitted with turtle excluder devices (TEDS) and the number of turtles caught per 1000 trawl hours was recorded along with water temperature.
+
+```{r turtles}
+## number of obs
+nn <- 197
+## presence/absence of TED
+TED <- sample(c(0,1), nn, replace = TRUE)
+## temperature
+temp <- runif(nn, 15, 25)
+
+## mean bycatch
+beta_0 <- -1.5
+## effect of TED
+beta_1 <- -1.1
+## effect of temp
+beta_2 <- 0.085
+
+## variance inflation
+mu <- 1
+vif <- 3
+
+## expectation
+mean <- exp(beta_0 + beta_1 * TED + beta_2 * temp)
+
+## bycatch
+bycatch <- rnbinom(nn, mu = mean, size = mu^2 / (vif - mu))
+
+## data frame
+turtles <- data.frame(bycatch, TED, temp)
+```
+
+
+```{r plot_turtles, fig.height=4.5, fig.width=4.5, fig.align='center'}
+## set plot area
+par(mai = c(0.9, 0.9, 0.6, 0.1),
+    omi = c(0, 0, 0, 0),
+    cex.lab = 1.5)
+
+## histogram of catches
+hist(turtles$bycatch, las = 1, breaks = seq(0, max(bycatch)),
+     col = "seagreen", border = "gray",
+     xlab = "Bycatch", main = "")
+```
+
+<br>
+
+## Poisson model for bycatch
+
+Let's begin by fitting a Poisson regression model to bycatch of turtles $y_i$ as a function of TED presence/absence $T_i$ and water temperature $W_i$. Here is the specification of our GLM:
+
+$$
+\begin{aligned}
+\text{data distribution:} & ~~ y_i \sim \text{Poisson}(\lambda_i) \\ \\
+\text{link function:} & ~~ \text{log}(\lambda_i) = \eta_i \\ \\
+\text{linear predictor:} & ~~ \eta_i = \alpha + \beta_1 T_i + \beta_2 W_i
+\end{aligned}
+$$
+
+Here is our model fit to the data.
+
+```{r ted_model}
+## Poisson regression
+ted_mod <- glm(bycatch ~ TED + temp, data = turtles,
+               family = poisson(link = "log"))
+## model summary
+faraway::sumary(ted_mod)
+```
+
+Two of these parameters appear to be non-significant at $\alpha$ = 0.05. That said, the estimated values are reasonably close the true values above.
+
+## Goodness of fit
+
+As we did above for the prawn model, we can use Pearson's $\chi^2$ statistic as a goodness-of-fit measure for our turtle model. Here again the null hypothesis is that our model is correctly specified.
+
+```{r ted_gof}
+## Pearson's X^2 statistic
+X2 <- sum((bycatch - fitted(ted_mod))^2 / fitted(ted_mod))
+## likelihood ratio test
+pchisq(X2, df = nn - length(coef(ted_mod)),
+       lower.tail = FALSE)
+```
+
+The $p$-value is quite small so we reject $H_0$ and conclude that the Poisson model is not a good fit to the data.
+
+### Overdispersion
+
+We can consider the possibility that the variance scales linearly with the mean, such that
+
+$$
+\text{Var}(y) = c \lambda
+$$
+
+If $c$ = 1 then $y \sim \text{Poisson}(\lambda)$, and if $c$ > 1 the data are *overdispersed*. We can estimate the overdispersion $\hat{c}$ as
+
+$$
+\hat{c} = \frac{X^2}{n - k}
+$$
+
+and
+
+```{r ted_over}
+## overdispersion parameter
+(c_hat <- X2 / (nn - length(coef(ted_mod))))
+```
+
+This estimate of dispersion is well above 1 so we should be concerned about its effect on the estimated uncertainty of our model parameters. Therefore, we can tell **R** that we want to account for the overdispersion when estimating the SE for the model parameters by including the `dispersion` argument in `summary()`. Let's compare the SE's for both cases.
+
+```{r ted_both}
+## regular Poisson
+signif(summary(ted_mod)$coefficients, 3)
+## overdispersed Poisson
+signif(summary(ted_mod, dispersion = c_hat)$coefficients, 3)
+```
+
+The SE's for the overdispersed model are clearly larger. We can see the effect this has on the estimated confidence intervals by overlaying them on plots of the data and zooming in on the lower range of the data.
+
+## Effect of overdispersion
+
+```{r fitted_ci_2, fig.height=4.5, fig.width=7.5, fig.align='center'}
+## fitted values
+tmp <- turtles[order(turtles[,3]),]
+fdat <- tmp[tmp$TED == 1,]
+cdat <- tmp[tmp$TED == 0,]
+TED <- predict(ted_mod, fdat, se.fit = TRUE, type = "link")
+no_TED <- predict(ted_mod, cdat, se.fit = TRUE, type = "link")
+
+## VIF fitted values
+tmp2 <- turtles[order(turtles[,3]),]
+fdat2 <- tmp2[tmp2$TED == 1,]
+cdat2 <- tmp2[tmp2$TED == 0,]
+TED2 <- predict(ted_mod, fdat2, se.fit = TRUE, type = "link", dispersion = c_hat)
+no_TED2 <- predict(ted_mod, cdat2, se.fit = TRUE, type = "link", dispersion = c_hat)
+
+## t value
+t_crit <- qt(0.975, nn - length(coef(ted_mod)))
+
+## set plot area
+par(mfrow = c(1,2),
+    mai = c(0.9, 0.9, 0.6, 0.1),
+    omi = c(0, 0, 0, 0),
+    cex.lab = 1.4)
+
+## temp vs bycatch
+plot(temp, bycatch, pch = 16, las = 1, ylim = c(0, 3.5),
+     ylab = "Bycatch", xlab ="Temperature (C)", main = "Without VIF")
+## with TED
+lines(fdat$temp, exp(TED$fit), lwd = 2, col = "blue")
+lines(fdat$temp, exp(TED$fit + t_crit * TED$se.fit), lwd = 1, col = "blue")
+lines(fdat$temp, exp(TED$fit - t_crit * TED$se.fit), lwd = 1, col = "blue")
+text(7, 65, "with TED", pos = 4, col = "blue")
+## without TED
+lines(cdat$temp, exp(no_TED$fit), lwd = 2, col = "darkred")
+lines(cdat$temp, exp(no_TED$fit + t_crit * no_TED$se.fit), lwd = 1, col = "darkred")
+lines(cdat$temp, exp(no_TED$fit - t_crit * no_TED$se.fit), lwd = 1, col = "darkred")
+text(7, 30, "w/o TED", pos = 4, col = "darkred")
+
+## temp vs bycatch
+plot(temp, bycatch, pch = 16, las = 1, ylim = c(0, 3.5),
+     ylab = "", xlab ="Temperature (C)", main = "With VIF")
+## with TED
+lines(fdat2$temp, exp(TED2$fit), lwd = 2, col = "blue")
+lines(fdat2$temp, exp(TED2$fit + t_crit * TED2$se.fit), lwd = 1, col = "blue")
+lines(fdat2$temp, exp(TED2$fit - t_crit * TED2$se.fit), lwd = 1, col = "blue")
+text(7, 65, "with TED", pos = 4, col = "blue")
+## without TED
+lines(cdat$temp, exp(no_TED2$fit), lwd = 2, col = "darkred")
+lines(cdat$temp, exp(no_TED2$fit + t_crit * no_TED2$se.fit), lwd = 1, col = "darkred")
+lines(cdat$temp, exp(no_TED2$fit - t_crit * no_TED2$se.fit), lwd = 1, col = "darkred")
+text(7, 30, "w/o TED", pos = 4, col = "darkred")
+```
+
+
+## Quasi-Poisson models
+
+We saw with the case of overdispersed binomial models that we could use a  *quasi-likelihood* to estimate the parameters. To fit these models, we use `family = quasipoisson(link = "log")` in our call to `glm()`. Here are the quasi-likelihood fits compared to the overdispersed Poisson.
+
+```{r ted_model_quasi}
+## Poisson regression
+ted_mod_q <- glm(bycatch ~ TED + temp, data = turtles,
+                 family = quasipoisson(link = "log"))
+## quasi-Poisson
+signif(summary(ted_mod_q)$coefficients, 3)
+## overdispersed Poisson
+signif(summary(ted_mod, dispersion = c_hat)$coefficients, 3)
+```
+
+These estimates indeed very close to one another.
+
+### Quasi-AIC
+
+Just as we did for binomial models, we can use a *quasi*-AIC to compare models, where
+
+$$
+QAIC = 2 k - 2 \frac{\log \mathcal{L}}{\hat{c}}
+$$
+
+Here's a comparison of several possible models for turtle bycatch.
+
+```{r qaic}
+## fit null
+ted_null <- glm(bycatch ~ 1, data = turtles,
+                family = poisson(link = "log"))
+## fit reduced
+ted_ted <- glm(bycatch ~ TED, data = turtles,
+               family = poisson(link = "log"))
+ted_temp <- glm(bycatch ~ temp, data = turtles,
+                family = poisson(link = "log"))
+
+## model selection results
+tbl_mods <- matrix(NA, 4, 6)
+rownames(tbl_mods) <- c("B0 + TED + temp  ", "B0 + TED  ",
+                        "B0 + temp  ", "B0 only  ")
+colnames(tbl_mods) <- c("k", "neg-LL", "AIC", "deltaAIC", "QAIC", "deltaQAIC")
+tbl_mods[,1] <- c(3,2,2,1)
+tbl_mods[,2] <- round(-c(logLik(ted_mod), logLik(ted_ted),
+                         logLik(ted_temp), logLik(ted_null)), 1)
+tbl_mods[,3] <- round(c(AIC(ted_mod), AIC(ted_ted),
+                        AIC(ted_temp), AIC(ted_null)), 1)
+tbl_mods[,4] <- round(tbl_mods[,3] - min(tbl_mods[,3]), 1)
+tbl_mods[,5] <- round(2 * tbl_mods[,1] + 2 * tbl_mods[,2] / c_hat, 1)
+tbl_mods[,6] <- round(tbl_mods[,5] - min(tbl_mods[,5]), 1)
+tbl_mods
+```
+
+
+## Negative binomial distribution
+
+We have seen several examples in lecture where we can use the negative binomial distribution to model overdispersed data because it has an additional parameter for the spread. Here is the description of a GLM for bycatch of turtles $y_i$ as a function of TED presence/absence $T_i$ and water temperature $W_i$
+
+$$
+\begin{aligned}
+\text{data distribution:} & ~~ y_i \sim \text{negBin}(r, \mu_i) \\ \\
+\text{link function:} & ~~ \text{log}(\mu_i) = \eta_i \\ \\
+\text{linear predictor:} & ~~ \eta_i = \alpha + \beta_1 T_i + \beta_2 W_i
+\end{aligned}
+$$
+
+<br>
+
+We can model our bycatch data with a negative binomial using `glm.nb()` from the **MASS** package.
+
+```{r ted_model_nb}
+## load MASS
+library(MASS)
+## negative binomial regression
+ted_mod_nb <- glm.nb(bycatch ~ TED + temp, data = turtles,
+                     link = "log")
+```
+
+Let's compare these estimates to those for the overdispersed and quasi-likelihood models.
+
+```{r ted_model_nb_compare}
+## overdispersed Poisson
+signif(summary(ted_mod, dispersion = c_hat)$coefficients, 3)
+## quasi-Poisson
+signif(summary(ted_mod_q)$coefficients, 3)
+## negative binomial
+signif(summary(ted_mod_nb)$coefficients, 3)
+```
+
+The model estimates from the negative binomial model are rather similar to those from the other methods.
+
+***
+
+# Zero-truncated counts
+
+Although somewhat rare in ecological studies, we saw some examples in lecture of so-called "zero-truncated data" (e.g., the time a whale is at the surface before diving, herd size in elk, number of fin rays on a fish). We also saw that the data themselves are not a problem, but rather an underlying assumption of a Poisson or negative binomial distribution may be the problem.
+
+## Poisson for zero-truncated data
+
+The probability that $y_i = 0$ is
+
+$$
+f(y_i; \lambda_i) = \frac{\exp (\text{-} \lambda_i) \lambda_{i}^{y_i}}{y_i!} \\
+\Downarrow \\
+\begin{align}
+f(y_i = 0; \lambda_i) &= \frac{\exp (\text{-} \lambda_i) \lambda_{i}^0}{0!} \\
+  &= \exp (\text{-} \lambda_i)
+\end{align}
+$$
+
+and therefore the probability that $y_i \neq 0$ is
+
+$$
+f(y_i \neq 0; \lambda_i) = 1 - \exp (\text{-} \lambda_i)
+$$
+
+We can now exclude the probability that $y_i = 0$ by dividing the pmf by the probability that $y_i \neq 0$
+
+$$
+f(y_i; \lambda_i) = \frac{\exp (\text{-} \lambda_i) \lambda_{i}^{y_i}}{y_i!} \\
+\Downarrow \\
+f^+(y_i; \lambda_i | y_i > 0) = \frac{\exp (\text{-} \lambda_i) \lambda_{i}^{y_i}}{y_i!} \cdot \frac{1}{1 - \exp (\text{-} \lambda_i)} \\
+\Downarrow \\
+\log \mathcal{L} = \left( y_i \log \lambda_i - \lambda_i \right) - \left( 1 - \exp (\text{-} \lambda_i) \right)
+$$
+
+
+## Road-killed snakes
+
+Let's revisit the data presented in Zuur et al. (2009) on the number of days that carcasses from road-killed snakes stay on roads. The predictors are the total rainfall (mm) and an indicator of whether the snake was killed in the driving lane or the shoulder (or "verve" as it is sometimes called). Let's begin by loading and plotting the data.
+
+```{r snake_data, fig.height=4.5, fig.width=6, fig.align='center'}
+## read data
+snakes <- read.csv("snakes.csv", stringsAsFactors = FALSE)
+
+## set plot area
+par(mai = c(0.9, 0.9, 0.6, 0.1),
+    omi = c(0, 0, 0, 0), bg = NA,
+    cex.lab = 1.3)
+## histogram
+hh <- hist(snakes$n_days, breaks = seq(0, max(snakes$n_days)), plot = FALSE)
+barplot(hh$counts, names.arg = seq(max(snakes$n_days)), las = 1,
+        ylab = "Count", xlab = "Number of days",
+        col = "dodgerblue", border = "gray")
+```
+
+<br>
+
+## Poisson model
+
+Let's first consider a regular Poisson regression model, which has a non-zero likelihood of producing zeros.
+
+```{r snake_pois}
+## Poisson regression
+smod_pois <- glm(n_days ~ location + rain, data = snakes,
+                 family = poisson(link = "log"))
+## model summary
+summary(smod_pois)
+```
+
+
+## Zero-truncated Poisson
+
+Now let's fit a zero-truncated Poisson regression model with `vglm()` from **VGAM** and compare the results to our regular Poisson model above. To do so, we need to specify `family = pospoisson` to indicate we want a zero-truncated Poisson distribution.
+
+```{r snake_pois_pos}
+library(VGAM)
+## zero-truncated Poisson regression
+smod_ztpois <- vglm(n_days ~ location + rain, data = snakes,
+                    family = pospoisson)
+
+## parameter MLEs and SEs for Poisson
+beta_hat_p <- cbind(coef(smod_pois), sqrt(diag(vcov(smod_pois))))
+## parameter MLEs and SEs for Poisson+
+beta_hat_ztp <- cbind(coef(smod_ztpois), sqrt(diag(vcov(smod_ztpois))))
+
+## table of results
+tbl_pois <- round(cbind(beta_hat_p, beta_hat_ztp), 3)
+colnames(tbl_pois) <- c("  Poisson", "  Poisson SE", "  +Poisson", "  +Poisson SE")
+tbl_pois
+```
+
+Here we can see that MLE's from the regular Poisson model are biased high and low for the intercept and location effect, respectively. The SE's for the Poisson model are also biased low.
+
+## Zero-truncated negative binomial
+
+Looking back at the results from the regular Poisson model, we can also see that the model deviance seems rather high given the degrees of freedom ($D$ = `r round(smod_pois$null.deviance, 1)` with $df$ = `r smod_pois$df.null`). This suggests that we should consider a model that allows for additional variance beyond that for a Poisson. The negative binomial is an obvious choice.
+
+Recall that for $y_i \sim \text{negBinom}(r, \mu)$, its probability mass function is
+
+$$
+f(y; \mu, r) = \frac{(y+r-1) !}{(r-1) ! y !} \left( \frac{r}{\mu + r} \right)^{r}\left( \frac{\mu}{\mu + r} \right)^{y}
+$$
+
+The probability that $y_i = 0$ is
+
+$$
+f(y; r, \mu) = \frac{(y+r-1) !}{(r-1) ! y !} \left( \frac{r}{\mu + r} \right)^{r}\left( \frac{\mu}{\mu + r} \right)^{y} \\
+\Downarrow \\
+\begin{align}
+f(y_i = 0; r, \mu) &= \frac{(0+r-1) !}{(r-1) ! 0 !} \left( \frac{r}{\mu + r} \right)^{r} \left( \frac{\mu}{\mu + r} \right)^{0} \\
+  &= \left( \frac{r}{\mu + r} \right)^{r}
+\end{align}
+$$
+
+and the probability that $y_i \neq 0$ is therefore
+
+$$
+f(y_i \neq 0; r, \mu_i) = 1 - \left( \frac{r}{\mu + r} \right)^{r}
+$$
+
+Just as we did for the Poisson distribution, we can now exclude the probability that $y_i = 0$ by dividing the pmf by the probability that $y_i \neq 0$
+
+$$
+f(y; r, \mu) = \frac{(y+r-1) !}{(r-1) ! y !} \left( \frac{r}{\mu + r} \right)^{r} \left( \frac{\mu}{\mu + r} \right)^{y} \\
+\Downarrow \\
+f^+(y_i; \lambda_i | y_i > 0) = \frac{ \frac{(y+r-1) !}{(r-1) ! y !} \left( \frac{r}{\mu + r} \right)^{r} \left( \frac{\mu}{\mu + r} \right)^{y} }{ 1 - \left( \frac{r}{\mu + r} \right)^{r} } \\
+\Downarrow \\
+\log \mathcal{L} = \log \mathcal{L}(\text{NB}) - \log \left( 1 - \left( \frac{r}{\mu + r} \right)^{r} \right)
+$$
+
+## Road-killed snakes
+
+Let's first consider a regular negative binomial regression model to which we can compare a zero-truncated version.
+
+```{r snake_nb}
+## load MASS pkg
+library(MASS)
+## negative binomial regression
+smod_nb <- glm.nb(n_days ~ location + rain, data = snakes,
+                  link = "log")
+## model summary
+summary(smod_nb)
+```
+
+Right away we can see that the deviance for this model is much more in line with our expectation. Now let's fit a zero-truncated negative binomial regression model with `vglm()` from **VGAM** and compare it to the regular negative binomial model. Here we need to specify `family = posnegbinomial` to specify a zero-truncated negative binomial.
+
+```{r snake_nb_pos}
+library(VGAM)
+## zero-truncated negative binomial regression
+smod_ztnb <- vglm(n_days ~ location + rain, data = snakes,
+                  family = posnegbinomial)
+
+## MLEs and SEs for regular NB
+beta_hat_nb <- cbind(coef(smod_nb), sqrt(diag(vcov(smod_nb))))
+## MLEs and SEs for regular NB+
+beta_hat_ztnb <- cbind(coef(smod_ztnb)[-2], sqrt(diag(vcov(smod_ztnb))[-2]))
+
+## table of results
+tbl_nb <- round(cbind(beta_hat_nb, beta_hat_ztnb), 3)
+colnames(tbl_nb) <- c("  NB", "  NB SE", "      +NB", " +NB SE")
+tbl_nb
+```
+
+This is a particularly impressive example of the biases in MLE's and the associated SE's that one would get by fitting the wrong model.
+
+***
+
+# Zero-inflated counts
+
+Count data that have an excess of zeros tend to be more common in ecological studies. These *zero-inflated* data contain more zeros than would be expected under a Poisson or negative binomial distribution. In general, there are 4 different types of errors that cause zeros
+
+1) Structural (an animal is absent because the habitat is unsuitable)
+
+2) Design (sampling is limited temporally or spatially)
+
+3) Observer error (inexperience or difficult circumstances)
+
+4) Process error (habitat is suitable but unused)
+
+## Approaches to zero-inflated data
+
+There are 2 general approaches for dealing with zero-inflated data, which differ in their assumption about the underlying sources of the excess zeros:
+
+1) Zero-altered ("hurdle") models
+
+2) Zero-inflated ("mixture") models
+
+Zero-altered (ZA) models do not discriminate among the 4 types of zeros and treat all of the count data as belonging to one of two distinct groups: zeros and non-zeros. Zero-inflated (ZI) models also treat the zeros as coming from two sources, but they arise either via observation errors (missed detections) or ecological reasons (the plant or animal was absent because of the environment). The primary difference is that ZA models treat the non-zeros as zero-truncated data whereas ZI models treat the non-zeros and *some of the zeros* as coming from a regular Poisson or negative binomial distribution. Here is a graphical depiction of the two cases.
+
+```{r za_zi_compare, fig.height=4.5, fig.width=7.5, fig.align='center'}
+## ZAP
+set.seed(514)
+junk <- rpois(300, 3)
+junk1 <- rep(0, 50)
+all <- c(junk1, junk)
+ind <- ifelse(all > 0, 0, 1)
+all_zap <- table(all, ind)
+
+## ZIP
+set.seed(514)
+junk <- rpois(300,3)
+junk1 <- rep(0,50)
+ind <- c(rep(1,50),rep(0,300))
+all <- c(junk1, junk)
+all_zip <- table(all,ind)
+
+## set plot area
+par(mfrow = c(1, 2),
+    mai = c(0.9, 0.9, 0.6, 0.1),
+    omi = c(0, 0, 0, 0), bg = NA,
+    cex.main = 1.2, cex.lab = 1.2)
+
+## bar charts of the data
+barplot(t(all_zap), las = 1, col=c("dodgerblue","indianred"),
+        xlab = "Count", main = "Zero altered (hurdle)")
+barplot(t(all_zip), las = 1, col=c("dodgerblue","indianred"),
+        xlab = "Count", main = "Zero inflated (mixture)")
+```
+
+<br>
+
+## Zero-altered Poisson
+
+Zero-altered models consist of 2 parts:
+
+1) a binomial model to determine the probability of a zero
+
+2) a truncated Poisson or negative binomial to model the positive counts
+
+Here we'll consider a zero-altered Poisson (ZAP) model, which is given by
+
+$$
+f_{\text{ZAP}}(y; \pi, \lambda) = 
+\left\{
+\begin{array}{lc}
+f_{\text{binomial}}(y = 0; \pi) \\
+\left[1 - f_{\text{binomial}}(y = 0; \pi) \right] \times \left( \frac{f_{\text{Poisson}}(y = 0; \lambda)}{1 - f_{\text{Poisson}}(y = 0; \lambda)} \right) 
+\end{array}
+\right.
+$$
+
+where $\pi$ is the probability of finding *any* individuals, and $\lambda$ is the mean (and variance) of the *positive counts*.
+
+We can model both parameters as functions of covariates, such that the logit-transformed probability of detection is given by
+
+$$
+\text{logit}(\pi) = \mathbf{X}_d \boldsymbol{\beta}_d
+$$
+
+and the log-transformed mean and variance of the positive counts is given by
+
+$$
+\log(\lambda) = \mathbf{X}_c \boldsymbol{\beta}_c
+$$
+
+## Counts of hippos
+
+Let's apply a ZAP model to our fictitious survey data for hippos, where we assume the following the probability of finding hippos increases with water availability and the number of hippos increases with tree density. We'll model detection as a function of water availability $W$, such that
+
+$$
+z_i \sim \text{Bernoulli}(\pi_i) \\
+\text{logit}(\pi) = \gamma_0 + \gamma_1 W_i
+$$
+
+and the positive counts as a function of tree density $T$, such that
+
+$$
+c_i \sim \text{Poisson}^+(\lambda_i) \\
+\log(\lambda) = \beta_0 + \beta_1 T_i
+$$
+
+Total counts are then a function of the non-zero detections and the positive counts
+
+$$
+y_i = z_i c_i
+$$
+
+Here's how we simulate the zero-inflated data.
+
+```{r hippo_data}
+## function to generate positive Poisson values
+rtpois <- function(n, l) {
+  qpois(runif(n, dpois(0, l), 1), l) 
+}
+
+set.seed(514)
+## sample size
+nn <- 200
+## parameters for detection model
+gamma_0 <- -2
+gamma_tree <- 3
+## parameters for count model
+beta_0 <- 2
+beta_tree <- 0.8
+## covariates
+water <- runif(nn, 0, 1)
+trees <- runif(nn, 0, 1)
+## expectation for Pr(detect)
+mu <- 1/(1+exp(-(gamma_0 + gamma_tree * water)))
+## detections (0/1)
+z <- rbinom(nn, 1, mu)
+## expectation for pos counts
+lambda <- exp(beta_0 + beta_tree * trees) 
+## pos counts
+pos_count <- rtpois(nn, lambda)
+## observations
+y <- z * pos_count
+```
+
+Here is a plot of the simulated hippo counts.
+
+```{r plot_hippo_data, fig.height=4.5, fig.width=6, fig.align='center'}
+## set plot area
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0), bg = NA,
+    cex.main = 1.2, cex.lab = 1.2)
+
+## histogram of counts
+hist(y, breaks = seq(0, max(y)), las = 1, col = "dodgerblue", border = "gray",
+     main = "", xlab = "Number of hippos", ylab = "Frequency", )
+```
+
+## ZAP model for hippos
+
+We can fit ZAP models in R with `hurdle()` from the **pscl** package. Note that the formula for ZAP models is specified as `y ~ predictors_of_counts | predictors_for_detection`.
+
+```{r hippo_zap, echo = TRUE}
+## load pscl
+library(pscl)
+## fit hurdle model
+hippo_zap <- hurdle(y ~ trees | water)
+## model summary
+summary(hippo_zap)
+```
+
+The model summary gives us the parameter estimates for both the detection model and the count model. The parameter estimates are pretty close to the true values above, but the slope for the effect of water availability is a bit low.
+
+We can plot the relationships between water availability and the probability of detection, and the estimated count as a function of our index of tree density.
+
+```{r hippo_zap_fitted, fig.height=4.5, fig.width=7.5, fig.align='center'}
+## fitted for detection prob (pi)
+water <- sort(water)
+gamma_hat_0 <- coef(hippo_zap)[3]
+gamma_hat_1 <- coef(hippo_zap)[4]
+pi_hat <- 1/(1+exp(-(gamma_hat_0 + gamma_hat_1*water)))
+
+## matrix of derivatives for SE's
+derivs <- matrix(NA,nrow=nn,ncol=4)
+derivs[,1] <- derivs[,2] <- 0
+derivs[,3] <- (exp(gamma_hat_0 + gamma_hat_1*water)) / ((exp(gamma_hat_0 + gamma_hat_1*water)+1)^2)
+derivs[,4] <- (water * exp(gamma_hat_0 + gamma_hat_1*water)) / ((exp(gamma_hat_0 + gamma_hat_1*water)+1)^2) 
+se <- sqrt( diag ( derivs %*% vcov(hippo_zap) %*% t(derivs) ))
+lower <- pi_hat - se * qt(0.025, nn-2, lower.tail = FALSE)
+upper <- pi_hat + se * qt(0.025, nn-2, lower.tail = FALSE)
+
+## fitted for mean & var (lambda)
+trees <- sort(trees)
+beta_hat_0 <- coef(hippo_zap)[1]
+beta_hat_1 <- coef(hippo_zap)[2]
+lambda_hat <- exp(beta_hat_0 + beta_hat_1*trees)
+
+## matrix of derivatives for SE's
+derivs_2 <- matrix(NA,nrow=nn,ncol=4)
+derivs_2[,1] <- exp(beta_hat_0+beta_hat_1*trees)
+derivs_2[,2] <- trees*exp(beta_hat_0+beta_hat_1*trees) 
+derivs_2[,3] <- derivs_2[,4] <- 0
+se_2 <- sqrt( diag ( derivs_2 %*% vcov(hippo_zap) %*% t(derivs_2) ))
+lower_2 <- lambda_hat - se_2 * qt(0.025, nn-2, lower.tail = FALSE)
+upper_2 <- lambda_hat + se_2 * qt(0.025, nn-2, lower.tail = FALSE)
+
+## set plot area
+par(mfrow = c(1, 2),
+    mai = c(0.9, 0.9, 0.6, 0.1),
+    omi = c(0, 0, 0, 0), bg = NA,
+    cex.main = 1.2, cex.lab = 1.2)
+## detections
+plot(water, pi_hat, type = "l", las = 1, ylim = c(0, 1), lwd = 2, col = "dodgerblue",
+     xlab = "Water availability", ylab = expression(pi), main = "Detection")
+lines(water, lower, lty = 2,  col = "dodgerblue", lwd = 2)
+lines(water, upper, lty = 2,  col = "dodgerblue", lwd = 2)
+## counts
+plot(trees, lambda_hat, type = "l", las = 1, ylim = c(0, 20), lwd = 2, col = "darkgreen",
+     xlab = "Tree density", ylab = expression(lambda), main = "Counts")
+lines(trees, lower_2, lty = 2, col = "darkgreen", lwd = 2)
+lines(trees, upper_2, lty = 2, col = "darkgreen", lwd = 2)
+
+```
+
+## Zero-inflated Poisson
+
+Zero-inflated Poisson (ZIP) models consist of 2 parts
+
+1) a binomial model to determine the probability of a zero
+
+2) a Poisson model for counts, which can include zeros
+
+Recall that the probability of a zero count comes from 2 sources:
+
+1) false zeros (missed detections)
+
+2) true zeros (ecological reasons)
+
+which means
+
+Pr(zero) = Pr(false zero) + Pr(true zero) $\times$ Pr(count = 0)
+
+Thus, a zero-inflated Poisson (ZIP) model is given by
+
+$$
+\begin{align}
+f_{\text{ZIP}}(y = 0) &= f_{\text{Binomial}}(\pi) + [1 - f_{\text{Binomial}}(\pi)] f_{\text{Poisson}}(y = 0; \lambda) \\
+~ \\
+f_{\text{ZIP}}(y | y > 0) &= [1 - f_{\text{Binomial}}(\pi)] f_{\text{Poisson}}(y; \lambda) \\
+\end{align}
+$$
+
+where $\pi$ is the probability of *false zeros* (missed detections) and $\lambda$ is the mean (and variance) of *all counts* (including zeros)
+
+## Counts of deer
+
+Let's apply a ZIP model to a simulated survey for white tailed deer where we'll assume that the probability of *not* detecting deer increases with tree density $T$, such that
+
+$$
+z_i \sim \text{Bernoulli}(\pi_i) \\
+\text{logit}(\pi) = \gamma_0 + \gamma_1 T_i
+$$
+
+and the counts of deer also increase with tree density $T$, such that
+
+$$
+c_i \sim \text{Poisson}(\lambda_i) \\
+\log(\lambda) = \beta_0 + \beta_1 T_i
+$$
+
+Total counts as a function of non-detections and positive counts
+
+$$
+y_i = (1 - z_i) c_i
+$$
+
+Here are the simulated data.
+
+```{r deer_data}
+set.seed(514)
+## sample size
+nn <- 200
+## parameters for detection model
+gamma_0 <- 0.01
+gamma_tree <- 3
+## parameters for count model
+beta_0 <- 1.5
+beta_tree <- 1.2
+## covariate
+trees <- runif(nn, 0, 1)
+## expectation for Pr(detect)
+mu <- 1 / (1 + exp(-(gamma_0 + gamma_tree * trees)))
+## missed detections (0/1)
+z <- rbinom(nn, 1, mu)
+## expectation for pos counts
+lambda <- exp(beta_0 + beta_tree * trees) 
+## pos counts
+pos_count <- rpois(nn, lambda)
+## observations
+y <- (1 - z) * pos_count
+```
+
+Here is a histogram of the deer counts
+
+```{r plot_deer_data, fig.height=4.5, fig.width=6, fig.align='center'}
+## set plot area
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0), bg = NA,
+    cex.main = 1.2, cex.lab = 1.2)
+
+## histogram of counts
+hist(y, breaks = seq(0, max(y)), las = 1, col = "brown", border = "gray",
+     main = "", xlab = "Number of deer", ylab = "Frequency", )
+```
+
+## ZIP model for deer
+
+We can fit ZIP models in R with `zeroinfl()` from the **pscl** package, where again we specify the formula as `y ~ predictors_of_counts | predictors_for_detection`.
+
+```{r deer_zip, echo = TRUE}
+## fit hurdle model
+deer_zip <- zeroinfl(y ~ trees | trees)
+## model summary
+summary(deer_zip)
+```
+
+Here, too, the estimated parameters for both the detection and count models *generally* agree with the true values, although the estimated intercept appears to be non-significant.
+
+As we did for the ZAP model for hippos, we can plot the estimated probability of non-detection and expected count as a function of tree density.
+
+```{r deer_zip_fitted, fig.height=4.5, fig.width=7.5, fig.align='center'}
+## fitted for detection prob (pi)
+trees <- sort(trees)
+gamma_hat_0 <- coef(deer_zip)[3]
+gamma_hat_1 <- coef(deer_zip)[4]
+pi_hat <- 1/(1+exp(-(gamma_hat_0 + gamma_hat_1 * trees)))
+
+## matrix of derivatives
+derivs <- matrix(NA, nrow = nn, ncol = 4)
+derivs[,1] <- derivs[,2] <- 0
+derivs[,3] <- (exp(gamma_hat_0 + gamma_hat_1*trees))/((exp(gamma_hat_0 + gamma_hat_1*trees)+1)^2)
+derivs[,4] <- (trees*exp(gamma_hat_0 + gamma_hat_1*trees))/((exp(gamma_hat_0 + gamma_hat_1*trees)+1)^2) 
+se <- sqrt( diag ( derivs %*% vcov(deer_zip) %*% t(derivs) ))
+lower <- pi_hat - se * qt(0.025, nn-2, lower.tail = FALSE)
+upper <- pi_hat + se * qt(0.025, nn-2, lower.tail = FALSE)
+
+## fitted for mean & var (lambda)
+beta_hat_0 <- coef(deer_zip)[1]
+beta_hat_1 <- coef(deer_zip)[2]
+lambda_hat <- exp(beta_hat_0 + beta_hat_1*trees)
+
+## matrix of derivatives
+derivs_2 <- matrix(NA, nrow = nn, ncol = 4)
+derivs_2[,1] <- exp(beta_hat_0+beta_hat_1*trees)
+derivs_2[,2] <- trees*exp(beta_hat_0+beta_hat_1*trees) 
+derivs_2[,3] <- derivs_2[,4] <- 0
+se_2 <- sqrt( diag ( derivs_2 %*% vcov(deer_zip) %*% t(derivs_2) ))
+lower_2 <- lambda_hat - se_2 * qt(0.025, nn-2, lower.tail = FALSE)
+upper_2 <- lambda_hat + se_2 * qt(0.025, nn-2, lower.tail = FALSE)
+
+## set plot area
+par(mfrow = c(1, 2),
+    mai = c(0.9, 0.9, 0.6, 0.1),
+    omi = c(0, 0, 0, 0), bg = NA,
+    cex.main = 1.2, cex.lab = 1.2)
+## detections
+plot(trees, pi_hat, type = "l", las = 1, ylim = c(0, 1), lwd = 2, col = "darkgreen",
+     xlab = "Tree density", ylab = expression(pi), main = "Missed detection")
+lines(trees, lower, lty = 2,  col = "darkgreen", lwd = 2)
+lines(trees, upper, lty = 2,  col = "darkgreen", lwd = 2)
+## counts
+plot(trees, lambda_hat, type = "l", las = 1, ylim = c(0, 20), lwd = 2, col = "darkgreen",
+     xlab = "Tree density", ylab = expression(lambda), main = "Counts")
+lines(trees, lower_2, lty = 2, col = "darkgreen", lwd = 2)
+lines(trees, upper_2, lty = 2, col = "darkgreen", lwd = 2)
+```
+
+
+
+
+
+
+
