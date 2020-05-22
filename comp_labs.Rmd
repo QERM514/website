@@ -29,7 +29,7 @@ week_labs$L4 <- design_matrices
 week_labs$L5 <- model_selection
 week_labs$L6 <- mixed_models
 week_labs$L7 <- fitting_glms
-week_labs$L8 <- fitting_glmms
+week_labs$L8 <- fitting_counts
 week_labs$L9 <- present_prep
 week_labs$L10 <- presentlab
 ```

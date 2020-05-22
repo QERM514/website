@@ -87,7 +87,7 @@ model_selection <- list(
 mixed_models <- list(
   title = "Fitting mixed models",
   topics = c("Fitting mixed models"),
-  pdf = c("references/Bates_2015_lme4_package.pdf"),
+  pdf = c(""),
   rmd = c("labs/week_06/mixed_models.Rmd"),
   html = c("labs/week_06/mixed_models.html"),
   zoom = "https://washington.zoom.us/rec/share/4fwtcrDf3EFOYLf9707vCpc7E4rbaaa80SEerPZfzxnoWuXjDVwi57Iiho6u3gKC",
@@ -95,9 +95,9 @@ mixed_models <- list(
   background = "[Bates et al (2015)](references/Bates_2015_lme4_package.pdf)"
   )
 
-## 7 fitting glms
+## 7 logistic regression
 fitting_glms <- list(
-  title = "Fitting GLMs",
+  title = "Logistic regression models",
   topics = c("Logistic regression models"),
   pdf = c(""),
   rmd = c("labs/week_07/fitting_glms.Rmd"),
@@ -107,7 +107,19 @@ fitting_glms <- list(
   background = c("")
   )
 
-## 8 fitting glmms
+## 8 fitting counts
+fitting_counts <- list(
+  title = "Models for counts",
+  topics = c("Models for counts"),
+  pdf = c(""),
+  rmd = c("labs/week_08/fitting_count_models.Rmd"),
+  html = c("labs/week_08/fitting_count_models.html"),
+  zoom = "",
+  data = "labs/week_08/snakes.csv",
+  background = c("")
+  )
+
+## 9 fitting glmms
 fitting_glmms <- list(
   title = "Fitting GLMMs",
   topics = c("Fitting GLMMs"),
