@@ -96,5 +96,16 @@ logistic_regr <- list(
   key = ""
 )
 
+## 8 count models
+count_models <- list(
+  title = "Models for count data",
+  topics = "Models for count data",
+  pdf = "homework/week_08/hw_08_count_models.pdf",
+  rmd = "homework/week_08/hw_08_count_models.Rmd",
+  html = "",
+  data = "homework/week_08/plant_richness.csv",
+  key = ""
+)
+
 ```
 

@@ -33,6 +33,7 @@ week_hw$L4 <- pvalues
 week_hw$L5 <- model_selection
 week_hw$L6 <- mixed_models
 week_hw$L7 <- logistic_regr
+week_hw$L8 <- count_models
 ```
 
 ```{r topics, include = FALSE}
