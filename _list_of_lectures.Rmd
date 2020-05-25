@@ -272,7 +272,7 @@ intro_GLMM <- list(
   background = c("[Faraway (2016) Chap 13](references/Faraway_2016_Extending_the_Linear_Models_with_R.pdf)",
                  "[Zuur et al (2009) Chap 13](references/Zuur_2009_mixed_effects_models_in_R.pdf)",
                  "[Bolker et al (2009)](Bolker_2009_glmm_guide.pdf)"),
-  zoom = ""
+  zoom = "https://washington.zoom.us/rec/share/5_NsFp3PrkNIWZXI80DOS5AZG6e0aaa8hCUa-_pZz06vYVUiJFvpv24ScmOnz66F"
 )
 
 holiday <- list(
