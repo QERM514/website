@@ -114,7 +114,7 @@ fitting_counts <- list(
   pdf = c(""),
   rmd = c("labs/week_08/fitting_count_models.Rmd"),
   html = c("labs/week_08/fitting_count_models.html"),
-  zoom = "",
+  zoom = "https://washington.zoom.us/rec/share/5ZBFJOjC_DtJAZXr8Vrwc_8lHIXKX6a81nNL_PQIzE520seRZNJO36PgswHFZ1aY",
   data = "labs/week_08/snakes.csv",
   background = c("")
   )
