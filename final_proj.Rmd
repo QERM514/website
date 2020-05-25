@@ -4,7 +4,8 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+library(kableExtra)
 ```
 
 
@@ -51,3 +52,63 @@ Your presentation should include
 Please use the RMarkdown report template for your final report, which will facilitate proper formatting of text, equations, code, figures, references, etc. Your report is restricted to 2000 words (exclusive of code chunks and figure/table captions) plus no more than 2 tables and 2 figures, although you should not feel obligated to hit that limit.
 
 Please bear in mind that your report should detail a fully reproducible workflow of your analysis. As such, please provide a copy of any necessary data file(s). However, I’ll only consult this as a last resort if there seems to be an error or I can’t work out what you did. Otherwise, all of the relevant information should be contained within your written report.
+
+## Schedule for presentations
+
+Here is the schedule for presentations. Days and times were randomly assigned.
+
+```{r present_order, echo = FALSE}
+set.seed(514)
+## get class roster
+roster <- read.csv("QERM_514_2020_students.csv", stringsAsFactors = FALSE)
+## get last names
+l_names <- roster$LastName
+## fix spelling
+l_names[l_names == "Mcmonagle"] <- "McMonagle"
+## auditors
+auditors <- c("Oxborrow")
+## names of students asking to go early
+early <- c("Aeluro", "Duvall", "Zahn")
+## names of students asking to go late
+later <- c("Tournay")
+## rest of class
+r_names <- l_names[!(l_names %in% c(auditors, early, later))]
+## order of presentations
+p_order <- c(sample(early, length(early)),
+             sample(r_names, length(r_names)),
+             sample(later, length(later)))
+
+## insert 15 min break on Fri
+p_order <- c(p_order[1:14], "[ Break ]", p_order[15:length(p_order)])
+
+## first day of presentations
+start_date <- as.POSIXct("2020-06-01 10:30")
+## dates in seconds past `start_date`
+dates_sec <- c(0, 48, 96, 97, 98) * 3600
+## presentation times in seconds past the hour
+p_times <- c(0, 15, 30, 45) * 60
+## presentation dates
+p_dates <- start_date + dates_sec
+## presentation dates & times
+dates_times <- sapply(p_dates, function(x) x + p_times)
+## nicer formatting
+dates_times <- as.POSIXct(dates_times, origin = "1970-01-01")
+dates_times <- format(dates_times, "%d %B @ %H:%M")
+## drop leading 0
+dates_times <- sub("0(\\d)", "\\1", dates_times)
+
+## full schedule
+df <- data.frame(date_time = dates_times, name = p_order)
+colnames(df) <- c("Date & time", "Last name")
+
+## generate table
+kable(df, format = "html", caption = " ",
+                  align = "cc", escape = FALSE,
+                  fixed_thead = TRUE) %>%
+  kable_styling(bootstrap_options = "striped",
+                full_width = FALSE,
+                position = "left") %>%
+  column_spec(1, width = "10em") %>%
+  column_spec(2, width = "15em") 
+```
+
