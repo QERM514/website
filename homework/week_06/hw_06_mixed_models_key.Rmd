@@ -1,6 +1,6 @@
 ---
 title: "Fitting mixed models and selecting among them"
-subtitle: "QERM 514 - Homework 6"
+subtitle: "QERM 514 - Homework 6 Answer Key"
 date: "8 May 2020"
 output:
   pdf_document:
