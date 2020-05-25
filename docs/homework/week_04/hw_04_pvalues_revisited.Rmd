@@ -1,6 +1,6 @@
 ---
 title: "Thinking critically about p-values and statistical significance"
-subtitle: "QERM 514 - Homework 4"
+subtitle: "QERM 514 - Homework 4 Answer Key"
 date: "24 April 2020"
 output:
   pdf_document:
