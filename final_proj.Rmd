@@ -68,9 +68,9 @@ l_names[l_names == "Mcmonagle"] <- "McMonagle"
 ## auditors
 auditors <- c("Oxborrow")
 ## names of students asking to go early
-early <- c("Aeluro", "Duvall", "Zahn")
+early <- c("Aeluro", "Duvall")
 ## names of students asking to go late
-later <- c("Tournay")
+later <- c("Tournay", "Mistry")
 ## rest of class
 r_names <- l_names[!(l_names %in% c(auditors, early, later))]
 ## order of presentations
