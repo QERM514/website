@@ -1,5 +1,5 @@
 ---
-title: "Course overview and expectations"
+title: "Course synthesis"
 subtitle: "Analysis of Ecological and Environmental Data<br>QERM 514"
 author: "Mark Scheuerell"
 date: "29 May 2020"
@@ -15,4 +15,986 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ## Goals for today
 
+Sit back and reflect on how much you've learned
+
+
+## Learning objectives for the course
+
+* Identify an appropriate statistical model based on the data and specific question
+
+* Understand the assumptions behind a chosen statistical model
+
+* Use **R** to fit a variety of linear models to data
+
+* Evaluate data support for various models and select the most parsimonious model among them
+
+* Use **R Markdown** to combine text, equations, code, tables, and figures into reports
+
+
+## Simple linear models
+
+```{r model_diagram_lm, fig.height = 5, fig.width = 7, fig.align = 'center'}
+par(mai = rep(0, 4), omi = rep(0, 4), bg = NA)
+
+## order: GLM, LM, GLMM, LMM
+xx <- c(1, 2, 2, 3) * 10
+yy <- c(2, 1, 3, 2) * 10
+
+plot(c(7, 33), c(7, 33), type = "n", xlim = c(7, 33), ylim = c(7, 33),
+     xaxt = "n", yaxt = "n", xlab = "", ylab = "",
+     bty = "n")
+symbols(xx, yy, circle = rep(2, 4), inches = 0.5, add = TRUE,
+        lwd = 2, fg = c("black", "blue", "black", "black"), bg = "white")
+text(xx, yy, c("GLM", "LM", "GLMM", "LMM"), cex = 1.5,
+     col = c("black", "blue", "black", "black"))
+## from LM to GLM
+arrows(xx[2]-2, yy[2]+2, xx[1]+2, yy[1]-2, length = 0.2)
+text(15, 14, "multiple forms of errors", pos = 2)
+## from LM to LMM
+arrows(xx[2]+2, yy[2]+2, xx[4]-2, yy[4]-2, length = 0.2)
+text(25, 14, "multiple random processes", pos = 4)
+## from GLM to GLMM
+arrows(xx[1]+2, yy[1]+2, xx[3]-2, yy[3]-2, length = 0.2)
+text(15, 26, "multiple random processes", pos = 2)
+## from LMM to GLMM
+arrows(xx[4]-2, yy[4]+2, xx[3]+2, yy[3]-2, length = 0.2)
+text(25, 26, "multiple forms of errors", pos = 4)
+```
+
+
+## Partitioning total deviations
+
+The total deviations in the data equal the sum of those for the model and errors
+
+$$
+\underbrace{y_i - \bar{y}}_{\text{Total}} = \underbrace{\hat{y}_i - \bar{y}}_{\text{Model}} + \underbrace{y_i - \hat{y}_i}_{\text{Error}}
+$$
+
+
+## Partitioning total deviations
+
+```{r partition_SS, echo = FALSE, fig.width = 8, fig.height = 3.5, fig.align="center"}
+## set random seed for reproducibility
+set.seed(514)
+
+## sample size
+nn <- 30
+## some values for the predictor x
+xx <- sort(runif(nn, 0, 20))
+## intercept
+beta_0 <- 1
+## slope
+beta_1 <- 0.5
+## random errors (mean = 0, SD = 1)
+epsilon <- rnorm(nn)
+## observed data
+yy <- beta_0 + beta_1*xx + epsilon
+
+## fit a regression model
+mm <- lm(yy ~ xx)
+## get predicted values
+yhat <- predict(mm)
+
+## set plot area
+par(mfrow = c(1,3),
+    mai = c(0.5,0.3,0.5,0.2),
+    omi = c(0, 0, 0, 0),
+    cex = 0.7)
+
+## SSTO - plot y and mean(y)
+plot(xx, yy, type = "n",
+     bty = "l", xaxt = "n", yaxt = "n",
+     xlab = "",
+     ylab = "")
+segments(x0 = xx, y0 = yy, y1 = mean(yhat), col = "gray")
+abline(h = mean(yy), lty = "dashed")
+points(xx, yy, pch = 19)
+mtext(expression(Total: ~ italic(y[i])-bar(italic(y))), side = 3, line = 1)
+mtext(expression(italic(x)), 1, line=0.2, cex=1.1, at=max(xx))
+mtext(expression(italic(y)), 2, line=0.3, cex=1.1, at=max(yy), las=1)
+mtext(expression(italic(bar(y))), 2, line=0.3, cex=1.1, at=mean(yy), las=1)
+
+## SSR - plot yhat and mean(yhat)
+plot(xx, yy, type = "n",
+     bty = "l", xaxt = "n", yaxt = "n",
+     xlab = "",
+     ylab = "")
+segments(x0 = xx, y0 = yhat, y1 = mean(yhat), col = "gray")
+points(xx, yhat, pch = 21, bg = "white")
+abline(a = coef(mm)[1], b = coef(mm)[2])
+abline(h = mean(yy), lty = "dashed")
+points(xx, yhat, pch = 21, bg = "white")
+mtext(expression(Model: ~ italic(hat(y)[i])-bar(italic(y))), side = 3, line = 1)
+mtext(expression(italic(x)), 1, line=0.2, cex=1.1, at=max(xx))
+mtext(expression(italic(y)), 2, line=0.3, cex=1.1, at=max(yy), las=1)
+mtext(expression(italic(bar(y))), 2, line=0.3, cex=1.1, at=mean(yy), las=1)
+mtext(expression(italic(hat(y))), 4, line=0.2, cex=1.1, at=max(yy), las=1)
+
+## SSE - plot observed and yhat
+plot(xx, yy, type = "n",
+     bty = "l", xaxt = "n", yaxt = "n",
+     xlab = "",
+     ylab = "")
+segments(x0 = xx, y0 = yhat, y1 = yy, col = "gray")
+points(xx, yy, pch = 19)
+abline(a = coef(mm)[1], b = coef(mm)[2])
+mtext(expression(Error: ~ italic(y[i])-italic(hat(y)[i])), side = 3, line = 1)
+mtext(expression(italic(x)), 1, line=0.3, cex=1.1, at=max(xx))
+mtext(expression(italic(y)), 2, line=0.3, cex=1.1, at=max(yy), las=1)
+mtext(expression(italic(hat(y))), 4, line=0.2, cex=1.1, at=max(yy), las=1)
+```
+
+
+## Partitioning sums-of-squares
+
+The sums-of-squares have the same additive property as the deviations
+
+$$
+\underbrace{\sum (y_i - \bar{y})^2}_{SSTO} = \underbrace{\sum (\hat{y}_i - \bar{y})^2}_{SSR} + \underbrace{\sum (y_i - \hat{y}_i)^2}_{SSE}
+$$
+
+
+## Linear models in matrix form
+
+$$
+y_i = \beta_0 + \beta_1 x_{1,i} + \beta_2 x_{2,i} + e_i \\
+\Downarrow \\
+\begin{bmatrix}
+y_1 \\ y_2 \\ \vdots \\ y_N
+\end{bmatrix}
+= 
+\begin{bmatrix}
+1 & x_{1,1} & x_{2,1} \\ 1 & x_{1,2} & x_{2,2} \\ \vdots & \vdots \\ 1 & x_{1,N} & x_{2,N} 
+\end{bmatrix}
+\begin{bmatrix}
+\beta_0 \\ \beta_1 \\ \beta_2
+\end{bmatrix}
++
+\begin{bmatrix}
+e_1 \\ e_2 \\ \vdots \\ e_N
+\end{bmatrix} \\
+\Downarrow \\
+\mathbf{y} = \mathbf{X} \boldsymbol{\beta} + \mathbf{e}
+$$
+
+
+## Ordinary least squares
+
+Rewriting our model, we have
+
+$$
+\mathbf{y} = \mathbf{X} \hat{\boldsymbol{\beta}} + \mathbf{e} \\
+\Downarrow \\
+\mathbf{e} = \mathbf{y} - \mathbf{X} \hat{\boldsymbol{\beta}}
+$$
+
+so the sum of squared errors is
+
+$$
+\mathbf{e}^{\top} \mathbf{e} = (\mathbf{y} - \mathbf{X} \hat{\boldsymbol{\beta}})^{\top} (\mathbf{y} - \mathbf{X} \hat{\boldsymbol{\beta}})
+$$
+
+
+## Ordinary least squares
+
+Minimizing the sum of squared errors leads to
+
+$$
+\hat{\boldsymbol{\beta}} = (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^{\top} \mathbf{y} \\
+\Downarrow \\
+\hat{\mathbf{y}} = \mathbf{X} \hat{\boldsymbol{\beta}}
+$$
+
+
+## Variance estimates | Parameters
+
+The variance of $\hat{\boldsymbol{\beta}}$ is given by
+
+$$
+\text{Var}(\hat{\boldsymbol{\beta}}) = \sigma^2 (\mathbf{X}^{\top} \mathbf{X})^{-1}
+$$
+
+<br>
+
+This suggests that our confidence in our estimate increases with the spread in $\mathbf{X}$
+
+
+## Effect of $\mathbf{X}$ on parameter precision
+
+Consider these two scenarios where the slope of the relationship is identical
+
+```{r slope_comp, fig.height=3.5, fig.width=7, fig.align="center"}
+## set random seed for reproducibility
+set.seed(514)
+
+## sample size
+nn <- 30
+## some values for the predictor x
+xx <- sort(runif(nn, 0, 20))
+## intercept
+beta_0 <- 1
+## slope
+beta_1 <- 0.5
+## random errors (mean = 0, SD = 1)
+epsilon <- rnorm(nn)
+## observed data
+yy <- beta_0 + beta_1*xx + epsilon
+
+## fit a regression model
+mm <- lm(yy ~ xx)
+## get predicted values
+yhat <- predict(mm)
+
+## new x
+xs <- sort(runif(nn, 5, 15))
+## random errors (mean = 0, SD = 1)
+epsilon <- rnorm(nn)
+## observed data
+ys <- beta_0 + beta_1*xs + epsilon
+
+m1 <- lm(yy ~ xx)
+yy_ci <- predict(m1, interval = "confidence")
+m2 <- lm(ys ~ xs)
+ys_ci <- predict(m2, interval = "confidence")
+
+XX <- cbind(rep(1, nn), xx)
+se_b1 <- round(sqrt(anova(m1)[["Mean Sq"]][2] * solve(t(XX) %*% XX)[2,2]), 3)
+XS <- cbind(rep(1, nn), xs)
+se_b2 <- round(sqrt(anova(m2)[["Mean Sq"]][2] * solve(t(XS) %*% XS)[2,2]), 3)
+
+
+par(mfrow = c(1,2), mai = c(0.5, 0.5, 0.1, 0.1), omi = c(0,0,0,0))
+## small range in X
+plot(xx, yy, pch = 16, xlim = range(xx), ylim = range(yy),
+     xlab = expression(italic(y)), ylab = expression(italic(y)))
+lines(xx, yy_ci[,"fit"])
+text(1, 10.5, substitute(paste(SE(beta)," = ", seb1), list(seb1 = se_b1)), pos = 4)
+
+## large range in X
+plot(xs, ys, pch = 16, xlim = range(xx), ylim = range(yy),
+     xlab = "", ylab = "",
+     yaxt = "n")
+lines(xs, ys_ci[,"fit"])
+text(1, 10.5, substitute(paste(SE(beta)," = ", seb2), list(seb2 = se_b2)), pos = 4)
+```
+
+
+## CI for the mean response
+
+A CI for the mean response is given by
+
+$$
+\hat{\mathbf{y}}^* \pm ~ t^{(\alpha / 2)}_{df} \sigma \sqrt{{\mathbf{X}^*}^{\top} (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^* } 
+$$
+
+
+## CI for a specific response
+
+A CI on a new prediction is given by
+
+$$
+\hat{\mathbf{y}}^* \pm ~ t^{(\alpha / 2)}_{df} \sigma \sqrt{1 + {\mathbf{X}^*}^{\top} (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^* } 
+$$
+
+<br>
+
+This is typically referred to as the *prediction interval*
+
+
+## Diagnostics
+
+```{r diagnostics, echo = FALSE, fig.width = 8, fig.height = 3.5, fig.align="center"}
+xx <- rnorm(40)
+yy <- 1 + 2*xx + rnorm(40)
+mm <- lm(yy ~ xx)
+
+## set plot area
+par(mfrow = c(1,3),
+    mai = c(0.9,0.4,0.5,0.1),
+    omi = c(0, 0.5, 0, 0),
+    cex = 1)
+
+## e vs y_hat
+plot(residuals(mm), fitted(mm), pch = 16, las = 1, xpd = NA,
+     cex.lab = 1.5, xlab = expression(hat(italic(y))), ylab = "Residuals",
+     main = "", cex.main = 1)
+## QQ plot
+qqnorm(residuals(mm), pch = 16, las = 1,
+     cex.lab = 1.5,
+     main = "", cex.main = 1)
+qqline(residuals(mm))
+## ACF
+acf(residuals(mm),
+     cex.lab = 1.5, xlab = expression(italic(x)), ylab = expression(y),
+     main = "", cex.main = 1)
+```
+
+
+## Unusual observations
+
+```{r outliers, echo = FALSE, fig.width = 8, fig.height = 3.5, fig.align="center"}
+xr <- round(1:10 + rnorm(10, 0, 0.2), 1)
+testdata <- data.frame(x = xr,
+                       y = xr + rnorm(10))
+mm <- lm(y ~ x, testdata)
+
+p1 <- c(5.5,12)
+m1 <- lm(y ~ x, rbind(testdata, p1))
+
+p2 <- c(17,17)
+m2 <- lm(y ~ x, rbind(testdata, p2))
+
+p3 <- c(17,5.1)
+m3 <- lm(y ~ x, rbind(testdata, p3))
+
+## set plot area
+par(mfrow = c(1,3),
+    mai = c(0.9,0.4,0.5,0.1),
+    omi = c(0, 0.5, 0, 0),
+    cex = 1)
+
+## plot examples
+plot(y ~ x, rbind(testdata, p1), pch = 16, las = 1, xpd = NA,
+     cex.lab = 1.5, xlab = expression(italic(x)), ylab = expression(y),
+     main = "No leverage or influence", cex.main = 1)
+points(5.5, 12, pch = 16, cex = 1.5, col ="red")
+abline(mm)
+abline(m1, lty=2, col ="red")
+plot(y ~ x, rbind(testdata, p2), pch = 16, las = 1,
+     cex.lab = 1.5, xlab = expression(italic(x)), ylab = expression(y),
+     main = "Leverage but no influence", cex.main = 1)
+points(17, 17, pch = 16, cex = 1.5, col ="red")
+abline(mm)
+abline(m2, lty=2, col ="red")
+plot(y ~ x, rbind(testdata, p3), pch = 16, las = 1,
+     cex.lab = 1.5, xlab = expression(italic(x)), ylab = expression(y),
+     main = "Leverage and influence", cex.main = 1)
+points(17, 5.1, pch = 16, cex = 1.5, col ="red")
+abline(mm)
+abline(m3, lty=2, col ="red")
+```
+
+
+## Bias versus variance
+
+```{r bias_vs_var, fig.align='center', fig.height=4.5, fig.width=5}
+## load shape pkg
+library(shape)
+set.seed(514)
+## num of bullet holes
+nn <- 20
+## means and vars
+mu <- c(0, 0, 0.5, 0.5)
+sigma <- c(0.05, 0.2, 0.05, 0.2)
+## setup plot
+par(mfrow = c(2,2),
+    mai = c(0, 0, 0, 0),
+    omi = c(0,0.5,0.5,0))
+## loop over quadrants
+for(i in 1:4) {
+  ## draw targets
+  symbols(x = rep(0, 4), y = rep(0, 4), circles = c(4:1)/5,
+          xlim = c(-1,1), ylim = c(-1,1),inches = FALSE,
+          bg = c("white", "dodgerblue", "white", "red"),
+          xlab="", ylab="", xaxt="n", yaxt="n", bty="n")
+  ## add bullet holes
+  x <- rnorm(nn, mu[i], sigma[i])
+  y <- rnorm(nn, mu[i], sigma[i])
+  points(x, y, pch=16)
+  ## label plots
+  if(i == 1) {
+    mtext("Low bias", side = 2, line = 1, cex = 1.2)
+    mtext("Low variance", side = 3, line = 1, cex = 1.2)
+  }
+  if(i == 2) {
+    mtext("High variance", side = 3, line = 1, cex = 1.2)
+  }
+  if(i == 3) {
+    mtext("High bias", side = 2, line = 1, cex = 1.2)
+  }
+}
+```
+
+
+## Bias-variance trade-off
+
+```{r var_bias_trade-off, fig.align='center', fig.height=4.5, fig.width=5.5}
+## create dummy variance and bias^2
+a1 <- 1
+b1 <- 0.2
+a2 <- 3
+b2 <- -0.25
+xx <- seq(0,100)/10
+## variance
+prec <- exp(a1 + b1*xx)
+## bias
+bias <- exp(a2 + b2*xx)
+## total
+both <- prec + bias
+mn <- both == min(both)
+## plot them
+par(mai = c(0, 0, 0, 0),
+    omi = c(0.5,0.5,0.05,0.05),
+    cex = 1.2)
+## combination
+plot(xx, both, type = "l", col="black", lwd=2, ylim=c(0,max(both)*1.05),
+     xlab="", ylab="", xaxt="n", yaxt="n", xaxs="r", yaxs="i")
+segments(x0 = xx[mn], y0 = 0, y1 = both[mn], lty = "dashed", col="dimgray")
+## variance
+lines(xx, prec, col="blue", lwd=2)
+## bias
+lines(xx, bias, col="red", lwd=2)
+## labels
+mtext("Model complexity", side = 1, line = 1, cex = 1.5)
+mtext("Error", side = 2, line = 1, cex = 1.5)
+text(10, max(both)*0.95, "Total", col="black", pos=2)
+text(0, 5, "Variance", col="blue", pos=4)
+text(10, 3, expression(Bias^2), col="red", pos=2)
+text(xx[mn], both[mn]*1.05, "Optimum", pos=3, col="dimgray")
+```
+
+
+## Model selection | In-sample
+
+### Null hypothesis testing
+
+* $F$ test, likelihood ratio test, $\chi^2$ test
+
+### Regularization
+
+* AIC, QAIC, BIC
+
+
+## Model selection | Out-of-sample
+
+### Cross validation
+
+* leave-$k$-out
+
+
+## Linear mixed models
+
+```{r model_diagram_lmm, fig.height = 5, fig.width = 7, fig.align = 'center'}
+par(mai = rep(0, 4), omi = rep(0, 4), bg = NA)
+
+## order: GLM, LM, GLMM, LMM
+xx <- c(1, 2, 2, 3) * 10
+yy <- c(2, 1, 3, 2) * 10
+
+plot(c(7, 33), c(7, 33), type = "n", xlim = c(7, 33), ylim = c(7, 33),
+     xaxt = "n", yaxt = "n", xlab = "", ylab = "",
+     bty = "n")
+symbols(xx, yy, circle = rep(2, 4), inches = 0.5, add = TRUE,
+        lwd = 2, fg = c("black", "black", "black", "blue"), bg = "white")
+text(xx, yy, c("GLM", "LM", "GLMM", "LMM"), cex = 1.5,
+     col = c("black", "black", "black", "blue"))
+## from LM to GLM
+arrows(xx[2]-2, yy[2]+2, xx[1]+2, yy[1]-2, length = 0.2)
+text(15, 14, "multiple forms of errors", pos = 2)
+## from LM to LMM
+arrows(xx[2]+2, yy[2]+2, xx[4]-2, yy[4]-2, length = 0.2)
+text(25, 14, "multiple random processes", pos = 4)
+## from GLM to GLMM
+arrows(xx[1]+2, yy[1]+2, xx[3]-2, yy[3]-2, length = 0.2)
+text(15, 26, "multiple random processes", pos = 2)
+## from LMM to GLMM
+arrows(xx[4]-2, yy[4]+2, xx[3]+2, yy[3]-2, length = 0.2)
+text(25, 26, "multiple forms of errors", pos = 4)
+```
+
+
+## Fixed vs random effects
+
+Fixed effects describe *specific levels* of factors that are *not* part of a larger group
+
+Random effects describe *varying levels* of factors drawn from a larger group
+
+
+## Model for means
+
+```{r dist_of_means, fig.width=5, fig.height=4.5, fig.align='center'}
+set.seed(514)
+## normal pdf + constant
+kk <- 1
+npdf <- function(x, k = kk) {
+  k + dnorm(x)
+}
+## set plot area
+par(mai = c(0.1, 0.1, 0.1, 0.1),
+    omi = c(0.6, 0, 0, 0))
+## grand mean
+plot(c(-8, 8), c(2, 2), type = "l", lwd = 2, ylim = c(0,2.4),
+     xaxt = "n", yaxt = "n", bty = "n",
+     xlab = "", ylab = "")
+abline(v = 0, lty = "dashed")
+points(0, 2, pch = 16, col = "blue", cex = 1.5)
+text(-8, 2.4, "no effects", pos = 4, cex = 1.2)
+text(8, 2.4, "complete pooling", pos = 2, cex = 1.2)
+## random means
+curve(npdf, -8, 8, lwd = 2, add = TRUE, col = "gray",
+      xaxt = "n", yaxt = "n", bty = "n",
+      xlab = expression(alpha[j]), ylab = "")
+lines(c(-8, 8), c(kk, kk), lwd = 2,
+     xaxt = "n", yaxt = "n", bty = "n")
+points(rnorm(7), rep(kk, 7), pch = 16, col = "blue", cex = 1.5)
+text(-8, 1.4, "random effects", pos = 4, cex = 1.2)
+text(8, 1.4, "partial pooling", pos = 2, cex = 1.2)
+## fixed means
+lines(c(-8, 8), c(0, 0), lwd = 2,
+     xaxt = "n", yaxt = "n", bty = "n")
+points(runif(7, -8, 8), rep(0, 7), pch = 16, col = "blue", cex = 1.5)
+text(-8, 0.4, "fixed effects", pos = 4, cex = 1.2)
+text(8, 0.4, "no pooling", pos = 2, cex = 1.2)
+## x-axis
+mtext("0", 1, line = 0.5, cex = 1.3, adj = c(1,1)/2)
+mtext(expression(alpha[italic(j)]), 1, line = 2.5, cex = 1.5)
+```
+
+
+## Linear mixed model
+
+We can extend the general linear model to include both of fixed and random effects
+
+$$
+\mathbf{y} = \mathbf{X} \boldsymbol{\beta} + \mathbf{Z} \boldsymbol{\alpha} + \mathbf{e} \\
+~ \\
+\mathbf{e} \sim \text{MVN}(\mathbf{0}, \sigma^2 \mathbf{I}) \\
+~ \\
+\boldsymbol{\alpha} \sim \text{MVN}(\mathbf{0}, \sigma^2 \mathbf{D})
+$$
+
+
+## Restricted maximum likelihood
+
+Estimating the parameters in a mixed effects model requires *restricted maximum likelihood* (REML)
+
+REML works by
+
+1. estimating the fixed effects $(\hat{\boldsymbol{\beta}})$ via ML
+
+2. using the $\hat{\boldsymbol{\beta}}$ to estimate the $\hat{\boldsymbol{\alpha}}$
+
+
+## Model selection
+
+To use AIC, we can follow these steps
+
+1. Fit a model with *all* of the possible fixed-effects included
+
+2. Keep the fixed effects constant and search for random effects
+
+3. Keep random effects as is and fit different fixed effects
+
+
+## Generalized linear models
+
+```{r model_diagram_glm, fig.height = 5, fig.width = 7, fig.align = 'center'}
+par(mai = rep(0, 4), omi = rep(0, 4), bg = NA)
+
+## order: GLM, LM, GLMM, LMM
+xx <- c(1, 2, 2, 3) * 10
+yy <- c(2, 1, 3, 2) * 10
+
+plot(c(7, 33), c(7, 33), type = "n", xlim = c(7, 33), ylim = c(7, 33),
+     xaxt = "n", yaxt = "n", xlab = "", ylab = "",
+     bty = "n")
+symbols(xx, yy, circle = rep(2, 4), inches = 0.5, add = TRUE,
+        lwd = 2, fg = c("blue", "black", "black", "black"), bg = "white")
+text(xx, yy, c("GLM", "LM", "GLMM", "LMM"), cex = 1.5,
+     col = c("blue", "black", "black", "black"))
+## from LM to GLM
+arrows(xx[2]-2, yy[2]+2, xx[1]+2, yy[1]-2, length = 0.2)
+text(15, 14, "multiple forms of errors", pos = 2)
+## from LM to LMM
+arrows(xx[2]+2, yy[2]+2, xx[4]-2, yy[4]-2, length = 0.2)
+text(25, 14, "multiple random processes", pos = 4)
+## from GLM to GLMM
+arrows(xx[1]+2, yy[1]+2, xx[3]-2, yy[3]-2, length = 0.2)
+text(15, 26, "multiple random processes", pos = 2)
+## from LMM to GLMM
+arrows(xx[4]-2, yy[4]+2, xx[3]+2, yy[3]-2, length = 0.2)
+text(25, 26, "multiple forms of errors", pos = 4)
+```
+
+
+## Generalized linear models (GLMs)
+
+*Three important components*
+
+1. Distribution of the data $y \sim f_{\theta}(y)$
+
+2. Link function $g(\eta)$
+
+3. Linear predictor $\eta = \mathbf{X} \boldsymbol{\beta}$
+
+
+## Common link functions
+
+| Distribution | Link function | Mean function |
+|:------------:|:-------------:|:-------------:|
+| Identity | $1(\mu) = \mathbf{X} \boldsymbol{\beta}$ | $\mu = \mathbf{X} \boldsymbol{\beta}$ |
+| Log  | $\log (\mu) = \mathbf{X} \boldsymbol{\beta}$ | $\mu = \exp (\mathbf{X} \boldsymbol{\beta})$ |
+| Logit  | $\log \left( \frac{\mu}{1 - \mu} \right) = \mathbf{X} \boldsymbol{\beta}$ | $\mu = \frac{\exp (\mathbf{X} \boldsymbol{\beta})}{1 + \exp (\mathbf{X} \boldsymbol{\beta})}$ |
+
+
+## Logistic regression for binary response
+
+We need 3 things to specify our GLM
+
+1. Distribution of the data: $y \sim \text{Bernoulli}(p)$
+
+2. Link function: $\text{logit}(p) = \log \left( \frac{p}{1 - p} \right) = \eta$
+
+3. Linear predictor: $\eta = \mathbf{X} \boldsymbol{\beta}$
+
+
+## Logistic regression for proportions
+
+We need 3 things to specify our GLM
+
+1. Distribution of the data: $y \sim \text{Binomial}(N, p)$
+
+2. Link function: $\text{logit}(p) = \log \left( \frac{p}{1 - p} \right) = \eta$
+
+3. Linear predictor: $\eta = \mathbf{X} \boldsymbol{\beta}$
+
+
+## Overdispersion
+
+The variance is larger than expected
+
+Overdispersion generally arises in 2 ways related to IID errors
+
+1) trials occur in groups & $p$ is not constant among groups
+
+2) trials are not independent
+
+
+## Overdispersion
+
+We can estimate the dispersion $c$ from the deviance $D$ as
+
+$$
+\hat{c} = \frac{D}{n - k}
+$$
+
+<br>
+
+or from Pearson's $\chi^2$ as
+
+$$
+\hat{c} = \frac{X^2}{n - k}
+$$
+
+
+## Effects on parameter estimates
+
+The estimate of $\hat{\boldsymbol{\beta}}$ is *not* affected by overdispersion...
+
+but the variance of $\hat{\boldsymbol{\beta}}$ *is* affected, such that
+
+$$
+\text{Var}(\hat{\boldsymbol{\beta}}) = \hat{c} \left( \mathbf{X}^{\top} \hat{\mathbf{W}} \mathbf{X} \right)^{-1}
+$$
+
+
+## Options for overdispersed proportions
+
+| Model             | Pros | Cons |
+|:------------------|:-----|:-----|
+| binomial          | Easy | Underestimates variance |
+| binomial with VIF | Easy; estimate of variance | Ad hoc |
+| quasi-binomial    | Easy; estimate of variance | No distribution for inference |
+| beta-binomial     | Strong foundation | Somewhat hard to implement |
+
+
+## Counts vs proportions
+
+With count data, we only know the *frequency of occurrence*
+
+That is, how often something occurred without knowing how often it *did not occur*
+
+
+## Poisson regression
+
+Counts $(y_i)$ as a function of covariates
+
+$$
+\begin{aligned}
+\text{data distribution:} & ~~ y_i \sim \text{Poisson}(\lambda_i) \\ \\
+\text{link function:} & ~~ \text{log}(\lambda_i) = \mu_i \\ \\
+\text{linear predictor:} & ~~ \mu_i = \mathbf{X} \boldsymbol{\beta}
+\end{aligned}
+$$
+
+
+## General variance for count data
+
+We can consider the possibility that the variance scales linearly with the mean
+
+$$
+\text{Var}(y) = c \lambda
+$$
+<br>
+
+If $c$ = 1 then $y \sim \text{Poisson}(\lambda)$
+
+If $c$ > 1 the data are *overdispersed*
+
+
+## Overdispersed regression
+
+Counts $(y_i)$ as a function of covariates
+
+$$
+\begin{aligned}
+\text{data distribution:} & ~~ y_i \sim \text{negBin}(r, \mu_i) \\ \\
+\text{link function:} & ~~ \text{log}(\mu_i) = \eta_i \\ \\
+\text{linear predictor:} & ~~ \eta_i = \mathbf{X} \boldsymbol{\beta}
+\end{aligned}
+$$
+
+
+## Zero-truncated data
+
+Zero-truncated data cannot take a value of 0
+
+Although somewhat rare in ecological studies, examples include
+
+* time a whale is at the surface before diving
+
+* herd size in elk
+
+* number of fin rays on a fish
+
+
+## Poisson for zero-truncated data
+
+The probability that $y_i = 0$ and $y_i \neq 0$
+
+$$
+f(y_i = 0; \lambda_i) = \exp (\text{-} \lambda_i) \\
+\Downarrow \\
+f(y_i \neq 0; \lambda_i) = 1 - \exp (\text{-} \lambda_i)
+$$
+
+
+## Poisson for zero-truncated data
+
+We can exclude the probability that $y_i = 0$ by dividing the pmf by the probability that $y_i \neq 0$
+
+$$
+f(y_i; \lambda_i) = \frac{\exp (\text{-} \lambda_i) \lambda_{i}^{y_i}}{y_i!} \\
+\Downarrow \\
+f(y_i; \lambda_i | y_i > 0) = \frac{\exp (\text{-} \lambda_i) \lambda_{i}^{y_i}}{y_i!} \cdot \frac{1}{1 - \exp (\text{-} \lambda_i)} \\
+\Downarrow \\
+\log \mathcal{L} = \left( y_i \log \lambda_i - \lambda_i \right) - \left( 1 - \exp (\text{-} \lambda_i) \right)
+$$
+
+
+## Neg binomial for zero-truncated data
+
+We can exclude the probability that $y_i = 0$ by dividing the pmf by the probability that $y_i \neq 0$
+
+$$
+f(y; r, \mu) = \frac{(y+r-1) !}{(r-1) ! y !} \left( \frac{r}{\mu + r} \right)^{r} \left( \frac{\mu}{\mu + r} \right)^{y} \\
+\Downarrow \\
+f(y_i; \lambda_i | y_i > 0) = \frac{ \frac{(y+r-1) !}{(r-1) ! y !} \left( \frac{r}{\mu + r} \right)^{r} \left( \frac{\mu}{\mu + r} \right)^{y} }{ 1 - \left( \frac{r}{\mu + r} \right)^{r} } \\
+\Downarrow \\
+\log \mathcal{L} = \log \mathcal{L}(\text{NB}) - \log \left( 1 - \left( \frac{r}{\mu + r} \right)^{r} \right)
+$$
+
+
+## Zeros in ecological data
+
+Lots of count data are *zero-inflated*
+
+The data contain more zeros than would be expected under a Poisson or negative binomial distribution
+
+
+## Sources of zeros
+
+In general, there are 4 different types of errors that cause zeros
+
+1) Structural (animal absent because the habitat is unsuitable)
+
+2) Design (sampling is limited temporally or spatially)
+
+3) Observer error (inexperience or difficult circumstances)
+
+4) Process error (habitat is suitable but unused)
+
+
+## Approaches to zero-inflated data
+
+There are 2 general approaches for dealing with zero-inflated data
+
+1) Zero-altered ("hurdle") models
+
+2) Zero-inflated ("mixture") models
+
+
+## Hurdle models
+
+Hurdle models do not discriminate among the 4 types of zeros
+
+The data are treated as 2 distinct groups:
+
+1) Zeros
+
+2) Non-zero counts
+
+
+## Hurdle models
+
+Hurdle models consist of 2 parts
+
+1) Use a binomial model to determine the probability of a zero
+
+2) If non-zero ("over the hurdle"), use a truncated Poisson or negative binomial to model the positive counts
+
+
+## Zero-inflated (mixture) models
+
+Zero-inflated (mixture) models treat the zeros as coming from 2 sources
+
+1) observation errors (missed detections)
+
+2) ecological (function of environment)
+
+
+## Mixture models
+
+Zero-inflated (mixture) models consist of 2 parts
+
+1) Use a binomial model to determine the probability of a zero
+
+2) Use a Poisson or negative binomial to model counts, which can include zeros
+
+
+## Sources of zeros and approaches
+
+| Source | Reason | Over-dispersion | Zero inflation | Approach |
+|:-------|:-------|:--------------:|:--------------:|:--------:|
+| Random | Sampling variability | No | No | Poisson |
+|   |   | Yes | No | Neg binomial |
+| Structural | Outside count process | No | Yes | ZAP or ZIP |
+|   |   | Yes | Yes | ZANB or ZINB |
+
+
+## Generalized linear mixed models
+
+```{r model_diagram_glmm, fig.height = 5, fig.width = 7, fig.align = 'center'}
+par(mai = rep(0, 4), omi = rep(0, 4), bg = NA)
+
+## order: GLM, LM, GLMM, LMM
+xx <- c(1, 2, 2, 3) * 10
+yy <- c(2, 1, 3, 2) * 10
+
+plot(c(7, 33), c(7, 33), type = "n", xlim = c(7, 33), ylim = c(7, 33),
+     xaxt = "n", yaxt = "n", xlab = "", ylab = "",
+     bty = "n")
+symbols(xx, yy, circle = rep(2, 4), inches = 0.5, add = TRUE,
+        lwd = 2, fg = c("black", "black", "blue", "black"), bg = "white")
+text(xx, yy, c("GLM", "LM", "GLMM", "LMM"), cex = 1.5,
+     col = c("black", "black", "blue", "black"))
+## from LM to GLM
+arrows(xx[2]-2, yy[2]+2, xx[1]+2, yy[1]-2, length = 0.2)
+text(15, 14, "multiple forms of errors", pos = 2)
+## from LM to LMM
+arrows(xx[2]+2, yy[2]+2, xx[4]-2, yy[4]-2, length = 0.2)
+text(25, 14, "multiple random processes", pos = 4)
+## from GLM to GLMM
+arrows(xx[1]+2, yy[1]+2, xx[3]-2, yy[3]-2, length = 0.2)
+text(15, 26, "multiple random processes", pos = 2)
+## from LMM to GLMM
+arrows(xx[4]-2, yy[4]+2, xx[3]+2, yy[3]-2, length = 0.2)
+text(25, 26, "multiple forms of errors", pos = 4)
+```
+
+
+## Generalized linear mixed model
+
+GLMMs combine the flexibility of non-normal distributions (GLMs) with the ability to address correlations among observations and nested data structures (LMMs)
+
+
+## Generalized linear mixed model
+
+<u>Good news</u>
+
+* these extensions follow similar methods to GLMs and LMMs
+
+<u>Bad news</u>
+
+* these models are on the frontier of statistical research
+
+* existing documentation is rather technical
+
+* multiple approaches for fitting models; some with different results
+
+
+## Generalized linear mixed model
+
+Just like GLMs, GLMMs have three components:
+
+1. Distribution of the data $f(y; \theta)$
+
+2. Link function $g(\eta)$
+
+3. Linear predictor $\eta$
+
+
+## Linear predictor for a GLMM
+
+For GLMMs, our linear predictor also includes random effects
+
+$$
+\eta = \beta_0 + \beta_1 x_1 + \dots + \beta_k x_k  + \alpha_0 + \alpha_1 z_1 + \dots + \alpha_l z_l\\
+\Downarrow \\
+\eta = \mathbf{X} \boldsymbol{\beta} + \mathbf{Z} \boldsymbol{\alpha}
+$$
+
+where the $\beta_i$ are fixed effects of the covariates $x_i$
+
+
+## Generalized linear mixed model
+
+$$
+\begin{aligned}
+\text{data distribution:} & ~~~ y_{i,j} \sim \text{Binomial}(N_{i,j}, s_{i,j}) \\
+\text{link function:} & ~~~ \text{logit}(s_{i,j}) = \text{log}\left(\frac{s_{i,j}}{1-s_{i,j}}\right) = \mu_{i,j} \\
+\text{linear model:} & ~~~ \mu_{i,j} = (\beta_0 + \alpha_j) + (\beta_1 + \delta_j) x_{i,j} \\
+& ~~~ \alpha_j \sim \text{N}(0, \sigma_{\alpha}^2) \\
+& ~~~ \delta_j \sim \text{N}(0, \sigma_{\delta}^2)
+\end{aligned}
+$$
+
+
+## Summary of GLMM methods
+
+| Method | Advantages | Disadvantages | R functions |
+|:-------|:-----------|:--------------|:-----------:|
+| Penalized quasi-likelihood | Flexible, widely implemented | inference may be inappropriate; potentially biased | `MASS::glmmPQL` |
+| Laplace approximation | More accurate than PQL | Slower and less flexible than PQL | `lme4::glmer` `glmmsr::glmm` `glmmML::glmmML` | 
+| Gauss-Hermite quadrature | More accurate than Laplace | Slower than Laplace; limited random effects | `lme4::glmer` `glmmsr::glmm` `glmmML::glmmML` |
+
+
+# THE FUTURE
+
+
+## Some things we didn't cover
+
+Generalized additive models (QERM 514 in a different year)
+
+Occupancy models (SEFS 590)
+
+Capture-Mark-Recapture models (SEFS 590)
+
+Multivariate response models (FISH 560)
+
+Time series models (FISH 507)
+
+Spatio-temporal models (FISH 556)
+
+Bayesian methods (FISH 558, FISH 559)
 
