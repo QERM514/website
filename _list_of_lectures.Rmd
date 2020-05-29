@@ -302,7 +302,7 @@ synthesis <- list(
   rmd = c("lectures/week_09/lec_27_course_summary.Rmd"),
   html = c("lectures/week_09/lec_27_course_summary.html"),
   background = "",
-  zoom = ""
+  zoom = "https://washington.zoom.us/rec/share/uelrdY_Z2WxJGYXVzX_Sdp8KBZjsaaa8hCVLq_AImUskDhYc4ALefWZQBhgglh8Y"
 )
 
 present <- list(

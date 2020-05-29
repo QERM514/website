@@ -126,7 +126,7 @@ fitting_glmms <- list(
   pdf = c(""),
   rmd = c("labs/week_09/fitting_glmms.Rmd"),
   html = c("labs/week_09/fitting_glmms.html"),
-  zoom = "",
+  zoom = "https://washington.zoom.us/rec/share/981qLr732H9OcLfwuW3jaP9-FNi9eaa8h3BK8vJfzhkq4tBwtEEyIAhyediIPRb6",
   data = "",
   background = c("")
   )
