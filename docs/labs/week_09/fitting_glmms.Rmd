@@ -1,0 +1,200 @@
+---
+title: "Working with generalized linear mixed models"
+author: "Mark Scheuerell"
+date: "29 May 2020"
+output:
+  html_document:
+    theme: journal
+    highlight: textmate
+    toc: true
+    toc_float: true
+    toc_depth: 4
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE)
+```
+
+# Background
+
+These lab exercises focus on fitting and evaluating generalized linear mixed models (GLMM). As we saw in lecture, GLMMs are relatively new and therefore the existing literature is rather sparse and technical. The good news, though, is that GLMMs follow similar methods to GLMs and LMMs. The bad news is that there are multiple approaches for fitting models, each with different pros and cons.
+
+<br>
+
+| Method | Advantages | Disadvantages | R functions |
+|:-------|:-----------|:--------------|:-----------:|
+| Penalized quasi-likelihood | Flexible, widely implemented | inference may be inappropriate; potentially biased | `MASS::glmmPQL` |
+| Laplace approximation | More accurate than PQL | Slower and less flexible than PQL | `lme4::glmer` `glmmsr::glmm` `glmmML::glmmML` | 
+| Gauss-Hermite quadrature | More accurate than Laplace | Slower than Laplace; limited random effects | `lme4::glmer` `glmmsr::glmm` `glmmML::glmmML` |
+
+<br>
+
+Just like GLMs, GLMMs have three components:
+
+1. Distribution of the data $f(y; \theta)$
+
+2. Link function $g(\eta)$
+
+3. Linear predictor $\eta$
+
+For GLMMs, our linear predictor also includes random effects, such that
+
+$$
+\eta = \beta_0 + \beta_1 x_1 + \dots + \beta_k x_k  + \alpha_0 + \alpha_1 z_1 + \dots + \alpha_l z_l\\
+\Downarrow \\
+\eta = \mathbf{X} \boldsymbol{\beta} + \mathbf{Z} \boldsymbol{\alpha}
+$$
+
+where the $\beta_i$ are fixed effects of the covariates $x_i$.
+
+
+# Model for tree snakes
+
+Let's consider a long-term study of invasive brown tree snakes in Guam, which were introduced to the island shortly after WWII. Theses snakes are voracious predators on native birds and other vertebrates, and there are many efforts underway to understand their ecology and possible control measures.
+
+Our data consist of counts of the number of eggs per female at 23 locations over 14 years. We are interested in the fixed effect of body size and the random effects of location and year. We'll begin with only the effects of body size and location. Here are the simulated data.
+
+```{r tree_snakes, fig.height = 4.5, fig.width = 6, fig.align = 'center'}
+## code adapted from Sarah Converse (2019)
+set.seed(514)
+## sample and group sizes
+nn <- 234
+n_loc <- 23
+n_yrs <- 14
+## grand mean
+mu <- 1
+## slope
+beta <- 0.5
+## random effects
+re_loc <- rnorm(n_loc, 0, 0.4)
+re_year <- rnorm(n_yrs, 0, 0.4)
+## covariates
+loc <- sample(seq(n_loc), nn, replace = TRUE)
+year <- sample(seq(n_yrs), nn, replace = TRUE)
+size <- runif(nn, -1, 1)
+
+## mean number of eggs 
+mean <- exp(mu + re_loc[loc] + re_year[year] + beta * size)
+## number of eggs
+eggs <- rpois(nn,mean)
+## data frame
+df_eggs <- data.frame(cbind(eggs, size, loc, year))
+
+## plot area
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0), bg = NA,
+    cex.main = 1.2, cex.lab = 1.2)
+## histogram of eggs
+hist(eggs, breaks = seq(0, max(eggs)), las = 1, col = "brown", border = "gray",
+     main = "", xlab = "Number of eggs")
+```
+
+
+## Penalized quasi-likelihood
+
+We fit PQL models with `MASS::glmPQL()`
+
+```{r snakes_pql}
+## load MASS
+library(MASS)
+## fit model
+snakes_pql <- glmmPQL(eggs ~ size, random = ~1 | loc, data = df_eggs,
+                      family = poisson)
+## model summary
+summary(snakes_pql)
+```
+
+## Laplace approximation
+
+We can fit Laplace models with `lme4::glmer()`
+
+```{r snakes_lap}
+## load lme4
+library(lme4)
+## fit model
+snakes_lap <- glmer(eggs ~ size + (1 | loc), data = df_eggs,
+                    family = poisson)
+## model summary
+summary(snakes_lap)
+```
+
+One question people have is, "What is the `Correlation of Fixed Effects` in the output from `glmer()`? Here the `Correlation of Fixed Effects` is not the correlation between (among) the predictors (i.e., it does not involve multicollinearity). Rather, it concerns the *expected* correlation of the model coefficients. So, in this case, if you repeated the study and the coefficient for `size` got smaller, there is some chance the intercept (`Intr`) would get bigger (i.e., there is a small negative correlation between `size` and `Intr`). In general, this phenomenon is expected for regression models.
+
+## Gauss-Hermite quadrature
+
+We can fit GHQ models with `lme4::glmer(..., nAGQ = pts)`, but note that *this method only works with one random effect*.
+
+```{r snakes_ghq}
+## fit model
+snakes_ghq <- glmer(eggs ~ size + (1 | loc), data = df_eggs,
+                    family = poisson, nAGQ = 20)
+## model summary
+summary(snakes_ghq)
+```
+
+### How many knots?
+
+A common question is how many knots one should use when fitting GHQ models? I have not seen good guidance on this, but one option is to fit a series of models with increasing values for `nAGQ` and see how the estimates change.
+
+```{r snakes_ghq_series}
+ngq <- seq(2, 20)
+## empty matrix for coefs
+gq <- matrix(NA, length(ngq), 3)
+colnames(gq) <- c("nAGQ", "beta", "SD_RE")
+gq[,1] <- ngq
+## loop over increasing nAGQ
+for(i in ngq) {
+  tmp <- glmer(eggs ~ size + (1 | loc), data = df_eggs,
+                    family = poisson, nAGQ = i)
+  gq[i-1,2] <- coef(tmp)$loc[1,2]
+  gq[i-1,3] <- unlist(summary(tmp)$varcor)^2
+}
+## inspect them
+gq
+```
+
+It looks like the results converge for `nAGQ` $\geq$ 7.
+
+
+## Model comparison
+
+Here is a summary of the results from the 3 methods
+
+```{r summary_tbl}
+## betas and SE's
+tbl_smry <- cbind(summary(snakes_pql)$tTable[, 1:2],
+                  summary(snakes_lap)$coefficients[, 1:2],
+                  summary(snakes_ghq)$coefficients[, 1:2])
+## SD for RE's
+loc_SD <- c(c(sqrt(insight::get_variance_random(snakes_pql)), NA),
+            c(sqrt(insight::get_variance_random(snakes_lap)), NA),
+            c(sqrt(insight::get_variance_random(snakes_ghq)), NA))
+## table of results
+tbl_smry <- rbind(tbl_smry, "location SD" = loc_SD)
+colnames(tbl_smry) <- c("    PQL ", "SE ", "   Laplace", "SE ", "     GHQ ", "SE ")
+round(tbl_smry, 3)
+```
+
+## 2+ random effects
+
+What if we also want to include the random effect of year? If so, our options are much more limited. `glmmPQL` only allows for nested random effects and `glmer(..., nAGQ = pts)` only allows for one random effect, but we can use the Laplace approximation via `glmer`.
+
+```{r snakes_lap_2}
+## fit model
+snakes_lap_2 <- glmer(eggs ~ size + (1 | loc) + (1 | year),
+                      data = df_eggs, family = poisson)
+## model summary
+summary(snakes_lap_2)
+```
+
+# Model selection
+
+The literature on model selection for GLMMs is thin at best. What does exist suggests that you should include all of the random effects that you think are important based on the system of interest, the design of the experiment or observational study, and limitations in the data. The idea is that these should not be "tested" for inclusion/exclusion, but rather purposefully included to account for blocks, groups, pseudorepliction, etc. The fixed effects within a GLMM can then be evaluated via AIC.
+
+
+# Bayesian estimation
+
+We did not cover Bayesian methods in class, but they are an exceptionally powerful and flexible way of estimating the parameters in all kinds of linear and nonlinear models. One of the languages for doing Bayesian estimation is [**Stan**](https://mc-stan.org/), which uses Hamiltonian Monte Carlo to estimate model parameters. The **Stan** website also contains a large and growing list of [tutorials](https://mc-stan.org/users/documentation/tutorials.html).
+
+The developers of **Stan** have also created a package called [**rstanarm**](https://mc-stan.org/rstanarm/articles/rstanarm.html), which uses a notation very similar to `glm()` and `glmer()`. Jonah Gabry and Ben Goodrich have written a [vignette](https://cran.r-project.org/web/packages/rstanarm/vignettes/glmer.html) on using **rstanarm** for GLMMs including a comparison with `glmer()`.
+
