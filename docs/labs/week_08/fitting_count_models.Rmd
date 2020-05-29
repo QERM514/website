@@ -536,8 +536,13 @@ $$
 and
 
 ```{r ted_over}
-## overdispersion parameter
-(c_hat <- X2 / (nn - length(coef(ted_mod))))
+## function to calculate dispersion parameter
+c_hat <- function(obs, model) {
+  X2 <- sum((obs - fitted(model))^2 / fitted(model))
+  return(X2 / (length(obs) - length(coef(model))))
+}
+## dispersion parameter
+(c_hat_ted <- c_hat(bycatch, ted_mod))
 ```
 
 This estimate of dispersion is well above 1 so we should be concerned about its effect on the estimated uncertainty of our model parameters. Therefore, we can tell **R** that we want to account for the overdispersion when estimating the SE for the model parameters by including the `dispersion` argument in `summary()`. Let's compare the SE's for both cases.
@@ -546,7 +551,7 @@ This estimate of dispersion is well above 1 so we should be concerned about its 
 ## regular Poisson
 signif(summary(ted_mod)$coefficients, 3)
 ## overdispersed Poisson
-signif(summary(ted_mod, dispersion = c_hat)$coefficients, 3)
+signif(summary(ted_mod, dispersion = c_hat_ted)$coefficients, 3)
 ```
 
 The SE's for the overdispersed model are clearly larger. We can see the effect this has on the estimated confidence intervals by overlaying them on plots of the data and zooming in on the lower range of the data.
@@ -565,8 +570,8 @@ no_TED <- predict(ted_mod, cdat, se.fit = TRUE, type = "link")
 tmp2 <- turtles[order(turtles[,3]),]
 fdat2 <- tmp2[tmp2$TED == 1,]
 cdat2 <- tmp2[tmp2$TED == 0,]
-TED2 <- predict(ted_mod, fdat2, se.fit = TRUE, type = "link", dispersion = c_hat)
-no_TED2 <- predict(ted_mod, cdat2, se.fit = TRUE, type = "link", dispersion = c_hat)
+TED2 <- predict(ted_mod, fdat2, se.fit = TRUE, type = "link", dispersion = c_hat_ted)
+no_TED2 <- predict(ted_mod, cdat2, se.fit = TRUE, type = "link", dispersion = c_hat_ted)
 
 ## t value
 t_crit <- qt(0.975, nn - length(coef(ted_mod)))
@@ -618,7 +623,7 @@ ted_mod_q <- glm(bycatch ~ TED + temp, data = turtles,
 ## quasi-Poisson
 signif(summary(ted_mod_q)$coefficients, 3)
 ## overdispersed Poisson
-signif(summary(ted_mod, dispersion = c_hat)$coefficients, 3)
+signif(summary(ted_mod, dispersion = c_hat_ted)$coefficients, 3)
 ```
 
 These estimates indeed very close to one another.
@@ -634,29 +639,37 @@ $$
 Here's a comparison of several possible models for turtle bycatch.
 
 ```{r qaic}
-## fit null
-ted_null <- glm(bycatch ~ 1, data = turtles,
-                family = poisson(link = "log"))
-## fit reduced
+## fit reduced models
 ted_ted <- glm(bycatch ~ TED, data = turtles,
                family = poisson(link = "log"))
 ted_temp <- glm(bycatch ~ temp, data = turtles,
                 family = poisson(link = "log"))
+## fit null model
+ted_null <- glm(bycatch ~ 1, data = turtles,
+                family = poisson(link = "log"))
+## get c_hat's
+c_hats <- c(c_hat(bycatch, ted_mod),
+            c_hat(bycatch, ted_ted),
+            c_hat(bycatch, ted_temp),
+            c_hat(bycatch, ted_null))
 
 ## model selection results
-tbl_mods <- matrix(NA, 4, 6)
+## neg log-likelihoods
+tbl_mods <- -c(logLik(ted_mod), logLik(ted_ted),
+               logLik(ted_temp), logLik(ted_null))
+## k & AIC
+tbl_mods <- cbind(tbl_mods, AIC(ted_mod, ted_ted, ted_temp, ted_null))
+## delta-AIC
+tbl_mods <- cbind(tbl_mods, tbl_mods[,3] - min(tbl_mods[,3]))
+## QAIC
+tbl_mods <- cbind(tbl_mods, 2 * tbl_mods[,1] + 2 * tbl_mods[,2] / c_hats)
+## delta-QAIC
+tbl_mods <- cbind(tbl_mods, tbl_mods[,5] - min(tbl_mods[,5]))
+## label table
 rownames(tbl_mods) <- c("B0 + TED + temp  ", "B0 + TED  ",
                         "B0 + temp  ", "B0 only  ")
-colnames(tbl_mods) <- c("k", "neg-LL", "AIC", "deltaAIC", "QAIC", "deltaQAIC")
-tbl_mods[,1] <- c(3,2,2,1)
-tbl_mods[,2] <- round(-c(logLik(ted_mod), logLik(ted_ted),
-                         logLik(ted_temp), logLik(ted_null)), 1)
-tbl_mods[,3] <- round(c(AIC(ted_mod), AIC(ted_ted),
-                        AIC(ted_temp), AIC(ted_null)), 1)
-tbl_mods[,4] <- round(tbl_mods[,3] - min(tbl_mods[,3]), 1)
-tbl_mods[,5] <- round(2 * tbl_mods[,1] + 2 * tbl_mods[,2] / c_hat, 1)
-tbl_mods[,6] <- round(tbl_mods[,5] - min(tbl_mods[,5]), 1)
-tbl_mods
+colnames(tbl_mods) <- c("neg-LL", "k", "AIC", "deltaAIC", "QAIC", "deltaQAIC")
+round(tbl_mods, 1)
 ```
 
 
@@ -688,7 +701,7 @@ Let's compare these estimates to those for the overdispersed and quasi-likelihoo
 
 ```{r ted_model_nb_compare}
 ## overdispersed Poisson
-signif(summary(ted_mod, dispersion = c_hat)$coefficients, 3)
+signif(summary(ted_mod, dispersion = c_hat_ted)$coefficients, 3)
 ## quasi-Poisson
 signif(summary(ted_mod_q)$coefficients, 3)
 ## negative binomial
@@ -887,21 +900,15 @@ There are 2 general approaches for dealing with zero-inflated data, which differ
 Zero-altered (ZA) models do not discriminate among the 4 types of zeros and treat all of the count data as belonging to one of two distinct groups: zeros and non-zeros. Zero-inflated (ZI) models also treat the zeros as coming from two sources, but they arise either via observation errors (missed detections) or ecological reasons (the plant or animal was absent because of the environment). The primary difference is that ZA models treat the non-zeros as zero-truncated data whereas ZI models treat the non-zeros and *some of the zeros* as coming from a regular Poisson or negative binomial distribution. Here is a graphical depiction of the two cases.
 
 ```{r za_zi_compare, fig.height=4.5, fig.width=7.5, fig.align='center'}
+## extra zeros + Poisson(3)
+set.seed(514)
+all <- c(rep(0, 50), rpois(300, 3))
 ## ZAP
-set.seed(514)
-junk <- rpois(300, 3)
-junk1 <- rep(0, 50)
-all <- c(junk1, junk)
-ind <- ifelse(all > 0, 0, 1)
-all_zap <- table(all, ind)
-
+idx_zap <- ifelse(all > 0, 0, 1)
+all_zap <- table(all, idx_zap)
 ## ZIP
-set.seed(514)
-junk <- rpois(300,3)
-junk1 <- rep(0,50)
-ind <- c(rep(1,50),rep(0,300))
-all <- c(junk1, junk)
-all_zip <- table(all,ind)
+idx_zip <- c(rep(1, 50), rep(0, 300))
+all_zip <- table(all, idx_zip)
 
 ## set plot area
 par(mfrow = c(1, 2),
@@ -910,9 +917,9 @@ par(mfrow = c(1, 2),
     cex.main = 1.2, cex.lab = 1.2)
 
 ## bar charts of the data
-barplot(t(all_zap), las = 1, col=c("dodgerblue","indianred"),
+barplot(t(all_zap), las = 1, col=c("dodgerblue","indianred"), border ="gray",
         xlab = "Count", main = "Zero altered (hurdle)")
-barplot(t(all_zip), las = 1, col=c("dodgerblue","indianred"),
+barplot(t(all_zip), las = 1, col=c("dodgerblue","indianred"), border ="gray",
         xlab = "Count", main = "Zero inflated (mixture)")
 ```
 
