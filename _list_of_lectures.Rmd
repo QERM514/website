@@ -292,15 +292,15 @@ review_2 <- list(
   rmd = c(""),
   html = c(""),
   background = "",
-  zoom = ""
+  zoom = "https://washington.zoom.us/rec/share/4tdMcozL521OWp3_7Ab5CpRiXaXnX6a823RL_KdcmBkuktM7JOZ3MNKCnNh-mTDx"
 )
 
 synthesis <- list(
   title = "Course synthesis",
   topics = c("<b>Course synthesis</b>", "What did we learn?", "Where do we go from here?"),
-  pdf = c(""),
-  rmd = c(""),
-  html = c(""),
+  pdf = c("lectures/week_09/lec_27_course_summary.pdf"),
+  rmd = c("lectures/week_09/lec_27_course_summary.Rmd"),
+  html = c("lectures/week_09/lec_27_course_summary.html"),
   background = "",
   zoom = ""
 )
