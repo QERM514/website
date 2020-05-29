@@ -122,10 +122,10 @@ fitting_counts <- list(
 ## 9 fitting glmms
 fitting_glmms <- list(
   title = "Fitting GLMMs",
-  topics = c("Fitting GLMMs"),
+  topics = c("Working with GLMMs"),
   pdf = c(""),
-  rmd = c(""),
-  html = c(""),
+  rmd = c("labs/week_09/fitting_glmms.Rmd"),
+  html = c("labs/week_09/fitting_glmms.html"),
   zoom = "",
   data = "",
   background = c("")
