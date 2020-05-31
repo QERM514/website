@@ -387,10 +387,10 @@ As with binomial models, we can check the deviance $D$ against a $\chi^2$ distri
 Recall that the deviance for any model is
 
 $$
-D_i = \text{-}2 \left[ \log \mathcal{L}(M_i) - \log \mathcal{L}(M_0) \right]
+D_i = \text{-}2 \left[ \log \mathcal{L}(M_i) - \log \mathcal{L}(M_S) \right]
 $$
 
-where $M_i$ is the model of interest and $M_0$ is an intercept-only model
+where $M_i$ is the model of interest and $M_S$ is a *saturated* model with $k = n$
 
 
 ## Deviance for Poisson
@@ -398,7 +398,7 @@ where $M_i$ is the model of interest and $M_0$ is an intercept-only model
 The log-likelihood for a Poisson is
 
 $$
-\log \mathcal{L}(y; \lambda) = \sum_{i=1}^{n} \left[ y_{i} \log (\lambda)- \lambda - \log \left( y_{i}! \right)  \right]
+\log \mathcal{L}(y; \lambda) = \sum_{i=1}^{n} \left[ y_{i} \log (\lambda_i)- \lambda_i - \log \left( y_{i}! \right)  \right]
 $$
 
 <br>
@@ -406,7 +406,7 @@ $$
 The deviance for a Poisson is
 
 $$
-\log \mathcal{L}(y; \lambda) = \sum_{i=1}^{n} \left[ y_{i} \log (y_i / \hat{\lambda}) - (y_i - \hat{\lambda})  \right]
+D = 2 \sum_{i=1}^{n} \left[ y_{i} \log (y_i / \hat{\lambda}_i) - (y_i - \hat{\lambda}_i)  \right]
 $$
 
 
