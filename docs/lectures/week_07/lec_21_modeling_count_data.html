@@ -3341,7 +3341,7 @@ signif(ci_tbl, 3)</pre>
 ## fish        0.03570   0.0894 0.1430
 ## temp        0.00856   0.0257 0.0428</pre>
 
-</article></slide><slide class=""><hgroup><h2>Profile likelihood</h2></hgroup><article  class="smaller" id="profile-likelihood">
+</article></slide><slide class=""><hgroup><h2>Profile likelihood</h2></hgroup><article  id="profile-likelihood" class="smaller">
 
 <p>Due to possible bias in \(\text{SE}(\beta)\), we can compute CI’s based on the <em>profile likelihood</em></p>
 
@@ -3375,17 +3375,17 @@ for(i in 1:nb) {
 <p>Recall that the deviance for any model is</p>
 
 <p>\[
-D_i = \text{-}2 \left[ \log \mathcal{L}(M_i) - \log \mathcal{L}(M_0) \right]
+D_i = \text{-}2 \left[ \log \mathcal{L}(M_i) - \log \mathcal{L}(M_S) \right]
 \]</p>
 
-<p>where \(M_i\) is the model of interest and \(M_0\) is an intercept-only model</p>
+<p>where \(M_i\) is the model of interest and \(M_S\) is a <em>saturated</em> model with \(k = n\)</p>
 
 </article></slide><slide class=""><hgroup><h2>Deviance for Poisson</h2></hgroup><article  id="deviance-for-poisson-1">
 
 <p>The log-likelihood for a Poisson is</p>
 
 <p>\[
-\log \mathcal{L}(y; \lambda) = \sum_{i=1}^{n} \left[ y_{i} \log (\lambda)- \lambda - \log \left( y_{i}! \right)  \right]
+\log \mathcal{L}(y; \lambda) = \sum_{i=1}^{n} \left[ y_{i} \log (\lambda_i)- \lambda_i - \log \left( y_{i}! \right)  \right]
 \]</p>
 
 <p><br></p>
@@ -3393,7 +3393,7 @@ D_i = \text{-}2 \left[ \log \mathcal{L}(M_i) - \log \mathcal{L}(M_0) \right]
 <p>The deviance for a Poisson is</p>
 
 <p>\[
-\log \mathcal{L}(y; \lambda) = \sum_{i=1}^{n} \left[ y_{i} \log (y_i / \hat{\lambda}) - (y_i - \hat{\lambda})  \right]
+D = 2 \sum_{i=1}^{n} \left[ y_{i} \log (y_i / \hat{\lambda}_i) - (y_i - \hat{\lambda}_i)  \right]
 \]</p>
 
 </article></slide><slide class=""><hgroup><h2>Goodness of fit for prawn model</h2></hgroup><article  id="goodness-of-fit-for-prawn-model">
