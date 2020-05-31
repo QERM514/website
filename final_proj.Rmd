@@ -49,7 +49,7 @@ Your presentation should include
 
 #### Reports are due by 11:59 PM on June 9 and constitute 18% of your final grade.
 
-Please use the [RMarkdown report template files]() for your final report, which will facilitate proper formatting of text, equations, code, figures, references, etc. At a minimum, you will need these two files:
+Please use the [RMarkdown report template files](https://github.com/QERM514/website/tree/master/project) for your final report, which will facilitate proper formatting of text, equations, code, figures, references, etc. At a minimum, you will need these two files:
 
 1) `report_template.Rmd`
 
