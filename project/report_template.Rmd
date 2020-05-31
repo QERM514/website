@@ -1,0 +1,272 @@
+---
+title: \Large{A relatively brief description of what I did for my independent project}
+output:
+  pdf_document:
+    includes:
+      before_body: report_title_page_template.tex
+    highlight: haddock
+    toc: true
+    number_sections: true
+    toc_depth: '3'
+fontsize: 11pt
+geometry: margin=1in
+bibliography: example_refs.bib
+csl: jpe.csl
+header-includes:
+  \usepackage{float}
+  \floatplacement{figure}{H}
+---
+
+```{r set_options, echo = FALSE, message = FALSE, warning=FALSE}
+options(width = 100)
+knitr::opts_chunk$set(message = FALSE)
+
+## for figure captions
+library(captioner)
+## set default caption options
+fig_cap <- captioner(suffix = ".", style = "b", style_prefix = TRUE)
+tbl_cap <- captioner(prefix = "Table", suffix = ".",
+                     style = "b", style_prefix = TRUE)
+
+## for nice tables
+library(kableExtra)
+```
+
+\vspace{0.2in}
+
+\newpage
+
+# Introduction
+
+Make sure to edit the YAML above to include your title (embedding it in `Large{}` makes the title page look nicer).
+
+You might want to delete lines 24-29 above if you don't want to use **captioner** (see below). You might want to delete lines 31-32 above if you don't want to use `kable()` for any tables you might have (see below). 
+
+Also make sure to edit `report_title_page_template.tex` with the date (line 5), your name and email (line 27), and affiliation (line 31) etc. Be sure to include `report_title_page_template.tex in the same folder where this .Rmd file is located.
+
+## Some formatting tips
+
+You can use `\vspace{0.5in}` to insert a half-inch of vertical line space somewhere. You can change the `0.5` to whatever you migh want. You can use `\newpage` to create a page break.
+
+## BibTeX for references
+
+If you want to use BibTeX for managing you references in a Markdown document, you have to format your references as such and save them in a file with a ".bib" extension (most reference manager software will allow you to export a library to .bib files). Make sure same to save the file in the same directory from which you knit this file. For example, the reference file for this document is called `example_refs.bib` and is listed in the YAML. You will have to change the name of the .bib file to whatever name you gave to your reference file.
+
+To cite a reference, you use `[@ref_ID]`, which will format to (Author(s) Year). The `ref_id` should be a unique identifier in the BibTeX reference. For example, here is a BibTeX entry for the **R** software:
+
+```
+@manual{R2018,
+	Address = {Vienna, Austria},
+	Author = {{R Core Team}},
+	Organization = {R Foundation for Statistical Computing},
+	Title = {R: A Language and Environment for Statistical Computing},
+	Url = {https://www.R-project.org/},
+	Year = {2018},
+	Bdsk-Url-1 = {https://www.R-project.org/}}
+```
+
+The reference ID for this entry is `R2018`, so you would cite this as `[@R2018]`, which renders to [@R2018].
+
+If you want multiple citations, you can use `[@ref_ID_1, @ref_ID_2]`. If you want to have only the year shown parenthetically without the author name(s), use `[-@ref_ID]` to get something like "were extracted with the **EGRET** package for **R** from Hirsch and De Cicco [-@egret]".
+
+### No BibTeX
+
+If you don't want to use BibTeX for your references, delete the following two lines from the YAML:
+
+```
+bibliography: example_refs.bib
+csl: jpe.csl
+```
+
+# Methods
+
+## Data
+
+I'd recommend a description of your data.
+
+## Modeling
+
+If you want your equations to be numbered, you need to enclose them with `\begin{equation}` and `\end{equation}`. If you don't want numbers you can just use `$$` at the beginning and end. For example, 
+
+```
+\begin{equation}
+R_t = \frac{\alpha S_t}{\mathrm{e}^{\beta S_t}},
+\end{equation}
+```
+
+yields
+
+\begin{equation}
+R_t = \frac{\alpha S_t}{\mathrm{e}^{\beta S_t}},
+\end{equation}
+
+and
+
+```
+$$
+R_t = \frac{\alpha S_t}{\mathrm{e}^{\beta S_t}},
+$$
+```
+
+yields
+
+$$
+R_t = \frac{\alpha S_t}{\mathrm{e}^{\beta S_t}},
+$$
+
+If you want multiple equations in a group, you must either use the `gathered` form for centered equations, or the `aligned` form if you want them aligned (use an ampersand (`&`) in each line to indicate the point of alignment). Add a double backslash (`\\`) at the end of a line to indicate a line break.
+
+```
+\begin{equation}
+\begin{gathered}
+y_i \sim \text{Normal}(\mu_i, \sigma^2) \\
+\mu_i = \beta_0 + \beta_1 x_{1,i}
+\end{gathered}
+\end{equation}
+```
+
+yields
+
+\begin{equation}
+\begin{gathered}
+y_i \sim \text{Normal}(\mu_i, \sigma^2) \\
+\mu_i = \beta_0 + \beta_1 x_{1,i}
+\end{gathered}
+\end{equation}
+
+and 
+
+```
+\begin{equation}
+\begin{aligned}
+&y_i \sim \text{Normal}(\mu_i, \sigma^2) \\
+&\mu_i = \beta_0 + \beta_1 x_{1,i}
+\end{aligned}
+\end{equation}
+```
+
+yields
+
+\begin{equation}
+\begin{aligned}
+&y_i \sim \text{Normal}(\mu_i, \sigma^2) \\
+&\mu_i = \beta_0 + \beta_1 x_{1,i}
+\end{aligned}
+\end{equation}
+
+If you want a multi-line equation with no number, embed the equation in between `$$`, such that
+
+```
+$$
+\begin{aligned}
+&y_i \sim \text{Normal}(\mu_i, \sigma^2) \\
+&\mu_i = \beta_0 + \beta_1 x_{1,i}
+\end{aligned}
+$$
+```
+
+yields
+
+$$
+\begin{aligned}
+&y_i \sim \text{Normal}(\mu_i, \sigma^2) \\
+&\mu_i = \beta_0 + \beta_1 x_{1,i}
+\end{aligned}
+$$
+
+
+# Results
+
+## Tables
+
+Here is a table with a caption above it as implemented with `tbl_cap()` defined using **captioner** in the `set_options` chunk at the beginning of the document. The syntax is `tbl_cap(your_tbl_number, caption = "Your caption.", display = "full")`.
+
+The table itself consists of a `data.frame`, which is formatted for nicer output with `kable()` and `kable_styling`. You can find lots of different options for formatting your tables here:
+
+https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html. 
+
+The commands below increase the margins for the caption and set the text size a bit smaller before restoring them again. You can increase or decrease the indentation by changing the arguments.
+
+\vspace{0.25in}
+
+\setlength{\leftskip}{0.5in}
+\setlength{\rightskip}{0.5in}
+
+\small
+
+`r tbl_cap(1, caption = "This is an example table caption as implemented with tbl_cap(). It can include LaTeX math codes to get $(p_e)$. If you want to use a LaTeX command that is preceeded by a backslash, you need to \"escape it\" with a second backslash like $\\Delta$AIC.", display = "full")` 
+
+\normalsize
+
+\setlength{\leftskip}{0in}
+\setlength{\rightskip}{0in}
+
+```{r tbl_example, echo = FALSE}
+## load LOOIC info
+tbl_ex <- data.frame(model = seq(10),
+                     k = sample(seq(3), 10, replace = TRUE),
+                     deltaAIC = c(0, round(runif(9, 1, 10), 1)))
+## print table
+knitr::kable(tbl_ex,
+             format = "latex",
+             booktabs = TRUE,
+             col.names = c("Model ID",
+                           "$k$",
+                           "$\\Delta$AIC"),
+             escape = FALSE,
+             row.names = FALSE,
+             align = "ccr") %>%
+  kable_styling(position = "center", font_size = 10)
+```
+
+## Figures
+
+You can add a figure caption below a figure using `tbl_cap()` as defined using **captioner** in the `set_options` chunk at the beginning of the document. Just as with tables, the syntax is `fig_cap(your_fig_number, caption = "Your caption.", display = "full")`. For example,
+
+\vspace{0.25in}
+
+```{r fig_ex, fig.height=3, fig.width=5, fig.align='center', echo = FALSE}
+## an ugly plot
+par(mai = c(1, 1, 0, 0))
+matplot(matrix(rpois(60, 10), 15, 4), las = 1, type = "l",
+        xlab = expression(paste("Something here (",hat(italic(y)),")")),
+        ylab = expression(paste("Another thing (",italic(e),")")))
+```
+
+\vspace{0.2in}
+
+\setlength{\leftskip}{0.5in}
+\setlength{\rightskip}{0.5in}
+
+\small
+
+`r fig_cap(1, caption = "This is an example figure caption as implemented with \'fig_cap()\'. It can include LaTeX math codes like \'$(p_e)$\' to get $(p_e)$. If you want to use a LaTeX command that is preceeded by a backslash, you need to \"escape it\" with a second backslash like \'$\\Delta$AIC\' to get $\\Delta$AIC$.", display = "full")` 
+
+
+\normalsize
+
+\setlength{\leftskip}{0in}
+\setlength{\rightskip}{0in}
+
+
+# Discussion
+
+Here is another citation [@buhle2009] to help fill out the Reference section below.  
+
+And some more text to make another paragraph.
+
+
+# References
+
+\setlength{\parindent}{-0.375in}
+\setlength{\leftskip}{0.375in}
+\setlength{\parskip}{8pt}
+\noindent
+
+You can replace this text with some references or just delete it if you're using the BibTex option, but you should leave the four lines above if you want hanging indents and some space between refs.
+
+
+
+
+
+
