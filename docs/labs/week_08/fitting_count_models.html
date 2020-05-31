@@ -1658,7 +1658,7 @@ faraway::sumary(cmod)</code></pre>
 ## n = 113 p = 3
 ## Deviance = 144.97655 Null Deviance = 192.31602 (Difference = 47.33947)</code></pre>
 <p>All three model coefficients are “significant” at the <span class="math inline">\(\alpha\)</span> = 0.05 level. Recall that the true values are <code>(Intercept)</code> = 3.5, <code>temp</code> = 0.03, and <code>fish</code> = 0.1, so our estimates are reasonably close to the true values. Also recall that because bait type is a categorical predictor with 2 levels, the effect of <code>fish</code> represents the case where the bait type is fish. If the bait type is chicken, then the effect is zero.</p>
-<p>We also get an estimate of the model deviance, which</p>
+<p>We also get an estimate of the model deviance (<code>Deviance</code>), which is ~144.98. To extract the deviance from a fitted model, you can use <code>deviance(cmod)</code> or <code>summary(cmod)$deviance</code>.</p>
 </div>
 <div id="inference" class="section level2">
 <h2>Inference</h2>

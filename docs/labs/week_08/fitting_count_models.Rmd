@@ -131,7 +131,7 @@ faraway::sumary(cmod)
 
 All three model coefficients are "significant" at the $\alpha$ = 0.05 level. Recall that the true values are `(Intercept)` = `r b0`, `temp` = `r b_temp`, and `fish` = `r b_bait`, so our estimates are reasonably close to the true values. Also recall that because bait type is a categorical predictor with 2 levels, the effect of `fish` represents the case where the bait type is fish. If the bait type is chicken, then the effect is zero.
 
-We also get an estimate of the model deviance, which 
+We also get an estimate of the model deviance (`Deviance`), which is ~`r round(deviance(cmod), 2)`. To extract the deviance from a fitted model, you can use `deviance(cmod)` or `summary(cmod)$deviance`.
 
 ## Inference
 
