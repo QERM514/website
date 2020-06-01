@@ -21,7 +21,7 @@ library(kableExtra)
 
 # R Markdown file
 
-You can find the R Markdown file used to create this answer key [here](homework/week_07/hw_07_logistic_regr_key.Rmd).
+You can find the R Markdown file used to create this answer key [here](hw_07_logistic_regr_key.Rmd).
 
 
 # Background
