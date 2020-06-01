@@ -1,5 +1,5 @@
 ---
-title: "Working with logistc regression models"
+title: "Working with logistic regression models"
 author: "Mark Scheuerell"
 date: "15 May 2020"
 output:
@@ -760,7 +760,7 @@ where $O_i$ is the observed count and $E_i$ is the expected count. For a binomia
 $$
 X^2 = \sum_{i = 1}^n \frac{(O_i - E_i)^2}{E_i} \\
 \Downarrow \\
-X^2 = \sum_{i = 1}^n \frac{(y_i - n_i \hat{p}_i)^2}{n_i \hat{p}_i (1 - \hat{p}_o)}
+X^2 = \sum_{i = 1}^n \frac{(y_i - n_i \hat{p}_i)^2}{n_i \hat{p}_i}
 $$
 
 We can then estimate $c$ as

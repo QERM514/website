@@ -38,7 +38,7 @@ library(kableExtra)
 
 # Introduction
 
-Make sure to edit the YAML above to include your title (embedding it in `Large{}` makes the title page look nicer).
+Make sure to edit the YAML above to include your title (embedding it in `\Large{}` makes the title page look nicer).
 
 You might want to delete lines 24-29 above if you don't want to use **captioner** (see below). You might want to delete lines 31-32 above if you don't want to use `kable()` for any tables you might have (see below). 
 
@@ -46,7 +46,7 @@ Also make sure to edit `report_title_page_template.tex` with the date (line 5), 
 
 ## Some formatting tips
 
-You can use `\vspace{0.5in}` to insert a half-inch of vertical line space somewhere. You can change the `0.5` to whatever you migh want. You can use `\newpage` to create a page break.
+You can use `\vspace{0.5in}` to insert a half-inch of vertical line space somewhere. You can change the `0.5` to whatever you might want. You can use `\newpage` to create a page break.
 
 ## BibTeX for references
 
@@ -263,7 +263,7 @@ And some more text to make another paragraph.
 \setlength{\parskip}{8pt}
 \noindent
 
-You can replace this text with some references or just delete it if you're using the BibTex option, but you should leave the four lines above if you want hanging indents and some space between refs.
+You can replace this text with some references or just delete it if you're using the BibTeX option, but you should leave the four lines above if you want hanging indents and some space between refs.
 
 
 
