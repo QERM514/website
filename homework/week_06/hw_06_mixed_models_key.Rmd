@@ -19,7 +19,7 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE)
 
 # R Markdown file
 
-You can find the R Markdown file used to create this answer key [here](homework/week_06/hw_06_mixed_models_key.Rmd).
+You can find the R Markdown file used to create this answer key [here](hw_06_mixed_models_key.Rmd).
 
 
 # Background
