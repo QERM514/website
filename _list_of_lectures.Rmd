@@ -305,7 +305,27 @@ synthesis <- list(
   zoom = "https://washington.zoom.us/rec/share/uelrdY_Z2WxJGYXVzX_Sdp8KBZjsaaa8hCVLq_AImUskDhYc4ALefWZQBhgglh8Y"
 )
 
-present <- list(
+present_1 <- list(
+  title = "Presentations of class projects",
+  topics = "<b>Presentations of class projects</b>",
+  pdf = c(""),
+  rmd = "",
+  html = "",
+  background = "",
+  zoom = "https://washington.zoom.us/rec/share/y_BJLozX3DxOXYnLzlDdZv8iGqTaX6a81HMe-PsInkacvB1GYhj-vY1J1YFKNK03"
+)
+
+present_2 <- list(
+  title = "Presentations of class projects",
+  topics = "<b>Presentations of class projects</b>",
+  pdf = c(""),
+  rmd = "",
+  html = "",
+  background = "",
+  zoom = ""
+)
+
+present_3 <- list(
   title = "Presentations of class projects",
   topics = "<b>Presentations of class projects</b>",
   pdf = c(""),
