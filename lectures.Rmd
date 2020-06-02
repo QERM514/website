@@ -55,9 +55,9 @@ week_lecs$L25 <- holiday
 week_lecs$L26 <- review_2
 week_lecs$L27 <- synthesis
 ## week 10
-week_lecs$L28 <- present
-week_lecs$L29 <- present
-week_lecs$L30 <- present
+week_lecs$L28 <- present_1
+week_lecs$L29 <- present_2
+week_lecs$L30 <- present_3
 ```
 
 ```{r topics, include = FALSE, eval = FALSE}
