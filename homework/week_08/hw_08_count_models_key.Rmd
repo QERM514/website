@@ -1,0 +1,380 @@
+---
+title: "Models for count data"
+subtitle: "QERM 514 - Homework 8 Answer key"
+date: "22 May 2020"
+output:
+  pdf_document:
+    highlight: haddock
+fontsize: 11pt
+geometry: margin=1in
+urlcolor: blue
+header-includes:
+  \usepackage{float}
+  \floatplacement{figure}{H}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE)
+```
+
+# R Markdown file
+
+You can find the R Markdown file used to create this answer key [here](hw_08_count_models_key.Rmd).
+
+
+# Background
+
+This week's homework assignment focuses on fitting and evaluating models for count data. One of your colleagues is interested in the theory of island biogeography and has acquired a data set with which to examine how species richness varies with the area of an island, the island's elevation, the distance to the nearest island, and the area of the nearest island. In particular, her expectation is that the number of plant species should increase with island area, and a plot of the data suggests this to indeed be the case, but her initial modeling effort has yielded the opposite result. Recognizing that she does not have much experience with this type of data analysis, she has turned to you for assistance.
+
+Her data are contained in the accompanying file `plant_richness.csv`, which has the following columns of information:
+
+* `island`: name of the island
+
+* `species`: number of plant species on the island
+
+* `area` the area of the island (km$^2$)
+
+* `elevation`: the highest elevation of the island (m)
+
+* `distance`: the distance to the nearest island (km)
+
+* `adjacent` the area of the nearest island (km$^2$)
+
+
+# Questions
+
+a) Plot the number of species versus island area and describe any patterns you observe. Does your colleague's assumption of a positive relationship between richness and area seem to hold?
+
+```{r load_data, fig.height=4.5, fig.width=5, fig.align='center'}
+## get the data
+dat <- read.csv("plant_richness.csv")
+
+## plot the richness vs area
+par(mai = c(0.9, 0.9, 0.6, 0.1),
+    omi = c(0, 0, 0, 0))
+plot(dat$area, dat$species, las = 1, pch = 16,
+     ylab = "Number of species", xlab = expression(paste("Island area (",km^2,")")))
+```
+
+\vspace{0.25in}
+
+Yes, there does appear to be a positive relationship between the number of species and island area. There is also one apparent outlier that seems to suggest a possible nonlinear, saturating relationship between the number of species and island area.
+
+***
+
+b) Your colleague explains that she fit the following model, which yielded the surprising result. Fit the model for yourself and verify if there is indeed a negative effect of `area` on `species`. Do the signs of the other coefficients seem to make sense from an ecological perspective? Why or why not? 
+
+$$
+\text{species}_i = \beta_0 + \beta_1 \text{area}_i + \beta_2 \text{elevation}_i + \beta_3 \text{nearest}_i + \beta_4 \text{adjacent}_i + e_i
+$$
+
+```{r b_fit_lm}
+## fit the model
+fit_lm <- lm(species ~ area + elevation + nearest + adjacent, data = dat)
+summary(fit_lm)
+```
+
+Yes, the effect of area is approximately `r round(coef(fit_lm)[2], 3)`, although its $p$-value would suggest the effect is non-significant. The effect of `elevation` is positive, which seems reasonable as greater variability in elevation should allow for greater niches. The effect of `nearest` is negative, although insignificant, which makes sense because greater distances between islands should decrease the dispersal of seeds between them. The effect of `adjacent` is negative, which doesn't make sense because larger neighboring islands should have more species and hence a greater probability that one of them would make it to the island in question.
+
+***
+
+c) Offer one explanation for the unexpected effect of `area` given the apparent relationship in (a). Based on this evaluation, offer a possible suggestion for estimating the effect of `area` on `species`.
+
+We have discussed how collinearity among predictor variables can causes non-identifiability problems if/when including 2+ covariates in the same model if they are highly correlated. Here are the correlations among the four covariates.
+
+```{r c_corr}
+## correlation among predictors
+round(cor(dat[,-(1:2)]), 2)
+```
+
+The correlation between `area` and `elevation` is quite high ($\rho \approx$ `r round(cor(dat$area, dat$elevation), 2)`), and this colinearity is causing non-identifiability problems when fitting the model. One simple solution is to fit models that include *either* `area` or `elevation`, but not both of them in the same model.
+
+***
+
+d) Does it seem reasonable to use `species` as a response variable in a linear model like the one your colleague fit initially? Why or why not? What would be a more appropriate response variable in a linear model like this?
+
+No, using `species` itself as a response variable is not a good idea because it's a count, which means a simple linear model could predict negative counts. Also, the diagnostics from the linear model in (b) suggest problems with the assumptions of IID errors. Two possible solutions would be to model the log(`species`) or the log(`counts`/`area`) as a function of the covariates.
+
+***
+
+e) Based upon your knowledge of models for count data, offer a *simple* alternative regression model that models `species` as a function of `area`, `nearest`, and `adjacent`. What are the important components to this model?
+
+An obvious choice would be a Poisson regression model (GLM) with the following three components:
+
+1) data distribution: $y_i \sim \text{Poisson}(\lambda_i)$
+
+2) link function: $\log(\lambda_i) = \eta_i$
+
+3) linear predictor: $\eta_i = \beta_0 + \beta_1 \text{area}_i + \beta_2 \text{nearest}_i + \beta_3 \text{adjacent}_i$
+
+***
+
+f) Fit the model you recommended in (e) and examine the summary information. Does the effect of `area` seem more reasonable in this model? Do you see any problems with this model?
+
+```{r f_glm_pois}
+## fit Poisson regression model
+fit_glm <- glm(species ~ area + nearest + adjacent, data = dat,
+               family = poisson(link = "log"))
+## model summary
+summary(fit_glm)
+```
+
+The effect of `area` is positive (~$`r signif(coef(fit_glm)[2], 3)`$), which is what we would expect based on theory and the plot in (a).
+
+The deviance $D$ of this model is ~`r floor(fit_glm$deviance)` based upon `r fit_glm$df.residual` degrees of freedom. Thus, the estimated dispersion $(\hat{c})$ is
+
+$$
+\hat{c} = \frac{D}{n - k}
+$$
+
+```{r f_dispersion}
+## sample size
+nn <- nrow(dat)
+##
+k <- length(coef(fit_glm))
+## estimated dispersion
+(c_hat <- fit_glm$deviance / (nn - k))
+```
+
+The estimated overdispersion from this model is *very* large, suggesting that we need to account for it when estimating the variance of the parameters and any test statistics associated with them.
+
+***
+
+g) Based on your assessment of the model in (f), identify three possible alternatives for estimating the model parameters and their associated uncertainty, and show how you would do so in **R**. How do the these alternative models compare to the estimates in (f).
+
+**Option 1**: Poisson model with overdispersion using the `c_hat` estimated above.
+
+```{r g1_over_pois}
+## Poisson with overdispersion
+summary(fit_glm, dispersion = c_hat)
+```
+
+\vspace{0.3in}
+
+**Option 2**: Quasi-Poisson model.
+
+```{r g2_quasi_pois}
+## fit quasi-Poisson regression model
+fit_glm_quasi <- glm(species ~ area + nearest + adjacent,
+                     data = dat,
+                     family = quasipoisson(link = "log"))
+
+## model summary
+summary(fit_glm_quasi)
+```
+
+\vspace{0.3in}
+
+**Option 3**: Negative binomial model.
+
+```{r g3_NB}
+## fit negative binomial regression model
+fit_glm_NB <- MASS::glm.nb(species ~ area + nearest + adjacent, data = dat,
+                           link = "log", maxit = 50)
+## model summary
+summary(fit_glm_NB)
+```
+
+As expected, all of these alternative models that account for overdispersion have the same point estimates of the parameters as the model in (f), but the uncertainty in the parameters is much greater, leading to smaller $z$ values and non-significant effects of `nearest` and `adjacent`.
+
+***
+
+h) For one of your alternatives in (g), evaluate whether a model that includes only `area` as a predictor is better than a model with all three predictors. Show the **R** code necessary to estimate the model and any test(s) or comparison(s) you might use.
+
+**Option 1**: overdispersed Poisson
+
+If we use an overdispersed Poisson model, we can compare the two models via QAIC.
+
+```{r option_1_chat}
+## fit reduced Poisson model
+fit_glm_r <- glm(species ~ area, data = dat,
+                 family = poisson(link = "log"))
+
+## log-likelihoods
+LL_f <- logLik(fit_glm)
+LL_r <- logLik(fit_glm_r)
+
+## QAIC for full Poisson model
+QAIC_f <- 2*4 - as.numeric(logLik(fit_glm) / (fit_glm$deviance / (nn - 4)))
+## QAIC for reduced Poisson model
+QAIC_r <- 2*2 - as.numeric(logLik(fit_glm_r) / (fit_glm_r$deviance / (nn - 2)))
+## delta-QAIC
+QAIC_r - QAIC_f
+```
+
+The reduced model has an QAIC that is ~3 units less than the full model, indicating more data support for the model with `area` only.
+
+\vspace{0.3in}
+
+**Option 2**: Quasi-Poisson model
+
+For the quasi-Poisson model, we do not have a likelihood from which to estimate QAIC, but we can use an $F$-test (recall that the $\chi^2$ test is not appropriate for Poisson models with overdispersion). The null hypothesis is that the model with `area` only provides a better fit to the data.
+
+```{r option_2_quasi}
+## fit reduced models
+## quasi-Poisson regression model
+fit_glm_quasi_r <- glm(species ~ area, data = dat,
+                       family = quasipoisson(link = "log"))
+
+## F test with df = 2
+anova(fit_glm_quasi_r, fit_glm_quasi, test = "F")
+```
+
+This $p$-value is ~0.9 so we cannot reject the null hypothesis and therefore we conclude that the full model does not provide an improvement over the reduced model with `area` only.
+
+\vspace{0.3in}
+
+**Option 3**: Negative binomial
+
+We can use a likelihood ratio test or compare AIC values for both forms of the negative binomial models.
+
+```{r option_3_NBa}
+## fit reduced negative binomial model
+fit_glm_NB_r <- MASS::glm.nb(species ~ area, data = dat,
+                             link = "log", maxit = 50)
+
+## LRT with df = 2
+anova(fit_glm_NB_r, fit_glm_NB)
+```
+
+The $p$-value is ~0.8 so we cannot reject the null hypothesis and therefore we conclude that the full model does not provide an improvement over the reduced model with `area` only.
+
+```{r option_3_NBb}
+## compare AIC values
+## AIC for full Poisson model with overdispersion
+AIC_3_f <- summary(fit_glm_NB)$aic
+## AIC for reduced Poisson model with overdispersion
+AIC_3_r <- summary(fit_glm_NB_r)$aic
+## delta-AIC
+AIC_3_r - AIC_3_f
+```
+
+The AIC value for the model with `area` only is ~3.7 units less than the model with three predictors, so we should select the more simple model with only `area`.
+
+***
+
+i) Evaluate the diagnostics for your model from (h) with `species` as a function of `area` only. Do you see any problems with this model?
+
+**Option 1**: overdispersed Poisson
+
+There is no way to evaluate diagnostics for the overdispersed Poisson model, in that the residuals, etc come from the model fitted without accounting for overdispersion (i.e., we only use the dispersion parameter in computing the SE's, $z$-values, and $p$-values). Here I examine a plot of the residuals versus the fitted values, and I check the leverages and Cook's Distance.
+
+```{r option_1_poisson_diag, fig.height=3, fig.width=4, fig.align='center'}
+## set up plot region
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0))
+
+## residuals vs fitted
+plot(fitted(fit_glm_r), residuals(fit_glm_r), las = 1, pch = 16, log = "x",
+     ylab = "Survival", xlab = "Fitted values")
+abline(h = 0, lty = "dashed")
+
+## leverages
+hat_values <- hatvalues(fit_glm_r)
+names(hat_values) <- dat$island
+## threshold value
+(h_crit <- 2 * length(coef(fit_glm_r)) / nn)
+## check if any h_i > b_crit
+hat_values[hat_values > h_crit]
+
+## Cook's D
+CD <- cooks.distance(fit_glm_r)
+names(CD) <- dat$island
+## Threshold value
+(CD_crit <- qf(0.5, nn, nn - length(coef(fit_glm_r))))
+## check if any CD_i > CD_crit
+CD[CD > CD_crit]
+```
+
+The plot of the residuals against the fitted values does not appear to be too disturbing, but there does appear to be one fitted value that is much larger than the rest.
+
+There is one island with a leverage greater than the expected value of ~`r round(h_crit, 2)`.
+
+There are 10 islands with Cook's $D$ greater than the expected value of ~`r round(CD_crit, 2)`.
+
+These diagnostics suggest we perhaps have some work to do in further refining our model.
+
+\vspace{0.3in}
+
+**Option 2**: Quasi-Poisson model
+
+Here are some diagnostic checks for the quasi-Poisson model.
+
+```{r option_2_quasi_diag, fig.height=3, fig.width=4, fig.align='center'}
+## set up plot region
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0))
+
+## residuals vs fitted
+plot(fitted(fit_glm_quasi_r), residuals(fit_glm_quasi_r), las = 1, pch = 16, log = "x",
+     ylab = "Survival", xlab = "Fitted values")
+abline(h = 0, lty = "dashed")
+
+## leverages
+hat_values <- hatvalues(fit_glm_quasi_r)
+names(hat_values) <- dat$island
+## threshold value
+(h_crit <- 2 * length(coef(fit_glm_quasi_r)) / nn)
+## check if any h_i > b_crit
+hat_values[hat_values > h_crit]
+
+## Cook's D
+CD <- cooks.distance(fit_glm_quasi_r)
+names(CD) <- dat$island
+## Threshold value
+(CD_crit <- qf(0.5, nn, nn - length(coef(fit_glm_quasi_r))))
+## check if any CD_i > CD_crit
+CD[CD > CD_crit]
+```
+
+The plot of the residuals against the fitted values does not appear to be too disturbing, but there does appear to be one fitted value that is much larger than the rest.
+
+There is one island with a leverage greater than the expected value of ~`r round(h_crit, 2)`.
+
+There is one island with a Cook's $D$ greater than the expected value of ~`r round(CD_crit, 2)`.
+
+These diagnostics suggest we perhaps have some work to do in further refining our model.
+
+
+\vspace{0.3in}
+
+**Option 3**: Negative binomial
+
+Here are some diagnostic checks for the negative binomial model.
+
+```{r option_3_NB_diag, fig.height=3, fig.width=4, fig.align='center'}
+## set up plot region
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0))
+
+## residuals vs fitted
+plot(fitted(fit_glm_NB_r), residuals(fit_glm_NB_r), las = 1, pch = 16, log = "x",
+     ylab = "Survival", xlab = "Fitted values")
+abline(h = 0, lty = "dashed")
+
+## leverages
+hat_values <- hatvalues(fit_glm_NB_r)
+names(hat_values) <- dat$island
+## threshold value
+(h_crit <- 2 * length(coef(fit_glm_NB_r)) / nn)
+## check if any h_i > b_crit
+hat_values[hat_values > h_crit]
+
+## Cook's D
+CD <- cooks.distance(fit_glm_NB_r)
+names(CD) <- dat$island
+## Threshold value
+(CD_crit <- qf(0.5, nn, nn - length(coef(fit_glm_NB_r))))
+## check if any CD_i > CD_crit
+CD[CD > CD_crit]
+```
+
+The plot of the residuals against the fitted values does not appear to be too disturbing, but there does appear to be one fitted value that is much larger than the rest.
+
+There is one island with a leverage greater than the expected value of ~`r round(h_crit, 2)`.
+
+There is one island with a Cook's $D$ greater than the expected value of ~`r round(CD_crit, 2)`.
+
+These diagnostics suggest we perhaps have some work to do in further refining our model.
+
+
