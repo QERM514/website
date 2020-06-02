@@ -104,7 +104,7 @@ count_models <- list(
   rmd = "homework/week_08/hw_08_count_models.Rmd",
   html = "",
   data = "homework/week_08/plant_richness.csv",
-  key = ""
+  key = "homework/week_08/hw_08_count_models_key.pdf"
 )
 
 ```
