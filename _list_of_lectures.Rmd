@@ -310,7 +310,7 @@ present_1 <- list(
   topics = "<b>Presentations of class projects</b>",
   pdf = c(""),
   rmd = "",
-  html = "",
+  html = "lectures/week_10/lec_28_present_1.html",
   background = "",
   zoom = "https://washington.zoom.us/rec/share/y_BJLozX3DxOXYnLzlDdZv8iGqTaX6a81HMe-PsInkacvB1GYhj-vY1J1YFKNK03"
 )
@@ -320,7 +320,7 @@ present_2 <- list(
   topics = "<b>Presentations of class projects</b>",
   pdf = c(""),
   rmd = "",
-  html = "",
+  html = "lectures/week_10/lec_29_present_2.html",
   background = "",
   zoom = ""
 )
@@ -330,7 +330,7 @@ present_3 <- list(
   topics = "<b>Presentations of class projects</b>",
   pdf = c(""),
   rmd = "",
-  html = "",
+  html = "lectures/week_10/lec_30_present_3.html",
   background = "",
   zoom = ""
 )
