@@ -1,0 +1,24 @@
+---
+title: "Project presentations - Day 2"
+subtitle: "Analysis of Ecological and Environmental Data<br>QERM 514"
+author: "Mark Scheuerell"
+date: "3 June 2020"
+output:
+  ioslides_presentation:
+    css: lecture_slides.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+## Schedule
+
+1) Privitera-Johnson
+
+2) Keller
+
+3) McMonagle
+
+4) Kwarta
