@@ -1,0 +1,24 @@
+---
+title: "Project presentations - Day 1"
+subtitle: "Analysis of Ecological and Environmental Data<br>QERM 514"
+author: "Mark Scheuerell"
+date: "1 June 2020"
+output:
+  ioslides_presentation:
+    css: lecture_slides.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+## Schedule
+
+1) Duvall
+
+2) Aeluro
+
+3) Arnold
+
+4) Bates
