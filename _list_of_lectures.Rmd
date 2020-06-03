@@ -322,7 +322,7 @@ present_2 <- list(
   rmd = "",
   html = "lectures/week_10/lec_29_present_2.html",
   background = "",
-  zoom = ""
+  zoom = "https://washington.zoom.us/rec/share/1PVofo_Tp21JTKvvy06cU4gAMKXVeaa8hnIdrvcLzU2QzOitTtXXdfLjfobJvcGD"
 )
 
 present_3 <- list(
