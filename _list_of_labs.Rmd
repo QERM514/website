@@ -149,7 +149,7 @@ presentlab <- list(
   topics = "Presentations of class projects",
   pdf = "",
   rmd = "",
-  html = "",
+  html = "labs/week_10/presentations.html",
   zoom = "",
   data = "",
   background = c("")
