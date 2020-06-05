@@ -150,7 +150,7 @@ presentlab <- list(
   pdf = "",
   rmd = "",
   html = "labs/week_10/presentations.html",
-  zoom = "",
+  zoom = "https://washington.zoom.us/rec/share/u8MybKzy2TtIW42WyW2HcK0CGYDKaaa8hnRNqfoFzxq6lWuaKiwrWi2eVklTVpzw",
   data = "",
   background = c("")
   )
