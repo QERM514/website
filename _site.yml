@@ -10,8 +10,6 @@ navbar:
       href: homework.html
     - text: "Final Project"
       href: final_proj.html
-    - text: "References"
-      href: references.html
     - text: ""
       icon: fa-github
       href: https://github.com/QERM514
