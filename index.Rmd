@@ -75,7 +75,7 @@ I am dedicated to providing a welcoming and supportive environment for all peopl
 
 * Show courtesy and respect towards others
 
-**Please note**: If you believe you have been a victim of an alleged violation of the Student Conduct Code or you are aware of an alleged violation of the Student Conduct Code, you have the right to [report it to the University](https://www.washington.edu/cssc/for-students-2/).
+**Please note**: If you believe you have been a victim of an alleged violation of the [Student Conduct Code](https://www.washington.edu/admin/rules/policies/WAC/478-121TOC.html) or you are aware of an alleged violation of the [Student Conduct Code](https://www.washington.edu/admin/rules/policies/WAC/478-121TOC.html), you have the right to [report it to the University](https://www.washington.edu/cssc/for-students-2/).
 
 <br>
 
@@ -130,7 +130,13 @@ In addition to email and Zoom, we will use the "Isuues" feature in **GitHub** to
 
 # Evaluation
 
-Students will be evaluated on their knowledge of course content, and their ability to communicate their understanding of the material, via individual homework assignments (70%) and a final project (30%). There will be 8 homework assignments, but the lowest score will be dropped for the purposes of grading; each of the 7 highest scoring assignments will count toward 10% of the final grade. Please note, though, that **all eight homework assignments must be turned in to achieve a passing grade**. Homework will be assigned each Friday of weeks 1-8 and will be due by 11:59 PM one week later on the following Friday (weeks 2-9). The instructor will evaluate and return student homework assignments within one week of their due date. **If for some reason you cannot meet the homework deadline, contact the instructor as soon as possible to discuss other options**.
+Students will be evaluated on their knowledge of course content and their ability to communicate their understanding of the material via individual homework assignments (70%) and a final project (30%). There will be 8 homework assignments, but the lowest score will be dropped for the purposes of grading; each of the 7 highest scoring assignments will count toward 10% of the final grade. Please note, **all assignments must be turned in to achieve a passing grade**.
+
+### Homework
+
+Homework will be assigned each Friday of weeks 1-8 and will be due by 11:59 PM one week later on the following Friday (weeks 2-9). The instructor will evaluate and return student homework assignments within one week of their due date. **If for some reason you cannot meet the homework deadline, contact the instructor as soon as possible to discuss other options**. Please see the [Homework](homework.html) page for more details.
+
+### Final Project
 
 Each student will complete a final project consisting of three elements: 1) a project plan, 2) a project presentation, and 3) a project report. The project plan will be due by 11:59 PM on Monday, May 11. Presentations of student projects will occur during the last week of class; specific days/times will be assigned randomly. The final project will be due by 11:59 PM on Tues, June 9. Please see the [Final Project](final_proj.html) page for more details.
 
@@ -140,7 +146,7 @@ Students should discuss any potential schedule conflicts with the instructor dur
 
 # Academic integrity
 
-Faculty and students at the University of Washington are expected to maintain the highest standards of academic conduct, professional honesty, and personal integrity (see the [University of Washington Student Conduct Code](https://www.washington.edu/cssc/for-students/academic-misconduct/)). Plagiarism, cheating, and other academic misconduct are serious violations of the Student Conduct Code. I have no reason to believe that anyone will violate the Student Conduct Code, but *I will have no choice* but to refer any suspected violation(s) to the College of the Environment for a Student Conduct Process hearing. Students who have been guilty of a violation will receive zero points for the assignment in question.
+Faculty and students at the University of Washington are expected to maintain the highest standards of academic conduct, professional honesty, and personal integrity. Plagiarism, cheating, and other academic misconduct are serious violations of the [Student Conduct Code](https://www.washington.edu/cssc/for-students/academic-misconduct/). I have no reason to believe that anyone will violate the Student Conduct Code, but *I will have no choice* but to refer any suspected violation(s) to the College of the Environment for a Student Conduct Process hearing. Students who have been guilty of a violation will receive zero points for the assignment in question.
 
 <br>
 
@@ -148,7 +154,7 @@ Faculty and students at the University of Washington are expected to maintain th
 
 We are in the midst of an historic pandemic that is creating a variety of challenges for everyone. If you should feel like you need some help, please consider the following resources available to students.
 
-*If you are experiencing a life-threatening emergency, please dial 911*.  
+**If you are experiencing a life-threatening emergency, please dial 911**.  
 
 [**Crisis Clinic**](http://www.crisisclinic.org/)  
 Phone: 206-461-3222 or toll-free at 1-866-427-4747   
