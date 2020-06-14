@@ -1,6 +1,6 @@
 ---
 title: "Thinking critically about p-values and statistical significance"
-subtitle: "QERM 514 - Homework 4"
+subtitle: "QERM 514 - Homework 4 Answer Key"
 date: "24 April 2020"
 output:
   pdf_document:
@@ -25,4 +25,7 @@ There have been several recent critiques of the use and misuse of null hypothesi
 
 Your assignment this week is to read the paper by Wasserstein et al. (2019) titled "[Moving to a world beyond 'p < 0.05']("references/Wasserstein_2019_world_beyond_p05.pdf")" and provide a summary of things we should and should not do with respect to statistical analysis in a frequentist framework. In particular, think about how the topics in the paper fit into your research and experiences you have had so far. Your comment should be 500-700 words.
 
+# Assessment
+
+There were no "right" answers for this homework assignment, as you were asked to write a comment on the cautionary notes and advice given by Wasserstein et al. (2019). In general, though, I was looking for some acknowledgment of their "do's" and "don'ts" and the ATOM acronym, and some connection to your own experiences in school or research.
 

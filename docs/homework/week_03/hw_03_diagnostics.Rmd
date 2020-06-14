@@ -1,6 +1,6 @@
 ---
 title: "Examining model diagnostics"
-subtitle: "Homework 3"
+subtitle: "QERM 514 - Homework 3"
 date: "17 April 2020"
 output:
   pdf_document:
