@@ -5,6 +5,17 @@ output: html_document
 
 <br>
 
+#### Navigating through a slide deck
+
+Here are some navigation tricks for slide decks in `.html` format.
+
+* Use the arrow keys (&#8592;/&#8594;) on your keyboard to go forward or backward
+
+* Press the "o" key on any slide to show you an overview of the slide deck
+
+* In overview mode, click on a slide or press "esc" to zoom in on it
+
+
 ```{r child = "_timeline.Rmd", include=FALSE}
 ```
 
@@ -78,11 +89,11 @@ slide_links <- lapply(week_lecs, function(x) { if(is.list(x)) {c(x$html)} else {
 slide_links_html <- sapply(lapply(slide_links, function(x) {
   if(length(x)>1) {
     tmp1 <- paste0("[",
-                   as.character(fontawesome::fa("file-alt", height = 20, fill = "#eb6864")),
+                   as.character(fontawesome::fa("file-alt", height = "2em", fill = "#eb6864")),
                    " (", 1:length(x), ")](")
     } else {
       tmp1 <- paste0("[",
-                     as.character(fontawesome::fa("file-alt", height = 20, fill = "#eb6864")),
+                     as.character(fontawesome::fa("file-alt", height = "2em", fill = "#eb6864")),
                      "](")
       }
   tmp2 <- ")"
@@ -96,11 +107,11 @@ source_links <- lapply(week_lecs, function(x) { if(is.list(x)) {c(x$rmd)} else {
 source_links_html <- sapply(lapply(source_links, function(x) {
   if(length(x)>1) {
     tmp1 <- paste0("[",
-                   as.character(fontawesome::fa("file-code", height = 20, fill = "#eb6864")),
+                   as.character(fontawesome::fa("file-code", height = "2em", fill = "#eb6864")),
                    " (", 1:length(x), ")](")
     } else {
       tmp1 <- paste0("[",
-                     as.character(fontawesome::fa("file-code", height = 20, fill = "#eb6864")),
+                     as.character(fontawesome::fa("file-code", height = "2em", fill = "#eb6864")),
                      "](")
       }
   tmp2 <- ")"
@@ -114,11 +125,11 @@ pdf_links <- lapply(week_lecs, function(x) { if(is.list(x)) {c(x$pdf)} else {""}
 pdf_links_html <- sapply(lapply(pdf_links, function(x) {
   if(length(x)>1) {
     tmp1 <- paste0("[",
-                   as.character(fontawesome::fa("file-pdf", height = 20, fill = "#eb6864")),
+                   as.character(fontawesome::fa("file-pdf", height = "2em", fill = "#eb6864")),
                    " (", 1:length(x), ")](")
     } else {
       tmp1 <- paste0("[",
-                     as.character(fontawesome::fa("file-pdf", height = 20, fill = "#eb6864")),
+                     as.character(fontawesome::fa("file-pdf", height = "2em", fill = "#eb6864")),
                      "](")
       }
   tmp2 <- ")"
@@ -134,11 +145,11 @@ zoom_links <- lapply(week_lecs, function(x) { if(is.list(x)) {x$zoom} else {""} 
 zoom_links_html <- sapply(lapply(zoom_links, function(x) {
   if(length(x)>1) {
     tmp1 <- paste0("[",
-                   as.character(fontawesome::fa("file-video", height = 20, fill = "#eb6864")),
+                   as.character(fontawesome::fa("file-video", height = "2em", fill = "#eb6864")),
                    " (", 1:length(x), ")](")
     } else {
       tmp1 <- paste0("[",
-                     as.character(fontawesome::fa("file-video", height = 20, fill = "#eb6864")),
+                     as.character(fontawesome::fa("file-video", height = "2em", fill = "#eb6864")),
                      "](")
       }
   tmp2 <- ")"
@@ -176,24 +187,24 @@ syl_txt <- data.frame(
   lec_links = slide_links_html,
   rmd_links = source_links_html,
   pdf_links = pdf_links_html,
-  zoom_links = zoom_links_html,
+  # zoom_links = zoom_links_html,
   # youtube_links = youtube_links_html,
   background_links = background_links_html
 )
 colnames(syl_txt) <- c("Date", "Topic(s)",
                        "Slides (html)", "Source (Rmd)", "Slides (pdf)",
-                       "Zoom recording",
+                       # "Zoom recording",
                        "Background")
 rownames(syl_txt) <- NULL
 
 ## generate table
 kableExtra::kable(syl_txt, format = "html", caption = " ",
-                  align = "clccccl", escape = FALSE) %>%
+                  align = "clcccl", escape = FALSE) %>%
   kable_styling(bootstrap_options = "striped",
                 full_width = FALSE,
                 position = "left") %>%
-  column_spec(c(1,3,4,5,6), width = "6em") %>%
-  column_spec(7, width = "15em") %>%
+  column_spec(c(1,3,4,5), width = "6em") %>%
+  column_spec(6, width = "15em") %>%
   scroll_box(height = "700px", extra_css = "border-style: none;")
 ```
 
