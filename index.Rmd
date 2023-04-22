@@ -18,14 +18,14 @@ h3 {
 }
 </style>
 
-<br>
+<br><br>
 
 
-<!-- <p align="center"> -->
-<!--     <img width="346" height="400" src="FISH549_hex_sticker.png"> -->
-<!-- </p> -->
+<p align="center">
+    <img width="1080" height="240" src="qerm514_logo_plots.png">
+</p>
 
-<br>
+<br><br>
 
 <center>&copy; Mark Scheuerell 2023</center>
 
