@@ -54,11 +54,11 @@ assignment_links <- lapply(week_hw, function(x) { if(is.list(x)) {c(x$pdf)} else
 assignment_links_html <- sapply(lapply(assignment_links, function(x) {
   if(length(x)>1) {
     tmp1 <- paste0("[",
-                   as.character(fontawesome::fa("file-pdf", height = 20, fill = "#eb6864")),
+                   as.character(fontawesome::fa("file-pdf", height = "2em", fill = "#eb6864")),
                    " (", 1:length(x), ")](")
     } else {
       tmp1 <- paste0("[",
-                     as.character(fontawesome::fa("file-pdf", height = 20, fill = "#eb6864")),
+                     as.character(fontawesome::fa("file-pdf", height = "2em", fill = "#eb6864")),
                      "](")
       }
   tmp2 <- ")"
@@ -72,11 +72,11 @@ template_links <- lapply(week_hw, function(x) { if(is.list(x)) {c(x$rmd)} else {
 template_links_html <- sapply(lapply(template_links, function(x) {
   if(length(x)>1) {
     tmp1 <- paste0("[",
-                   as.character(fontawesome::fa("file-code", height = 20, fill = "#eb6864")),
+                   as.character(fontawesome::fa("file-code", height = "2em", fill = "#eb6864")),
                    " (", 1:length(x), ")](")
     } else {
       tmp1 <- paste0("[",
-                     as.character(fontawesome::fa("file-code", height = 20, fill = "#eb6864")),
+                     as.character(fontawesome::fa("file-code", height = "2em", fill = "#eb6864")),
                      "](")
       }
   tmp2 <- ")"
@@ -90,11 +90,11 @@ data_links <- lapply(week_hw, function(x) { if(is.list(x)) {x$data} else {""} })
 data_links_html <- sapply(lapply(data_links, function(x) {
   if(length(x)>1) {
     tmp1 <- paste0("[",
-                   as.character(fontawesome::fa("table", height = 20, fill = "#eb6864")),
+                   as.character(fontawesome::fa("table", height = "2em", fill = "#eb6864")),
                    " (", 1:length(x), ")](")
     } else {
       tmp1 <- paste0("[",
-                     as.character(fontawesome::fa("table", height = 20, fill = "#eb6864")),
+                     as.character(fontawesome::fa("table", height = "2em", fill = "#eb6864")),
                      "](")
       }
   tmp2 <- ")"
@@ -108,11 +108,11 @@ key_links <- lapply(week_hw, function(x) { if(is.list(x)) {c(x$key)} else {""} }
 key_links_html <- sapply(lapply(key_links, function(x) {
   if(length(x)>1) {
     tmp1 <- paste0("[",
-                   as.character(fontawesome::fa("key", height = 20, fill = "#eb6864")),
+                   as.character(fontawesome::fa("key", height = "2em", fill = "#eb6864")),
                    " (", 1:length(x), ")](")
     } else {
       tmp1 <- paste0("[",
-                     as.character(fontawesome::fa("key", height = 20, fill = "#eb6864")),
+                     as.character(fontawesome::fa("key", height = "2em", fill = "#eb6864")),
                      "](")
       }
   tmp2 <- ")"
