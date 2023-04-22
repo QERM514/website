@@ -1,39 +1,50 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
 
 <title>Analysis of Ecological and Environmental Data</title>
 
-<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<script src="site_libs/header-attrs-2.21/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/journal.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
-<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
-<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
-<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
-<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.2.1/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.2.1/css/v4-shims.min.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
 <style type="text/css">code{white-space: pre;}</style>
-<style type="text/css">
-  pre:not([class]) {
-    background-color: white;
-  }
-</style>
 <script type="text/javascript">
 if (window.hljs) {
   hljs.configure({languages: []});
@@ -46,32 +57,8 @@ if (window.hljs) {
 
 
 
-<style type="text/css">
-h1 {
-  font-size: 34px;
-}
-h1.title {
-  font-size: 38px;
-}
-h2 {
-  font-size: 30px;
-}
-h3 {
-  font-size: 24px;
-}
-h4 {
-  font-size: 18px;
-}
-h5 {
-  font-size: 16px;
-}
-h6 {
-  font-size: 12px;
-}
-.table th:not([align]) {
-  text-align: left;
-}
-</style>
+
+
 
 
 
@@ -82,13 +69,8 @@ h6 {
   margin-left: auto;
   margin-right: auto;
 }
-code {
-  color: inherit;
-  background-color: rgba(0, 0, 0, 0.04);
-}
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -102,40 +84,16 @@ button.code-folding-btn:focus {
 summary {
   display: list-item;
 }
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
 </style>
 
 
 <style type="text/css">
-/* padding for bootstrap navbar */
-body {
-  padding-top: 61px;
-  padding-bottom: 40px;
-}
-/* offset scroll position for anchor links (for fixed navbar)  */
-.section h1 {
-  padding-top: 66px;
-  margin-top: -66px;
-}
-.section h2 {
-  padding-top: 66px;
-  margin-top: -66px;
-}
-.section h3 {
-  padding-top: 66px;
-  margin-top: -66px;
-}
-.section h4 {
-  padding-top: 66px;
-  margin-top: -66px;
-}
-.section h5 {
-  padding-top: 66px;
-  margin-top: -66px;
-}
-.section h6 {
-  padding-top: 66px;
-  margin-top: -66px;
-}
 .dropdown-submenu {
   position: relative;
 }
@@ -163,7 +121,7 @@ body {
   margin-right: -10px;
 }
 .dropdown-submenu:hover>a:after {
-  border-left-color: #ffffff;
+  border-left-color: #adb5bd;
 }
 .dropdown-submenu.pull-left {
   float: none;
@@ -175,7 +133,7 @@ body {
 }
 </style>
 
-<script>
+<script type="text/javascript">
 // manage active state of menu based on current page
 $(document).ready(function () {
   // active menu anchor
@@ -185,11 +143,28 @@ $(document).ready(function () {
     href = "index.html";
   var menuAnchor = $('a[href="' + href + '"]');
 
-  // mark it active
-  menuAnchor.parent().addClass('active');
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
 
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
 });
 </script>
 
@@ -201,13 +176,12 @@ $(document).ready(function () {
   max-height: 500px;
   min-height: 44px;
   overflow-y: auto;
-  background: white;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -215,16 +189,9 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -237,6 +204,7 @@ $(document).ready(function () {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -249,106 +217,8 @@ $(document).ready(function () {
 }
 </style>
 
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
 <!-- code folding -->
 
-
-
-<script>
-$(document).ready(function ()  {
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
-</script>
-
-<style type="text/css">
-
-#TOC {
-  margin: 25px 0px 20px 0px;
-}
-@media (max-width: 768px) {
-#TOC {
-  position: relative;
-  width: 100%;
-}
-}
-
-
-.toc-content {
-  padding-left: 30px;
-  padding-right: 40px;
-}
-
-div.main-container {
-  max-width: 1200px;
-}
-
-div.tocify {
-  width: 20%;
-  max-width: 260px;
-  max-height: 85%;
-}
-
-@media (min-width: 768px) and (max-width: 991px) {
-  div.tocify {
-    width: 25%;
-  }
-}
-
-@media (max-width: 767px) {
-  div.tocify {
-    width: 100%;
-    max-width: none;
-  }
-}
-
-.tocify ul, .tocify li {
-  line-height: 20px;
-}
-
-.tocify-subheader .tocify-item {
-  font-size: 0.90em;
-  padding-left: 25px;
-  text-indent: 0;
-}
-
-.tocify .list-group-item {
-  border-radius: 0px;
-}
-
-
-</style>
 
 
 
@@ -360,22 +230,12 @@ div.tocify {
 <div class="container-fluid main-container">
 
 
-<!-- setup 3col/9col grid for toc_float and main content  -->
-<div class="row-fluid">
-<div class="col-xs-12 col-sm-4 col-md-3">
-<div id="TOC" class="tocify">
-</div>
-</div>
-
-<div class="toc-content col-xs-12 col-sm-8 col-md-9">
-
-
 
 
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -388,6 +248,9 @@ div.tocify {
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
+  <a href="syllabus.html">Syllabus</a>
+</li>
+<li>
   <a href="lectures.html">Lectures</a>
 </li>
 <li>
@@ -411,167 +274,46 @@ div.tocify {
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-<div class="fluid-row" id="header">
+<div id="header">
 
 
 
-<h1 class="title toc-ignore">Analysis of Ecological and Environmental Data</h1>
-<h3 class="subtitle">QERM 514     University of Washington     Spring 2020</h3>
+<h1 class="title toc-ignore">Analysis of Ecological and Environmental
+Data</h1>
+<h3 class="subtitle">QERM 514     University of Washington     Spring
+2020</h3>
 
 </div>
 
 
-<p><br></p>
-<div id="course-overview" class="section level1">
-<h1>Course overview</h1>
-<p>This course will introduce students to a large class of statistical models commonly used for analyses in ecology and environmental science. These include simple linear models, such as analysis of variance (ANOVA) and regression models, along with Generalized Linear Models (GLMs) that assume non-normal error distributions (<em>e.g.</em>, logistic and Poisson regression). Students will learn to distinguish the difference between fixed and random effects, and how to implement them in mixed-effects models such as Generalized Linear Mixed Models (GLMMs). This course also covers various aspects of assessing model performance and evaluating model diagnostics. In general, students will focus on conceptualizing analyses, implementing analyses, and making inference from the results.</p>
-<p>This course is also one of the core requirements for graduate students in the Quantitative Ecology &amp; Resource Management (QERM) program at the University of Washington. For more information, <a href="https://quantitative.uw.edu/graduate/">click here</a>.</p>
-</div>
-<div id="learning-objectives" class="section level1">
-<h1>Learning objectives</h1>
-<p>By the end of the quarter, students should be able to:</p>
-<ul>
-<li><p>Identify an appropriate statistical model based on the data and specific question</p></li>
-<li><p>Understand the assumptions behind a chosen statistical model</p></li>
-<li><p>Use <strong>R</strong> to fit a variety of linear models to data</p></li>
-<li><p>Evaluate data support for various models and select the most parsimonious model among them</p></li>
-<li><p>Use <strong>R Markdown</strong> to combine text, equations, code, tables, and figures into reports</p></li>
-</ul>
-<p><br></p>
-</div>
-<div id="instructor" class="section level1">
-<h1>Instructor</h1>
-<p><a href="https://fish.uw.edu/faculty/mark-scheuerell/"><strong>Mark Scheuerell</strong></a><br />
-Associate Professor, School of Aquatic &amp; Fishery Sciences</p>
-<p>Office: Rm 220A Fishery Sciences</p>
-<p>Email: <a href="mailto:qerm514@uw.edu">qerm514@uw.edu</a></p>
-<p><br></p>
-</div>
-<div id="meeting-times-locations" class="section level1">
-<h1>Meeting times &amp; locations</h1>
-<div id="lectures" class="section level4">
-<h4>Lectures</h4>
-<p>M/W/F from 10:30-11:20 <del>in FSH 213</del> via <a href="https://washington.zoom.us/j/831083365">Zoom</a></p>
-</div>
-<div id="computer-lab" class="section level4">
-<h4>Computer Lab</h4>
-<p>Friday from 11:30-1:20 <del>in FSH 136</del> via <a href="https://washington.zoom.us/j/946943308">Zoom</a></p>
-</div>
-<div id="office-hours" class="section level4">
-<h4>Office hours</h4>
-<p>By appointment</p>
-<p><br></p>
-</div>
-</div>
-<div id="pre-requisites" class="section level1">
-<h1>Pre-requisites</h1>
-<p>Students should be comfortable with basic probability and statistics. Students should also have a working knowledge of the <a href="https://www.r-project.org/"><strong>R</strong></a> computing software, such as that provided in FISH 552/553.</p>
-<p><br></p>
-</div>
-<div id="classroom-conduct" class="section level1">
-<h1>Classroom conduct</h1>
-<p>I am dedicated to providing a welcoming and supportive environment for all people, regardless of background, identity, physical appearance, or manner of communication. Any form of language or behavior used to exclude, intimidate, or cause discomfort will not be tolerated. This applies to all course participants (instructor, students, guests). In order to foster a positive and professional learning environment, I encourage the following kinds of behaviors:</p>
-<ul>
-<li><p>Use welcoming and inclusive language</p></li>
-<li><p>Be respectful of different viewpoints and experiences</p></li>
-<li><p>Gracefully accept constructive criticism</p></li>
-<li><p>Show courtesy and respect towards others</p></li>
-</ul>
-<p><strong>Please note</strong>: If you believe you have been a victim of an alleged violation of the <a href="https://www.washington.edu/admin/rules/policies/WAC/478-121TOC.html">Student Conduct Code</a> or you are aware of an alleged violation of the <a href="https://www.washington.edu/admin/rules/policies/WAC/478-121TOC.html">Student Conduct Code</a>, you have the right to <a href="https://www.washington.edu/cssc/for-students-2/">report it to the University</a>.</p>
-<p><br></p>
-</div>
-<div id="access-accommodations" class="section level1">
-<h1>Access &amp; accommodations</h1>
-<p>All students deserve access to the full range of learning experiences, and the University of Washington is committed to creating inclusive and accessible learning environments consistent with federal and state laws.</p>
-<div id="disabilities" class="section level3">
-<h3>Disabilities</h3>
-<p>If you have already established accommodations with Disability Resources for Students (DRS), please communicate your approved accommodations to me at your earliest convenience so we can discuss your needs in this course. If you have not yet established services through DRS, but have a temporary health condition or permanent disability that requires accommodations (<em>e.g.</em>, mental health, learning, vision, hearing, physical impacts), you are welcome to contact DRS at 206-543-8924 or via <a href="mailto:uwdrs@uw.edu">email</a> or their <a href="https://depts.washington.edu/uwdrs/">website</a>. DRS offers resources and coordinates reasonable accommodations for students with disabilities and/or temporary health conditions. Reasonable accommodations are established through an interactive process between you, your instructor(s) and DRS.</p>
-</div>
-<div id="religious-observances" class="section level3">
-<h3>Religious observances</h3>
-<p>Students who expect to miss class or assignments as a consequence of their religious observance will be provided with a reasonable accommodation to fulfill their academic responsibilities. Absence from class for religious reasons does not relieve students from responsibility for the course work required during the period of absence. It is the responsibility of the student to provide the instructor with advance notice of the dates of religious holidays on which they will be absent. Students who are absent will be offered an opportunity to make up the work, without penalty, within a reasonable time, as long as the student has made prior arrangements.</p>
-<p><br></p>
-</div>
-</div>
-<div id="technology" class="section level1">
-<h1>Technology</h1>
-<p>This course will revolve around hands-on computing exercises that demonstrate the topics of interest. Therefore, students are strongly recommended to bring their own laptop to class, although students are certainly free to work with one another. <strong>For students without access to a personal laptop</strong>: it is possible to check out UW laptops for an entire quarter (see the <a href="https://education.uw.edu/admissions/office-of-student-services">Student Services office</a> for details).</p>
-<p>All of the software we will be using is free and platform independent, meaning students may use macOS, Linux, or Windows operating systems. In addition to a web browser, we will be using the free <a href="https://www.r-project.org/"><strong>R</strong></a> software and the desktop version of the <a href="https://www.rstudio.com/products/rstudio-desktop/"><strong>R Studio</strong></a> integrated development environment (IDE). We will also be using various packages not contained in the base installation of <strong>R</strong>, but we will wait and install them at the necessary time. The instructor will be available during the first week of class to help students troubleshoot any software installation problems.</p>
-<p>Students will also be required to have a user account on <a href="https://github.com/"><strong>GitHub</strong></a>, which we will be using for file hosting and communications via “issues”. If you do not already have an account, you can sign up for a free one <a href="https://github.com/join?source=header-home">here</a>. The instructor will provide training on how to use the intended features in <strong>GitHub</strong>.</p>
-<div id="zoom-recordings" class="section level3">
-<h3>Zoom recordings</h3>
-<p>This course is scheduled to run synchronously at our scheduled class time via <a href="https://itconnect.uw.edu/connect/phones/conferencing/zoom-video-conferencing/">Zoom</a>. These Zoom class sessions will be recorded. The recording will capture the presenter’s audio, video and computer screen. Student audio and video will be recorded if they share their computer audio and video during the recorded session. The recordings will only be accessible to students enrolled in the course to review materials. These recordings will not be shared with the public, and will be deleted after 90 days.</p>
-<p>UW-IT and Zoom have a Business Associates Agreement (BAA) to protect the security and privacy of UW Zoom accounts and is <a href="https://registrar.washington.edu/students/ferpa/">FERPA</a> compliant. Students who <strong>do not</strong> wish to give consent to being recorded should:</p>
-<ul>
-<li>Choose a Zoom username that does not include any personal identifying information like their name or UW NetID<br />
-</li>
-<li>Never share their computer audio or video during their Zoom sessions</li>
-</ul>
-<p><strong>By enrolling in this class, all students agree to never upload course recordings to other platforms</strong>.</p>
-<p><br></p>
-</div>
-</div>
-<div id="teaching-methodology" class="section level1">
-<h1>Teaching methodology</h1>
-<p>This course will introduce new material primarily through prepared slides and hands-on demonstrations. Students will be expected to work both individually and collaboratively (to the extent possible given the current conditions); course content and evaluation will emphasize the communication of ideas and the ability to think critically more so than a specific pathway or method. Other areas of this website provide an overview of the topics to be covered, including links to weekly reading assignments, lecture materials, computer labs, and homework assignments.</p>
-<p><br></p>
-</div>
-<div id="communication" class="section level1">
-<h1>Communication</h1>
-<p>This course will involve a <em>lot</em> of communication between and among students and the instructor. Short questions should be addressed to me via email; I will try my best to respond to your message within 24 hours. Under more normal circumstances, detailed questions would be addressed to me in person–either after class or during a scheduled meeting. In this case, however, we will schedule one-on-one or group Zoom calls as needed.</p>
-<p>In addition to email and Zoom, we will use the “Isuues” feature in <strong>GitHub</strong> to ask questions and assist others. Specifically, questions and answers can be posted to the issues in the course’s “assistance” repository <a href="https://github.com/QERM514/assistance/issues">here</a>.</p>
-<p><br></p>
-</div>
-<div id="evaluation" class="section level1">
-<h1>Evaluation</h1>
-<p>Students will be evaluated on their knowledge of course content and their ability to communicate their understanding of the material via individual homework assignments (70%) and a final project (30%). There will be 8 homework assignments, but the lowest score will be dropped for the purposes of grading; each of the 7 highest scoring assignments will count toward 10% of the final grade. Please note, <strong>all assignments must be turned in to achieve a passing grade</strong>.</p>
-<div id="homework" class="section level3">
-<h3>Homework</h3>
-<p>Homework will be assigned each Friday of weeks 1-8 and will be due by 11:59 PM one week later on the following Friday (weeks 2-9). The instructor will evaluate and return student homework assignments within one week of their due date. <strong>If for some reason you cannot meet the homework deadline, contact the instructor as soon as possible to discuss other options</strong>. Please see the <a href="homework.html">Homework</a> page for more details.</p>
-</div>
-<div id="final-project" class="section level3">
-<h3>Final Project</h3>
-<p>Each student will complete a final project consisting of three elements: 1) a project plan, 2) a project presentation, and 3) a project report. The project plan will be due by 11:59 PM on Monday, May 11. Presentations of student projects will occur during the last week of class; specific days/times will be assigned randomly. The final project will be due by 11:59 PM on Tues, June 9. Please see the <a href="final_proj.html">Final Project</a> page for more details.</p>
-<p>Students should discuss any potential schedule conflicts with the instructor during the first week of class.</p>
-<p><br></p>
-</div>
-</div>
-<div id="academic-integrity" class="section level1">
-<h1>Academic integrity</h1>
-<p>Faculty and students at the University of Washington are expected to maintain the highest standards of academic conduct, professional honesty, and personal integrity. Plagiarism, cheating, and other academic misconduct are serious violations of the <a href="https://www.washington.edu/cssc/for-students/academic-misconduct/">Student Conduct Code</a>. I have no reason to believe that anyone will violate the Student Conduct Code, but <em>I will have no choice</em> but to refer any suspected violation(s) to the College of the Environment for a Student Conduct Process hearing. Students who have been guilty of a violation will receive zero points for the assignment in question.</p>
-<p><br></p>
-</div>
-<div id="mental-health" class="section level1">
-<h1>Mental health</h1>
-<p>We are in the midst of an historic pandemic that is creating a variety of challenges for everyone. If you should feel like you need some help, please consider the following resources available to students.</p>
-<p><strong>If you are experiencing a life-threatening emergency, please dial 911</strong>.</p>
-<p><a href="http://www.crisisclinic.org/"><strong>Crisis Clinic</strong></a><br />
-Phone: 206-461-3222 or toll-free at 1-866-427-4747</p>
-<p><a href="https://www.washington.edu/counseling/services"><strong>UW Counseling Center</strong></a><br />
-Phone: 206-543-1240<br />
-<a href="https://www.washington.edu/counseling/services/crisis/">Immediate assistance</a></p>
-<p><a href="https://wellbeing.uw.edu/virtual-lets-talk/"><strong>Let’s Talk</strong></a></p>
-<p><a href="https://wellbeing.uw.edu/unit/hall-health"><strong>Hall Health Mental Health</strong></a></p>
-<p><br></p>
-</div>
-<div id="safety" class="section level1">
-<h1>Safety</h1>
-<p>If you feel unsafe or at-risk in any way while taking any course, contact <a href="https://www.washington.edu/safecampus/">SafeCampus</a> (206-685-7233) anytime–no matter where you work or study–to anonymously discuss safety and well-being concerns for yourself or others. SafeCampus can provide individualized support, discuss short- and long-term solutions, and connect you with additional resources when requested. For a broader range of resources and assistance see the <a href="https://wellbeing.uw.edu/">Husky Health &amp; Well-Being website</a>.</p>
-<p><br></p>
-</div>
-<div id="food-pantry" class="section level1">
-<h1>Food Pantry</h1>
-<p>No student should ever have to choose between buying food or textbooks. The UW Food Pantry helps mitigate the social and academic effects of campus food insecurity. They aim to lessen the financial burden of purchasing food by providing students access to shelf-stable groceries, seasonal fresh produce, and hygiene products at <strong>no cost</strong>. Students can expect to receive 4 to 5 days’ worth of supplemental food support when they visit the Pantry, located on the north side of Poplar Hall at the corner of NE 41<sup>st</sup> St and Brooklyn Ave NE. Visit the <a href="https://uw.edu/anyhungryhusky">Any Hungry Husky website</a> for additional information, including operating hours and additional food support resources.</p>
+<style>
+h1 {
+  text-align: center;
+}
+
+h2 {
+  text-align: center;
+}
+
+h3 {
+  text-align: center;
+}
+</style>
+<p><br><br></p>
+<p align="center">
+<img width="1080" height="240" src="qerm514_logo_plots.png">
+</p>
+<p><br><br></p>
+<center>
+© Mark Scheuerell 2023
+</center>
 <p><br></p>
 <center>
-<em>This site was last updated at 15:38 on 14 Jun 2020</em>
+<em>This site was last updated at 11:02 on 22 Apr 2023</em>
 </center>
-</div>
 
 
 
-</div>
-</div>
 
 </div>
 
@@ -579,7 +321,7 @@ Phone: 206-543-1240<br />
 
 // add bootstrap table styles to pandoc tables
 function bootstrapStylePandocTables() {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
 }
 $(document).ready(function () {
   bootstrapStylePandocTables();
@@ -587,6 +329,23 @@ $(document).ready(function () {
 
 
 </script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>

@@ -1,37 +1,52 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
 
 <title>Final Project</title>
 
-<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<script src="site_libs/header-attrs-2.21/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/journal.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 <script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
-<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
-<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.2.1/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.2.1/css/v4-shims.min.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
 <style type="text/css">code{white-space: pre;}</style>
-<style type="text/css">
-  pre:not([class]) {
-    background-color: white;
-  }
-</style>
 <script type="text/javascript">
 if (window.hljs) {
   hljs.configure({languages: []});
@@ -44,32 +59,8 @@ if (window.hljs) {
 
 
 
-<style type="text/css">
-h1 {
-  font-size: 34px;
-}
-h1.title {
-  font-size: 38px;
-}
-h2 {
-  font-size: 30px;
-}
-h3 {
-  font-size: 24px;
-}
-h4 {
-  font-size: 18px;
-}
-h5 {
-  font-size: 16px;
-}
-h6 {
-  font-size: 12px;
-}
-.table th:not([align]) {
-  text-align: left;
-}
-</style>
+
+
 
 
 
@@ -80,13 +71,8 @@ h6 {
   margin-left: auto;
   margin-right: auto;
 }
-code {
-  color: inherit;
-  background-color: rgba(0, 0, 0, 0.04);
-}
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -100,40 +86,16 @@ button.code-folding-btn:focus {
 summary {
   display: list-item;
 }
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
 </style>
 
 
 <style type="text/css">
-/* padding for bootstrap navbar */
-body {
-  padding-top: 61px;
-  padding-bottom: 40px;
-}
-/* offset scroll position for anchor links (for fixed navbar)  */
-.section h1 {
-  padding-top: 66px;
-  margin-top: -66px;
-}
-.section h2 {
-  padding-top: 66px;
-  margin-top: -66px;
-}
-.section h3 {
-  padding-top: 66px;
-  margin-top: -66px;
-}
-.section h4 {
-  padding-top: 66px;
-  margin-top: -66px;
-}
-.section h5 {
-  padding-top: 66px;
-  margin-top: -66px;
-}
-.section h6 {
-  padding-top: 66px;
-  margin-top: -66px;
-}
 .dropdown-submenu {
   position: relative;
 }
@@ -161,7 +123,7 @@ body {
   margin-right: -10px;
 }
 .dropdown-submenu:hover>a:after {
-  border-left-color: #ffffff;
+  border-left-color: #adb5bd;
 }
 .dropdown-submenu.pull-left {
   float: none;
@@ -173,7 +135,7 @@ body {
 }
 </style>
 
-<script>
+<script type="text/javascript">
 // manage active state of menu based on current page
 $(document).ready(function () {
   // active menu anchor
@@ -183,11 +145,28 @@ $(document).ready(function () {
     href = "index.html";
   var menuAnchor = $('a[href="' + href + '"]');
 
-  // mark it active
-  menuAnchor.parent().addClass('active');
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
 
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
 });
 </script>
 
@@ -199,13 +178,12 @@ $(document).ready(function () {
   max-height: 500px;
   min-height: 44px;
   overflow-y: auto;
-  background: white;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -213,16 +191,9 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -235,6 +206,7 @@ $(document).ready(function () {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -246,18 +218,6 @@ $(document).ready(function () {
   display: none;
 }
 </style>
-
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
 
 <!-- code folding -->
 
@@ -277,7 +237,7 @@ $(document).ready(function () {
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -290,6 +250,9 @@ $(document).ready(function () {
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
+  <a href="syllabus.html">Syllabus</a>
+</li>
+<li>
   <a href="lectures.html">Lectures</a>
 </li>
 <li>
@@ -313,7 +276,7 @@ $(document).ready(function () {
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-<div class="fluid-row" id="header">
+<div id="header">
 
 
 
@@ -322,13 +285,30 @@ $(document).ready(function () {
 </div>
 
 
-<p>Each student will produce and report on a thoughtful and thorough analysis of a dataset. You should start with a research question that relates to your interests. You then should obtain a data set, analyze it (with full consideration of issues including checking your assumptions, model selection, parameter estimation, and prediction), and report on your findings.</p>
-<p>You’ll deliver a final presentation and produce a final report, each of which should include an Introduction, Methods, Results, and Discussion. Your attention to detail should be at the level expected for a conference presentation or a paper you would submit for publication (even if the question and depth of introduction and discussion are not). When thinking about your project, remember our class themes: moving from a question to a model or models, and moving from a model or model(s) to inference. I want to clearly see your thought process.</p>
-<p>There will be 3 components to your project: a project plan, a presentation, and a final report. All three of these elements will contribute a total of 30% toward your final grade.</p>
+<p>Each student will produce and report on a thoughtful and thorough
+analysis of a dataset. You should start with a research question that
+relates to your interests. You then should obtain a data set, analyze it
+(with full consideration of issues including checking your assumptions,
+model selection, parameter estimation, and prediction), and report on
+your findings.</p>
+<p>You’ll deliver a final presentation and produce a final report, each
+of which should include an Introduction, Methods, Results, and
+Discussion. Your attention to detail should be at the level expected for
+a conference presentation or a paper you would submit for publication
+(even if the question and depth of introduction and discussion are not).
+When thinking about your project, remember our class themes: moving from
+a question to a model or models, and moving from a model or model(s) to
+inference. I want to clearly see your thought process.</p>
+<p>There will be 3 components to your project: a project plan, a
+presentation, and a final report. All three of these elements will
+contribute a total of 30% toward your final grade.</p>
 <div id="plan" class="section level2">
 <h2>1. Plan</h2>
-<div id="project-plans-are-due-by-1159-pm-on-may-11-and-constitute-3-of-your-final-grade." class="section level4">
-<h4>Project plans are due by 11:59 PM on May 11 and constitute 3% of your final grade.</h4>
+<div
+id="project-plans-are-due-by-1159-pm-on-may-11-and-constitute-3-of-your-final-grade."
+class="section level4">
+<h4>Project plans are due by 11:59 PM on May 11 and constitute 3% of
+your final grade.</h4>
 <p>Write a 1-page description of your project idea that includes</p>
 <ol style="list-style-type: decimal">
 <li>the question(s) of interest;<br />
@@ -345,18 +325,31 @@ $(document).ready(function () {
 </li>
 <li>Might there be random effects?<br />
 </li>
-<li>How will you go about developing one or more models, analyzing them, and making inference?</li>
+<li>How will you go about developing one or more models, analyzing them,
+and making inference?</li>
 </ul>
 </div>
 </div>
 <div id="presentation" class="section level2">
 <h2>2. Presentation</h2>
-<div id="presentations-will-be-during-week-of-june-1-5-and-make-up-9-of-your-final-grade." class="section level4">
-<h4>Presentations will be during week of June 1-5 and make up 9% of your final grade.</h4>
-<p>Each student will be expected to present their project to the class. The instructor will randomly assign each student to a time slot for their presentation, either during class on June 1, June 3, or June 5, or during lab on June 5. You will have 10 minutes for your presentation, and there will be 2 minutes for questions. I will be quite strict with time. Unfortunately, we will not be able to gather together to watch everyone’s presentations, so you will have to take turns presenting remotely via <strong>Zoom</strong>. Students will have an opportunity for a “dry run” if you would like.</p>
+<div
+id="presentations-will-be-during-week-of-june-1-5-and-make-up-9-of-your-final-grade."
+class="section level4">
+<h4>Presentations will be during week of June 1-5 and make up 9% of your
+final grade.</h4>
+<p>Each student will be expected to present their project to the class.
+The instructor will randomly assign each student to a time slot for
+their presentation, either during class on June 1, June 3, or June 5, or
+during lab on June 5. You will have 10 minutes for your presentation,
+and there will be 2 minutes for questions. I will be quite strict with
+time. Unfortunately, we will not be able to gather together to watch
+everyone’s presentations, so you will have to take turns presenting
+remotely via <strong>Zoom</strong>. Students will have an opportunity
+for a “dry run” if you would like.</p>
 <p>Your presentation should include</p>
 <ul>
-<li>a <em>brief</em> introduction of your question and why you chose it;<br />
+<li>a <em>brief</em> introduction of your question and why you chose
+it;<br />
 </li>
 <li>a <em>synopsis</em> of the models and assumptions;<br />
 </li>
@@ -367,9 +360,16 @@ $(document).ready(function () {
 </div>
 <div id="report" class="section level2">
 <h2>3. Report</h2>
-<div id="reports-are-due-by-1159-pm-on-june-9-and-constitute-18-of-your-final-grade." class="section level4">
-<h4>Reports are due by 11:59 PM on June 9 and constitute 18% of your final grade.</h4>
-<p>Please use the <a href="https://github.com/QERM514/website/tree/master/project">R Markdown report template files</a> for your final report, which will facilitate proper formatting of text, equations, code, figures, references, etc. At a minimum, you will need these two files:</p>
+<div
+id="reports-are-due-by-1159-pm-on-june-9-and-constitute-18-of-your-final-grade."
+class="section level4">
+<h4>Reports are due by 11:59 PM on June 9 and constitute 18% of your
+final grade.</h4>
+<p>Please use the <a
+href="https://github.com/QERM514/website/tree/master/project">R Markdown
+report template files</a> for your final report, which will facilitate
+proper formatting of text, equations, code, figures, references, etc. At
+a minimum, you will need these two files:</p>
 <ol style="list-style-type: decimal">
 <li><p><code>report_template.Rmd</code></p></li>
 <li><p><code>report_title_page_template.tex</code></p></li>
@@ -379,13 +379,24 @@ $(document).ready(function () {
 <li><p><code>jpe.csl</code></p></li>
 <li><p><code>example_refs.bib</code></p></li>
 </ol>
-<p>if you want to use BibTeX as reference manager for your report. All of these files will need to be located in the same folder or directory. See the report template for instructions.</p>
-<p>Please bear in mind that your report should detail a fully reproducible workflow of your analysis. As such, please provide a copy of any necessary data file(s). However, I’ll only consult this as a last resort if there seems to be an error or I can’t seem to work out what you did. Otherwise, all of the relevant information should be contained within your written report. Your report is restricted to 2000 words (exclusive of code chunks and figure/table captions) plus no more than 2 tables and 2 figures, although you should not feel obligated to hit that limit.</p>
+<p>if you want to use BibTeX as reference manager for your report. All
+of these files will need to be located in the same folder or directory.
+See the report template for instructions.</p>
+<p>Please bear in mind that your report should detail a fully
+reproducible workflow of your analysis. As such, please provide a copy
+of any necessary data file(s). However, I’ll only consult this as a last
+resort if there seems to be an error or I can’t seem to work out what
+you did. Otherwise, all of the relevant information should be contained
+within your written report. Your report is restricted to 2000 words
+(exclusive of code chunks and figure/table captions) plus no more than 2
+tables and 2 figures, although you should not feel obligated to hit that
+limit.</p>
 </div>
 </div>
 <div id="schedule-for-presentations" class="section level2">
 <h2>Schedule for presentations</h2>
-<p>Here is the schedule for presentations. Days and times were randomly assigned.</p>
+<p>Here is the schedule for presentations. Days and times were randomly
+assigned.</p>
 <table class="table table-striped" style="width: auto !important; ">
 <caption>
 </caption>
@@ -421,7 +432,7 @@ Aeluro
 1 June @ 11:00
 </td>
 <td style="text-align:center;width: 15em; ">
-Arnold
+Kwarta
 </td>
 </tr>
 <tr>
@@ -429,7 +440,7 @@ Arnold
 1 June @ 11:15
 </td>
 <td style="text-align:center;width: 15em; ">
-Bates
+Olsen
 </td>
 </tr>
 <tr>
@@ -437,7 +448,7 @@ Bates
 3 June @ 10:30
 </td>
 <td style="text-align:center;width: 15em; ">
-Privitera-Johnson
+Bates
 </td>
 </tr>
 <tr>
@@ -445,7 +456,7 @@ Privitera-Johnson
 3 June @ 10:45
 </td>
 <td style="text-align:center;width: 15em; ">
-Keller
+Johnson
 </td>
 </tr>
 <tr>
@@ -453,7 +464,7 @@ Keller
 3 June @ 11:00
 </td>
 <td style="text-align:center;width: 15em; ">
-McMonagle
+Keller
 </td>
 </tr>
 <tr>
@@ -461,7 +472,7 @@ McMonagle
 3 June @ 11:15
 </td>
 <td style="text-align:center;width: 15em; ">
-Kwarta
+Henry
 </td>
 </tr>
 <tr>
@@ -469,7 +480,7 @@ Kwarta
 5 June @ 10:30
 </td>
 <td style="text-align:center;width: 15em; ">
-Lindsay
+Radcliffe
 </td>
 </tr>
 <tr>
@@ -477,7 +488,7 @@ Lindsay
 5 June @ 10:45
 </td>
 <td style="text-align:center;width: 15em; ">
-Radcliffe
+Zahn
 </td>
 </tr>
 <tr>
@@ -485,7 +496,7 @@ Radcliffe
 5 June @ 11:00
 </td>
 <td style="text-align:center;width: 15em; ">
-Olsen
+Lindsay
 </td>
 </tr>
 <tr>
@@ -493,7 +504,7 @@ Olsen
 5 June @ 11:15
 </td>
 <td style="text-align:center;width: 15em; ">
-Johnson
+Arnold
 </td>
 </tr>
 <tr>
@@ -509,7 +520,7 @@ Dohrn
 5 June @ 11:45
 </td>
 <td style="text-align:center;width: 15em; ">
-Lee
+Privitera-Johnson
 </td>
 </tr>
 <tr>
@@ -525,7 +536,7 @@ Lee
 5 June @ 12:15
 </td>
 <td style="text-align:center;width: 15em; ">
-Rathor
+McMonagle
 </td>
 </tr>
 <tr>
@@ -533,7 +544,7 @@ Rathor
 5 June @ 12:30
 </td>
 <td style="text-align:center;width: 15em; ">
-Henry
+Rathor
 </td>
 </tr>
 <tr>
@@ -541,7 +552,7 @@ Henry
 5 June @ 12:45
 </td>
 <td style="text-align:center;width: 15em; ">
-Zahn
+Lee
 </td>
 </tr>
 <tr>
@@ -573,7 +584,7 @@ Tournay
 
 // add bootstrap table styles to pandoc tables
 function bootstrapStylePandocTables() {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
 }
 $(document).ready(function () {
   bootstrapStylePandocTables();
@@ -581,6 +592,23 @@ $(document).ready(function () {
 
 
 </script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>
