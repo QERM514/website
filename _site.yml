@@ -2,6 +2,8 @@ name: "docs"
 navbar:
   title: "QERM 514"
   right:
+    - text: "Syllabus"
+      href: syllabus.html
     - text: "Lectures"
       href: lectures.html
     - text: "Computer Labs"
