@@ -43,9 +43,9 @@ names(lab_topics_html) <- NULL
 handout_links <- lapply(week_labs, function(x) { if(is.list(x)) {c(x$html)} else {""} })
 handout_links_html <- sapply(lapply(handout_links, function(x) {
   if(length(x)>1) {
-    tmp1 <- paste0("[", as.character(fontawesome::fa("file-alt", height = 20, fill = "#eb6864")), " (", 1:length(x), ")](")
+    tmp1 <- paste0("[", as.character(fontawesome::fa("file-alt", height = "2em", fill = "#eb6864")), " (", 1:length(x), ")](")
     } else {
-      tmp1 <- paste0("[", as.character(fontawesome::fa("file-alt", height = 20, fill = "#eb6864")), "](")
+      tmp1 <- paste0("[", as.character(fontawesome::fa("file-alt", height = "2em", fill = "#eb6864")), "](")
       }
   tmp2 <- ")"
   tmp <- paste0(tmp1, x, tmp2)
@@ -55,9 +55,9 @@ handout_links_html <- sapply(lapply(handout_links, function(x) {
 source_links <- lapply(week_labs, function(x) { if(is.list(x)) {c(x$rmd)} else {""} })
 source_links_html <- sapply(lapply(source_links, function(x) {
   if(length(x)>1) {
-    tmp1 <- paste0("[", as.character(fontawesome::fa("file-code", height = 20, fill = "#eb6864")), " (", 1:length(x), ")](")
+    tmp1 <- paste0("[", as.character(fontawesome::fa("file-code", height = "2em", fill = "#eb6864")), " (", 1:length(x), ")](")
     } else {
-      tmp1 <- paste0("[", as.character(fontawesome::fa("file-code", height = 20, fill = "#eb6864")), "](")
+      tmp1 <- paste0("[", as.character(fontawesome::fa("file-code", height = "2em", fill = "#eb6864")), "](")
       }
   tmp2 <- ")"
   tmp <- paste(tmp1, x, tmp2)
@@ -72,11 +72,11 @@ zoom_links <- lapply(week_labs, function(x) { if(is.list(x)) {x$zoom} else {""} 
 zoom_links_html <- sapply(lapply(zoom_links, function(x) {
   if(length(x)>1) {
     tmp1 <- paste0("[",
-                   as.character(fontawesome::fa("file-video", height = 20, fill = "#eb6864")),
+                   as.character(fontawesome::fa("file-video", height = "2em", fill = "#eb6864")),
                    " (", 1:length(x), ")](")
     } else {
       tmp1 <- paste0("[",
-                     as.character(fontawesome::fa("file-video", height = 20, fill = "#eb6864")),
+                     as.character(fontawesome::fa("file-video", height = "2em", fill = "#eb6864")),
                      "](")
       }
   tmp2 <- ")"
@@ -91,9 +91,9 @@ data_links <- lapply(week_labs, function(x) {if(is.list(x)) {x$data} else {""} }
 ## topics formatted for html
 data_links_html <- sapply(lapply(data_links, function(x) {
   if(length(x)>1) {
-    tmp1 <- paste0("[", as.character(fontawesome::fa("table", height = 20, fill = "#eb6864")), " (", 1:length(x), ")](")
+    tmp1 <- paste0("[", as.character(fontawesome::fa("table", height = "2em", fill = "#eb6864")), " (", 1:length(x), ")](")
     } else {
-      tmp1 <- paste0("[", as.character(fontawesome::fa("table", height = 20, fill = "#eb6864")), "](")
+      tmp1 <- paste0("[", as.character(fontawesome::fa("table", height = "2em", fill = "#eb6864")), "](")
       }
   tmp2 <- ")"
   tmp <- paste0(tmp1, x, tmp2)
@@ -116,11 +116,13 @@ syl_txt <- data.frame(
   lab_links = handout_links_html,
   source_links = source_links_html,
   data_links = data_links_html,
-  zoom_links = zoom_links_html,
+  # zoom_links = zoom_links_html,
   background_links = background_links_html
 )
 colnames(syl_txt) <- c("Date", "Topic(s)",
-                       "Handout", "Source code", "Data", "Zoom recording", "Reference(s)")
+                       "Handout", "Source code", "Data",
+                       # "Zoom recording",
+                       "Reference(s)")
 rownames(syl_txt) <- NULL
 
 ## generate table
@@ -129,6 +131,6 @@ kable(syl_txt, format = "html", caption = " ",
   kable_styling(bootstrap_options = "striped",
                 full_width = FALSE,
                 position = "left") %>%
-  column_spec(c(1,3,4,5,6), width = "6em") 
+  column_spec(c(1,3,4,5), width = "6em") 
 ```
 
