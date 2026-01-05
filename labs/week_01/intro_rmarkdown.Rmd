@@ -1,11 +1,13 @@
 ---
 title: "Introduction to R Markdown"
 author: "Mark Scheuerell"
-date: "3 April 2020"
+date: "3 April 2026"
 output:
   html_document:
     theme: journal
     highlight: textmate
+    css: ../lecture_inst.css
+    code_download: true
     toc: true
     toc_float: true
     toc_depth: 3
@@ -31,7 +33,7 @@ The front matter is defined in a block of text that begins and ends with 3 dashe
 ---
 title: "I really like R Markdown"
 author: "Mark Scheuerell"
-date: "3 April 2020"
+date: "3 April 2026"
 output: html_document
 ---
 ```
@@ -42,11 +44,13 @@ The YAML can include a lot more information as well, including fields for variou
 ---
 title: "Introduction to R Markdown"
 author: "Mark Scheuerell"
-date: "3 April 2020"
+date: "3 April 2026"
 output:
   html_document:
     theme: journal
     highlight: textmate
+    css: ../lecture_inst.css
+    code_download: true
     toc: true
     toc_float: true
     toc_depth: 3
