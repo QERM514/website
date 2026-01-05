@@ -5,7 +5,7 @@ output: html_document
 
 ```{r generate_dates, include=FALSE}
 ## first day of class
-start_date <- as.Date("2020-03-30")
+start_date <- as.Date("2026-03-30")
 ## all mon
 mon <- seq.Date(from = start_date, by = 7, length.out = 10)
 ## all wed
