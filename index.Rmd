@@ -1,6 +1,6 @@
 ---
 title: "Analysis of Ecological and Environmental Data"
-subtitle: "QERM 514 &nbsp; &nbsp; University of Washington &nbsp; &nbsp; Spring 2020"
+subtitle: "QERM 514 &nbsp; &nbsp; University of Washington &nbsp; &nbsp; Spring 2026"
 output: html_document
 ---
 
@@ -22,14 +22,12 @@ h3 {
 
 
 <p align="center">
-    <img width="1080" height="240" src="qerm514_logo_plots.png">
+    <img width="1080" height="240" src="qerm514_logo_plots.png" alt="Three plots showing stylized relationships between some predictor variable X and a response variable Y, where Y takes on values over the entire real line (left), values in the interval from 0 to 1, and values on the positive real line (right)." >
 </p>
 
 <br><br>
 
-<center>&copy; Mark Scheuerell 2023</center>
+<center>&copy; Mark Scheuerell 2026</center>
 
 <br>
-
-<center>*This site was last updated at `r format(Sys.time(), "%H:%M")` on `r format(Sys.Date(), "%d %b %Y")`*</center>
 
