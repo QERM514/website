@@ -1,0 +1,892 @@
+---
+title: "Analysis of Ecological and Environmental Data"
+subtitle: "QERM 514 &nbsp; &nbsp; University of Washington &nbsp; &nbsp; Spring 2026"
+output: html_document
+---
+
+<style>
+h1 {
+  text-align: center;
+}
+
+h2 {
+  text-align: center;
+}
+
+h3 {
+  text-align: center;
+}
+</style>
+
+<br><br>
+
+
+<p align="center">
+    <img width="1080" height="240" src="qerm514_logo_plots.png" alt="Three plots showing stylized relationships between some predictor variable X and a response variable Y, where Y takes on values over the entire real line (left), values in the interval from 0 to 1, and values on the positive real line (right)." >
+</p>
+
+<br><br>
+
+<center>&copy; Mark Scheuerell 2026</center>
+
+<br>
+
+
+<!--chapter:end:index.Rmd-->
+
+---
+title: "Computer Labs"
+output: html_document
+---
+
+<br>
+
+```{r child = "_timeline.Rmd", include=FALSE}
+```
+
+```{r child = "_list_of_labs.Rmd", include=FALSE}
+```
+
+```{r include=FALSE}
+library(kableExtra)
+```
+
+```{r week_labs, include = FALSE}
+## empty list for labs
+week_labs <- vector("list", 10)
+names(week_labs) <- paste0("L", seq(10))
+## lab topics
+week_labs$L1 <- markdown
+week_labs$L2 <- fitting_LMs
+week_labs$L3 <- diagnostics_and_errors
+week_labs$L4 <- design_matrices
+week_labs$L5 <- model_selection
+week_labs$L6 <- mixed_models
+week_labs$L7 <- fitting_glms
+week_labs$L8 <- fitting_counts
+week_labs$L9 <- fitting_glmms
+week_labs$L10 <- presentlab
+```
+
+```{r topics, include = FALSE}
+lab_topics <- lapply(week_labs, function(x) { if(is.list(x)) {x$topics} else {""} })
+## topics formatted for html
+lab_topics_html <- sapply(lapply(lab_topics, paste, "<br>", collapse = ""), c)
+names(lab_topics_html) <- NULL
+```
+
+```{r lec_links, include = FALSE}
+handout_links <- lapply(week_labs, function(x) { if(is.list(x)) {c(x$html)} else {""} })
+handout_links_html <- sapply(lapply(handout_links, function(x) {
+  if(length(x)>1) {
+    tmp1 <- paste0("[", as.character(fontawesome::fa("file-alt", height = "2em", fill = "#eb6864")), " (", 1:length(x), ")](")
+    } else {
+      tmp1 <- paste0("[", as.character(fontawesome::fa("file-alt", height = "2em", fill = "#eb6864")), "](")
+      }
+  tmp2 <- ")"
+  tmp <- paste0(tmp1, x, tmp2)
+  tmp[x==""] <- ""
+  tmp <- paste(tmp, collapse="<br>"); tmp}), c)
+
+source_links <- lapply(week_labs, function(x) { if(is.list(x)) {c(x$rmd)} else {""} })
+source_links_html <- sapply(lapply(source_links, function(x) {
+  if(length(x)>1) {
+    tmp1 <- paste0("[", as.character(fontawesome::fa("file-code", height = "2em", fill = "#eb6864")), " (", 1:length(x), ")](")
+    } else {
+      tmp1 <- paste0("[", as.character(fontawesome::fa("file-code", height = "2em", fill = "#eb6864")), "](")
+      }
+  tmp2 <- ")"
+  tmp <- paste(tmp1, x, tmp2)
+  tmp[x==""] <- ""
+  tmp <- paste(tmp, collapse = "<br>")
+  tmp}), c)
+```
+
+```{r zoom_links, include = FALSE}
+zoom_links <- lapply(week_labs, function(x) { if(is.list(x)) {x$zoom} else {""} })
+## topics formatted for html
+zoom_links_html <- sapply(lapply(zoom_links, function(x) {
+  if(length(x)>1) {
+    tmp1 <- paste0("[",
+                   as.character(fontawesome::fa("file-video", height = "2em", fill = "#eb6864")),
+                   " (", 1:length(x), ")](")
+    } else {
+      tmp1 <- paste0("[",
+                     as.character(fontawesome::fa("file-video", height = "2em", fill = "#eb6864")),
+                     "](")
+      }
+  tmp2 <- ")"
+  tmp <- paste0(tmp1, x, tmp2)
+  tmp[x==""] <- ""
+  tmp <- paste(tmp, collapse = "<br>")
+  tmp}), c)
+```
+
+```{r data_links, include = FALSE}
+data_links <- lapply(week_labs, function(x) {if(is.list(x)) {x$data} else {""} })
+## topics formatted for html
+data_links_html <- sapply(lapply(data_links, function(x) {
+  if(length(x)>1) {
+    tmp1 <- paste0("[", as.character(fontawesome::fa("table", height = "2em", fill = "#eb6864")), " (", 1:length(x), ")](")
+    } else {
+      tmp1 <- paste0("[", as.character(fontawesome::fa("table", height = "2em", fill = "#eb6864")), "](")
+      }
+  tmp2 <- ")"
+  tmp <- paste0(tmp1, x, tmp2)
+  tmp[x==""] <- ""
+  tmp <- paste(tmp, collapse="<br>"); tmp}), c)
+```
+
+```{r background_links, include = FALSE}
+background_links <- lapply(week_labs, function(x) { if(is.list(x)) {x$background} else {""} })
+## topics formatted for html
+background_links_html <- sapply(lapply(background_links, paste, "<br>", collapse = ""), c)
+names(background_links_html) <- NULL
+```
+
+```{r generate_table, echo=FALSE}
+## data frame with dates & topics
+syl_txt <- data.frame(
+  date = sub("0(\\d)", "\\1", format(fri, "%d %B")),
+  lab_topics = lab_topics_html,
+  lab_links = handout_links_html,
+  source_links = source_links_html,
+  data_links = data_links_html,
+  # zoom_links = zoom_links_html,
+  background_links = background_links_html
+)
+colnames(syl_txt) <- c("Date", "Topic(s)",
+                       "Handout", "Source code", "Data",
+                       # "Zoom recording",
+                       "Reference(s)")
+rownames(syl_txt) <- NULL
+
+## generate table
+kable(syl_txt, format = "html", caption = " ",
+      align = "clccccl", escape = FALSE) %>%
+  kable_styling(bootstrap_options = "striped",
+                full_width = FALSE,
+                position = "left") %>%
+  column_spec(c(1,3,4,5), width = "6em") 
+```
+
+
+<!--chapter:end:comp_labs.Rmd-->
+
+---
+title: "Final Project"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+library(kableExtra)
+```
+
+
+Each student will produce and report on a thoughtful and thorough analysis of a dataset. You should start with a research question that relates to your interests. You then should obtain a data set, analyze it (with full consideration of issues including checking your assumptions, model selection, parameter estimation, and prediction), and report on your findings.
+
+You’ll deliver a final presentation and produce a final report, each of which should include an Introduction, Methods, Results, and Discussion. Your attention to detail should be at the level expected for a conference presentation or a paper you would submit for publication (even if the question and depth of introduction and discussion are not). When thinking about your project, remember our class themes: moving from a question to a model or models, and moving from a model or model(s) to inference. I want to clearly see your thought process.
+
+There will be 3 components to your project: a project plan, a presentation, and a final report. All three of these elements will contribute a total of 30% toward your final grade.
+
+## 1. Plan
+
+#### Project plans are due by 11:59 PM on May 11 and constitute 3% of your final grade.
+
+Write a 1-page description of your project idea that includes 
+
+1. the question(s) of interest;  
+2. the data you will use; and  
+3. your general approach to analyzing the data.  
+
+Things to consider:
+
+* What sort of model do you expect to build?  
+* Will it be linear or otherwise?  
+* Might there be random effects?  
+* How will you go about developing one or more models, analyzing them, and making inference?
+
+## 2. Presentation
+
+#### Presentations will be during week of June 1-5 and make up 9% of your final grade.
+
+Each student will be expected to present their project to the class. The instructor will randomly assign each student to a time slot for their presentation, either during class on June 1, June 3, or June 5, or during lab on June 5. You will have 10 minutes for your presentation, and there will be 2 minutes for questions. I will be quite strict with time. Unfortunately, we will not be able to gather together to watch everyone's presentations, so you will have to take turns presenting remotely via **Zoom**. Students will have an opportunity for a "dry run" if you would like.
+
+Your presentation should include
+
+* a *brief* introduction of your question and why you chose it;  
+* a *synopsis* of the models and assumptions;  
+* the results of your analsysis; and
+* a discussion of the implications and possible next steps.
+
+## 3. Report
+
+#### Reports are due by 11:59 PM on June 9 and constitute 18% of your final grade.
+
+Please use the [R Markdown report template files](https://github.com/QERM514/website/tree/master/project) for your final report, which will facilitate proper formatting of text, equations, code, figures, references, etc. At a minimum, you will need these two files:
+
+1) `report_template.Rmd`
+
+2) `report_title_page_template.tex`
+
+You will also need these two files:
+
+1) `jpe.csl`
+
+2) `example_refs.bib`
+
+if you want to use BibTeX as reference manager for your report. All of these files will need to be located in the same folder or directory. See the report template for instructions.
+
+Please bear in mind that your report should detail a fully reproducible workflow of your analysis. As such, please provide a copy of any necessary data file(s). However, I’ll only consult this as a last resort if there seems to be an error or I can’t seem to work out what you did. Otherwise, all of the relevant information should be contained within your written report. Your report is restricted to 2000 words (exclusive of code chunks and figure/table captions) plus no more than 2 tables and 2 figures, although you should not feel obligated to hit that limit.
+
+## Schedule for presentations
+
+Here is the schedule for presentations. Days and times were randomly assigned.
+
+```{r present_order, echo = FALSE}
+set.seed(514)
+## get class roster
+roster <- read.csv("QERM_514_2020_students.csv", stringsAsFactors = FALSE)
+## get last names
+l_names <- roster$LastName
+## fix spelling
+l_names[l_names == "Mcmonagle"] <- "McMonagle"
+## auditors
+auditors <- c("Oxborrow")
+## names of students asking to go early
+early <- c("Aeluro", "Duvall")
+## names of students asking to go late
+later <- c("Tournay", "Mistry")
+## rest of class
+r_names <- l_names[!(l_names %in% c(auditors, early, later))]
+## order of presentations
+p_order <- c(sample(early, length(early)),
+             sample(r_names, length(r_names)),
+             sample(later, length(later)))
+
+## insert 15 min break on Fri
+p_order <- c(p_order[1:14], "[ Break ]", p_order[15:length(p_order)])
+
+## first day of presentations
+start_date <- as.POSIXct("2020-06-01 10:30")
+## dates in seconds past `start_date`
+dates_sec <- c(0, 48, 96, 97, 98) * 3600
+## presentation times in seconds past the hour
+p_times <- c(0, 15, 30, 45) * 60
+## presentation dates
+p_dates <- start_date + dates_sec
+## presentation dates & times
+dates_times <- sapply(p_dates, function(x) x + p_times)
+## nicer formatting
+dates_times <- as.POSIXct(dates_times, origin = "1970-01-01")
+dates_times <- format(dates_times, "%d %B @ %H:%M")
+## drop leading 0
+dates_times <- sub("0(\\d)", "\\1", dates_times)
+
+## full schedule
+df <- data.frame(date_time = dates_times, name = p_order)
+colnames(df) <- c("Date & time", "Last name")
+
+## generate table
+kable(df, format = "html", caption = " ",
+                  align = "cc", escape = FALSE,
+                  fixed_thead = TRUE) %>%
+  kable_styling(bootstrap_options = "striped",
+                full_width = FALSE,
+                position = "left") %>%
+  column_spec(1, width = "10em") %>%
+  column_spec(2, width = "15em") 
+```
+
+
+<!--chapter:end:final_proj.Rmd-->
+
+---
+title: "Homework assignments"
+output: html_document
+---
+
+```{r child = "_timeline.Rmd", include=FALSE}
+```
+
+```{r child = "_list_of_hw.Rmd", include=FALSE}
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Students will use **R Markdown** to complete their homework assignments, which will allow you to execute **R** code and combine the output with additional text and equations into a single pdf file. Each homework assignment will have its own Markdown template for students to fill in and submit. 
+
+**Homework will be assigned each Friday of weeks 1-8 and will be due by 11:59 PM on the following Friday (weeks 2-9).**
+
+Completed homework files should be named
+
+`[lastname]_qerm514_hw_[#].Rmd`
+
+where `[lastname]` is replaced with the student's last name and the `[#]` is replaced with the actual number of the homework assignment. For example,
+
+`king_qerm514_hw_1.Rmd`
+
+Students should attach their completed homework file to an email message and send it to [qerm514@uw.edu](mailto:qerm514@uw.edu).
+
+```{r week_hw, include = FALSE}
+## empty list for labs
+week_hw <- vector("list", 8)
+names(week_hw) <- paste0("L", seq(8))
+## hw topics
+week_hw$L1 <- markdown
+week_hw$L2 <- linear_models
+week_hw$L3 <- diagnostics
+week_hw$L4 <- pvalues
+week_hw$L5 <- model_selection
+week_hw$L6 <- mixed_models
+week_hw$L7 <- logistic_regr
+week_hw$L8 <- count_models
+```
+
+```{r topics, include = FALSE}
+topics <- lapply(week_hw, function(x) { if(is.list(x)) {c(x$topics)} else {""} })
+## topics formatted for html
+topics_html <- sapply(lapply(topics, paste, "<br>", collapse = ""), c)
+names(topics_html) <- NULL
+```
+
+```{r assignment_links, include = FALSE}
+assignment_links <- lapply(week_hw, function(x) { if(is.list(x)) {c(x$pdf)} else {""} })
+assignment_links_html <- sapply(lapply(assignment_links, function(x) {
+  if(length(x)>1) {
+    tmp1 <- paste0("[",
+                   as.character(fontawesome::fa("file-pdf", height = "2em", fill = "#eb6864")),
+                   " (", 1:length(x), ")](")
+    } else {
+      tmp1 <- paste0("[",
+                     as.character(fontawesome::fa("file-pdf", height = "2em", fill = "#eb6864")),
+                     "](")
+      }
+  tmp2 <- ")"
+  tmp <- paste0(tmp1, x, tmp2)
+  tmp[x==""] <- ""
+  tmp <- paste(tmp, collapse="<br>"); tmp}), c)
+```
+
+```{r template_links, include = FALSE}
+template_links <- lapply(week_hw, function(x) { if(is.list(x)) {c(x$rmd)} else {""} })
+template_links_html <- sapply(lapply(template_links, function(x) {
+  if(length(x)>1) {
+    tmp1 <- paste0("[",
+                   as.character(fontawesome::fa("file-code", height = "2em", fill = "#eb6864")),
+                   " (", 1:length(x), ")](")
+    } else {
+      tmp1 <- paste0("[",
+                     as.character(fontawesome::fa("file-code", height = "2em", fill = "#eb6864")),
+                     "](")
+      }
+  tmp2 <- ")"
+  tmp <- paste0(tmp1, x, tmp2)
+  tmp[x==""] <- ""
+  tmp <- paste(tmp, collapse="<br>"); tmp}), c)
+```
+
+```{r data_links, include = FALSE}
+data_links <- lapply(week_hw, function(x) { if(is.list(x)) {x$data} else {""} })
+data_links_html <- sapply(lapply(data_links, function(x) {
+  if(length(x)>1) {
+    tmp1 <- paste0("[",
+                   as.character(fontawesome::fa("table", height = "2em", fill = "#eb6864")),
+                   " (", 1:length(x), ")](")
+    } else {
+      tmp1 <- paste0("[",
+                     as.character(fontawesome::fa("table", height = "2em", fill = "#eb6864")),
+                     "](")
+      }
+  tmp2 <- ")"
+  tmp <- paste0(tmp1, x, tmp2)
+  tmp[x==""] <- ""
+  tmp <- paste(tmp, collapse="<br>"); tmp}), c)
+```
+
+```{r key_links, include = FALSE}
+key_links <- lapply(week_hw, function(x) { if(is.list(x)) {c(x$key)} else {""} })
+key_links_html <- sapply(lapply(key_links, function(x) {
+  if(length(x)>1) {
+    tmp1 <- paste0("[",
+                   as.character(fontawesome::fa("key", height = "2em", fill = "#eb6864")),
+                   " (", 1:length(x), ")](")
+    } else {
+      tmp1 <- paste0("[",
+                     as.character(fontawesome::fa("key", height = "2em", fill = "#eb6864")),
+                     "](")
+      }
+  tmp2 <- ")"
+  tmp <- paste(tmp1, x, tmp2)
+  tmp[x==""] <- ""
+  tmp <- paste(tmp, collapse = " ")
+  tmp}), c)
+names(key_links_html) <- NULL
+```
+
+```{r generate_table, echo=FALSE}
+## data frame with dates & topics
+syl_txt <- data.frame(
+  date = sub("0(\\d)", "\\1", format(fri[1:8], "%d %B")),
+  topics = topics_html,
+  assignment_links = assignment_links_html,
+  template_links = template_links_html,
+  data_links = data_links_html,
+  key_links = key_links_html
+)
+colnames(syl_txt) <- c("Date", "Topic(s)", "Assignment", "Template", "Data", "Answer key")
+rownames(syl_txt) <- NULL
+
+## generate table
+kable(syl_txt, format = "html", caption = " ",
+      align = "clccc", escape = FALSE) %>%
+  kable_styling(bootstrap_options = "striped",
+                full_width = FALSE,
+                position = "left") %>%
+  column_spec(1, width = "6em") %>%
+  column_spec(c(3,4,5), width = "7em") %>%
+  column_spec(6, width = "8em")
+```
+
+
+<!--chapter:end:homework.Rmd-->
+
+---
+title: "Lecture information"
+output: html_document
+---
+
+<br>
+
+#### Navigating through a slide deck
+
+Here are some navigation tricks for slide decks in `.html` format.
+
+* Use the arrow keys (&#8592;/&#8594;) on your keyboard to go forward or backward
+
+* Press the "o" key on any slide to show you an overview of the slide deck
+
+* In overview mode, click on a slide or press "esc" to zoom in on it
+
+
+```{r child = "_timeline.Rmd", include=FALSE}
+```
+
+```{r child = "_list_of_lectures.Rmd", include=FALSE}
+```
+
+```{r week_lecs, include = FALSE}
+## empty list for lecs
+week_lecs <- vector("list", 30)
+names(week_lecs) <- paste0("L", seq(30))
+## lecture topics
+## week 1
+week_lecs$L1 <- intro
+week_lecs$L2 <- software
+week_lecs$L3 <- data_types
+## week 2
+week_lecs$L4 <- linear_models_1
+week_lecs$L5 <- linear_models_2
+week_lecs$L6 <- inference
+## week 3
+week_lecs$L7 <- diagnostics
+week_lecs$L8 <- non_IID_errors
+week_lecs$L9 <- transformations
+## week 4
+week_lecs$L10 <- design_matrices
+week_lecs$L11 <- review
+week_lecs$L12 <- max_likelihood
+## week 5
+week_lecs$L13 <- model_selection_1
+week_lecs$L14 <- model_selection_2
+week_lecs$L15 <- mixed_models_1
+## week 6
+week_lecs$L16 <- mixed_models_2
+week_lecs$L17 <- guest_lec_01
+week_lecs$L18 <- intro_GLM
+## week 7
+week_lecs$L19 <- binary_GLM
+week_lecs$L20 <- overdispersed_binary
+week_lecs$L21 <- count_GLM
+## week 8
+week_lecs$L22 <- overdispersed_count
+week_lecs$L23 <- zero_models
+week_lecs$L24 <- intro_GLMM
+## week 9
+week_lecs$L25 <- holiday
+week_lecs$L26 <- review_2
+week_lecs$L27 <- synthesis
+## week 10
+week_lecs$L28 <- present_1
+week_lecs$L29 <- present_2
+week_lecs$L30 <- present_3
+```
+
+```{r topics, include = FALSE, eval = FALSE}
+lec_titles <- lapply(week_lecs, function(x) { if(is.list(x)) {x$title} else {""} })
+## topics formatted for html
+lec_titles_html <- sapply(lapply(lec_titles, paste, "<br>", collapse = ""), c)
+names(lec_titles_html) <- NULL
+```
+
+```{r lecture_topics, include = FALSE}
+lec_topics <- lapply(week_lecs, function(x) { if(is.list(x)) {x$topics} else {""} })
+## topics formatted for html
+lec_topics_html <- sapply(lapply(lec_topics, paste, "<br>", collapse = ""), c)
+names(lec_topics_html) <- NULL
+```
+
+```{r lec_links, include = FALSE}
+## HTML
+slide_links <- lapply(week_lecs, function(x) { if(is.list(x)) {c(x$html)} else {""} })
+slide_links_html <- sapply(lapply(slide_links, function(x) {
+  if(length(x)>1) {
+    tmp1 <- paste0("[",
+                   as.character(fontawesome::fa("file-alt", height = "2em", fill = "#eb6864")),
+                   " (", 1:length(x), ")](")
+    } else {
+      tmp1 <- paste0("[",
+                     as.character(fontawesome::fa("file-alt", height = "2em", fill = "#eb6864")),
+                     "](")
+      }
+  tmp2 <- ")"
+  tmp <- paste0(tmp1, x, tmp2)
+  tmp[x==""] <- ""
+  tmp <- paste(tmp, collapse = "<br>")
+  tmp}), c)
+
+## Rmd
+source_links <- lapply(week_lecs, function(x) { if(is.list(x)) {c(x$rmd)} else {""} })
+source_links_html <- sapply(lapply(source_links, function(x) {
+  if(length(x)>1) {
+    tmp1 <- paste0("[",
+                   as.character(fontawesome::fa("file-code", height = "2em", fill = "#eb6864")),
+                   " (", 1:length(x), ")](")
+    } else {
+      tmp1 <- paste0("[",
+                     as.character(fontawesome::fa("file-code", height = "2em", fill = "#eb6864")),
+                     "](")
+      }
+  tmp2 <- ")"
+  tmp <- paste0(tmp1,x,tmp2)
+  tmp[x==""] <- ""
+  tmp <- paste(tmp, collapse = "<br>")
+  tmp}), c)
+
+## PDF
+pdf_links <- lapply(week_lecs, function(x) { if(is.list(x)) {c(x$pdf)} else {""} })
+pdf_links_html <- sapply(lapply(pdf_links, function(x) {
+  if(length(x)>1) {
+    tmp1 <- paste0("[",
+                   as.character(fontawesome::fa("file-pdf", height = "2em", fill = "#eb6864")),
+                   " (", 1:length(x), ")](")
+    } else {
+      tmp1 <- paste0("[",
+                     as.character(fontawesome::fa("file-pdf", height = "2em", fill = "#eb6864")),
+                     "](")
+      }
+  tmp2 <- ")"
+  tmp <- paste0(tmp1, x, tmp2)
+  tmp[x==""] <- ""
+  tmp <- paste(tmp, collapse = "<br>")
+  tmp}), c)
+```
+
+```{r zoom_links, include = FALSE}
+zoom_links <- lapply(week_lecs, function(x) { if(is.list(x)) {x$zoom} else {""} })
+## topics formatted for html
+zoom_links_html <- sapply(lapply(zoom_links, function(x) {
+  if(length(x)>1) {
+    tmp1 <- paste0("[",
+                   as.character(fontawesome::fa("file-video", height = "2em", fill = "#eb6864")),
+                   " (", 1:length(x), ")](")
+    } else {
+      tmp1 <- paste0("[",
+                     as.character(fontawesome::fa("file-video", height = "2em", fill = "#eb6864")),
+                     "](")
+      }
+  tmp2 <- ")"
+  tmp <- paste0(tmp1, x, tmp2)
+  tmp[x==""] <- ""
+  tmp <- paste(tmp, collapse = "<br>")
+  tmp}), c)
+```
+
+```{r youtube_links, include = FALSE, eval = FALSE}
+youtube_links <- lapply(week_lecs, function(x) { if(is.list(x)) {x$youtube} else {""} })
+## topics formatted for html
+youtube_links_html <- sapply(lapply(youtube_links, function(x) {
+  tmp1 <- "[YouTube]("; tmp2 <- ")"
+  tmp <- paste0(tmp1, x, tmp2)
+  tmp[x==""] <- ""
+  tmp <- paste(tmp, collapse = "<br>")
+  tmp}), c)
+names(youtube_links_html) <- NULL
+```
+
+```{r background_links, include = FALSE}
+background_links <- lapply(week_lecs, function(x) { if(is.list(x)) {x$background} else {""} })
+## topics formatted for html
+background_links_html <- sapply(lapply(background_links, paste, "<br>", collapse = ""), c)
+names(background_links_html) <- NULL
+```
+
+```{r generate_table, echo=FALSE}
+## data frame with dates & topics
+syl_txt <- data.frame(
+  date = qtr,
+  # lec_titles = lec_titles_html,
+  lec_topics = lec_topics_html,
+  lec_links = slide_links_html,
+  rmd_links = source_links_html,
+  pdf_links = pdf_links_html,
+  # zoom_links = zoom_links_html,
+  # youtube_links = youtube_links_html,
+  background_links = background_links_html
+)
+colnames(syl_txt) <- c("Date", "Topic(s)",
+                       "Slides (html)", "Source (Rmd)", "Slides (pdf)",
+                       # "Zoom recording",
+                       "Background")
+rownames(syl_txt) <- NULL
+
+## generate table
+kableExtra::kable(syl_txt, format = "html", caption = " ",
+                  align = "clcccl", escape = FALSE) %>%
+  kable_styling(bootstrap_options = "striped",
+                full_width = FALSE,
+                position = "left") %>%
+  column_spec(c(1,3,4,5), width = "6em") %>%
+  column_spec(6, width = "15em") %>%
+  scroll_box(height = "700px", extra_css = "border-style: none;")
+```
+
+
+<!--chapter:end:lectures.Rmd-->
+
+---
+title: "References"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<br>
+
+Students are not required to purchase any textbooks for the course, but we will use two books by Julian Faraway as reference materials, which are available in pdf format on this website. As the course progresses, more references will be added to this page, including a number of journal articles.
+
+<p style="margin-left: 22px; text-indent: -22px;">
+Faraway JJ (2015) *Linear Models with R* (2nd Ed). CRC Press, United Kingdom. 270 pp. [available [here](references/Faraway_2015_Linear_models_with_R.pdf)]   
+</p>
+
+<p style="margin-left: 22px; text-indent: -22px;">
+Faraway JJ (2016) *Extending the Linear Model with R - Generalized Linear, Mixed Effects and Nonparametric Regression Models* (2nd Ed). CRC Press, United Kingdom. 394 pp. [available [here](references/Faraway_2016_Extending_the_Linear_Models_with_R.pdf)]
+</p>
+
+<br>
+
+In addition, the following books are useful references for the material covered in this course.
+
+<p style="margin-left: 22px; text-indent: -22px;">
+Burnham KP, Anderson DR (2002) *Model Selection and Multimodel Inference - A Practical Information-Theoretic Approach* (2nd Ed). Springer, New York. 488 pp. [available [here](references/Burnham_Anderson_2002_model_selection.pdf)]    
+</p>
+
+<p style="margin-left: 22px; text-indent: -22px;">
+Zuur AF, Ieno EN, Walker NJ, Saveliev AA, Smith GM (2009) *Mixed Effects Models and Extensions in Ecology with R*. Springer, New York. 574 pp. [available [here](references/Zuur_2009_mixed_effects_models_in_R.pdf)]    
+</p>
+
+
+<!--chapter:end:references.Rmd-->
+
+---
+title: "Syllabus"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 3
+---
+
+<br>
+
+# Course overview
+
+This course will introduce students to a large class of statistical models commonly used for analyses in ecology and environmental science. These include simple linear models, such as analysis of variance (ANOVA) and regression models, along with Generalized Linear Models (GLMs) that assume non-normal error distributions (_e.g._, logistic and Poisson regression). Students will learn to distinguish the difference between fixed and random effects, and how to implement them in mixed-effects models such as Generalized Linear Mixed Models (GLMMs). This course also covers various aspects of assessing model performance and evaluating model diagnostics. In general, students will focus on conceptualizing analyses, implementing analyses, and making inference from the results.
+
+This course is also one of the core requirements for graduate students in the Quantitative Ecology & Resource Management (QERM) program at the University of Washington. For more information, [click here](https://quantitative.uw.edu/graduate/).
+
+
+# Learning objectives
+
+By the end of the quarter, students should be able to:
+
+* Identify an appropriate statistical model based on the data and specific question
+
+* Understand the assumptions behind a chosen statistical model
+
+* Use **R** to fit a variety of linear models to data
+
+* Evaluate data support for various models and select the most parsimonious model among them
+
+* Use **R Markdown** to combine text, equations, code, tables, and figures into reports
+
+<br>
+
+# Instructor
+
+[**Mark Scheuerell**](https://fish.uw.edu/faculty/mark-scheuerell/)  
+Associate Professor, School of Aquatic & Fishery Sciences
+
+Office: Rm 220A Fishery Sciences
+
+Email: [qerm514@uw.edu](mailto:qerm514@uw.edu)
+
+<br>
+
+# Meeting times & locations
+
+#### Lectures 
+M/W/F from 10:30-11:20 ~~in FSH 213~~ via [Zoom](https://washington.zoom.us/j/831083365)
+
+#### Computer Lab
+Friday from 11:30-1:20 ~~in FSH 136~~ via [Zoom](https://washington.zoom.us/j/946943308)
+
+#### Office hours
+By appointment
+
+<br>
+
+# Pre-requisites
+
+Students should be comfortable with basic probability and statistics. Students should also have a working knowledge of the [**R**](https://www.r-project.org/) computing software, such as that provided in FISH 552/553.
+
+<br>
+
+# Classroom conduct
+
+I am dedicated to providing a welcoming and supportive environment for all people, regardless of background, identity, physical appearance, or manner of communication. Any form of language or behavior used to exclude, intimidate, or cause discomfort will not be tolerated. This applies to all course participants (instructor, students, guests). In order to foster a positive and professional learning environment, I encourage the following kinds of behaviors:
+
+* Use welcoming and inclusive language
+
+* Be respectful of different viewpoints and experiences
+
+* Gracefully accept constructive criticism
+
+* Show courtesy and respect towards others
+
+**Please note**: If you believe you have been a victim of an alleged violation of the [Student Conduct Code](https://www.washington.edu/admin/rules/policies/WAC/478-121TOC.html) or you are aware of an alleged violation of the [Student Conduct Code](https://www.washington.edu/admin/rules/policies/WAC/478-121TOC.html), you have the right to [report it to the University](https://www.washington.edu/cssc/for-students-2/).
+
+<br>
+
+# Access & accommodations
+
+All students deserve access to the full range of learning experiences, and the University of Washington is committed to creating inclusive and accessible learning environments consistent with federal and state laws. 
+
+### Disabilities
+
+If you have already established accommodations with Disability Resources for Students (DRS), please communicate your approved accommodations to me at your earliest convenience so we can discuss your needs in this course. If you have not yet established services through DRS, but have a temporary health condition or permanent disability that requires accommodations (*e.g.*, mental health, learning, vision, hearing, physical impacts), you are welcome to contact DRS at 206-543-8924 or via [email](mailto:uwdrs@uw.edu) or their [website](https://depts.washington.edu/uwdrs/). DRS offers resources and coordinates reasonable accommodations for students with disabilities and/or temporary health conditions.  Reasonable accommodations are established through an interactive process between you, your instructor(s) and DRS.
+
+### Religious observances
+
+Students who expect to miss class or assignments as a consequence of their religious observance will be provided with a reasonable accommodation to fulfill their academic responsibilities. Absence from class for religious reasons does not relieve students from responsibility for the course work required during the period of absence. It is the responsibility of the student to provide the instructor with advance notice of the dates of religious holidays on which they will be absent. Students who are absent will be offered an opportunity to make up the work, without penalty, within a reasonable time, as long as the student has made prior arrangements.
+
+<br>
+
+# Technology
+
+This course will revolve around hands-on computing exercises that demonstrate the topics of interest. Therefore, students are strongly recommended to bring their own laptop to class, although students are certainly free to work with one another. **For students without access to a personal laptop**: it is possible to check out UW laptops for an entire quarter (see the [Student Services office](https://education.uw.edu/admissions/office-of-student-services) for details).
+
+All of the software we will be using is free and platform independent, meaning students may use macOS, Linux, or Windows operating systems. In addition to a web browser, we will be using the free [**R**](https://www.r-project.org/) software and the desktop version of the [**R Studio**](https://www.rstudio.com/products/rstudio-desktop/) integrated development environment (IDE). We will also be using various packages not contained in the base installation of **R**, but we will wait and install them at the necessary time. The instructor will be available during the first week of class to help students troubleshoot any software installation problems.
+
+Students will also be required to have a user account on [**GitHub**](https://github.com/), which we will be using for file hosting and communications via "issues". If you do not already have an account, you can sign up for a free one [here](https://github.com/join?source=header-home). The instructor will provide training on how to use the intended features in **GitHub**.
+
+### Zoom recordings
+
+This course is scheduled to run synchronously at our scheduled class time via [Zoom](https://itconnect.uw.edu/connect/phones/conferencing/zoom-video-conferencing/). These Zoom class sessions will be recorded. The recording will capture the presenter’s audio, video and computer screen. Student audio and video will be recorded if they share their computer audio and video during the recorded session. The recordings will only be accessible to students enrolled in the course to review materials. These recordings will not be shared with the public, and will be deleted after 90 days.
+
+UW-IT and Zoom have a Business Associates Agreement (BAA) to protect the security and privacy of UW Zoom accounts and is [FERPA](https://registrar.washington.edu/students/ferpa/) compliant. Students who **do not** wish to give consent to being recorded should:
+
+* Choose a Zoom username that does not include any personal identifying information like their name or UW NetID  
+* Never share their computer audio or video during their Zoom sessions  
+
+**By enrolling in this class, all students agree to never upload course recordings to other platforms**. 
+
+<br>
+
+# Teaching methodology
+
+This course will introduce new material primarily through prepared slides and hands-on demonstrations. Students will be expected to work both individually and collaboratively (to the extent possible given the current conditions); course content and evaluation will emphasize the communication of ideas and the ability to think critically more so than a specific pathway or method. Other areas of this website provide an overview of the topics to be covered, including links to weekly reading assignments, lecture materials, computer labs, and homework assignments.
+
+<br>
+
+# Communication
+
+This course will involve a *lot* of communication between and among students and the instructor. Short questions should be addressed to me via email; I will try my best to respond to your message within 24 hours. Under more normal circumstances, detailed questions would be addressed to me in person--either after class or during a scheduled meeting. In this case, however, we will schedule one-on-one or group Zoom calls as needed.
+
+In addition to email and Zoom, we will use the "Isuues" feature in **GitHub** to ask questions and assist others. Specifically, questions and answers can be posted to the issues in the course's "assistance" repository [here](https://github.com/QERM514/assistance/issues).
+
+<br>
+
+# Evaluation
+
+Students will be evaluated on their knowledge of course content and their ability to communicate their understanding of the material via individual homework assignments (70%) and a final project (30%). There will be 8 homework assignments, but the lowest score will be dropped for the purposes of grading; each of the 7 highest scoring assignments will count toward 10% of the final grade. Please note, **all assignments must be turned in to achieve a passing grade**.
+
+### Homework
+
+Homework will be assigned each Friday of weeks 1-8 and will be due by 11:59 PM one week later on the following Friday (weeks 2-9). The instructor will evaluate and return student homework assignments within one week of their due date. **If for some reason you cannot meet the homework deadline, contact the instructor as soon as possible to discuss other options**. Please see the [Homework](homework.html) page for more details.
+
+### Final Project
+
+Each student will complete a final project consisting of three elements: 1) a project plan, 2) a project presentation, and 3) a project report. The project plan will be due by 11:59 PM on Monday, May 11. Presentations of student projects will occur during the last week of class; specific days/times will be assigned randomly. The final project will be due by 11:59 PM on Tues, June 9. Please see the [Final Project](final_proj.html) page for more details.
+
+Students should discuss any potential schedule conflicts with the instructor during the first week of class.
+
+<br>
+
+# Academic integrity
+
+Faculty and students at the University of Washington are expected to maintain the highest standards of academic conduct, professional honesty, and personal integrity. Plagiarism, cheating, and other academic misconduct are serious violations of the [Student Conduct Code](https://www.washington.edu/cssc/for-students/academic-misconduct/). I have no reason to believe that anyone will violate the Student Conduct Code, but *I will have no choice* but to refer any suspected violation(s) to the College of the Environment for a Student Conduct Process hearing. Students who have been guilty of a violation will receive zero points for the assignment in question.
+
+<br>
+
+# Mental health
+
+We are in the midst of an historic pandemic that is creating a variety of challenges for everyone. If you should feel like you need some help, please consider the following resources available to students.
+
+**If you are experiencing a life-threatening emergency, please dial 911**.  
+
+[**Crisis Clinic**](http://www.crisisclinic.org/)  
+Phone: 206-461-3222 or toll-free at 1-866-427-4747   
+
+[**UW Counseling Center**](https://www.washington.edu/counseling/services)  
+Phone: 206-543-1240  
+[Immediate assistance](https://www.washington.edu/counseling/services/crisis/)
+
+[**Let’s Talk**](https://wellbeing.uw.edu/virtual-lets-talk/)
+
+[**Hall Health Mental Health**](https://wellbeing.uw.edu/unit/hall-health)
+
+<br>
+
+# Safety
+
+If you feel unsafe or at-risk in any way while taking any course, contact [SafeCampus](https://www.washington.edu/safecampus/) (206-685-7233) anytime&ndash;no matter where you work or study&ndash;to anonymously discuss safety and well-being concerns for yourself or others. SafeCampus can provide individualized support, discuss short- and long-term solutions, and connect you with additional resources when requested. For a broader range of resources and assistance see the [Husky Health & Well-Being website](https://wellbeing.uw.edu/).
+
+<br>
+
+# Food Pantry
+
+No student should ever have to choose between buying food or textbooks. The UW Food Pantry helps mitigate the social and academic effects of campus food insecurity. They aim to lessen the financial burden of purchasing food by providing students access to shelf-stable groceries, seasonal fresh produce, and hygiene products at **no cost**. Students can expect to receive 4 to 5 days' worth of supplemental food support when they visit the Pantry, located on the north side of Poplar Hall at the corner of NE 41<sup>st</sup> St and Brooklyn Ave NE. Visit the [Any Hungry Husky website](https://uw.edu/anyhungryhusky) for additional information, including operating hours and additional food support resources.
+
+<br>
+
+<center>*This site was last updated at `r format(Sys.time(), "%H:%M")` on `r format(Sys.Date(), "%d %b %Y")`*</center>
+
+
+<!--chapter:end:syllabus.Rmd-->
+

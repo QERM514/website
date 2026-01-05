@@ -1,11 +1,13 @@
 ---
 title: "Fitting linear models in R"
 author: "Mark Scheuerell"
-date: "10 April 2020"
+date: "10 April 2026"
 output:
   html_document:
     theme: journal
     highlight: textmate
+    css: ../lecture_inst.css
+    code_download: true
     toc: true
     toc_float: true
     toc_depth: 4
@@ -25,15 +27,25 @@ This week we will see how to fit linear models in **R**, and estimate parameter 
 * `Scruz`: the distance from Santa Cruz Island (km)  
 * `Adjacent`: the area of the adjacent island (km<sup>2</sup>)
 
-The `gala` dataset is included in the **faraway** package. Let's load the package and inspect the data.
+The `gala` dataset is included in the **{faraway}** package. 
+
+::: task
+
+Load the package and inspect the data.
+
+:::
 
 ```{r load_gala_dataset}
+## load package
 library(faraway)
+
+## inspect the first few rows
 head(gala)
 ```
 
 The second column `Endemics` is the number of plant species that are endemic to each island, but we will just use the total number of plant species recorded in `Species`.
 
+***
 
 # A simple model for plant diversity
 
@@ -49,169 +61,298 @@ $$
 
 where $i$ indicates an island.
 
-Let's plot the repsonse and predictor to see what the relationship looks like.
+::: task
 
-```{r plot_gala, echo=FALSE, fig.height=4.5, fig.width=5, fig.align="center"}
+Plot the number of species (response) against island area (predictor) to see what the relationship looks like.
+
+:::
+
+```{r plot_gala, echo = FALSE, fig.height = 4.5, fig.width = 5, fig.align = "center", fig.alt = "Bivariate plot of the number of species on an island versus the area of the island in kilometers."}
 par(mai = c(0.9, 0.9, 0.3, 0.1), omi = rep(0, 4))
 plot(gala$Area, gala$Species, pch = 16, col = "dark green",
-     ylab = "Number of species", xlab = expression(paste("Area of island (", km^2, ")")))
+     ylab = "Number of species",
+     xlab = expression(paste("Area of island (", km^2, ")")))
 ```
 
-## Estimating $\hat{\boldsymbol{\beta}}$
+## Estimating $\boldsymbol{\hat{\beta}}$
 
 We saw in lecture that we can estimate the regression parameters as
 
 $$
-\hat{\boldsymbol{\beta}} = (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^{\top} \mathbf{y}.
+\boldsymbol{\hat{\beta}} = (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^{\top} \mathbf{y}.
 $$
 
-Let's begin by creating the matrix of response values $\mathbf{y}$, which should have dimensions $n \times 1$.
+::: task
+
+Begin by creating the matrix of response values $\mathbf{y}$, which should have dimensions $n \times 1$.
+
+:::
 
 ```{r create_y_matrix}
+## sample size
 nn <- nrow(gala)
+
+## vector (matrix) with responses
 yy <- matrix(gala$Species, nrow = nn, ncol = 1)
+
+## inspect the vector of responses
 head(yy)
 ```
 
+::: task
+
 Next let's create the matrix of predictors $\mathbf{X}$. There is only one predictor in the model (`Area`), so our matrix should consist of a column of 1's and a column with the area of each island.
 
+:::
+
 ```{r create_design_matrix}
+## vector of 1's for intercept
 Intercept <- rep(1, nn)
+
+## vector of island areas
 Area <- gala$Area
+
+## create design matrix
 XX <- cbind(Intercept, Area)
+
+## inspect the first few rows
 head(XX)
 ```
 
-Matrix multiplication in **R** uses the `%*%` operator. You can transpose a matrix with `t()` and invert a matrix with `solve()`. So our estimate of the regression parameters in \hat{\boldsymbol{\beta}} is
+::: tip
+
+Matrix multiplication in **R** uses the `%*%` operator. You can transpose a matrix with `t()` and invert a matrix with `solve()`. 
+
+:::
+
+::: task
+
+Estimate the regression parameters in $\boldsymbol{\hat{\beta}}$.
+
+:::
 
 ```{r est_beta}
-beta_hat <- solve(t(XX) %*% XX) %*% t(XX) %*% yy
-beta_hat
+## parameter (alpha & beta) estimates
+(beta_hat <- solve(t(XX) %*% XX) %*% t(XX) %*% yy)
 ```
+
+::: success
 
 We can interpret these coefficients to mean that an island with an area of 0 km<sup>2</sup> would be expected to have ~`r round(beta_hat[1], 0)` species of plants(!), and that you would add ~`r round(beta_hat[2]*100, 0)` species per 100 km<sup>2</sup> of island.
 
-## Estimating $\hat{\mathbf{y}}$
+:::
 
-Recall that the fitted values are given by
+
+## Estimating $\mathbf{\hat{y}}$
+
+Recall that the estimated (fitted) values are given by
 
 $$
 \begin{align}
-\hat{\mathbf{y}} &= \mathbf{X} \hat{\boldsymbol{\beta}} \\
+\mathbf{\hat{y}} &= \mathbf{X} \boldsymbol{\hat{\beta}} \\
   &= \mathbf{X} \left( (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^{\top} \mathbf{y} \right) \\
-  &= \underbrace{\mathbf{X} (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^{\top}}_{\mathbf{H}} \mathbf{y} \\
+  &= \mathbf{X} (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^{\top} \mathbf{y} \\
   &= \mathbf{H} \mathbf{y}.
 \end{align}
 $$
 
-So we can calculate the hat matrix $\mathbf{H}$ and solve for $\hat{\mathbf{y}}$
+::: task
+
+Calculate the hat matrix $\mathbf{H}$ and solve for $\mathbf{\hat{y}}$
+
+:::
 
 ```{r get_hatmat}
+## calculate hat matrix
 HH <- XX %*% solve(t(XX) %*% XX) %*% t(XX)
+
+## solve for y_hat
 y_hat <- HH %*% yy
 ```
 
-Let's add the predicted values to our plot of the data.
+::: task
 
-```{r plot_gala_fit, fig.height=4.5, fig.width=5, fig.align="center"}
+Add the predicted values to our plot of the data.
+
+:::
+
+```{r plot_gala_fit, fig.height = 4.5, fig.width = 5, fig.align = "center", fig.alt = "Bivariate plot of the number of species on an island versus the area of the island in kilometers, including the estimated regression line through the data."}
 par(mai = c(0.9, 0.9, 0.3, 0.1), omi = rep(0, 4))
 ## plot the data
 plot(gala$Area, gala$Species, pch = 16, col = "dark green",
-     ylab = "Number of plant species", xlab = expression(paste("Area of island (", km^2, ")")))
+     ylab = "Number of plant species",
+     xlab = expression(paste("Area of island (", km^2, ")")))
 ## add the fitted values (line)
 abline(a = beta_hat[1], b = beta_hat[2])
 ```
 
 This is not a great fit, but it's a decent start. We'll expand upon our model later.
 
+<br>
+
 ## A shortcut to model fitting
 
-As we saw briefly in lecture, it's easy to fit a linear regression model using the function `lm()`, which takes arguments like
+As we saw briefly in lecture, it's easy to fit a linear regression model using the function `lm()`, which has syntax akin to
 
 `lm(respone ~ predictor(s), data_to_use)`
 
-To do so for our model above, we have
+::: tip
+
+Type `?lm` at the R command prompt to see the arguments and returned values.
+
+:::
+
+::: task
+
+Use `lm()` to fit the same model from above.
+
+:::
 
 ```{r fit_with_lm}
+## fit simple linear regression
 simple_model <- lm(Species ~ Area, gala)
+
+## inspect the results
 simple_model
 ```
 
-Note that these are the same estimates that we obtained earlier
+::: success
 
-We can obtain the estimates of the fitted values $\hat{\mathbf{y}}$ via one of two functions in **R**: `fitted()` and `predict()`. We'll see later that `predict()` has additional functionality that we can use.
+Note that these are the same estimates for alpha (intercept) and beta (slope) that we obtained earlier when calculating the estimates the long way.
+
+:::
+
+::: tip
+
+We can obtain the estimates of the fitted values $\mathbf{\hat{y}}$ via one of two functions in **R**: `fitted()` and `predict()`. We'll see later that `predict()` has additional functionality that we can use.
+
+:::
+
+::: task
+
+Compare the results of `fitted()` and `predict()`.
+
+:::
 
 ```{r get_fitted_y}
+## get model estimates
+
 ## via fitted
 y_hat_f <- fitted(simple_model)
+
 ## via predict
 y_hat_p <- predict(simple_model, type = "response")
+
 ## compare these to each other
 all.equal(y_hat_f, y_hat_p)
 ```
 
 ## Goodness-of-fit
 
-We saw in lecture that we can use the *coefficient of determination* $(R^2)$ to measure how well a model fits the data. The formula is
+We saw in lecture that we can use the *coefficient of determination* $(R^2)$ to measure how well a model fits the data; a value of 0 means no relationship whatsoever and a value of 1 means a perfect relationship between the two. The formula is
 
 $$
 R^2 = 1 - \frac{SSE}{SSTO}
 $$
 
-We can easly compute these quantities from our model fit and data.
+We can easily compute these quantities from our model fit and data.
+
+<br>
 
 ```{r compute_R2}
 ## SSE
 resids <- yy - y_hat
-SSE <- sum(resids^2) # = t(resids) %*% resids
+SSE <- sum(resids^2)   # = t(resids) %*% resids
+
 ## SSTO
 SSTO <- sum((yy - mean(yy))^2)
+
 ## R^2
 1 - SSE / SSTO
 ```
 
-Let's compare this to the value in the ANOVA table that **R** produces
+::: task
+
+Compare this to the `Multiple R-squared` value in the ANOVA table that **R** produces.
+
+:::
 
 ```{r check_R2}
 summary(simple_model)
 ```
 
+::: success
+
 The estimates are indeed the same.
+
+:::
 
 ### Adjusted $R^2$
 
-The ANOVA table above also reports the `Adjusted R-squared`, which we haven't discussed yet. It turns out that one can always increase the $SSR$ of a model by including more predictors, even if they are completed unrelated to the response. Recall our objective in least squares estimation is
+The ANOVA table above also reports the `Adjusted R-squared`, which we haven't discussed yet. It turns out that one can always increase the $SSR$ of a model by including more predictors, even if they are completed unrelated to the response variable. Recall that our objective in least squares estimation is
 
 $$
 \min \sum SSE = \min \sum_i (y_i - X_i \beta).
 $$
 
-Increasing the dimension of $\mathbf{X}$ by adding more predictors (columns) necessitates an increased space within which to minimize this objective function, and hence you can get a better fit o the data. We can demonstrate this with a simple example. Suppose we added another predictor to our simple model that was nothing more than a vector of Gaussian white noise, which is unrelated to the response.
+Increasing the dimension of $\mathbf{X}$ by adding more predictors (columns) necessitates an increased space within which to minimize this objective function, and hence you can get a better fit to the data.
+
+We can demonstrate this with a simple example. Suppose we added another predictor to our simple model that was nothing more than a vector of Gaussian (normal) white noise, which is unrelated to the response.
+
+::: tip
+
+You can use `rnorm(mean = mu, sd = sigma, n)` to generate `n` random draws from a normal distribution with mean $\mu$ and standard deviation $\sigma$.
+
+:::
 
 ```{r demo_adj_R2}
+## make this reproducible
 set.seed(514)
+
 ## generate a vector of Gaussian white noise
-WN <- rnorm(nn)
-## add this to our Galapagos data frame
+WN <- rnorm(mean = 0, sd = 1, nn)
+
+## add this column to our Galapagos design matrix
 gala$WN <- WN 
-## fit a model with Area & WN
+
+## fit a model with both Area & WN
 summary(lm(Species ~ Area + WN, gala))
 ```
 
-Notice that our $R^2$ value has indeed increased.
+::: note
 
-To account for this, we can use an *adjusted* $R^2$, which corrects for these additional degrees of freedom.
+Our $R^2$ value has indeed increased.
+
+:::
+
+::: tip
+
+To account for this, we can use a so-called *adjusted* $R^2$, which corrects for these additional degrees of freedom and is given by
 
 $$
 \bar{R}^2 = 1 - \frac{SSE ~ / ~ df_{error}}{SSTO ~ / ~ df_{total}}
 $$
 
-Let's calculate $\bar{R}^2$ for our simple model and confirm that it matches the value in the ANOVA table for the model with only `Area` as a predictor.
+:::
+
+::: task
+
+Calculate the $\bar{R}^2$ for our simple model and confirm that it matches the value in the ANOVA table for the model with only `Area` as a predictor.
+
+:::
 
 ```{r adjusted_R2}
-1 - (SSE / (nn - 2)) / (SSTO / (nn - 1))
+## degrees of freedom, error
+df_e <- nn - 2
+
+## degrees of freedom, total
+df_t <- nn - 1
+
+## adjusted R2
+(R2_adj <- 1 - (SSE / df_e) / (SSTO / df_t))
 ```
 
+***
 
 # A better model for plant diversity
 
@@ -229,30 +370,38 @@ where $i$ indicates an island.
 
 ## Fit the model
 
-We'll use `lm()` to estimate this model.
+::: task
+
+Use `lm()` to fit this model and estimate the parameters.
+
+:::
 
 ```{r fit_multiple_regr}
-## larger model
-full_mod <- lm(Species ~ Area + Elevation + Nearest, gala)
-full_mod
+## fit larger model
+(full_mod <- lm(Species ~ Area + Elevation + Nearest, gala))
 ```
 
-Notice that our estimates for the intercept $\beta_0$ and the effect of island area $\beta_1$ changed when we accounted for additional predictors in the model.
+::: note
+
+Our estimates for the intercept $\beta_0$ and the effect of island area $\beta_1$ changed when we accounted for additional predictors in the model.
+
+:::
 
 ## Hypothesis tests to compare models
 
-We saw in lecture a number of different hypothesis tests we might wish to undertake. Let's run through examples of those here.
+We saw in lecture a number of different hypothesis tests we might wish to undertake in a scenario like this. Let's run through examples of those here.
 
 ### Test of *all* predictors in a model
 
-Suppose we wanted to test whether this collection of 3 predictors in our model were better than simply estimating the data by their mean.
+Suppose we wanted to test whether this collection of 3 predictors in our model were better than simply estimating the data by their mean. In mathematical notation, we could express these two models as
 
 $$
 \Theta: \mathbf{y} = \mathbf{X} \boldsymbol{\beta} + \mathbf{e} \\
-\theta: \mathbf{y} = \boldsymbol{\mu} + \mathbf{e} \\
+~ \\
+\theta: \mathbf{y} = \boldsymbol{\mu} + \mathbf{e} 
 $$
 
-We write the null hypothesis as
+Our null hypothesis for this test is given by
 
 $$
 H_0: \beta_1 = \beta_2 = \dots = \beta_k = 0
@@ -260,7 +409,7 @@ $$
 
 and we would reject $H_0$ if $F > F^{(\alpha)}_{k_{\Theta} - k_{\theta}, n - k_{\Theta}}$
 
-Recall that we wil base this test on an $F$-distribution, such that
+Recall that we will base this test on an $F$-distribution, such that
 
 $$
 SSE_{\Theta} = \left( \mathbf{y} - \mathbf{X} \boldsymbol{\beta} \right)^{\top} \left( \mathbf{y} - \mathbf{X} \boldsymbol{\beta} \right) = \mathbf{e}^{\top} \mathbf{e} = SSE \\
@@ -271,42 +420,66 @@ $$
 
 #### $F$-test by hand
 
-Calculating the sums-of-squares in **R** is straightforward with matric operations.
+Calculating the sums-of-squares in **R** is straightforward with matrix operations.
+
+::: tip
+
+You can obtain p-values from the _F_ distribution using the `pf()` function
+
+:::
 
 ```{r F_test_by_hand}
-## get matrix of predictors
+## matrix of predictors
 XX <- model.matrix(full_mod)
-## estimate beta
+
+## estimated beta
 beta_hat <- solve(t(XX) %*% XX) %*% t(XX) %*% yy
-## total sum of squares
-SSE <- t(yy - XX %*% beta_hat) %*% (yy - XX %*% beta_hat)
+
 ## error sum of squares
+SSE <- t(yy - XX %*% beta_hat) %*% (yy - XX %*% beta_hat)
+
+## total sum of squares
 SSTO <- t(yy - mean(yy)) %*% (yy - mean(yy))
+
 ## F statistic
 (F_stat <- ((SSTO - SSE) / (4 - 1)) / (SSE / (nn - 4)))
+
 ## F test
-pf(F_stat, 4-1, nn-4, lower.tail = F)
+pf(q = F_stat, df1 = 4-1, df2 = nn-4, lower.tail = F)
 ```
+
+::: note
 
 This $F$-statistic is quite large and the $p$-value is very small, so we would reject the null hypothesis that we would be justified in dropping the 3 predictors from this model in favor of a mean-only model.
 
+:::
+
 #### $F$-test with built-in functions
 
-We can use the `anova()` function in **R** to conduct this $F$-test
+::: tip
+
+We can use the `anova()` function in **R** to conduct this $F$-test.
+
+:::
 
 ```{r gala_full, echo = TRUE}
-## null model; the '1' indicates an intercept-only model
+## fit null model; the '1' indicates an intercept-only model
 null_mod <- lm(Species ~ 1, gala)
+
 ## use `anova('simple', 'complex')` to get the F-test results
 anova(null_mod, full_mod)
 ```
 
+::: success
+
 We can see that we get the same $F$-statistic and $p$-value as earlier
+
+:::
 
 
 ### Testing one predictor
 
-We might ask whether any one predictor could be dropped from our model. For example, can `nearest` be dropped from this model? One option is to fit this reduced model and compare to it to the full model via our $F$-test with $H_0: \beta_3 = 0$
+We might ask whether any single predictor could be dropped from our model. For example, can `nearest` be dropped from this model? One option is to fit this reduced model and compare to it to the full model via our $F$-test with $H_0: \beta_3 = 0$
 
 $$
 \begin{aligned}
@@ -321,13 +494,19 @@ Here's our test in **R**.
 ```{r gala_one_predictor_F, echo = TRUE}
 ## full model as before
 full_mod <- lm(Species ~ Area + Elevation + Nearest, gala)
+
 ## reduced model without `nearest`
 reduced_mod <- lm(Species ~ Area + Elevation, gala)
+
 ## use `anova('reduced', 'full')` to get the F-test results
 anova(reduced_mod, full_mod)
 ```
 
+::: note
+
 The $F$-statistic is small and the $p$-value is large so we cannot reject $H_0$, and hence we conclude that we would be justified in dropping `Nearest` from our model.
+
+:::
 
 #### Using a $t$-test
 
@@ -337,16 +516,27 @@ $$
 t_i = \frac{\beta_i}{\text{SE} \left( \beta_i \right)}
 $$
 
-and compare it to a $t$-distribution with $n - k$ degrees of freedom. We can get the results of the $t$-test with `summary()` from base **R** or `sumary()` from the **faraway** pkg, which is much less verbose.
+and compare it to a $t$-distribution with $n - k$ degrees of freedom. 
+
+::: tip
+
+We can get the results of the $t$-test with `summary()` from base **R** or `sumary()` from the **{faraway}** pkg, which is much less verbose.
+
+:::
 
 ```{r gala_one_predictor_t, echo = TRUE}
 ## via `base::summary()`
 summary(full_mod)
+
 ## via `faraway::sumary()`
 sumary(full_mod)
 ```
 
-Note that we get $t^2 = F$ and the same $p$-value as before
+::: note
+
+Here we get $t = \sqrt{F}$ and the same $p$-value as before.
+
+:::
 
 
 ### Testing 2+ predictors
@@ -363,7 +553,11 @@ $$
 
 $H_0 : \beta_1 = \beta_3 = 0$
 
+::: tip
+
 Again we can conduct this test by fitting both models and calculating $F$.
+
+:::
 
 ```{r gala_one_predictor_F2, echo = TRUE}
 ## reduced model without `area` and `nearest`
@@ -372,7 +566,11 @@ reduced_mod <- lm(Species ~ Elevation, gala)
 anova(reduced_mod, full_mod)
 ```
 
+::: note
+
 The $F$-statistic is rather small and the $p$-value is big so we cannot reject $H_0$, suggesting we would be justified in dropping area and elevation from the model.
+
+:::
 
 
 #### Multiple $t$-tests versus one $F$-test
@@ -384,18 +582,12 @@ Could we instead evaluate our null hypothesis by examining our table of $t$-stat
 sumary(full_mod)
 ```
 
-This creates the problem of having to make our decision based on 2 $p$-values rather than one
-
-* Each $p$-value corresponds to a separate $t$-test with the other predictor in the model
-
-* Therefore we must use the single $F$-test 
+This creates the problem of having to make our decision based on 2 $p$-values rather than one and each $p$-value corresponds to a separate $t$-test with the other predictor in the model. Thus, we must use the single $F$-test. 
 
 
 ### Testing a subspace
 
-Some tests cannot be expressed in terms of the inclusion or exclusion of predictors.
-
-Consider a test of whether the areas of the current and adjacent island could be added together and used in place of the two separate predictors
+Some tests cannot be expressed in terms of the inclusion or exclusion of predictors. For example, consider a test of whether the areas of the current and adjacent island could be added together and used in place of the two separate predictors:
 
 $$
 \text{species}_i = \beta_0 + \beta_1 \text{area}_i + \beta_2 \text{adjacent}_i + \dots + e_i \\
@@ -405,80 +597,113 @@ $$
 
 $H_0 : \beta_{\text{area}} = \beta_{\text{adjacent}}$
 
-We can do this in **R** by using the `I()` function, which tells **R** to treat things inside the `()` as an operation.
+::: tip
+
+We can do this by using the `I()` function, which tells **R** to treat things inside the `()` as an operation.
+
+:::
 
 ```{r gala_subspace, echo = TRUE}
 ## full model as before
 full_mod <- lm(Species ~ Area + Adjacent + Elevation + Nearest, gala)
+
 ## reduced model without `elevation + nearest`
 comb_mod <- lm(Species ~ I(Area + Adjacent) + Elevation + Nearest, gala)
+
 ## use `anova('combined', 'full')` to get the F-test results
 anova(comb_mod, full_mod)
 ```
 
+::: note
+
 The $F$-statistic is large and the $p$-value is reasonably small so we reject $H_0$.
+
+:::
 
 <br>
 
-What if we wanted to test whether a predictor had a specific (non-zero) value? For example, is there a 1:1 relationship between $\text{species}$ and $\text{elevation}$ after controlling for the other predictors?
+What if we wanted to test whether a predictor had a specific (non-zero) value? For example, is there a 1:1 relationship between $\text{species}$ and $\text{elevation}$ after controlling for the other predictors? We could write this model as
 
 $$
-\text{species}_i = \beta_0 + \beta_1 \text{area}_i + \underline{1} \text{elevation}_i + \beta_3 \text{nearest}_i + e_i
+\text{species}_i = \beta_0 + \beta_1 \text{area}_i + (1 \times \text{elevation}_i) + \beta_3 \text{nearest}_i + e_i
 $$
 
 $H_0 : \beta_2 = 1$
 
-We can do this in **R** by using the `offset()` function, which allows us to set a fixed beta.
+::: tip
+
+We can do this in **R** by using the `offset()` function, which allows us to set a fixed beta rather than treat it as unknown and estimate it.
+
+:::
 
 ```{r gala_subspace_elev, echo = TRUE}
 ## full model
 full_mod <- lm(Species ~ Area + Elevation + Nearest, gala)
+
 ## model with effect of `elevation` = 1
 fixed_mod <- lm(Species ~ Area + offset(1 * Elevation) + Nearest, gala)
+
 ## use `anova('comb', 'full')` to get the F-test results
 anova(fixed_mod, full_mod)
 ```
 
+::: note
+
 The $F$-statistic is very large and the $p$-value is tiny so we reject $H_0$.
 
+:::
 
 #### Using a $t$-test
 
-We can also modify our $t$-test from before and use it for our comparison by including the hypothesized $\hat{\beta}_{H_0}$ as an offset
+We can also modify our $t$-test from before and use it for our comparison by including the hypothesized $\hat{\beta}_{H_0}$ as an offset.
 
 $$
 t_i = \frac{(\hat{\beta_i} - \beta_{H_0})}{\text{SE} \left( \hat{\beta}_i \right)}
 $$
 
-We can get $\hat{\beta}_{\text{elevation}}$ and $\text{SE}(\hat{\beta}_{\text{elevation}})$ from our model summary
+::: tip
+
+We can get $\hat{\beta}_{\text{elevation}}$ and $\text{SE}(\hat{\beta}_{\text{elevation}})$ from our model summary.
+
+:::
 
 ```{r gala_subspace_elev_2, echo = TRUE}
 ## full model
 sumary(full_mod)
 ```
 
-This leaves us with $\hat{\beta}_{\text{elevation}} \approx 0.17$ and $\text{SE}(\hat{\beta}_{\text{elevation}}) \approx 0.055$. 
+This leaves us with $\hat{\beta}_{\text{elevation}} \approx 0.171$ and $\text{SE}(\hat{\beta}_{\text{elevation}}) \approx 0.0545$. 
 
-We can calculate the $t$-test by hand and compare the results to the above $F$-test
+::: task
+
+Calculate the $t$-test by hand and compare the results to the above $F$-test
+
+:::
 
 ```{r t-test_subspace, echo = TRUE, results = "hold"}
 ## t statistic
-(t_value <- (0.171336 - 1) / 0.054519)
+t_value <- (0.171336 - 1) / 0.054519
+
 ## p-value = t_alpha * Pr(t_value, df); `pt()` is the pdf for a t-dist
-(p_value <- 1.96 * pt(t_value, 26))
+(p_value <- 1.96 * pt(q = t_value, df = (30 - 4)))
+
 ## verify t^2 = F
 all.equal(t_value^2, anova(fixed_mod, full_mod)$F[2], tolerance = 0.0001)
 ```
 
+::: note
+
 The $p$-value is the same and $t^2 = F$ as before
+
+:::
 
 
 ## Confidence intervals for $\beta$
 
-We can also use confidence intervals (CI's) to express uncertainty in $\hat{\beta}_i$, which take the form
+We can also use confidence intervals (CI's) to express uncertainty in $\hat{\beta_i}$, which take the form
 
 $$
-100(1 - \alpha)\% ~ \text{CI}: \hat{\beta}_{i} \pm t_{n-p}^{(\alpha / 2)} \operatorname{SE}(\hat{\beta})
+100(1 - \alpha)\% ~ \text{CI}: \hat{\beta_i} \pm t_{n-p}^{(\alpha / 2)} \operatorname{SE} ( \hat{\beta} )
 $$
 
 where here $\alpha$ is our *predetermined* Type-I error rate. To do so, we need the information from the model summary.
@@ -488,33 +713,49 @@ where here $\alpha$ is our *predetermined* Type-I error rate. To do so, we need 
 sumary(full_mod)
 ```
 
-We can construct a 95% CI on $\hat{\beta}_{\text{area}}$ using the 2.5% and 97.5% percentiles of the $t$-distribution with $df = 30 - 4 = 26$.
+::: tip
+
+We can construct a 95% CI on $\hat{\beta}$ using the 2.5% and 97.5% percentiles of the $t$-distribution with $df = 30 - 4 = 26$.
+
+:::
 
 ```{r gala_CI_2, echo = TRUE}
-## critical value for the t-dist
+## critical value for the t-distribution
 ## `qt()` is the quantile function for the t-dist; `p` is the (1-alpha/2) value 
 t_crit <- qt(p = 0.975, df = 30-4)
+
 ## 95% CI
 CI95_beta <- 0.019085 + c(-1,1) * t_crit * 0.026764
-round(CI95_beta, 3)
+CI95_beta |> round(3)
 ```
 
+::: note
+
+This 95% CI includes zero so we would conclude that we cannot reject the null hypothesis that $\beta = 0$.
+
+:::
 
 ### Confidence intervals for all $\beta$
 
+::: tip
+
 We can quickly get the 95% CI for all the $\beta_i$ using the function `confint()`.
 
+:::
+
 ```{r gala_CI_all, echo = TRUE}
-## all of the 95% CI's
-confint(full_mod)
+## 95% CI's for all betas (rounded to the nearest thousandth)
+confint(full_mod) |> round(3)
 ```
 
 
 ## Bootstrap confidence intervals
 
-The above $F$- and $t$-based CI's depend on the assumption of normality. Recall that the bootstrap method provides a way to construct CI's without this assumption
+The above $F$- and $t$-based CI's depend on the assumption of normality. Recall that the bootstrap method provides a way to construct CI's without this assumption.
 
 ### Bootstrap procedure
+
+::: task
 
 Step 1: Fit your model to the data
 
@@ -522,7 +763,7 @@ Step 1: Fit your model to the data
 ## we already fit `full_mod` above
 ```
 
-Step 2: Calculate $\mathbf{e} = \mathbf{y} - \mathbf{X} \hat{\boldsymbol{\beta}}$ 
+Step 2: Calculate $\mathbf{e} = \mathbf{y} - \mathbf{X} \boldsymbol{\hat{\beta}}$ 
 
 ```{r bootstrap_CI_1-2, echo = TRUE}
 ## residuals from our full model
@@ -530,8 +771,8 @@ resids <- residuals(full_mod)
 ```
 
 Step 3a: Generate $\mathbf{e}^*$ by sampling *with replacement* from $\mathbf{e}$  
-Step 3b: Calculate $\mathbf{y}^* = \mathbf{X} \hat{\boldsymbol{\beta}} + \mathbf{e}^*$  
-Step 3c: Estimate $\hat{\boldsymbol{\beta}}^*$ from $\mathbf{X}$ & $\mathbf{y}^*$  
+Step 3b: Calculate $\mathbf{y}^* = \mathbf{X} \boldsymbol{\hat{\beta}} + \mathbf{e}^*$  
+Step 3c: Estimate $\boldsymbol{\hat{\beta}}^*$ from $\mathbf{X}$ & $\mathbf{y}^*$  
 
 ```{r bootstrap_CI_3, echo = TRUE}
 ## number of boostrap samples
@@ -553,7 +794,7 @@ for(i in 1:nb) {
 }
 ```
 
-Step 4: Select the $\tfrac{\alpha}{2}$ and $(1 - \tfrac{\alpha}{2})$ percentiles from the saved $\hat{\boldsymbol{\beta}}^*$
+Step 4: Select the $\tfrac{\alpha}{2}$ and $(1 - \tfrac{\alpha}{2})$ percentiles from the saved $\boldsymbol{\hat{\beta}}^*$
 
 ```{r bootstrap_CI_4, echo = TRUE}
 ## extract 2.5% and 97.5% values
@@ -562,15 +803,11 @@ colnames(CI95) <- c("Intercept", colnames(gala[,3:5]))
 t(round(CI95, 3))
 ```
 
+:::
 
 ## Confidence interval for new predictions
 
-Given a fitted model $\mathbf{y} = \mathbf{X} \hat{\boldsymbol{\beta}} + \mathbf{e}$, we might want to know the uncertainty around a new estimate $\mathbf{y}^*$ given some new predictor $\mathbf{X}^*$. Recall that this CI is given by 
-
-$$
-\hat{\mathbf{y}}^* \pm ~ t^{(\alpha / 2)}_{df} \sigma \sqrt{ {\mathbf{X}^*}^{\top} (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^* } 
-$$
-
+Given a fitted model $\mathbf{y} = \mathbf{X} \boldsymbol{\beta} + \mathbf{e}$, we might want to know the uncertainty around a new estimate $\mathbf{y}^*$ given some new predictor $\mathbf{X}^*$. 
 
 ### CI for the mean response
 
@@ -582,66 +819,103 @@ $$
 
 Suppose we wanted to estimate the uncertainty in the *average* diversity for an island with an area of 2000 km<sup>2</sup>. Recall that our CI on the mean response is given by
 
+$$
+\mathbf{\hat{y}}^* \pm ~ t^{(\alpha / 2)}_{df} \sigma \sqrt{ {\mathbf{X}^*}^{\top} (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^* } 
+$$
 
 and here $\mathbf{X}^* = [1 ~~ 2000]$ (ie, a $1 \times 2$ row matrix).
 
 
 #### CI by hand
 
-We can calculate this by hand using matrix operations in **R**.
+::: task
+
+Calculate the CI by hand using matrix operations in **R**.
+
+:::
 
 ```{r CI_by_hand, warning=FALSE, message=FALSE}
 ## matrix of predictors
 XX <- model.matrix(simple_model)
+
 ## new X; vector for now
 X_star <- c(Intercept = 1, Area = 2000)
+
 ## inside sqrt
 inner_X <- t(X_star) %*% solve(t(XX) %*% XX) %*% X_star
+
 ## critical t-value
 t_crit <- qt(0.975, df = nn-2)
+
 ## estimated SD
 sigma <- summary(simple_model)$sigma
+
 ## predicted y
 y_star <- sum(X_star * coef(simple_model))
+
 ## 95% CI
 y_star + c(-1,1) * t_crit * sigma * sqrt(inner_X)
 ```
 
 #### CI with `predict()`
 
-It's much easier to use the `predict()` function to give us a CI.
+::: tip
+
+It's much easier to use the `predict()` function to give us a CI. Type `?predict` at the command prompt to see the function's arguments.
+
+:::
 
 ```{r CI_with_predict}
-predict(simple_model, new = data.frame(t(X_star)),
-        level = 0.95, interval = "confidence")
+predict(simple_model,
+        new = data.frame(t(X_star)),
+        level = 0.95,
+        interval = "confidence")
 ```
 
+::: success
+
 The estimated lower and upper bounds are the same as those we obtained by hand.
+
+:::
 
 ### Prediction interval for a new response
 
 We saw in lecture that we can also estimate the uncertainty for a *specific* prediction rather than the average response. Let's now imagine we wanted to predict how many plant species we might find on a hypothetical island that might one day emerge from an underwater volcano and is ultimately 2000 km<sup>2</sup>. Recall that a PI is given by 
 
 $$
-\hat{\mathbf{y}}^* \pm ~ t^{(\alpha / 2)}_{df} \sigma \sqrt{1 + {\mathbf{X}^*}^{\top} (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^* } 
+\mathbf{\hat{y}}^* \pm ~ t^{(\alpha / 2)}_{df} \sigma \sqrt{1 + {\mathbf{X}^*}^{\top} (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^* } 
 $$
 
-To calculate the PI by hand simply requires a different calculation for `inner_X` above.
+::: tip
+
+Calculating the PI by hand simply requires a different calculation for `inner_X` than we made above.
+
+:::
 
 ```{r PI_by_hand, warning=FALSE, message=FALSE}
 ## new X_star
 X_star <- c(Intercept = 1, Area = 2000)
+
 ## inside sqrt
 inner_X <- 1 + t(X_star) %*% solve(t(XX) %*% XX) %*% X_star
+
 ## 95% CI
 y_star + c(-1,1) * t_crit * sigma * sqrt(inner_X)
 ```
 
-Notice how much wider this interval is than the CI we estimated above. We could instead use `predict()` as we did above for the CI by switching the `interval` argument to `"prediction"`.
+Notice how much wider this interval is than the CI we estimated above.
+
+::: tip
+
+We could instead use `predict()` as we did above for the CI by switching the `interval` argument to `"prediction"`.
+
+:::
 
 ```{r PI_with_predict}
-predict(simple_model, new = data.frame(t(X_star)),
-        level = 0.95, interval = "prediction")
+predict(simple_model, 
+        new = data.frame(t(X_star)),
+        level = 0.95, 
+        interval = "prediction")
 ```
 
 
