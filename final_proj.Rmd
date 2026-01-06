@@ -69,7 +69,7 @@ Please bear in mind that your report should detail a fully reproducible workflow
 
 Here is the schedule for presentations. Days and times were randomly assigned.
 
-```{r present_order, echo = FALSE}
+```{r present_order, echo = FALSE, eval = FALSE}
 set.seed(514)
 ## get class roster
 roster <- read.csv("QERM_514_2020_students.csv", stringsAsFactors = FALSE)
