@@ -2,9 +2,10 @@
 title: "Ecological data & distributions"
 subtitle: "Analysis of Ecological and Environmental Data<br>QERM 514"
 author: "Mark Scheuerell"
-date: "3 April 2020"
+date: "3 April 2026"
 output:
   ioslides_presentation:
+    widescreen: true
     css: lecture_slides.css
 ---
 
@@ -193,7 +194,7 @@ Distributions of data
 
 <br>
 
-### Count $\left(\mathbb{Z}^{\geq}\right)$ $\rightarrow$ [Poisson](https://en.wikipedia.org/wiki/Poisson_distribution) or [Negative-Binomial](https://en.wikipedia.org/wiki/Negative_binomial_distribution)
+### Count (non-negative integers) $\rightarrow$ [Poisson](https://en.wikipedia.org/wiki/Poisson_distribution) or [Negative-Binomial](https://en.wikipedia.org/wiki/Negative_binomial_distribution)
 
 
 ## Discrete distributions
@@ -202,37 +203,37 @@ Distributions of data
 
 <br>
 
-### Count $\left(\mathbb{Z}^{\geq}\right)$ $\rightarrow$ [Poisson](https://en.wikipedia.org/wiki/Poisson_distribution) or [Negative-Binomial](https://en.wikipedia.org/wiki/Negative_binomial_distribution)
+### Count (non-negative integers) $\rightarrow$ [Poisson](https://en.wikipedia.org/wiki/Poisson_distribution) or [Negative-Binomial](https://en.wikipedia.org/wiki/Negative_binomial_distribution)
 
 <br>
 
-Composition $\left(\mathcal{S}^D\right)$ $\rightarrow$ [Binomial](https://en.wikipedia.org/wiki/Binomial_distribution) (*D* = 2) or [Multinomial](https://en.wikipedia.org/wiki/Multinomial_distribution) (*D* > 2)
+### Composition (length-D counts) $\rightarrow$ [Binomial](https://en.wikipedia.org/wiki/Binomial_distribution) (*D* = 2) or [Multinomial](https://en.wikipedia.org/wiki/Multinomial_distribution) (*D* > 2)
+
+
+## Continuous distributions
+
+### Density (non-negative real values) $\rightarrow$ [log-Normal](https://en.wikipedia.org/wiki/Log-normal_distribution) or [Gamma](https://en.wikipedia.org/wiki/Gamma_distribution)
+
+
+## Continuous distributions
+
+### Density (non-negative real values) $\rightarrow$ [log-Normal](https://en.wikipedia.org/wiki/Log-normal_distribution) or [Gamma](https://en.wikipedia.org/wiki/Gamma_distribution)
+
+<br>
+
+### Proportion (length-D simplex) $\rightarrow$ [Beta](https://en.wikipedia.org/wiki/Beta_distribution) (*D* = 2) or [Dirichlet](https://en.wikipedia.org/wiki/Dirichlet_distribution) (*D* > 2)
 
 
 ## Continuous distributions
 
 ### Density $\left(\mathbb{R}^{\geq}\right)$ $\rightarrow$ [log-Normal](https://en.wikipedia.org/wiki/Log-normal_distribution) or [Gamma](https://en.wikipedia.org/wiki/Gamma_distribution)
 
+<br>
 
-## Continuous distributions
-
-### Density $\left(\mathbb{R}^{\geq}\right)$ $\rightarrow$ [log-Normal](https://en.wikipedia.org/wiki/Log-normal_distribution) or [Gamma](https://en.wikipedia.org/wiki/Gamma_distribution)
+### Proportion (simplex$^D$) $\rightarrow$ [Beta](https://en.wikipedia.org/wiki/Beta_distribution) (*D* = 2) or [Dirichlet](https://en.wikipedia.org/wiki/Dirichlet_distribution) (*D* > 2)
 
 <br>
 
-### Proportion $\left(\mathcal{C}^D\right)$ $\rightarrow$ [Beta](https://en.wikipedia.org/wiki/Beta_distribution) (*D* = 2) or [Dirichlet](https://en.wikipedia.org/wiki/Dirichlet_distribution) (*D* > 2)
-
-
-## Continuous distributions
-
-### Density $\left(\mathbb{R}^{\geq}\right)$ $\rightarrow$ [log-Normal](https://en.wikipedia.org/wiki/Log-normal_distribution) or [Gamma](https://en.wikipedia.org/wiki/Gamma_distribution)
-
-<br>
-
-### Proportion $\left(\mathcal{C}^D\right)$ $\rightarrow$ [Beta](https://en.wikipedia.org/wiki/Beta_distribution) (*D* = 2) or [Dirichlet](https://en.wikipedia.org/wiki/Dirichlet_distribution) (*D* > 2)
-
-<br>
-
-### Transformations $\left(\mathbb{R}\right)$ $\rightarrow$ [Normal](https://en.wikipedia.org/wiki/Normal_distribution)
+### Transformations (real values) $\rightarrow$ [Normal](https://en.wikipedia.org/wiki/Normal_distribution)
 
 
