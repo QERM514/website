@@ -114,23 +114,24 @@ syl_txt <- data.frame(
   date = sub("0(\\d)", "\\1", format(fri, "%d %B")),
   lab_topics = lab_topics_html,
   lab_links = handout_links_html,
-  source_links = source_links_html,
+  # source_links = source_links_html,
   data_links = data_links_html,
   # zoom_links = zoom_links_html,
   background_links = background_links_html
 )
 colnames(syl_txt) <- c("Date", "Topic(s)",
-                       "Handout", "Source code", "Data",
+                       "Handout", "Data",
                        # "Zoom recording",
                        "Reference(s)")
 rownames(syl_txt) <- NULL
 
 ## generate table
 kable(syl_txt, format = "html", caption = " ",
-      align = "clccccl", escape = FALSE) %>%
+      align = "clccc", escape = FALSE) %>%
   kable_styling(bootstrap_options = "striped",
                 full_width = FALSE,
                 position = "left") %>%
-  column_spec(c(1,3,4,5), width = "6em") 
+  column_spec(c(1,3,4), width = "6em") %>%
+  column_spec(5, width = "15em")
 ```
 
