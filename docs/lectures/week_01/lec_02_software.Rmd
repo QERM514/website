@@ -2,9 +2,10 @@
 title: "Overview of software requirements"
 subtitle: "Analysis of Ecological and Environmental Data<br>QERM 514"
 author: "Mark Scheuerell"
-date: "1 April 2020"
+date: "1 April 2026"
 output:
   ioslides_presentation:
+    widescreen: true
     css: lecture_slides.css
 ---
 

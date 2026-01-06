@@ -2,14 +2,15 @@
 title: "Course overview"
 subtitle: "Analysis of Ecological and Environmental Data<br>QERM 514"
 author: "Mark Scheuerell"
-date: "30 March 2020"
+date: "30 March 2026"
 output:
   ioslides_presentation:
-    css: lecture_slides.css
+    widescreen: true
+    css: ../lecture_slides.css
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(echo = FALSE, fig.align = 'center')
 ```
 
 ## {.flexbox .vcenter .bigger}
@@ -35,7 +36,7 @@ Who are you?
 </font>
 
 
-## Introduce yourself | Tell us via Zoom chat:
+## Introduce yourself
 
 1. Your degree program (MS, PhD)
 
@@ -88,7 +89,7 @@ Data = Process + Noise
 
 ## Ecological data often have lots of noise
 
-```{r info_noise_barchart}
+```{r info_noise_barchart, fig.alt = "Barplot comparing the proportions of signal and noise in contrasting datasets between ecology and finance."}
 dat <- matrix(c(20, 80, 90, 10), 2, 2)
 par(mai = c(0.5, 1, 0.5, 0.5))
 bp <- barplot(dat, las = 1, col = c("blue", "gray"), border = NA, axes = FALSE,
@@ -99,7 +100,7 @@ text(1.9, 45, adj = c(0.5, 0.5), "Process", col = "white", cex = 1.5)
 text(1.9, 95, adj = c(0.5, 0.5), "Noise", col = "black", cex = 1.5)
 ```
 
-## {.flexbox .vcenter}
+## {.flexbox .vcenter .hcenter}
 
 <font size="10">
 Our challenge is to separate<br>the signal from the noise
@@ -120,7 +121,7 @@ Our challenge is to separate<br>the signal from the noise
 ## Ecological forecasting
 
 <font size="6">
-How will [some future scenario] affect<br>[some ecosystem service]?
+How will [some future scenario] affect [some ecosystem service]?
 </font>
 
 
@@ -132,14 +133,14 @@ How will [some future scenario] affect<br>[some ecosystem service]?
 ## Forms of linear models
 
 | Errors | Single random process | Multiple random processes |
-|:-------|:--------------:|:------------------:|
-| Normal | Linear Model (LM) | Linear Mixed Model (LMM) |
+|:-------|:---------------------:|:-------------------------:|
+| Normal | Linear Model (LM)     | Linear Mixed Model (LMM)  |
 | Non-normal | Generalized Linear Model (GLM) | Generalized Linear Mixed Model (GLMM) |
 
 
 ## Forms of linear models
  
-```{r model_diagram, fig.height = 5, fig.width = 7, fig.align = 'center'}
+```{r model_diagram, fig.height = 5, fig.width = 7, fig.alt = "Circle and arrow diagram showing the relationtships between general and generalized linear models with and without random effects."}
 par(mai = rep(0, 4), omi = rep(0, 4), bg = NA)
 
 ## order: GLM, LM, GLMM, LMM

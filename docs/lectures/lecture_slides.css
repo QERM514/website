@@ -59,3 +59,7 @@
 .bigger {
   font-size: 2em;
 }
+
+.hcenter {
+  text-align: center;
+}
