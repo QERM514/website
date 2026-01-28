@@ -5,9 +5,7 @@ output: html_document
 
 <br>
 
-#### Navigating through a slide deck
-
-Here are some navigation tricks for slide decks in `.html` format.
+**Navigating slide decks in `.html` format:**
 
 * Use the arrow keys (&#8592;/&#8594;) on your keyboard to go forward or backward
 
@@ -102,6 +100,9 @@ slide_links_html <- sapply(lapply(slide_links, function(x) {
   tmp <- paste(tmp, collapse = "<br>")
   tmp}), c)
 
+slide_links_html <- sapply(slide_links_html, sub, 
+                           pattern = 'role', replacement = 'aria-labelledby=\"link\" role')               
+               
 ## Rmd
 source_links <- lapply(week_lecs, function(x) { if(is.list(x)) {c(x$rmd)} else {""} })
 source_links_html <- sapply(lapply(source_links, function(x) {
@@ -120,16 +121,19 @@ source_links_html <- sapply(lapply(source_links, function(x) {
   tmp <- paste(tmp, collapse = "<br>")
   tmp}), c)
 
+source_links_html <- sapply(source_links_html, sub, 
+                            pattern = 'role', replacement = 'aria-labelledby=\"link\" role')               
+
 ## PDF
 pdf_links <- lapply(week_lecs, function(x) { if(is.list(x)) {c(x$pdf)} else {""} })
 pdf_links_html <- sapply(lapply(pdf_links, function(x) {
   if(length(x)>1) {
     tmp1 <- paste0("[",
-                   as.character(fontawesome::fa("file-pdf", height = "2em", fill = "#eb6864")),
+                   as.character(fontawesome::fa("file-pdf", height = "2em", a11y = "deco", fill = "#eb6864")),
                    " (", 1:length(x), ")](")
     } else {
       tmp1 <- paste0("[",
-                     as.character(fontawesome::fa("file-pdf", height = "2em", fill = "#eb6864")),
+                     as.character(fontawesome::fa("file-pdf", height = "2em", a11y = "deco", fill = "#eb6864")),
                      "](")
       }
   tmp2 <- ")"
@@ -137,6 +141,9 @@ pdf_links_html <- sapply(lapply(pdf_links, function(x) {
   tmp[x==""] <- ""
   tmp <- paste(tmp, collapse = "<br>")
   tmp}), c)
+
+pdf_links_html <- sapply(source_links_html, 
+                         sub, pattern = 'role', replacement = 'aria-labelledby=\"link\" role')
 ```
 
 ```{r zoom_links, include = FALSE}
@@ -145,11 +152,11 @@ zoom_links <- lapply(week_lecs, function(x) { if(is.list(x)) {x$zoom} else {""} 
 zoom_links_html <- sapply(lapply(zoom_links, function(x) {
   if(length(x)>1) {
     tmp1 <- paste0("[",
-                   as.character(fontawesome::fa("file-video", height = "2em", fill = "#eb6864")),
+                   as.character(fontawesome::fa("file-video", height = "2em", a11y = "sem", fill = "#eb6864")),
                    " (", 1:length(x), ")](")
     } else {
       tmp1 <- paste0("[",
-                     as.character(fontawesome::fa("file-video", height = "2em", fill = "#eb6864")),
+                     as.character(fontawesome::fa("file-video", height = "2em", a11y = "sem", fill = "#eb6864")),
                      "](")
       }
   tmp2 <- ")"
