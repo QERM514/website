@@ -18,5 +18,5 @@ navbar:
 output_dir: "docs"
 output:
   html_document:
-    theme: yeti
+    theme: journal
     highlight: textmate
