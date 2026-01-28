@@ -22,7 +22,7 @@ h3 {
 
 
 <p align="center">
-    <img width="1080" height="240" src="qerm514_logo_plots.png" alt="Three plots showing stylized relationships between some predictor variable X and a response variable Y, where Y takes on values over the entire real line (left), values in the interval from 0 to 1, and values on the positive real line (right)." >
+    <img width="1080" height="240" src="qerm514_logo_plots.png" alt="Three plots showing stylized relationships between some predictor variable X and a response variable Y." >
 </p>
 
 <br><br>
