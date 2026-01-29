@@ -1,4 +1,5 @@
 name: "docs"
+lang: en-US
 navbar:
   title: "QERM 514"
   right:
@@ -12,11 +13,11 @@ navbar:
       href: homework.html
     - text: "Final Project"
       href: final_proj.html
-    - text: ""
-      icon: fa-github
-      href: https://github.com/QERM514
+    # - text: ""
+    #   icon: fa-github
+    #   href: https://github.com/QERM514
 output_dir: "docs"
 output:
   html_document:
-    theme: journal
+    theme: united
     highlight: textmate
