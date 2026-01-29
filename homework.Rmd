@@ -53,13 +53,9 @@ names(topics_html) <- NULL
 assignment_links <- lapply(week_hw, function(x) { if(is.list(x)) {c(x$pdf)} else {""} })
 assignment_links_html <- sapply(lapply(assignment_links, function(x) {
   if(length(x)>1) {
-    tmp1 <- paste0("[",
-                   as.character(fontawesome::fa("file-pdf", height = "2em", fill = "#eb6864")),
-                   " (", 1:length(x), ")](")
+    tmp1 <- paste0("[pdf (", 1:length(x), ")](")
     } else {
-      tmp1 <- paste0("[",
-                     as.character(fontawesome::fa("file-pdf", height = "2em", fill = "#eb6864")),
-                     "](")
+      tmp1 <- paste0("[pdf](")
       }
   tmp2 <- ")"
   tmp <- paste0(tmp1, x, tmp2)
@@ -71,13 +67,9 @@ assignment_links_html <- sapply(lapply(assignment_links, function(x) {
 template_links <- lapply(week_hw, function(x) { if(is.list(x)) {c(x$rmd)} else {""} })
 template_links_html <- sapply(lapply(template_links, function(x) {
   if(length(x)>1) {
-    tmp1 <- paste0("[",
-                   as.character(fontawesome::fa("file-code", height = "2em", fill = "#eb6864")),
-                   " (", 1:length(x), ")](")
+    tmp1 <- paste0("[Rmd (", 1:length(x), ")](")
     } else {
-      tmp1 <- paste0("[",
-                     as.character(fontawesome::fa("file-code", height = "2em", fill = "#eb6864")),
-                     "](")
+      tmp1 <- paste0("[Rmd](")
       }
   tmp2 <- ")"
   tmp <- paste0(tmp1, x, tmp2)
@@ -89,13 +81,9 @@ template_links_html <- sapply(lapply(template_links, function(x) {
 data_links <- lapply(week_hw, function(x) { if(is.list(x)) {x$data} else {""} })
 data_links_html <- sapply(lapply(data_links, function(x) {
   if(length(x)>1) {
-    tmp1 <- paste0("[",
-                   as.character(fontawesome::fa("table", height = "2em", fill = "#eb6864")),
-                   " (", 1:length(x), ")](")
+    tmp1 <- paste0("[csv (", 1:length(x), ")](")
     } else {
-      tmp1 <- paste0("[",
-                     as.character(fontawesome::fa("table", height = "2em", fill = "#eb6864")),
-                     "](")
+      tmp1 <- paste0("[csv](")
       }
   tmp2 <- ")"
   tmp <- paste0(tmp1, x, tmp2)
@@ -107,13 +95,9 @@ data_links_html <- sapply(lapply(data_links, function(x) {
 key_links <- lapply(week_hw, function(x) { if(is.list(x)) {c(x$key)} else {""} })
 key_links_html <- sapply(lapply(key_links, function(x) {
   if(length(x)>1) {
-    tmp1 <- paste0("[",
-                   as.character(fontawesome::fa("key", height = "2em", fill = "#eb6864")),
-                   " (", 1:length(x), ")](")
+    tmp1 <- paste0("[key (", 1:length(x), ")](")
     } else {
-      tmp1 <- paste0("[",
-                     as.character(fontawesome::fa("key", height = "2em", fill = "#eb6864")),
-                     "](")
+      tmp1 <- paste0("[key](")
       }
   tmp2 <- ")"
   tmp <- paste(tmp1, x, tmp2)
