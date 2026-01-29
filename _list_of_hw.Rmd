@@ -27,7 +27,7 @@ markdown <- list(
   rmd = "homework/week_01/hw_01_intro_to_markdown.Rmd",
   html = "",
   data = "",
-  key = "homework/week_01/hw_01_intro_to_markdown_key.pdf"
+  key = "" # "homework/week_01/hw_01_intro_to_markdown_key.pdf"
 )
 
 ## 2 fitting linear models
@@ -38,7 +38,7 @@ linear_models <- list(
   rmd = "homework/week_02/hw_02_fitting_lm.Rmd",
   html = "",
   data = "homework/week_02/L_Washington_plankton.csv",
-  key = "homework/week_02/hw_02_fitting_lm_key.pdf"
+  key = "" # "homework/week_02/hw_02_fitting_lm_key.pdf"
 )
 
 ## 3 diagnostics
@@ -49,7 +49,7 @@ diagnostics <- list(
   rmd = "homework/week_03/hw_03_diagnostics.Rmd",
   html = "",
   data = "homework/week_03/usfws_bull_trout.csv",
-  key = "homework/week_03/hw_03_diagnostics_key.pdf"
+  key = "" # "homework/week_03/hw_03_diagnostics_key.pdf"
 )
 
 ## 4 pvalues
@@ -60,7 +60,7 @@ pvalues <- list(
   rmd = "homework/week_04/hw_04_pvalues_revisited.Rmd",
   html = "",
   data = "references/Wasserstein_2019_world_beyond_p05.pdf",
-  key = "homework/week_04/hw_04_pvalues_revisited_key.pdf"
+  key = "" # "homework/week_04/hw_04_pvalues_revisited_key.pdf"
 )
 
 ## 5 model selection
@@ -71,7 +71,7 @@ model_selection <- list(
   rmd = "homework/week_05/hw_05_model_selection.Rmd",
   html = "",
   data = "homework/week_05/soil_nitrogen.csv",
-  key = "homework/week_05/hw_05_model_selection_key.pdf"
+  key = "" # "homework/week_05/hw_05_model_selection_key.pdf"
 )
 
 ## 6 mixed models
@@ -82,7 +82,7 @@ mixed_models <- list(
   rmd = "homework/week_06/hw_06_mixed_models.Rmd",
   html = "",
   data = "homework/week_06/ps_chinook.csv",
-  key = "homework/week_06/hw_06_mixed_models_key.pdf"
+  key = "" # "homework/week_06/hw_06_mixed_models_key.pdf"
 )
 
 ## 7 logistic regr
@@ -93,7 +93,7 @@ logistic_regr <- list(
   rmd = "homework/week_07/hw_07_logistic_regr.Rmd",
   html = "",
   data = "homework/week_07/srss_chin_sar.csv",
-  key = "homework/week_07/hw_07_logistic_regr_key.pdf"
+  key = "" # "homework/week_07/hw_07_logistic_regr_key.pdf"
 )
 
 ## 8 count models
@@ -104,7 +104,7 @@ count_models <- list(
   rmd = "homework/week_08/hw_08_count_models.Rmd",
   html = "",
   data = "homework/week_08/plant_richness.csv",
-  key = "homework/week_08/hw_08_count_models_key.pdf"
+  key = "" # "homework/week_08/hw_08_count_models_key.pdf"
 )
 
 ```
