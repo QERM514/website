@@ -81,18 +81,18 @@ lec_topics_html <- sapply(lapply(lec_topics, paste, "<br>", collapse = ""), c)
 names(lec_topics_html) <- NULL
 ```
 
-```{r lec_links, include = FALSE}
+```{r lec_links_orig, include = FALSE, eval = FALSE}
 ## HTML
 slide_links <- lapply(week_lecs, function(x) { if(is.list(x)) {c(x$html)} else {""} })
 slide_links_html <- sapply(lapply(slide_links, function(x) {
   if(length(x)>1) {
     tmp1 <- paste0("[",
                    as.character(fontawesome::fa("file-alt", height = "2em", fill = "#eb6864")),
-                   " (", 1:length(x), ")](")
+                   " (", 1:length(x), ") notes](")
     } else {
       tmp1 <- paste0("[",
                      as.character(fontawesome::fa("file-alt", height = "2em", fill = "#eb6864")),
-                     "](")
+                     " notes](")
       }
   tmp2 <- ")"
   tmp <- paste0(tmp1, x, tmp2)
@@ -100,8 +100,8 @@ slide_links_html <- sapply(lapply(slide_links, function(x) {
   tmp <- paste(tmp, collapse = "<br>")
   tmp}), c)
 
-slide_links_html <- sapply(slide_links_html, sub, 
-                           pattern = 'role', replacement = 'aria-labelledby=\"link\" role')               
+# slide_links_html <- sapply(slide_links_html, sub, 
+#                            pattern = 'role', replacement = 'aria-labelledby=\"link\" role')               
                
 ## Rmd
 source_links <- lapply(week_lecs, function(x) { if(is.list(x)) {c(x$rmd)} else {""} })
@@ -129,11 +129,11 @@ pdf_links <- lapply(week_lecs, function(x) { if(is.list(x)) {c(x$pdf)} else {""}
 pdf_links_html <- sapply(lapply(pdf_links, function(x) {
   if(length(x)>1) {
     tmp1 <- paste0("[",
-                   as.character(fontawesome::fa("file-pdf", height = "2em", a11y = "deco", fill = "#eb6864")),
+                   as.character(fontawesome::fa("file-pdf", height = "2em", fill = "#eb6864")),
                    " (", 1:length(x), ")](")
     } else {
       tmp1 <- paste0("[",
-                     as.character(fontawesome::fa("file-pdf", height = "2em", a11y = "deco", fill = "#eb6864")),
+                     as.character(fontawesome::fa("file-pdf", height = "2em", fill = "#eb6864")),
                      "](")
       }
   tmp2 <- ")"
@@ -146,7 +146,60 @@ pdf_links_html <- sapply(source_links_html,
                          sub, pattern = 'role', replacement = 'aria-labelledby=\"link\" role')
 ```
 
-```{r zoom_links, include = FALSE}
+```{r lec_links, include = FALSE}
+## HTML
+slide_links <- lapply(week_lecs, function(x) { if(is.list(x)) {c(x$html)} else {""} })
+slide_links_html <- sapply(lapply(slide_links, function(x) {
+  if(length(x)>1) {
+    tmp1 <- paste0("[html (", 1:length(x), ")](")
+    } else {
+      tmp1 <- paste0("[html](")
+      }
+  tmp2 <- ")"
+  tmp <- paste0(tmp1, x, tmp2)
+  tmp[x==""] <- ""
+  tmp <- paste(tmp, collapse = "<br>")
+  tmp}), c)
+
+# slide_links_html <- sapply(slide_links_html, sub, 
+#                            pattern = 'role', replacement = 'aria-labelledby=\"link\" role')               
+               
+## Rmd
+source_links <- lapply(week_lecs, function(x) { if(is.list(x)) {c(x$rmd)} else {""} })
+source_links_html <- sapply(lapply(source_links, function(x) {
+  if(length(x)>1) {
+    tmp1 <- paste0("[Rmd (", 1:length(x), ")](")
+    } else {
+      tmp1 <- paste0("[Rmd](")
+      }
+  tmp2 <- ")"
+  tmp <- paste0(tmp1,x,tmp2)
+  tmp[x==""] <- ""
+  tmp <- paste(tmp, collapse = "<br>")
+  tmp}), c)
+
+# source_links_html <- sapply(source_links_html, sub, 
+#                             pattern = 'role', replacement = 'aria-labelledby=\"link\" role')               
+
+## PDF
+pdf_links <- lapply(week_lecs, function(x) { if(is.list(x)) {c(x$pdf)} else {""} })
+pdf_links_html <- sapply(lapply(pdf_links, function(x) {
+  if(length(x)>1) {
+    tmp1 <- paste0("[pdf (", 1:length(x), ")](")
+    } else {
+      tmp1 <- paste0("[pdf](")
+      }
+  tmp2 <- ")"
+  tmp <- paste0(tmp1, x, tmp2)
+  tmp[x==""] <- ""
+  tmp <- paste(tmp, collapse = "<br>")
+  tmp}), c)
+
+# pdf_links_html <- sapply(source_links_html, 
+#                          sub, pattern = 'role', replacement = 'aria-labelledby=\"link\" role')
+```
+
+```{r zoom_links, include = FALSE, eval = FALSE}
 zoom_links <- lapply(week_lecs, function(x) { if(is.list(x)) {x$zoom} else {""} })
 ## topics formatted for html
 zoom_links_html <- sapply(lapply(zoom_links, function(x) {
@@ -193,25 +246,25 @@ syl_txt <- data.frame(
   lec_topics = lec_topics_html,
   lec_links = slide_links_html,
   rmd_links = source_links_html,
-  pdf_links = pdf_links_html,
+  # pdf_links = pdf_links_html,
   # zoom_links = zoom_links_html,
   # youtube_links = youtube_links_html,
   background_links = background_links_html
 )
 colnames(syl_txt) <- c("Date", "Topic(s)",
-                       "Slides (html)", "Source (Rmd)", "Slides (pdf)",
+                       "Slides", "Source", # "Slides (pdf)",
                        # "Zoom recording",
-                       "Background")
+                       "Background info")
 rownames(syl_txt) <- NULL
 
 ## generate table
 kableExtra::kable(syl_txt, format = "html", caption = " ",
-                  align = "clcccl", escape = FALSE) %>%
+                  align = "clccc", escape = FALSE) %>%
   kable_styling(bootstrap_options = "striped",
                 full_width = FALSE,
                 position = "left") %>%
-  column_spec(c(1,3,4,5), width = "6em") %>%
-  column_spec(6, width = "15em") %>%
+  column_spec(c(1,3,4), width = "6em") %>%
+  column_spec(5, width = "17em") %>%
   scroll_box(height = "700px", extra_css = "border-style: none;")
 ```
 
