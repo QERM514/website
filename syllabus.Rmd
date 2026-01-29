@@ -34,8 +34,7 @@ By the end of the quarter, students should be able to:
 
 # Instructor
 
-[**Mark Scheuerell**](https://fish.uw.edu/faculty/mark-scheuerell/)  
-Associate Professor, School of Aquatic & Fishery Sciences
+[**Mark Scheuerell**](https://fish.uw.edu/faculty/mark-scheuerell/), Associate Professor, School of Aquatic & Fishery Sciences
 
 Office: Rm 220A Fishery Sciences
 
@@ -45,13 +44,16 @@ Email: [qerm514@uw.edu](mailto:qerm514@uw.edu)
 
 # Meeting times & locations
 
-#### Lectures 
-M/W/F from 10:30-11:20 ~~in FSH 213~~ via [Zoom](https://washington.zoom.us/j/831083365)
+**Lectures**
 
-#### Computer Lab
-Friday from 11:30-1:20 ~~in FSH 136~~ via [Zoom](https://washington.zoom.us/j/946943308)
+M/W/F from 10:30-11:20 in FSH 213
 
-#### Office hours
+**Computer Lab**
+
+Friday from 11:30-1:20 in FSH 136
+
+**Office hours**
+
 By appointment
 
 <br>
@@ -82,11 +84,11 @@ I am dedicated to providing a welcoming and supportive environment for all peopl
 
 All students deserve access to the full range of learning experiences, and the University of Washington is committed to creating inclusive and accessible learning environments consistent with federal and state laws. 
 
-### Disabilities
+## Disabilities
 
 If you have already established accommodations with Disability Resources for Students (DRS), please communicate your approved accommodations to me at your earliest convenience so we can discuss your needs in this course. If you have not yet established services through DRS, but have a temporary health condition or permanent disability that requires accommodations (*e.g.*, mental health, learning, vision, hearing, physical impacts), you are welcome to contact DRS at 206-543-8924 or via [email](mailto:uwdrs@uw.edu) or their [website](https://depts.washington.edu/uwdrs/). DRS offers resources and coordinates reasonable accommodations for students with disabilities and/or temporary health conditions.  Reasonable accommodations are established through an interactive process between you, your instructor(s) and DRS.
 
-### Religious observances
+## Religious observances
 
 Students who expect to miss class or assignments as a consequence of their religious observance will be provided with a reasonable accommodation to fulfill their academic responsibilities. Absence from class for religious reasons does not relieve students from responsibility for the course work required during the period of absence. It is the responsibility of the student to provide the instructor with advance notice of the dates of religious holidays on which they will be absent. Students who are absent will be offered an opportunity to make up the work, without penalty, within a reasonable time, as long as the student has made prior arrangements.
 
@@ -99,17 +101,6 @@ This course will revolve around hands-on computing exercises that demonstrate th
 All of the software we will be using is free and platform independent, meaning students may use macOS, Linux, or Windows operating systems. In addition to a web browser, we will be using the free [**R**](https://www.r-project.org/) software and the desktop version of the [**R Studio**](https://www.rstudio.com/products/rstudio-desktop/) integrated development environment (IDE). We will also be using various packages not contained in the base installation of **R**, but we will wait and install them at the necessary time. The instructor will be available during the first week of class to help students troubleshoot any software installation problems.
 
 Students will also be required to have a user account on [**GitHub**](https://github.com/), which we will be using for file hosting and communications via "issues". If you do not already have an account, you can sign up for a free one [here](https://github.com/join?source=header-home). The instructor will provide training on how to use the intended features in **GitHub**.
-
-### Zoom recordings
-
-This course is scheduled to run synchronously at our scheduled class time via [Zoom](https://itconnect.uw.edu/connect/phones/conferencing/zoom-video-conferencing/). These Zoom class sessions will be recorded. The recording will capture the presenter’s audio, video and computer screen. Student audio and video will be recorded if they share their computer audio and video during the recorded session. The recordings will only be accessible to students enrolled in the course to review materials. These recordings will not be shared with the public, and will be deleted after 90 days.
-
-UW-IT and Zoom have a Business Associates Agreement (BAA) to protect the security and privacy of UW Zoom accounts and is [FERPA](https://registrar.washington.edu/students/ferpa/) compliant. Students who **do not** wish to give consent to being recorded should:
-
-* Choose a Zoom username that does not include any personal identifying information like their name or UW NetID  
-* Never share their computer audio or video during their Zoom sessions  
-
-**By enrolling in this class, all students agree to never upload course recordings to other platforms**. 
 
 <br>
 
@@ -131,11 +122,11 @@ In addition to email and Zoom, we will use the "Isuues" feature in **GitHub** to
 
 Students will be evaluated on their knowledge of course content and their ability to communicate their understanding of the material via individual homework assignments (70%) and a final project (30%). There will be 8 homework assignments, but the lowest score will be dropped for the purposes of grading; each of the 7 highest scoring assignments will count toward 10% of the final grade. Please note, **all assignments must be turned in to achieve a passing grade**.
 
-### Homework
+## Homework
 
 Homework will be assigned each Friday of weeks 1-8 and will be due by 11:59 PM one week later on the following Friday (weeks 2-9). The instructor will evaluate and return student homework assignments within one week of their due date. **If for some reason you cannot meet the homework deadline, contact the instructor as soon as possible to discuss other options**. Please see the [Homework](homework.html) page for more details.
 
-### Final Project
+## Final Project
 
 Each student will complete a final project consisting of three elements: 1) a project plan, 2) a project presentation, and 3) a project report. The project plan will be due by 11:59 PM on Monday, May 11. Presentations of student projects will occur during the last week of class; specific days/times will be assigned randomly. The final project will be due by 11:59 PM on Tues, June 9. Please see the [Final Project](final_proj.html) page for more details.
 
