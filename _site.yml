@@ -18,7 +18,19 @@ navbar:
 output_dir: "docs"
 output:
   html_document:
-    theme: united
+    theme: 
+      bootswatch: journal
+      # bg: "#FFF"
+      # fg: "#000000"
+      primary: "#32006e"
+      # secondary: "#ffc700"
+      # success: "#85754d"
+      # base_font:
+      #   google: "Georgia"
+      # heading_font:
+      #   google: "Trebuchet MS"
+      # # code_font:
+      # #   google: "JetBrains Mono"
     highlight: textmate
     pandoc_args: ["--variable", "lang=en-US"]
     
