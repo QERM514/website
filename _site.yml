@@ -1,5 +1,4 @@
 name: "docs"
-lang: en-US
 navbar:
   title: "QERM 514"
   right:
@@ -21,3 +20,5 @@ output:
   html_document:
     theme: united
     highlight: textmate
+    pandoc_args: ["--variable", "lang=en-US"]
+    
