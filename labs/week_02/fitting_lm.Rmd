@@ -10,6 +10,7 @@ output:
     highlight: textmate
     css: ../lecture_inst.css
     code_download: true
+    code_folding: show
     toc: true
     toc_float: true
     toc_depth: 4
