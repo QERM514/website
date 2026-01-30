@@ -15,6 +15,7 @@ This course will introduce students to a large class of statistical models commo
 
 This course is also one of the core requirements for graduate students in the Quantitative Ecology & Resource Management (QERM) program at the University of Washington. For more information, [click here](https://quantitative.uw.edu/graduate/).
 
+<br>
 
 # Learning objectives
 
@@ -54,7 +55,7 @@ Friday from 11:30-1:20 in FSH 136
 
 **Office hours**
 
-By appointment
+M from 11:30-12:30 in FSH 220A
 
 <br>
 
@@ -106,15 +107,15 @@ Students will also be required to have a user account on [**GitHub**](https://gi
 
 # Teaching methodology
 
-This course will introduce new material primarily through prepared slides and hands-on demonstrations. Students will be expected to work both individually and collaboratively (to the extent possible given the current conditions); course content and evaluation will emphasize the communication of ideas and the ability to think critically more so than a specific pathway or method. Other areas of this website provide an overview of the topics to be covered, including links to weekly reading assignments, lecture materials, computer labs, and homework assignments.
+This course will introduce new material primarily through prepared slides and hands-on demonstrations. Students will be expected to work both individually and collaboratively (to the extent possible given the current conditions); course content and evaluation will emphasize the communication of ideas and the ability to think critically more than a specific pathway or method. Other areas of this website provide an overview of the topics to be covered, including links to weekly reading assignments, lecture materials, computer labs, homework assignments, and the final project.
 
 <br>
 
 # Communication
 
-This course will involve a *lot* of communication between and among students and the instructor. Short questions should be addressed to me via email; I will try my best to respond to your message within 24 hours. Under more normal circumstances, detailed questions would be addressed to me in person--either after class or during a scheduled meeting. In this case, however, we will schedule one-on-one or group Zoom calls as needed.
+This course will involve a *lot* of communication between and among students and the instructor. Short questions should be addressed to me via email; I will try my best to respond to your message within 24 hours. More detailed questions should be addressed to me in person--either during office hours or a scheduled meeting.
 
-In addition to email and Zoom, we will use the "Isuues" feature in **GitHub** to ask questions and assist others. Specifically, questions and answers can be posted to the issues in the course's "assistance" repository [here](https://github.com/QERM514/assistance/issues).
+We will also use the "Isuues" feature in **GitHub** to ask questions and assist others. Specifically, questions and answers can be posted to the issues in the course's "assistance" repository [here](https://github.com/QERM514/assistance/issues).
 
 <br>
 
