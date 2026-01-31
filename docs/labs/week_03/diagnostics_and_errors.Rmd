@@ -1,5 +1,5 @@
 ---
-title: "Model diagnostics and problems with errors"
+title: "Model diagnostics and<br>problems with errors"
 author: "Mark Scheuerell"
 date: "17 April 2026"
 output:
@@ -10,6 +10,7 @@ output:
     highlight: textmate
     css: ../lecture_inst.css
     code_download: true
+    code_folding: show
     toc: true
     toc_float: true
     toc_depth: 4
@@ -61,13 +62,17 @@ m3 <- lm(y3 ~ xx)
 e3 <- resid(m3)
 ```
 
-Now we can plot the residuals against the fitted value and check for problems.
+::: tip
 
-```{r plot_nonconstant_variance, echo = TRUE, fig.width = 8, fig.height = 4.5, fig.align="center"}
+We can plot the residuals against the fitted value and check for problems.
+
+:::
+
+```{r plot_nonconstant_variance, echo = TRUE, fig.width = 8.5, fig.height = 4, fig.align="center"}
 ## set plot area
 par(mfrow = c(1,3),
     mai = c(0.9,0.5,0.5,0.2),
-    omi = c(0.5, 0.4, 0.5, 0),
+    omi = c(0, 0, 0, 0),
     cex = 0.9)
 ## plot errors
 ## well behaved errors (left)
@@ -109,7 +114,13 @@ where
 * $\bar{Z_{i}}$ is the mean of the $Z_{ij}$ in group $j$
 * $\bar{Z}$ is the overall mean of all the $Z_{ij}$
 
-The test statistic $W$ is approximately $F$-distributed with $k-1$ and $N-k$ degrees of freedom. Levene's test is easy to compute in **R**. Here is the test for the "well behaved" residuals from model `m1` above.
+The test statistic $W$ is approximately $F$-distributed with $k-1$ and $N-k$ degrees of freedom. 
+
+::: tip
+
+Levene's test is easy to compute in **R**. Here is the test for the "well behaved" residuals from model `m1` above.
+
+:::
 
 ```{r levene_good, echo = TRUE}
 ## split residuals (e1) into 2 groups
@@ -122,7 +133,11 @@ var.test(g1, g2)
 
 You can see there is no justification to reject $H_0: \text{Var}(group_1) = \text{Var}(group_2)$ based on the residuals from the well behaved model.
 
-Now let's repeat the test for a set of residuals with clear heteroscedasticity as in the `e2` set above.
+::: task
+
+Repeat the test for a set of residuals with clear heteroscedasticity as in the `e2` set above.
+
+:::
 
 ```{r levene_bad, echo = TRUE}
 ## split residuals (e2) into 2 groups
@@ -132,16 +147,24 @@ g2 <- e2[yh > median(yh)]
 var.test(g1, g2)
 ```
 
+::: note
+
 Here we would reject $H_0$ and conclude that the variances in the two groups are not equal.
+
+:::
 
 ## Normality of errors
 
-We seek a method for assessing whether our residuals are indeed normally distributed. The easiest way is via a so-called $Q$-$Q$ plot (for quantile-quantile). As we saw in lecture, here are some quantiles for a "standard" normal distribution (ie., the mean is 0 and the variance is 1).
+We seek a method for assessing whether our residuals are indeed normally distributed. The easiest way is via a so-called $Q$-$Q$ plot (for quantile-quantile). 
 
-```{r QQ_theory, echo = TRUE, fig.width = 4.5, fig.height = 4.5, fig.align="center"}
+### Normally distributed errors
+
+As we saw in lecture, here are some quantiles for a "standard" normal distribution (ie., the mean is 0 and the variance is 1).
+
+```{r QQ_theory, echo = TRUE, fig.width = 6, fig.height = 5, fig.align="center"}
 ## set plot area
 par(mai = c(1,1,0.1,0.1),
-    omi = c(0.5, 0, 0.5, 0),
+    omi = c(0, 0, 0, 0),
     cex = 1.2)
 
 ## plot Gaussian pdf
@@ -153,12 +176,14 @@ abline(v = qnorm(c(0.1, 0.9)), lty = "dashed", col = "blue")
 abline(v = qnorm(c(0.025, 0.975)), lty = "dashed", col = "red")
 ```
 
+### Heavy-tailed distribution
+
 In contrast, here are the quantiles for a heavy-tailed (leptokurtic) distribution.
 
-```{r QQ_theory_lepto, echo = TRUE, fig.width = 4.5, fig.height = 4.5, fig.align="center"}
+```{r QQ_theory_lepto, echo = TRUE, fig.width = 6, fig.height = 5, fig.align="center"}
 ## set plot area
 par(mai = c(1,1,0.1,0.1),
-    omi = c(0.5, 0, 0.5, 0),
+    omi = c(0, 0, 0, 0),
     cex = 1.2)
 
 ## plot Gaussian pdf
@@ -173,12 +198,14 @@ abline(v = qcauchy(c(0.1, 0.9)), lty = "dashed", col = "blue")
 abline(v = qcauchy(c(0.025, 0.975)), lty = "dashed", col = "red")
 ```
 
-And here they are for a short-tailed (platykurtic) distribution. Notice that I made up a pdf based on a [Butterworth function](https://en.wikipedia.org/wiki/Butterworth_filter).
+### Short-tailed distribution
 
-```{r QQ_theory_platy, echo = TRUE, fig.width = 4.5, fig.height = 4.5, fig.align="center"}
+Here is a short-tailed (platykurtic) distribution. Notice that I made up a pdf based on a [Butterworth function](https://en.wikipedia.org/wiki/Butterworth_filter).
+
+```{r QQ_theory_platy, echo = TRUE, fig.width = 6, fig.height = 5, fig.align="center"}
 ## set plot area
 par(mai = c(1,1,0.1,0.1),
-    omi = c(0.5, 0, 0.5, 0),
+    omi = c(0, 0, 0, 0),
     cex = 1.2)
 
 ## Butterworth fx
@@ -205,14 +232,18 @@ abline(v = qb[c(2,6)], lty = "dashed", col = "blue")
 abline(v = qb[c(1,7)], lty = "dashed", col = "red")
 ```
 
+::: tip
+
 Here is a comparisons of the $Q$-$Q$ plots for these three examples via `qqnorm(x)`.
 
-```{r qq_plots, echo = TRUE, fig.width = 8, fig.height = 3.5, fig.align="center"}
+:::
+
+```{r qq_plots, echo = TRUE, fig.width = 8.5, fig.height = 4, fig.align="center"}
 ## set plot area
 par(mfrow = c(1,3),
     mai = c(0.9,0.5,0.5,0.2),
-    omi = c(0, 0.4, 0, 0),
-    cex = 1)
+    omi = c(0, 0, 0, 0),
+    cex = 0.9)
 ## Q-Q plots
 ## normal
 z1 <- rnorm(nn)
@@ -229,6 +260,7 @@ qqnorm(z3, pch =16, main = "Light-tailed")
 qqline(z3)
 ```
 
+<br>
 
 ## Correlated errors
 
@@ -240,25 +272,37 @@ One component of *IID* errors is "independent", which means we expect no correla
 
 * Blocked data
 
-For example, let's examine the data on tree rings and climate proxies in the `globwarm` dataset from the **faraway** package. Here is a plot of tree growth versus temperature. 
+For example, let's examine the data on tree rings and climate proxies in the `globwarm` dataset from the **faraway** package. 
 
-```{r tree_rings, echo = TRUE, fig.width = 4.5, fig.height = 5, fig.align="center"}
+::: task
+
+Plot tree growth (`wusa`) versus temperature (`nhtemp`). 
+
+:::
+
+```{r tree_rings, echo = TRUE, fig.width = 6, fig.height = 6, fig.align="center"}
 ## get raw data
 data(globwarm, package = "faraway")
 ## trim to recent years
 dat <- globwarm[globwarm$year > 1960,]
 
 ## set plot area
-par(mai = c(0.9,0.9,0.1,0.1),
-    omi = c(0.5, 0.4, 0.5, 0),
-    cex = 1.1)
+par(mai = c(1,1,0.1,0.1),
+    omi = c(0, 0, 0, 0),
+    cex = 1.2)
 
 ## plot regr
 plot(dat$nhtemp, dat$wusa, pch = 16, las = 1, xpd = NA,
      cex.lab = 1.2, xlab = "Temperature", ylab = "Tree growth", main = "")
 ```
 
-Let's fit a simple regression model where tree growth (`wusa`) is a function of temperature (`nhtemp`).
+<br>
+
+::: task
+
+Fit a simple regression model where tree growth (`wusa`) is a function of temperature (`nhtemp`).
+
+:::
 
 ```{r fit_tree_rings}
 ## fit a model
@@ -269,34 +313,48 @@ ff <- fitted(mm)
 ee <- resid(mm)
 ```
 
-Now let's plot the residuals versus the fitted values (left) and the residuals at time $t$ against those at time $t+1$ (right). Notice the strong correlation between the residuals.
+::: tip
 
-```{r tree_rings_ee, echo = TRUE, fig.width = 7.5, fig.height = 5, fig.align="center"}
+Here is a plot of the residuals versus the fitted values (left) and the residuals at time $t$ against those at time $t+1$ (right). Notice the strong correlation between the residuals.
+
+:::
+
+```{r tree_rings_ee, echo = TRUE, fig.width = 7, fig.height = 4, fig.align="center"}
 ## set plot area
 par(mfrow = c(1,2),
-    mai = c(0.9,0.9,0.1,0.1),
-    omi = c(0.5, 0.4, 0.5, 0),
+    mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0.1, 0.1, 0.4, 0.1),
     cex = 1)
 ## plots
 plot(ff, ee, pch = 16, las = 1, xpd = NA,
      cex.lab = 1.2, xlab = "Fitted values", ylab = "Residuals", main = "")
 abline(h = 0, lty ="dashed")
-plot(ee[1:(length(ee)-1)], ee[2:length(ee)], pch = 16, las = 1,
-     cex.lab = 1.2, xlab = expression(italic(e[t])), ylab = expression(italic(e)[italic(t)+1]),
+plot(ee[1:(length(ee)-1)], ee[2:length(ee)], 
+     pch = 16, las = 1, cex.lab = 1.2, 
+     xlab = expression(italic(e[t])), 
+     ylab = expression(italic(e)[italic(t)+1]),
      main = "")
 ```
 
+::: tip
+
 We can estimate the *autocorrelation function* in **R** with the `acf()` function.
 
-```{r tree_rings_acf, echo = TRUE, fig.width = 5, fig.height = 4.5, fig.align="center"}
+:::
+
+```{r tree_rings_acf, echo = TRUE, fig.width = 6, fig.height = 5, fig.align="center"}
 ## set plot area
-par(mai = c(0.9,0.9,0.1,0.1),
-    omi = c(0.5, 0.4, 0.5, 0))
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0.1, 0.1, 0.4, 0))
 ## plot acf
 acf(ee,
     ylab = expression(paste("Correlation of ", italic(e[t]), " & ", italic(e[t + h]))),
     main = "", cex.lab = 1.3)
 ```
+
+<br>
+
+::: tip
 
 This suggests we should instead use a model along the lines of
 
@@ -305,7 +363,15 @@ y_t = \mathbf{X}_t \boldsymbol{\beta} + \epsilon_t  \\
 \epsilon_t \sim \text{N}(\phi \epsilon_{t-1}, \sigma^2).
 $$
 
-We cannot fit this model using the base function `lm()` in **R**, but we can use the `gls()` function in the [**nlme** package](https://cran.r-project.org/web/packages/nlme/index.html). Specifically, we specify the `correlation` argument using the function `corAR1(value, form, ...)`, which fits a first-order autoregressive model, or AR(1). We can ignore the `value` argument because we want to estimate $\phi$ rather than prescribe it. The `form` argument specifies the time covariate (predictor) as a one-sided formula; here we use `year`. We also need to eliminate the `NA`'s from the data set before passing it to `gls()`.
+:::
+
+::: note
+
+We cannot fit this model using the base function `lm()` in **R**, but we can use the `gls()` function in the [**nlme** package](https://cran.r-project.org/web/packages/nlme/index.html).
+
+:::
+
+Specifically, we specify the `correlation` argument using the function `corAR1(value, form, ...)`, which fits a first-order autoregressive model, or AR(1). We can ignore the `value` argument because we want to estimate $\phi$ rather than prescribe it. The `form` argument specifies the time covariate (predictor) as a one-sided formula; here we use `year`. We also need to eliminate the `NA`'s from the data set before passing it to `gls()`.
 
 ```{r fit_gls}
 ## load nlme pkg
@@ -318,7 +384,17 @@ glmod <- gls(nhtemp ~ wusa,
 summary(glmod)
 ```
 
-We can see that the AR(1) coefficient $\phi$ is ~0.75, which is rather high. We can get the 95% confidence intervals around the regression and AR(1) parameters with `intervals()`.
+::: note
+
+We can see that the AR(1) coefficient $\phi$ is ~0.75, which is rather high. 
+
+:::
+
+::: tip
+
+We can get the 95% confidence intervals around the regression and AR(1) parameters with `intervals()`.
+
+:::
 
 ```{r confint_AR1}
 intervals(glmod)
@@ -326,11 +402,11 @@ intervals(glmod)
 
 # Unusual observations
 
-It is often the case that one or more data points do not fit our model well; we refer to these as *outliers*. Some outliers affect the fit of the model and we refer to these as *influential* observations. *Leverage points* are extreme in the predictor $(X)$ space and may or may not affect model fit.
+It is often the case that one or more data points do not fit our model well; we refer to these as *outliers*. Some outliers affect the fit of the model and we refer to these as *influential* observations. *Leverage points*, on the other hand, are extreme in the predictor $(X)$ space and may or may not affect model fit.
 
 Here are some examples of unusual observations.
 
-```{r outliers, echo = TRUE, fig.width = 8, fig.height = 4.5, fig.align="center"}
+```{r outliers, echo = TRUE, fig.width = 8, fig.height = 4, fig.align="center"}
 ## create data
 xr <- round(1:10 + rnorm(10, 0, 0.2), 1)
 simdata <- data.frame(x = xr,
@@ -347,9 +423,9 @@ p3 <- c(17,5.1)
 m3 <- lm(y ~ x, rbind(simdata, p3))
 ## set plot area
 par(mfrow = c(1,3),
-    mai = c(0.9,0.4,0.5,0.1),
-    omi = c(0.5, 0.5, 0.5, 0),
-    cex = 1)
+    mai = c(0.9, 0.9, 0.6, 0.1),
+    omi = c(0, 0, 0, 0),
+    cex = 0.9)
 ## plot examples
 ## no leverage or influence (left)
 plot(y ~ x, rbind(simdata, p1), pch = 16, las = 1, xpd = NA,
@@ -374,10 +450,17 @@ abline(mm)
 abline(m3, lty=2, col ="red")
 ```
 
+<br>
 
 ## Identifying leverage points
 
-Recall that we can use the "hat matrix" $(\mathbf{H})$ to project the $n$-dimensional data $\mathbf{y}$ onto the $k$-dimensional model. As a reminder, for our linear model
+::: tip
+
+Recall that we can use the "hat matrix" $(\mathbf{H})$ to project the $n$-dimensional data $\mathbf{y}$ onto the $k$-dimensional model. 
+
+:::
+
+As a reminder, for our linear model given by
 
 $$
 \mathbf{y} = \mathbf{X} \boldsymbol{\beta} + \boldsymbol{\epsilon}  \\
@@ -388,9 +471,9 @@ we have
 
 $$
 \begin{align}
-\hat{\mathbf{y}} &= \mathbf{X} \hat{\boldsymbol{\beta}} \\
+\mathbf{\hat{y}} &= \mathbf{X} \boldsymbol{\hat{\beta}} \\
   &= \mathbf{X} \left( (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^{\top} \mathbf{y} \right) \\
-  &= \underbrace{\mathbf{X} (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^{\top}}_{\mathbf{H}} \mathbf{y} \\
+  &= \mathbf{X} (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^{\top} \mathbf{y} \\
   &= \mathbf{H} \mathbf{y}
 \end{align}
 $$
@@ -399,8 +482,8 @@ The values along the diagonal of $\mathbf{H}$ are known as the *leverages* (wher
 
 $$
 \begin{aligned}
-\hat{\boldsymbol{\epsilon}} &= \mathbf{e} \\
-  &= \mathbf{y} - \hat{\mathbf{y}} \\
+\boldsymbol{\hat{\epsilon}} &= \mathbf{e} \\
+  &= \mathbf{y} - \mathbf{\hat{y}} \\
   &= \mathbf{y} - \mathbf{H} \mathbf{y} \\
   &= \mathbf{y} (\mathbf{I} - \mathbf{H}).
 \end{aligned}
@@ -410,7 +493,7 @@ From this it follows that
 
 $$
 \begin{aligned}
-\text{Var}(\hat{\boldsymbol{\epsilon}}) &= \text{Var}(\mathbf{e}) \\
+\text{Var}(\boldsymbol{\hat{\epsilon}}) &= \text{Var}(\mathbf{e}) \\
   &= \text{Var}(\mathbf{y} (\mathbf{I} - \mathbf{H})) \\
   &= (\mathbf{I} - \mathbf{H}) \text{Var}(\mathbf{y} ) (\mathbf{I} - \mathbf{H})^{\top} \\
   &= \sigma^2 (\mathbf{I} - \mathbf{H})^2 \\
@@ -421,7 +504,7 @@ $$
 and therefore the variance of an individual residual is 
 
 $$
-\text{Var}(\hat{\epsilon}_i) = \sigma^2 (1 - h_i).
+\text{Var}(\widehat{\epsilon}_{i}) = \sigma^2 (1 - h_i).
 $$
 
 From this relationship we can see that large $h_i$ lead to small variances of $\hat{\epsilon}_i$ & hence $\hat{y}_i$ tends to $y_i$. The hat matrix $\mathbf{H}$ has dimensions $n \times n$ and
@@ -432,7 +515,11 @@ $$
 
 Thus, on average we should expect that the average leverage value is $\bar{h}_i = \frac{k}{n}$. Any $h_i > 2 \frac{k}{n}$ deserve closer inspection.
 
+::: tip
+
 We can easily compute the $h_i$ in **R** via the function `hatvalues()` as shown here.
+
+:::
 
 ```{r ex_hat_values, echo = TRUE}
 ## leverages of points in middle plot above
@@ -445,7 +532,11 @@ Eh <- 2 * (k / length(hv))
 hv > Eh
 ```
 
+::: tip
+
 We can also plot the individual leverage values to see whether they exceed their expectation, or identify high leverage via a half-normal plot.
+
+:::
 
 ```{r leverage_plots, echo = TRUE, fig.width = 8, fig.height = 4.5, fig.align="center"}
 ## revised `halfnorm()` from Faraway
@@ -498,7 +589,17 @@ and $e_i$ is the residual for the $i$<sup>th</sup> case based on a model that in
 
 Note, however, that this requires us to undertake $n$ different null hypothesis tests. Thus, if we chose a Type-I error rate of $\alpha$ = 0.05, we should expect that 1 in 20 of these tests would be significant by chance alone. To account for all of these tests, we can employ a *Bonferroni correction*, which instead sets the threshold at $\alpha_B = \alpha / n$. This correction factor comes up elsewhere in statistical testing and is known to be conservative; it finds fewer outliers than the nominal level of confidence would.
 
-Computing the studentized residuals in **R** is easy with the `rstudent()` function. We can then compare them to the critical $t$ value with `qt()`. Let's do so for case #1 above (left-hand plot).
+::: tip
+
+Computing the studentized residuals in **R** is easy with the `rstudent()` function. We can then compare them to the critical $t$ value with `qt()`. 
+
+:::
+
+::: task
+
+Computing the studentized residuals for case #1 above (left-hand plot).
+
+:::
 
 ```{r student_t, echo = TRUE}
 ## get sample size
@@ -514,7 +615,11 @@ t_crit <- qt(1 - alpha/2, df)
 t_stud > t_crit
 ```
 
+::: note
+
 We can see that the `r which(t_stud > t_crit)`<sup>th</sup> datum is an outlier (as we suspected from the above plot).
+
+:::
 
 ## Identifying influential observations
 
@@ -526,16 +631,17 @@ $$
 
 The idea here is that $D_i$ combines the magnitude of a residual and its leverage. It's easy to calculate the $D_i$ with the `cooks.distance()` function. We can then visually inspect $D$ with a half-normal plot (we'll label the 2 values with the highest $D$ by setting `nlab = 2`).
 
-```{r cooks_d, echo = TRUE, fig.width = 4, fig.height = 4, fig.align="center"}
+```{r cooks_d, echo = TRUE, fig.width = 5, fig.height = 5, fig.align="center"}
 ## Cook's D
 cook <- cooks.distance(m2)
 ## half-normal plot
-par(mai = c(0.9,0.9,0.1,0.1),
+par(mai = c(1,1,0.1,0.1),
     omi = c(0, 0, 0, 0),
     cex = 1)
 halfnorm(cook, nlab = 2, ylab = "Cook’s Distance")
 ```
 
+<br>
 
 # Problems with errors
 
@@ -545,19 +651,25 @@ The models we have been using assume that the errors are independent and identic
 
 In cases where the errors are independent, but *not* identically distributed, we can use weighted least squares. Let's consider a data set from the famous statistician [Francis Galton](https://en.wikipedia.org/wiki/Francis_Galton), which contains information he collected on the size of pea seeds in parent plants and their offspring plants, and the frequency of each of the paired measurements. The data are contained in the accompanying file `galton_peas.csv`.
 
-We begin by reading in the data and plotting them.
+::: task
 
-```{r galton_peas, echo = TRUE, fig.width = 4.5, fig.height = 4.5, fig.align="center"}
+Begin by reading in the data and plotting them.
+
+:::
+
+```{r galton_peas, echo = TRUE, fig.width = 5, fig.height = 5, fig.align="center"}
 ## read data file
 peas <- read.csv("galton_peas.csv")
 ## set plot area
 par(mai = c(1,1,0.1,0.1),
-    omi = c(0.5, 0, 0.5, 0),
+    omi = c(0, 0, 0, 0),
     cex = 1)
 ## plot the data
 plot(peas$parent, peas$offspring, pch = 16, las = 1,
      xlab = "Size of parent seed (mm)", ylab = "Size of offspring seed (mm)")
 ```
+
+<br>
 
 Each of the $y_i$ here is actually a weighted mean of the offspring pea size in each of the parent size groups, so we should use a weighted regression with $w_i = 1 / n_i$. This is easy to do with `lm()` by passing an additional `weights` argument. We'll also fit a regular unweighted model for comparison.
 
@@ -570,7 +682,11 @@ mp <- lm(offspring ~ parent, peas)
 faraway::sumary(mp)
 ```
 
-Notice that our weighted regression has a much lower $MSE = \hat{\sigma}^2$, and that the parameter estimates are different as well.
+::: note
+
+Our weighted regression has a much lower `Residual SE` $(\widehat{\sigma}^2)$ and the parameter estimates are different as well.
+
+:::
 
 ## Robust regression
 
@@ -591,11 +707,17 @@ c \left| z \right| - \frac{c^2}{2} & \text{otherwise}
 \right.
 $$
 
-and $c = \hat{\sigma} \propto \text{Median}(\left| \hat{\epsilon} \right|)$.
+and $c = \widehat{\sigma} \propto \text{Median}(\left| \widehat{\epsilon} \right|)$.
 
-As an example, let's return to the plant data from the Galapagos Archipelago that we used last week in lab. To begin, we'll fit a normal regression model and plot the residuals against the fitted values.
+As an example, let's return to the plant data from the Galapagos Archipelago that we used last week in lab. 
 
-```{r plain_gala, echo = TRUE, fig.width = 4.5, fig.height = 4.5, fig.align="center"}
+::: task
+
+Begin by fitting a normal regression model and plot the residuals against the fitted values.
+
+:::
+
+```{r plain_gala, echo = TRUE, fig.width = 5, fig.height = 5, fig.align="center"}
 ## get the data
 library(faraway)
 head(gala)
@@ -605,12 +727,14 @@ gm <- lm(Species ~ Area, gala)
 sumary(gm)
 ## set plot area
 par(mai = c(1,1,0.1,0.1),
-    omi = c(0.5, 0, 0.5, 0),
+    omi = c(0, 0, 0, 0),
     cex = 1)
 ## plot residuals vs y_hat
 plot(fitted(gm), resid(gm), pch = 16, las = 1,
      ylab = expression(italic(e)), xlab = expression(hat(italic(y))))
 ```
+
+<br>
 
 This plot reveals some obvious problems with our model assumptions, so now let's fit our robust model. To do so, we can use the `rlm()` function in the **MASS** package, wherein the default option is to use Huber's method.
 
@@ -631,7 +755,11 @@ names(wts) <- row.names(gala)
 sort(wts)
 ```
 
+::: note
+
 Four of the islands have been discounted in the estimation procedure.
+
+:::
 
 ### Trimmed least squares
 
@@ -643,7 +771,17 @@ $$
 
 and $(i)$ indicates the residuals are sorted in ascending order. The default is $q = \lfloor n/2 \rfloor + \lfloor (k + 1) / 2 \rfloor$ where $\lfloor \cdot \rfloor$ is the floor function, which always rounds a number down to the nearest integer (type `?floor` for help on this function in **R**).
 
-We can fit an LTS model with the `ltsreg()` function in the **MASS** package. Let's do so for the Galapagos plant data and examine the estimated parameters.
+::: tip
+
+We can fit an LTS model with the `ltsreg()` function in the **MASS** package. 
+
+:::
+
+::: task
+
+Fit an LTS model to the Galapagos plant data and examine the estimated parameters.
+
+:::
 
 ```{r LTS}
 ## fit LTS model
@@ -675,6 +813,6 @@ for(i in 1:nb) {
 ## extract 2.5% and 97.5% values (with the median)
 CI95 <- apply(beta_est, 2, quantile, c(0.025, 0.5, 0.975))
 colnames(CI95) <- c("Intercept", "Area")
-t(round(CI95, 3))
+t(round(CI95, 2))
 ```
 
