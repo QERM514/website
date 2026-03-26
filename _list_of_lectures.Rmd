@@ -11,147 +11,134 @@ knitr::opts_chunk$set(echo = TRUE)
 intro <- list(
   title = "Introduction",
   topics = c("<b>Course overview</b>"),
-  pdf = c("lectures/week_01/lec_01_class_overview.pdf"),
   rmd = c("lectures/week_01/lec_01_class_overview.Rmd"),
   html = c("lectures/week_01/lec_01_class_overview.html"),
-  background = c(""),
-  zoom = ""
-)
-
-software <- list(
-  title = "Overview of required software",
-  topics = c("<b>Required software</b>","R / RStudio", "R Markdown", "GitHub"),
-  pdf = c("lectures/week_01/lec_02_software.pdf"),
-  rmd = c("lectures/week_01/lec_02_software.Rmd"),
-  html = c("lectures/week_01/lec_02_software.html"),
   background = c("[R software](https://www.r-project.org/about.html)",
                  "[RStudio](https://resources.rstudio.com/)",
-                 "[Intro to R Markdown](https://rmarkdown.rstudio.com/lesson-1.html)",
-                 "[Video intro to GitHub](https://www.youtube.com/watch?v=w3jLJU7DT5E)"),
-  zoom = "https://washington.zoom.us/rec/share/ucxNJqvQ6kpJR4nV-Vjnd5N9ALXvT6a82ykaqfdYxR0_zA1nuhdWz6dZRWcQOrrg"
+                 "[Intro to R Markdown](https://rmarkdown.rstudio.com/lesson-1.html)"),
+  zoom = ""
 )
 
 data_types <- list(
   title = "Ecological data and distributions",
   topics = c("<b>Ecological data & distributions</b>", "Detections", "Counts", "Survival"),
-  pdf = c("lectures/week_01/lec_03_data_types.pdf"),
-  rmd = c("lectures/week_01/lec_03_data_types.Rmd"),
-  html = c("lectures/week_01/lec_03_data_types.html"),
+  rmd = c("lectures/week_01/lec_02_data_types.Rmd"),
+  html = c("lectures/week_01/lec_02_data_types.html"),
   background = c("[Understanding data](https://punkrockor.com/2019/11/01/data-science-isnt-just-data-wrangling-and-data-analysis-on-understanding-your-data/)",
                  "[Statistical distributions](http://learnbayes.org/demo/stat-distributions-js/distributionTable.html)",
                  "[Distribution relationships](http://www.math.wm.edu/~leemis/chart/UDR/UDR.html)"),
-  zoom = "https://washington.zoom.us/rec/share/_o9nHZ7g-1pLWKvhuE3mBfYkNd-4eaa8gCQe-PQOyh3HoSm7VFUsg4u0GcXsJYEn"
+  zoom = ""
 )
 
 linear_models_1 <- list(
   title = "Linear models",
   topics = c("<b>Linear models</b>", "Non-linear approximations", "Regression, ANOVA, ANCOVA"),
-  pdf = c("lectures/week_02/lec_04_intro_to_linear_models.pdf"),
-  rmd = c("lectures/week_02/lec_04_intro_to_linear_models.Rmd"),
-  html = c("lectures/week_02/lec_04_intro_to_linear_models.html"),
+  rmd = c("lectures/week_02/lec_03_intro_to_linear_models.Rmd"),
+  html = c("lectures/week_02/lec_03_intro_to_linear_models.html"),
   background = c("[Farraway (2015) Chap 2](references/Faraway_2015_Linear_models_with_R.pdf)"),
-  zoom = "https://washington.zoom.us/rec/share/3MdxDY_d6GNJT7OKq3DeWekoBtq0X6a8hiAb8vQKzEpMOBCGCWXB7lQXyVSeosLU"
+  zoom = ""
 )
 
 linear_models_2 <- list(
   title = "Linear models",
   topics = c("<b>Linear models</b>", "Models in matrix form", "Least squares", "Identifiability"),
-  pdf = c("lectures/week_02/lec_05_intro_to_linear_models.pdf"),
-  rmd = c("lectures/week_02/lec_05_intro_to_linear_models.Rmd"),
-  html = c("lectures/week_02/lec_05_intro_to_linear_models.html"),
+  rmd = c("lectures/week_02/lec_04_intro_to_linear_models.Rmd"),
+  html = c("lectures/week_02/lec_04_intro_to_linear_models.html"),
   background = c("[Farraway (2015) Chap 2](references/Faraway_2015_Linear_models_with_R.pdf)"),
-  zoom = "https://washington.zoom.us/rec/share/2dVrKI_71EpJAYWVq2jna7UdHK3Eeaa81nNPqfIFnh2fJYha4c7zZa3sot5Tx4b3"
+  zoom = ""
 )
 
-inference <- list(
+inference_1 <- list(
   title = "Inference",
   topics = c("<b>Inference</b>", "Variance partitioning", "F-tests for nested models", "Confidence intervals"),
-  pdf = c("lectures/week_02/lec_06_inference_from_linear_models.pdf"),
+  rmd = c("lectures/week_02/lec_05_inference_from_linear_models.Rmd"),
+  html = c("lectures/week_02/lec_05_inference_from_linear_models.html"),
+  background = c("[Farraway (2015) Chap 3](references/Faraway_2015_Linear_models_with_R.pdf)",
+                 "[Farraway (2015) Chap 4](references/Faraway_2015_Linear_models_with_R.pdf)",
+                 "[Wasserstein et al. (2019)](references/Wasserstein_2019_world_beyond_p05.pdf)"),
+  zoom = ""
+)
+
+inference_2 <- list(
+  title = "Inference",
+  topics = c("<b>Inference</b>", "Variance partitioning", "F-tests for nested models", "Confidence intervals"),
   rmd = c("lectures/week_02/lec_06_inference_from_linear_models.Rmd"),
   html = c("lectures/week_02/lec_06_inference_from_linear_models.html"),
   background = c("[Farraway (2015) Chap 3](references/Faraway_2015_Linear_models_with_R.pdf)",
                  "[Farraway (2015) Chap 4](references/Faraway_2015_Linear_models_with_R.pdf)",
                  "[Wasserstein et al. (2019)](references/Wasserstein_2019_world_beyond_p05.pdf)"),
-  zoom = "https://washington.zoom.us/rec/share/xpVXMLCozlhJa5Hy013wYbAGQpTPT6a8gHQX__QIzU3slPvtOjG8chISlLY8mfrx"
+  zoom = ""
 )
 
 diagnostics <- list(
   title = "Model diagnostics",
   topics = c("<b>Model diagnostics</b>", "Assumptions about errors", "Leverage", "Outliers"),
-  pdf = c("lectures/week_03/lec_07_diagnostics_for_linear_models.pdf"),
   rmd = c("lectures/week_03/lec_07_diagnostics_for_linear_models.Rmd"),
   html = c("lectures/week_03/lec_07_diagnostics_for_linear_models.html"),
   background = c("[Farraway (2015) Chap 6](references/Faraway_2015_Linear_models_with_R.pdf)"),
-  zoom = "https://washington.zoom.us/rec/share/45V5Jq_g_EhOU9bhtXvyeYgtJ6_HX6a81nAe86EPykgGzHzr6mPuy0buVUjP30h-"
+  zoom = ""
 )
 
 non_IID_errors <- list(
   title = "Problems with model residuals",
   topics = c("<b>Problems with model errors</b>", "Generalized least squares", "Weighted least squares", "Robust regression"),
-  pdf = c("lectures/week_03/lec_08_problems_with_errors.pdf"),
   rmd = "lectures/week_03/lec_08_problems_with_errors.Rmd",
   html = "lectures/week_03/lec_08_problems_with_errors.html",
   background = "[Farraway (2015) Chap 8](references/Faraway_2015_Linear_models_with_R.pdf)",
-  zoom = "https://washington.zoom.us/rec/share/pp02Mp-h-2hLQIHOwULTebwQMbamT6a8gycb-6FenR1JEP75CyEOQp4EMSEuE1uf"
+  zoom = ""
 )
 
 transformations <- list(
   title = "Data transformations",
   topics = c("<b>Data transformations</b>", "Box-Cox", "Powers/roots", "Logarithms"),
-  pdf = c("lectures/week_03/lec_09_data_transformations.pdf"),
   rmd = "lectures/week_03/lec_09_data_transformations.Rmd",
   html = "lectures/week_03/lec_09_data_transformations.html",
   background = c("[Farraway (2015) Chap 9](references/Faraway_2015_Linear_models_with_R.pdf)",
                  "[O'Hara & Kotze (2010)](references/OHara_Kotze_2010_dont_log_counts.pdf)",
                  "[Xiao et al. (2011)](references/Xiao_2011_log_vs_NL_regr.pdf)"),
-  zoom = "https://washington.zoom.us/rec/share/xcp-L-2s7kJJTdLS6l36Zqo-Ao--aaa80ykWqfBYn0wVsgUnSaSXqZlgCyZLzV8f"
+  zoom = ""
 )
 
-design_matrices <- list(
+design_matrices_1 <- list(
   title = "Design matrices",
   topics = c("<b>Design matrices</b>", "Models in matrix form", "Regression", "ANOVA / ANCOVA"),
-  pdf = c("lectures/week_04/lec_10_design_matrices.pdf"),
   rmd = c("lectures/week_04/lec_10_design_matrices.Rmd"),
   html = c("lectures/week_04/lec_10_design_matrices.html"),
   background = "[Venables (2018)](references/Venables_2018_design_matrices.pdf)",
-  zoom = "https://washington.zoom.us/rec/share/xctFDZ_TrD5OR6PEx2_TGa07WYHYT6a80yBMrPYJzUZic0blhrwFbi8UM_hnrEp4"
+  zoom = ""
 )
 
-review <- list(
-  title = "Review session",
-  topics = c("<b>Review session</b>", "All topics to date"),
-  pdf = c(""),
-  rmd = c(""),
-  html = c(""),
-  background = "",
-  zoom = "https://washington.zoom.us/rec/share/1MlbNpvAxmFLaIHNuG7OdIsRPZb9T6a80HdPr6AJyFEad35Ebc-ybkRWNtet45c"
+design_matrices_2 <- list(
+  title = "Design matrices",
+  topics = c("<b>Design matrices</b>", "Models in matrix form", "Regression", "ANOVA / ANCOVA"),
+  rmd = c("lectures/week_04/lec_11_design_matrices.Rmd"),
+  html = c("lectures/week_04/lec_11_design_matrices.html"),
+  background = "[Venables (2018)](references/Venables_2018_design_matrices.pdf)",
+  zoom = ""
 )
 
 max_likelihood <- list(
   title = "Maximum likelihood estimation",
   topics = c("<b>Maximum likelihood estimation</b>", "Relationship to probability", "Estimation", "Characteristics of MLE"),
-  pdf = "lectures/week_04/lec_12_max_likelihood.pdf",
   rmd = "lectures/week_04/lec_12_max_likelihood.Rmd",
   html = "lectures/week_04/lec_12_max_likelihood.html",
   background = "[Faraway (2016) Appendix A](references/Faraway_2016_Extending_the_Linear_Models_with_R.pdf)",
-  zoom = "https://washington.zoom.us/rec/share/3t5OJb3s12pLW4Xr4nPQY-koMILZaaa82iEd_vUFmRor1fLzHGyGWoiDTegm06_C"
+  zoom = ""
 )
 
 model_selection_1 <- list(
   title = "Model selection",
   topics = c("<b>Model selection</b>", "Bias-Variance trade-offs", "In-sample selection", "AIC"),
-  pdf = c("lectures/week_05/lec_13_model_selection.pdf"),
   rmd = c("lectures/week_05/lec_13_model_selection.Rmd"),
   html = c("lectures/week_05/lec_13_model_selection.html"),
   background = c("[Burnham & Anderson (2002)](references/Burnham_Anderson_2002_model_selection.pdf)",
                  "[Hobbs & Hilborn (2006)](references/Hobbs_Hilborn_2006_alternatives_nht.pdf)"),
-  zoom = "https://washington.zoom.us/rec/share/yv5uHYHBz31OGdbzxW3_d4oQJ5zHX6a80SRMrqZcmR0_HGJaqvCMwCm8pIreHtwM"
+  zoom = ""
 )
 
 model_selection_2 <- list(
   title = "Model selection",
   topics = c("<b>Model selection</b>", "Out-of-sample selection", "Cross-validation", "Multi-model inference"),
-  pdf = c("lectures/week_05/lec_14_model_selection.pdf"),
   rmd = c("lectures/week_05/lec_14_model_selection.Rmd"),
   html = c("lectures/week_05/lec_14_model_selection.html"),
   background = c("[Aho et al (2014)](references/Aho_2014_model_selection.pdf)",
@@ -160,155 +147,196 @@ model_selection_2 <- list(
                  "[Cade (2015)](references/Cade_2015_muddled_multimodel.pdf)",
                  "[Hooten & Hobbs (2015)](references/Hooten_Hobbs_2015_Bayesian_model_avg.pdf)",
                  "[Link & Barber (2006)](references/Link_Barber_2006_model_weights.pdf)"),
-  zoom = "https://washington.zoom.us/rec/share/wcV8Epar6llIWafA1FHBUYIhLpr1X6a8gHNL-PIPmk6O-6oNBp9nsDryFJd34LO2"
+  zoom = ""
+)
+
+review <- list(
+  title = "Review session",
+  topics = c("<b>Review session</b>", "All topics to date"),
+  rmd = c(""),
+  html = c(""),
+  background = "",
+  zoom = ""
 )
 
 mixed_models_1 <- list(
   title = c("Mixed effects models", "<br><b>Project plan due</b>"),
   topics = c("<b>Mixed effects models</b>", "Fixed vs Random effects", "Shrinkage",
              "Costs/benefits"),
-  pdf = "lectures/week_05/lec_15_intro_mixed_effects.pdf",
-  rmd = "lectures/week_05/lec_15_intro_mixed_effects.Rmd",
-  html = "lectures/week_05/lec_15_intro_mixed_effects.html",
+  rmd = "lectures/week_05/lec_16_intro_mixed_effects.Rmd",
+  html = "lectures/week_05/lec_16_intro_mixed_effects.html",
   background = c("[Freeman's visualization](http://mfviz.com/hierarchical-models/)",
                  "[Harrison et al (2018)](references/Harrison_2018_intro_mixed_models.pdf)",
                  "[Zuur et al (2009) Chap 5](references/Zuur_2009_mixed_effects_models_in_R.pdf)"),
-  zoom = "https://washington.zoom.us/rec/share/2NNldrX5xGNIHpXt2GHHWoNxPbz_T6a8gSYb_fsMyR1MEILtneDfjWYVc1qc6lfw"
+  zoom = ""
 )
 
 mixed_models_2 <- list(
   title = "Mixed effects models",
   topics = c("<b>Mixed effects models</b>", "Inference", "Diagnostics", "Model selection"),
-  pdf = "lectures/week_06/lec_16_mixed_effects.pdf",
-  rmd = "lectures/week_06/lec_16_mixed_effects.Rmd",
-  html = "lectures/week_06/lec_16_mixed_effects.html",
+  rmd = "lectures/week_06/lec_17_mixed_effects.Rmd",
+  html = "lectures/week_06/lec_17_mixed_effects.html",
   background = c("[Gurka (2006)](references/Gurka_2006_reml.pdf)",
                  "[Harrison et al (2018)](references/Harrison_2018_intro_mixed_models.pdf)"),
-  zoom = "https://washington.zoom.us/rec/share/y-VsJrTr-l9IW8-SwRnjYIR8PLq_eaa8hCcY-aVYyEfv1v9UgD04udzwXsEt5Jrc"
+  zoom = ""
 )
 
-guest_lec_01 <- list(
-  title = "Guest lecture - Dr. Staci Amburgey",
-  topics = c("<b>Guest lecture:</b>", "<b>Dr. Staci Amburgey</b>", "<i>Using quantitative ecology for<br>species conservation in the<br>face of anthropogenic change</i>"),
-  pdf = "lectures/week_06/lec_17_guest_lec_amburgey.pdf",
+paper_discussion <- list(
+  title = "Guest: Dr. Sarah Converse",
+  topics = c("<b>Guest lecture:</b>", "<b>Dr. Sarah Converse</b>", "<i>Research questions, hypotheses & predictions</i>"),
   rmd = "",
-  html = "lectures/week_06/lec_17_guest_lec_amburgey.html",
-  background = c("[Amburgey et al (2017)](references/Amburgey_2017_GCB)",
-                 "[Amburgey et al (2019)](references/Amburgey_2019_Ecosphere)",
-                 "[Amburgey et al (2020)](references/Amburgey_2020_JHerp)"),
-  zoom = "https://washington.zoom.us/rec/share/xsd6Lp_7_WZIWLP9w1jndvJmEMfCaaa8hiYeq6BbmE4Ng_ypPA34e6C-bUD_m1eQ"
+  html = "",
+  background = c("[Chamberlin (1890)](references/Amburgey_2017_GCB)",
+                 "[Garton et al (2020)](references/Amburgey_2019_Ecosphere)"),
+  zoom = ""
 )
 
 intro_GLM <- list(
   title = "Introduction to GLMs",
   topics = c("<b>Introduction to GLMs</b>", "Data distributions", "Link functions", "Linear predictors"),
-  pdf = c("lectures/week_06/lec_18_intro_GLMs.pdf"),
-  rmd = c("lectures/week_06/lec_18_intro_GLMs.Rmd"),
-  html = c("lectures/week_06/lec_18_intro_GLMs.html"),
+  rmd = c("lectures/week_07/lec_19_intro_GLMs.Rmd"),
+  html = c("lectures/week_07/lec_19_intro_GLMs.html"),
   background = c("[Nelder & Wedderburn (1972)](references/Nelder_Wedderburn_1972_GLM.pdf)",
                  "[Faraway (2016) Chap 8](references/Faraway_2016_Extending_the_Linear_Models_with_R.pdf)"),
-  zoom = "https://washington.zoom.us/rec/share/6tFVHq3LzlxJWoHk1nPVcIQPFIe1eaa81HVPq_YPzUyachFUiIEpeFir4p9njow8"
+  zoom = ""
 )
 
 binary_GLM <- list(
   title = "Modeling binary data",
   topics = c("<b>Modeling binary data</b>", "Logistic regression", "Model selection",
              "Diagnostics", "<br><b>Project plan due</b>"),
-  pdf = "lectures/week_07/lec_19_modeling_binary_data.pdf",
-  rmd = "lectures/week_07/lec_19_modeling_binary_data.Rmd",
-  html = "lectures/week_07/lec_19_modeling_binary_data.html",
+  rmd = "lectures/week_07/lec_20_modeling_binary_data.Rmd",
+  html = "lectures/week_07/lec_20_modeling_binary_data.html",
   background = "[Faraway (2016) Chap 2](references/Faraway_2016_Extending_the_Linear_Models_with_R.pdf)",
-  zoom = "https://washington.zoom.us/rec/share/pv0rMoPg2mFOaa_HsR_HV6ccGdTkeaa82ihLr_IImkfx0rcbQGWTn4Ie5i3Vz9Iu"
+  zoom = ""
 )
 
 overdispersed_binary <- list(
   title = "Overdispersion in binary data",
   topics = c("<b>Overdispersion in binary data</b>", "Variance inflation", "Beta-binomial modes", "Quasi-likelihood"),
-  pdf = "lectures/week_07/lec_20_overdispersed_binary_data.pdf",
-  rmd = "lectures/week_07/lec_20_overdispersed_binary_data.Rmd",
-  html = "lectures/week_07/lec_20_overdispersed_binary_data.html",
+  rmd = "lectures/week_07/lec_21_overdispersed_binary_data.Rmd",
+  html = "lectures/week_07/lec_21_overdispersed_binary_data.html",
   background = c("[Faraway (2016) Chap 2 & 3](references/Faraway_2016_Extending_the_Linear_Models_with_R.pdf)"),
-  zoom = "https://washington.zoom.us/rec/share/5JxKM7HvzztIHJH8yFHnWox8E6naeaa803MW-vILz0cJek0GnE-T2mjyxuq6WvGg"
+  zoom = ""
 )
 
 count_GLM <- list(
   title = "Modeling count data",
   topics = c("<b>Modeling count data</b>", "Poisson regression", "Leverage and influence", "Diagnostics"),
-  pdf = c("lectures/week_07/lec_21_modeling_count_data.pdf"),
-  rmd = "lectures/week_07/lec_21_modeling_count_data.Rmd",
-  html = "lectures/week_07/lec_21_modeling_count_data.html",
+  rmd = "lectures/week_08/lec_22_modeling_count_data.Rmd",
+  html = "lectures/week_08/lec_22_modeling_count_data.html",
   background = c("[Faraway (2016) Chap 5](references/Faraway_2016_Extending_the_Linear_Models_with_R.pdf)", "[St-Pierre et al. (2017)](references/StPierre_2017_count_data_in_biology.pdf)"),
-  zoom = "https://washington.zoom.us/rec/share/wulbNerRz1hLaNbpt2judbQGXYbOX6a8hyAcqPFYzk8NCH1LQ_CHneHPkKJOP3_n"
+  zoom = ""
 )
 
 overdispersed_count <- list(
   title = "Overdispersion in count data",
   topics = c("<b>Overdispersion in count data</b>", "Variance inflation", "Quasi-likelihood", "Negative-binomial distribution"),
-  pdf = c("lectures/week_08/lec_22_overdispersed_count_data.pdf"),
-  rmd = c("lectures/week_08/lec_22_overdispersed_count_data.Rmd"),
-  html = c("lectures/week_08/lec_22_overdispersed_count_data.html"),
+  rmd = c("lectures/week_08/lec_23_overdispersed_count_data.Rmd"),
+  html = c("lectures/week_08/lec_23_overdispersed_count_data.html"),
   background = c("[Faraway (2016) Chap 5](references/Faraway_2016_Extending_the_Linear_Models_with_R.pdf)", "[Ver Hoef & Boveng (2007)](references/VerHoef_Boveng_2007_quasiPois_vs_negbin.pdf)"),
-  zoom = "https://washington.zoom.us/rec/share/-sBvAZD0pltLZIXf2nqcYqU7Qq7eeaa82iAf_foLmRmgKFBsGNakUbkuTtac_Tbc"
+  zoom = ""
 )
 
 zero_models <- list(
   title = "Zero-truncated & zero-inflated models",
   topics = c("<b>Zero-truncated & zero-inflated models</b>", "Zero truncation", "Zero inflation", "Hurdle models", "Mixture models"),
-  pdf = c("lectures/week_08/lec_23_zero_models.pdf"),
-  rmd = c("lectures/week_08/lec_23_zero_models.Rmd"),
-  html = c("lectures/week_08/lec_23_zero_models.html"),
+  rmd = c("lectures/week_08/lec_24_zero_models.Rmd"),
+  html = c("lectures/week_08/lec_24_zero_models.html"),
   background = c("[Faraway (2016) Chap 5](references/Faraway_2016_Extending_the_Linear_Models_with_R.pdf)",
                  "[Zuur et al (2009) Chap 11](references/Zuur_2009_mixed_effects_models_in_R.pdf)",
                  "[Blasco-Moreno (2019)](references/Blasco-Moreno_2019_what_does_a_zero_mean.pdf.pdf)"),
-  zoom = "https://washington.zoom.us/rec/share/wd5cJLPapmFLeK_AxxnxfooCM9_dT6a8hHNKqfpbnUYiTXhG5IW2cH7KIloyx9Gd"
-)
-
-intro_GLMM <- list(
-  title = "Working with GLMMs",
-  topics = c("<b>Working with GLMMs</b>", "Computing likelihoods", "Diagnostics", "Goodness-of-fit"),
-  pdf = c("lectures/week_08/lec_24_intro_GLMMs.pdf"),
-  rmd = c("lectures/week_08/lec_24_intro_GLMMs.Rmd"),
-  html = c("lectures/week_08/lec_24_intro_GLMMs.html"),
-  background = c("[Faraway (2016) Chap 13](references/Faraway_2016_Extending_the_Linear_Models_with_R.pdf)",
-                 "[Zuur et al (2009) Chap 13](references/Zuur_2009_mixed_effects_models_in_R.pdf)",
-                 "[Bolker et al (2009)](Bolker_2009_glmm_guide.pdf)"),
-  zoom = "https://washington.zoom.us/rec/share/5_NsFp3PrkNIWZXI80DOS5AZG6e0aaa8hCUa-_pZz06vYVUiJFvpv24ScmOnz66F"
+  zoom = ""
 )
 
 holiday <- list(
   title = "<b>Memorial Day - No class</b>",
   topics = "<b>Memorial Day - No class</b>",
-  pdf = c(""),
   rmd = "",
   html = "",
   background = "",
   zoom = ""
 )
 
-review_2 <- list(
-  title = "Material review",
-  topics = c("<b>Review of materials</b>"),
-  pdf = c(""),
-  rmd = c(""),
-  html = c(""),
-  background = "",
-  zoom = "https://washington.zoom.us/rec/share/4tdMcozL521OWp3_7Ab5CpRiXaXnX6a823RL_KdcmBkuktM7JOZ3MNKCnNh-mTDx"
+intro_GLMM_1 <- list(
+  title = "Working with GLMMs",
+  topics = c("<b>Working with GLMMs</b>", "Computing likelihoods"),
+  rmd = c("lectures/week_09/lec_26_intro_GLMMs.Rmd"),
+  html = c("lectures/week_09/lec_26_intro_GLMMs.html"),
+  background = c("[Faraway (2016) Chap 13](references/Faraway_2016_Extending_the_Linear_Models_with_R.pdf)",
+                 "[Zuur et al (2009) Chap 13](references/Zuur_2009_mixed_effects_models_in_R.pdf)",
+                 "[Bolker et al (2009)](Bolker_2009_glmm_guide.pdf)"),
+  zoom = ""
+)
+
+intro_GLMM_2 <- list(
+  title = "Working with GLMMs",
+  topics = c("<b>Working with GLMMs</b>", "Diagnostics", "Goodness-of-fit"),
+  rmd = c("lectures/week_09/lec_27_intro_GLMMs.Rmd"),
+  html = c("lectures/week_09/lec_27_intro_GLMMs.html"),
+  background = c("[Faraway (2016) Chap 13](references/Faraway_2016_Extending_the_Linear_Models_with_R.pdf)",
+                 "[Zuur et al (2009) Chap 13](references/Zuur_2009_mixed_effects_models_in_R.pdf)",
+                 "[Bolker et al (2009)](Bolker_2009_glmm_guide.pdf)"),
+  zoom = ""
+)
+
+
+intro_GAM_1 <- list(
+  title = "Intro to GAMs",
+  topics = c("<b>Intro to GAMs</b>", "Smooths"),
+  rmd = c("lectures/week_10/lec_28_intro_GAMs.Rmd"),
+  html = c("lectures/week_10/lec_28_intro_GAMs.html"),
+  background = c("[Zuur et al (2009) Chap 3](references/Zuur_2009_mixed_effects_models_in_R.pdf)",
+                 "[Pedersen et al (2019)](references/Pedersen_2019_hierarchical_gam.pdf)"),
+  zoom = ""
+)
+
+intro_GAM_2 <- list(
+  title = "Working with GLMMs",
+  topics = c("<b>Working with GAMs</b>", "Fitting models"),
+  rmd = c("lectures/week_10/lec_29_intro_GAMs.Rmd"),
+  html = c("lectures/week_10/lec_29_intro_GAMs.html"),
+  background = c("[Zuur et al (2009) Chap 3](references/Zuur_2009_mixed_effects_models_in_R.pdf)",
+                 "[Pedersen et al (2019)](references/Pedersen_2019_hierarchical_gam.pdf)"),
+  zoom = ""
 )
 
 synthesis <- list(
   title = "Course synthesis",
   topics = c("<b>Course synthesis</b>", "What did we learn?", "Where do we go from here?"),
-  pdf = c("lectures/week_09/lec_27_course_summary.pdf"),
-  rmd = c("lectures/week_09/lec_27_course_summary.Rmd"),
-  html = c("lectures/week_09/lec_27_course_summary.html"),
+  rmd = c("lectures/week_10/lec_30_course_summary.Rmd"),
+  html = c("lectures/week_10/lec_30_course_summary.html"),
   background = "",
-  zoom = "https://washington.zoom.us/rec/share/uelrdY_Z2WxJGYXVzX_Sdp8KBZjsaaa8hCVLq_AImUskDhYc4ALefWZQBhgglh8Y"
+  zoom = ""
+)
+
+
+## old stuff below here
+
+software <- list(
+  title = "Overview of required software",
+  topics = c("<b>Required software</b>","R / RStudio", "R Markdown", "GitHub"),
+  rmd = c("lectures/week_01/lec_02_software.Rmd"),
+  html = c("lectures/week_01/lec_02_software.html"),
+  background = c("[R software](https://www.r-project.org/about.html)",
+                 "[RStudio](https://resources.rstudio.com/)",
+                 "[Intro to R Markdown](https://rmarkdown.rstudio.com/lesson-1.html)",
+                 "[Video intro to GitHub](https://www.youtube.com/watch?v=w3jLJU7DT5E)"),
+  zoom = ""
+)
+
+review_2 <- list(
+  title = "Material review",
+  topics = c("<b>Review of materials</b>"),
+  rmd = c(""),
+  html = c(""),
+  background = "",
+  zoom = ""
 )
 
 present_1 <- list(
   title = "Presentations of class projects",
   topics = "<b>Presentations of class projects</b>",
-  pdf = c(""),
   rmd = "",
   html = "lectures/week_10/lec_28_present_1.html",
   background = "",
@@ -318,7 +346,6 @@ present_1 <- list(
 present_2 <- list(
   title = "Presentations of class projects",
   topics = "<b>Presentations of class projects</b>",
-  pdf = c(""),
   rmd = "",
   html = "lectures/week_10/lec_29_present_2.html",
   background = "",
@@ -328,11 +355,21 @@ present_2 <- list(
 present_3 <- list(
   title = "Presentations of class projects",
   topics = "<b>Presentations of class projects</b>",
-  pdf = c(""),
   rmd = "",
   html = "lectures/week_10/lec_30_present_3.html",
   background = "",
   zoom = "https://washington.zoom.us/rec/share/1elUEI2vtUhOe6_gtRrheqo9GNviaaa82ygeq6EMnxlgFaKnlZXkqzIVvhivTP6s"
+)
+
+guest_lec_01 <- list(
+  title = "Guest lecture - Dr. Staci Amburgey",
+  topics = c("<b>Guest lecture:</b>", "<b>Dr. Staci Amburgey</b>", "<i>Using quantitative ecology for<br>species conservation in the<br>face of anthropogenic change</i>"),
+  rmd = "",
+  html = "lectures/week_06/lec_17_guest_lec_amburgey.html",
+  background = c("[Amburgey et al (2017)](references/Amburgey_2017_GCB)",
+                 "[Amburgey et al (2019)](references/Amburgey_2019_Ecosphere)",
+                 "[Amburgey et al (2020)](references/Amburgey_2020_JHerp)"),
+  zoom = ""
 )
 ```
 
