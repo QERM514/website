@@ -2,9 +2,10 @@
 title: "Inference from linear models"
 subtitle: "Analysis of Ecological and Environmental Data<br>QERM 514"
 author: "Mark Scheuerell"
-date: "10 April 2020"
+date: "10 April 2026"
 output:
   ioslides_presentation:
+    wide: true
     css: lecture_slides.css
 ---
 
