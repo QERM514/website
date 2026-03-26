@@ -1,10 +1,11 @@
 ---
-title: "Introduction to linear models"
+title: "More on linear models"
 subtitle: "Analysis of Ecological and Environmental Data<br>QERM 514"
 author: "Mark Scheuerell"
-date: "6 April 2020"
+date: "6 April 2026"
 output:
   ioslides_presentation:
+    wide: true
     css: lecture_slides.css
 ---
 
@@ -14,550 +15,793 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ## Goals for today
 
-* Identify whether a model is linear in the predictors
-* Recognize that linear models can approximate nonlinear functions
-* Understand the difference between categorical and continuous models
-* Recognize the difference between written and coded factors
+* Understand how to represent a linear model with matrix notation
+* Understand the concept, assumptions & practice of least squares estimation for linear models
+* Understand the concept of identifiability
 
 
-## Forms of linear models
-
-| Errors | Single random process | Multiple random processes |
-|:-------|:--------------:|:------------------:|
-| Normal | Linear Model (LM) | Linear Mixed Model (LMM) |
-| Non-normal | Generalized Linear Model (GLM) | Generalized Linear Mixed Model (GLMM) |
-
-
-## Forms of linear models
- 
-```{r model_diagram_lm, fig.height = 5, fig.width = 7, fig.align = 'center'}
-par(mai = rep(0, 4), omi = rep(0, 4), bg = NA)
-
-## order: GLM, LM, GLMM, LMM
-xx <- c(1, 2, 2, 3) * 10
-yy <- c(2, 1, 3, 2) * 10
-
-plot(c(7, 33), c(7, 33), type = "n", xlim = c(7, 33), ylim = c(7, 33),
-     xaxt = "n", yaxt = "n", xlab = "", ylab = "",
-     bty = "n")
-symbols(xx, yy, circle = rep(2, 4), inches = 0.5, add = TRUE,
-        lwd = 2, fg = c("black", "blue", "black", "black"), bg = "white")
-text(xx, yy, c("GLM", "LM", "GLMM", "LMM"), cex = 1.5,
-     col = c("black", "blue", "black", "black"))
-## from LM to GLM
-arrows(xx[2]-2, yy[2]+2, xx[1]+2, yy[1]-2, length = 0.2)
-text(15, 14, "multiple forms of errors", pos = 2)
-## from LM to LMM
-arrows(xx[2]+2, yy[2]+2, xx[4]-2, yy[4]-2, length = 0.2)
-text(25, 14, "multiple random processes", pos = 4)
-## from GLM to GLMM
-arrows(xx[1]+2, yy[1]+2, xx[3]-2, yy[3]-2, length = 0.2)
-text(15, 26, "multiple random processes", pos = 2)
-## from LMM to GLMM
-arrows(xx[4]-2, yy[4]+2, xx[3]+2, yy[3]-2, length = 0.2)
-text(25, 26, "multiple forms of errors", pos = 4)
-```
-
-
-## What is a linear model?
-
-A relationship that defines a response variable as a linear function of one or more predictor variables
-
-
-## Which of these are linear models?
-
-<div class="columns-2">
-
-$1) ~ y_i = \delta x_i$
-
-$2) ~ y_i = \alpha + \beta x_i$
-
-$3) ~ y_i = \alpha x_i^{\beta}$
-
-$4) ~ y_i = \alpha + \beta x_i + \gamma z_i$
-
-$~$
-
-$5) ~ y_i = \alpha + \beta \frac{1}{x_i}$
-
-$6) ~ y_t = \mu + \phi(y_{t-1} - \mu)$
-
-$7) ~ y_i =   (\alpha + x_i) \beta x_i$
-
-$8) ~ y_i =   \frac{\alpha x_i}{1 + \beta x_i}$
-
-</div>
-
-
-## Which of these are linear models?
-
-<div class="columns-2">
-
-$\underline{1) ~ y_i = \delta x_i}$
-
-$\underline{2) ~ y_i = \alpha + \beta x_i}$
-
-$3) ~ y_i = \alpha x_i^{\beta}$
-
-$\underline{4) ~ y_i = \alpha + \beta x_i + \gamma z_i}$
-
-$~$
-
-$5) ~ y_i = \alpha + \beta \frac{1}{x_i}$
-
-$\underline{6) ~ y_t = \mu + \phi(y_{t-1} - \mu)}$
-
-$7) ~ y_i =   (\alpha + x_i) \beta x_i$
-
-$8) ~ y_i =   \frac{\alpha x_i}{1 + \beta x_i}$
-
-</div>
-
-
-## What is a linear model?
-
-*A relationship that defines a response variable as a linear function of one or more predictor variables*
-
-> - characterized by a sum of terms, each of which is the product of a parameter and a single predictor
-
-
-## Is this a linear model?
+## Linear models in matrix form | Simple regression
 
 $$
-y_i = \alpha (1 + \beta x_i)
+y_i = \alpha + \beta x_{i} + e_i \\
+\Downarrow^{*} \\
+y_i = \beta_0 + \beta_1 x_{i} + e_i
+$$
+
+The $i$ subscript indicates one of a total $N$ observations
+
+<br>
+
+$^*$The reason for this notation switch will become clear later
+
+
+## Linear models in matrix form | Simple regression
+
+Let's make this general statement more specific
+
+$$
+y_i = \beta_0 + \beta_1 x_{i} + e_i \\
+\Downarrow \\
+y_1 = \beta_0 + \beta_1 x_{1} + e_1 \\
+y_2 = \beta_0 + \beta_1 x_{2} + e_2 \\
+\vdots \\
+y_N = \beta_0 + \beta_1 x_{N} + e_N \\
 $$
 
 
-## Is this a linear model?
+## Linear models in matrix form | Simple regression
+
+Let's now make the implicit "1" multiplier on $\beta_0$ explicit 
 
 $$
-y_i = \alpha (1 + \beta x_i)
+y_1 = \beta_0 \underline{1} + \beta_1 x_{1} + e_1 \\
+y_2 = \beta_0 \underline{1} + \beta_1 x_{2} + e_2 \\
+\vdots \\
+y_N = \beta_0 \underline{1} + \beta_1 x_{N} + e_N \\
 $$
 
-Yes, *if*
+
+## Linear models in matrix form | Simple regression
+
+Let's next gather the common terms into column vectors
+
+$$
+y_1 = \beta_0 1 + \beta_1 x_{1} + e_1 \\
+y_2 = \beta_0 1 + \beta_1 x_{2} + e_2 \\
+\vdots \\
+y_N = \beta_0 1 + \beta_1 x_{N} + e_N \\
+$$
+
+
+## Linear models in matrix form | Simple regression
+
+Maybe something like this?
+
+$$
+\begin{bmatrix}
+y_1 \\ y_2 \\ \vdots \\ y_N
+\end{bmatrix}
+= 
+\begin{bmatrix}
+\beta_0 \\ \beta_0 \\ \vdots \\ \beta_0
+\end{bmatrix}
+\begin{bmatrix}
+1 \\ 1 \\ \vdots \\ 1
+\end{bmatrix}
++
+\begin{bmatrix}
+\beta_1 \\ \beta_1 \\ \vdots \\ \beta_1
+\end{bmatrix}
+\begin{bmatrix}
+x_1 \\ x_2 \\ \vdots \\ x_N
+\end{bmatrix}
++
+\begin{bmatrix}
+e_1 \\ e_2 \\ \vdots \\ e_N
+\end{bmatrix}
+$$
+
+
+## An aside on linear algebra
+
+We refer to the dimensions of matrices in a row-by-column manner
+
+$[rows \times columns]$
+
+
+## An aside on linear algebra
+
+When adding matrices, the dimensions must match
+
+$[m \times n] + [m \times n]$ &nbsp; <b>&#10003;</b>
+
+$[m \times n] + [m \times p]$ &nbsp; <b>X</b>
+
+
+## An aside on linear algebra
+
+When multiplying 2 matrices, the inner dimensions must match
+
+$[m \times \underline{n}] [\underline{n} \times p]$ &nbsp; <b>&#10003;</b>
+
+$[m \times \underline{n}] [\underline{p} \times n]$ &nbsp; <b>X</b>
+
+
+## An aside on linear algebra
+
+When multiplying 2 matrices, the dimensions are<br>[rows-of-first $\times$ columns-of-second]
+
+$[\underline{m} \times n] [n \times \underline{p}] = [m \times p]$
+
+
+## Linear models in matrix form | Simple regression
+
+Let's check the dimensions
+
+$$
+\begin{bmatrix}
+y_1 \\ y_2 \\ \vdots \\ y_N
+\end{bmatrix}
+= 
+\begin{bmatrix}
+\beta_0 \\ \beta_0 \\ \vdots \\ \beta_0
+\end{bmatrix}
+\begin{bmatrix}
+1 \\ 1 \\ \vdots \\ 1
+\end{bmatrix}
++
+\begin{bmatrix}
+\beta_1 \\ \beta_1 \\ \vdots \\ \beta_1
+\end{bmatrix}
+\begin{bmatrix}
+x_1 \\ x_2 \\ \vdots \\ x_N
+\end{bmatrix}
++
+\begin{bmatrix}
+e_1 \\ e_2 \\ \vdots \\ e_N
+\end{bmatrix}
+$$
+
+
+## Linear models in matrix form | Simple regression
+
+Let's check the dimensions
+
+$$
+\begin{bmatrix}
+y_1 \\ y_2 \\ \vdots \\ y_N
+\end{bmatrix}
+= 
+\begin{bmatrix}
+\beta_0 \\ \beta_0 \\ \vdots \\ \beta_0
+\end{bmatrix}
+\begin{bmatrix}
+1 \\ 1 \\ \vdots \\ 1
+\end{bmatrix}
++
+\begin{bmatrix}
+\beta_1 \\ \beta_1 \\ \vdots \\ \beta_1
+\end{bmatrix}
+\begin{bmatrix}
+x_1 \\ x_2 \\ \vdots \\ x_N
+\end{bmatrix}
++
+\begin{bmatrix}
+e_1 \\ e_2 \\ \vdots \\ e_N
+\end{bmatrix}
+$$
+
+$$
+[N \times 1] = \underbrace{[N \times 1] [N \times 1]}_{\text{OOPS!}} + \underbrace{[N \times 1] [N \times 1]}_{\text{OOPS!}} + [N \times 1]
+$$
+
+
+## An aside on linear algebra
+
+When multiplying a scalar times a vector/matrix, it's just element-wise
+
+$$
+a
+\begin{bmatrix}
+X \\ Y \\ Z
+\end{bmatrix}
+=
+\begin{bmatrix}
+aX \\ aY \\ aZ
+\end{bmatrix}
+$$
+
+
+## Linear models in matrix form | Simple regression
+
+So this looks better
+
+$$
+\begin{bmatrix}
+y_1 \\ y_2 \\ \vdots \\ y_N
+\end{bmatrix}
+= 
+\beta_0
+\begin{bmatrix}
+1 \\ 1 \\ \vdots \\ 1
+\end{bmatrix}
++
+\beta_1
+\begin{bmatrix}
+x_1 \\ x_2 \\ \vdots \\ x_N
+\end{bmatrix}
++
+\begin{bmatrix}
+e_1 \\ e_2 \\ \vdots \\ e_N
+\end{bmatrix}
+$$
+
+$$
+[N \times 1] = [N \times 1] + [N \times 1] + [N \times 1]
+$$
+
+
+## Linear models in matrix form | Simple regression
+
+This is nice, but can we make $\beta_0$ and $\beta_1$ more compact?
+
+$$
+\begin{bmatrix}
+y_1 \\ y_2 \\ \vdots \\ y_N
+\end{bmatrix}
+= 
+\beta_0
+\begin{bmatrix}
+1 \\ 1 \\ \vdots \\ 1
+\end{bmatrix}
++
+\beta_1
+\begin{bmatrix}
+x_1 \\ x_2 \\ \vdots \\ x_N
+\end{bmatrix}
++
+\begin{bmatrix}
+e_1 \\ e_2 \\ \vdots \\ e_N
+\end{bmatrix}
+$$
+
+
+## Linear models in matrix form | Simple regression
+
+What if we move $\beta_0$ & $\beta_1$ to the other side of the predictors...
+
+$$
+\begin{bmatrix}
+y_1 \\ y_2 \\ \vdots \\ y_N
+\end{bmatrix}
+= 
+\begin{bmatrix}
+1 \\ 1 \\ \vdots \\ 1
+\end{bmatrix}
+\beta_0
++
+\begin{bmatrix}
+x_1 \\ x_2 \\ \vdots \\ x_N
+\end{bmatrix}
+\beta_1
++
+\begin{bmatrix}
+e_1 \\ e_2 \\ \vdots \\ e_N
+\end{bmatrix}
+$$
+
+
+## Linear models in matrix form | Simple regression
+
+...and group the predictors and parameters into matrices
+
+$$
+\begin{bmatrix}
+y_1 \\ y_2 \\ \vdots \\ y_N
+\end{bmatrix}
+= 
+\begin{bmatrix}
+1 & x_1 \\ 1 & x_2 \\ \vdots & \vdots \\ 1 & x_N
+\end{bmatrix}
+\begin{bmatrix}
+\beta_0 & \beta_1
+\end{bmatrix}
++
+\begin{bmatrix}
+e_1 \\ e_2 \\ \vdots \\ e_N
+\end{bmatrix}
+$$
+
+
+## Linear models in matrix form | Simple regression
+
+Let's check the dimensions
+
+$$
+\begin{bmatrix}
+y_1 \\ y_2 \\ \vdots \\ y_N
+\end{bmatrix}
+= 
+\begin{bmatrix}
+1 & x_1 \\ 1 & x_2 \\ \vdots & \vdots \\ 1 & x_N
+\end{bmatrix}
+\begin{bmatrix}
+\beta_0 & \beta_1
+\end{bmatrix}
++
+\begin{bmatrix}
+e_1 \\ e_2 \\ \vdots \\ e_N
+\end{bmatrix}
+$$
+
+$$
+[N \times 1] = \underbrace{[N \times 2] [1 \times 2]}_{\text{OOPS!}} + [N \times 1]
+$$
+
+
+## An aside on linear algebra
+
+Matrix multiplication works on a row-times-column manner
+
+$$
+\begin{aligned}
+\begin{bmatrix}
+a & b \\ c & d
+\end{bmatrix}
+\begin{bmatrix}
+X \\ Y
+\end{bmatrix}
+&=
+\begin{bmatrix}
+aX + bY \\ cX + dY
+\end{bmatrix} \\
+~ \\
+[2 \times 2] [2 \times 1] &= [2 \times 1]
+\end{aligned}
+$$
+
+
+## Linear models in matrix form | Simple regression
+
+Let's transpose the parameter vector $[\beta_0 ~~ \beta_1]^{\top}$
+
+$$
+\begin{bmatrix}
+y_1 \\ y_2 \\ \vdots \\ y_N
+\end{bmatrix}
+= 
+\begin{bmatrix}
+1 & x_1 \\ 1 & x_2 \\ \vdots & \vdots \\ 1 & x_N
+\end{bmatrix}
+\begin{bmatrix}
+\beta_0 \\ \beta_1
+\end{bmatrix}
++
+\begin{bmatrix}
+e_1 \\ e_2 \\ \vdots \\ e_N
+\end{bmatrix}
+$$
+
+
+## Linear models in matrix form | Simple regression
+
+and check the dimensions
+
+$$
+\begin{bmatrix}
+y_1 \\ y_2 \\ \vdots \\ y_N
+\end{bmatrix}
+= 
+\begin{bmatrix}
+1 & x_1 \\ 1 & x_2 \\ \vdots & \vdots \\ 1 & x_N
+\end{bmatrix}
+\begin{bmatrix}
+\beta_0 \\ \beta_1
+\end{bmatrix}
++
+\begin{bmatrix}
+e_1 \\ e_2 \\ \vdots \\ e_N
+\end{bmatrix}
+$$
 
 $$
 \begin{align}
-y_i &= \alpha (1 + \beta x_i) \\
-    &= \alpha + \alpha \beta x_i \\
-    &= \alpha + \gamma x_i ~~ \text{with} ~~ \gamma = \alpha \beta
+[N \times 1] &= [N \times 2] [2 \times 1] + [N \times 1] \\
+&= [N \times 1] + [N \times 1] \\
+&= [N \times 1]
 \end{align}
 $$
 
 
-## What is a linear model?
+## Linear models in matrix form | Simple regression
 
-*A relationship that defines a response variable as a linear function of one or more predictor variables*
-
-* characterized by a sum of terms, each of which is the product of a parameter and a single predictor
-
-* the predictor can be a transformed variable
-
-
-## Linear transformations
+Lastly, we can write the model in a more compact notation
 
 $$
-y_i = \alpha + \beta x_i^2 \\
+\begin{bmatrix}
+y_1 \\ y_2 \\ \vdots \\ y_N
+\end{bmatrix}
+= 
+\begin{bmatrix}
+1 & x_1 \\ 1 & x_2 \\ \vdots & \vdots \\ 1 & x_N
+\end{bmatrix}
+\begin{bmatrix}
+\beta_0 \\ \beta_1
+\end{bmatrix}
++
+\begin{bmatrix}
+e_1 \\ e_2 \\ \vdots \\ e_N
+\end{bmatrix} \\
 \Downarrow \\
-y_i = \alpha + \beta z_i \\
-z_i = x_i^2
+\mathbf{y} = \mathbf{X} \boldsymbol{\beta} + \mathbf{e}
 $$
 
 
-## Linear vs nonlinear models
+## Linear models in matrix form | Multiple regression
 
-There are only 2 forms of a linear model with 2 parameters
-
-$$
-y_i = \alpha + \beta x_i
-$$
-
-<center>or</center>
+The matrix form is generalizaable to multiple predictors
 
 $$
-y_i = \beta_1 x_{1,i} + \beta_2 x_{2,i}
-$$
-
-
-## Linear vs nonlinear models
-
-There are *many* forms of nonlinear models with 2 parameters
-
-$$
-y_i = \alpha x_i^{\beta} \\
-y_i = \alpha + x_i^{\beta} \\
-y_i = \alpha^{\beta x_i} \\
-y_i = \alpha + \beta \frac{1}{x} \\
-\vdots
-$$
-
-
-## Linear vs nonlinear models
-
-In linear models, effect sizes of different predictors are directly comparable
-
-* intercept: units = response (eg, grams)
-
-* slope: units = response per predictor (eg, grams per cm)
-
-
-## Linear vs nonlinear models
-
-In linear models, effect sizes of different predictors are directly comparable
-
-* intercept: units = response (eg, grams)
-
-* slope: units = response per predictor (eg, grams per cm)
-
-In nonlinear models, common inference tools (*p*-values, confidence intervals) may not be available
-
-
-## Locally linear models
-
-If we reduce the scale (interval) enough, we can approximate a nonlinear function with a linear model
-
-$$
-y = x^2 \\
+\begin{bmatrix}
+y_1 \\ y_2 \\ \vdots \\ y_N
+\end{bmatrix}
+= 
+\begin{bmatrix}
+1 & x_{1,1} & x_{2,1} \\ 1 & x_{1,2} & x_{2,2} \\ \vdots & \vdots \\ 1 & x_{1,N} & x_{2,N} 
+\end{bmatrix}
+\begin{bmatrix}
+\beta_0 \\ \beta_1 \\ \beta_2
+\end{bmatrix}
++
+\begin{bmatrix}
+e_1 \\ e_2 \\ \vdots \\ e_N
+\end{bmatrix} \\
 \Downarrow \\
-\frac{dy}{dx} = 2x
+\mathbf{y} = \mathbf{X} \boldsymbol{\beta} + \mathbf{e}
 $$
-
-
-## Locally linear models | Consider the quadratic $y = \alpha + \beta x + x^2$
-
-```{r nonlinear_scaling, fig.align='center', fig.height=3.5, fig.width=7}
-par(mfrow = c(1,2), mai = c(0.9,0.9,0.1,0.1))
-alpha <- 2
-beta <- 0.5
-curve(alpha + beta*x + x^2, -2, 2,
-      xlim = c(-2,2), ylim = c(0,8), col = "blue", lwd = 2,
-      xlab = expression(italic(x)), ylab = expression(italic(y)))
-curve(alpha + beta*x + x^2, 0, 1,
-      xlim = c(-2,2), ylim = c(0,8), col = "orange", lwd = 2,
-      xlab = expression(italic(x)), ylab = "")
-```
-
-
-## Locally linear models | A stochastic example with $y = \tfrac{1}{2} + 2 x + x^2 + \epsilon_i$
-
-```{r sim_quadratic, echo = TRUE}
-set.seed(514)
-nn <- 30
-alpha <- 2
-beta <- 1/2
-eps <- rnorm(nn, 0, 1) ## errors ~ N(0,1)
-x_all <- runif(nn, -2, 2)
-y_all <- alpha + beta*x_all + x_all^2 + eps
-x_loc <- x_all[x_all >= 0 & x_all <= 1]
-y_loc <- y_all[x_all >= 0 & x_all <= 1]
-```
-
-
-## Locally linear models | A stochastic example with $y = \tfrac{1}{2} + 2 x + x^2 + \epsilon_i$
-
-```{r plot_sim_quadratic, fig.align='center', fig.height=3.5, fig.width=7}
-par(mfrow = c(1,2), mai = c(0.9,0.9,0.1,0.1))
-plot(x_all, y_all, pch = 16,
-     xlim = c(-2,2), ylim = c(0,8), col = "blue",
-     xlab = expression(italic(x)), ylab = expression(italic(y)))
-plot(x_loc, y_loc, pch = 16,
-     xlim = c(-2,2), ylim = c(0,8), col = "orange",
-     xlab = expression(italic(x)), ylab = "")
-```
-
-
-## Linear model for size of fish
-
-In **R**, we can use `lm()` to fit linear regression models
-
-$y_i = \alpha + \beta x_i + e_i$
-
-`lm(y ~ x)`
-
-(notice that the intercept $\alpha$ is implicit here)
-
-
-## Linear model for size of fish
-
-In **R**, we use `summary()` to get info about a fitted model
-
-`fitted_regr_model <- lm(L10_mass ~ L10_length)` 
-
-`summary(fitted_regr_model)` 
-
-
-## Locally linear models {.smaller}
-
-```{r fit_quad_1, echo = TRUE}
-## model 1: full dataset
-fit_1 <- lm(y_all ~ x_all)
-summary(fit_1)
-```
-
-
-## Locally linear models {.smaller}
-
-```{r fit_quad_2, echo = TRUE}
-## model 2: "local" data
-fit_2 <- lm(y_loc ~ x_loc)
-summary(fit_2)
-```
-
-
-## Linear model for size of fish
-
-In **R**, we use `coef()` to extract the intercept(s) and slope(s)
-
-`fitted_regr_model <- lm(y ~ x)` 
-
-`coef(fitted_regr_model)` 
-
-
-## Locally linear models {.smaller}
-
-```{r coef_quad_2, echo = TRUE}
-## intercept and slope for model 2
-coef(fit_2)
-```
-
-
-## Locally linear models {.smaller}
-
-```{r coef_quad_2b, echo = TRUE}
-## intercept and slope for model 2
-coef(fit_2)
-```
-
-True model: $y = \tfrac{1}{2} + 2 x + x^2$
-
-Estimate: $\hat{y} \approx 1.1 + 2.7 x + 0 x^2$
-
-
-## {.flexbox .vcenter .bigger}
-
-<font size="10">
-<center>Linear models can be *good approximations* to nonlinear functions</center>
-</font>
 
 
 # QUESTIONS?
 
 
-## {.flexbox .vcenter .bigger}
+## Ordinary least squares
 
-<font size="10">
-<center>Common forms for linear models</center>
-</font>
-
-
-## A simple starting point
-
-### Data = (Deterministic part) + (Stochastic part)
-
-
-## Types of linear models
-
-We classify linear models by the form of their deterministic part
-
-Discrete predictor $\rightarrow$ ANalysis Of VAriance (ANOVA)
-
-Continuous predictor $\rightarrow$ Regression
-
-Both $\rightarrow$ ANalysis of COVAriance (ANCOVA)
-
-
-## Possible models for growth of fish
-
-| Model | Description |
-|:------|:-----------:|
-| $\text{growth}_i = \alpha + \beta \text{species}_i + \epsilon_i$ | 1-way ANOVA |
-| $\text{growth}_i = \alpha + \beta_{1,\text{species}} + \beta_{2,\text{tank}} + \epsilon_i$ | 2-way ANOVA |
-| $\text{growth}_i = \alpha + \beta \text{ration}_i + \epsilon_i$ | simple linear regression |
-| $\text{growth}_i = \alpha + \beta_1 \text{ration}_i + \beta_2 \text{temperature}_i + \epsilon_i ~ ~$ | multiple regression |
-| $\text{growth}_i = \alpha + \beta_{1,\text{species}} + \beta_2 \text{ration}_i + \epsilon_i$ | ANCOVA |
-
-
-## Example | Fish growth during an experiment
-
-* A biologist at the WA Dept of Fish & Wildlife contacts you for help with an experiment
-
-* She wants to know how growth of hatchery salmon is affected by their ration size
-
-* She sends you a spreadsheet with 2 cols:  
-
-    1. fish growth (mm)  
-    2. ration size (2g, 4g, 6g)
-
-
-## ANOVA model
-
-```{r sim_anova, fig.align='center', fig.height=4, fig.width=5}
-set.seed(514)
-## sample size
-nn <- 30
-## groups
-pp <- 3
-## global intercept
-alpha <- 5
-## offsets
-beta_1 <- c(1,2,3)*5
-## slope
-beta_2 <- 2
-## vector of lienar parameters
-BETA <- matrix(c(alpha, beta_1, beta_2), ncol = 1)
-## linear predictors
-x_avg <- rep(1, nn*pp)
-x_int <- matrix(c(rep(c(rep(1,nn),
-                        rep(0,nn*pp)),2),
-                  c(rep(1,nn))),
-                nn*pp, pp)
-x_cov <- runif(nn*pp, 0, 12)
-## matrix of predictors
-xx <- cbind(x_avg, x_int, x_cov)
-## Gaussian errors
-ee <- rnorm(nn*pp, 0, 2)
-## simulated data
-yy <- xx %*% BETA + ee
-## bin data for ANOVA
-vv <- cbind(x_cov, yy)
-v1 <- vv[x_cov <=4, ]
-v2 <- vv[x_cov > 4 & x_cov <=8, ]
-v3 <- vv[x_cov > 8 & x_cov <=12, ]
-## plot all data
-par(mai = c(0.8,0.8,0.1,0.1))
-## low
-plot(rep(1, nrow(v1)), v1[,2], pch = 16, col = "red",
-     xlim = c(0.5,3.5), ylim = range(yy),
-     xaxt = "n",
-     xlab = "Ration size (g)", ylab = "Growth (mm)")
-points(1, mean(v1[,2]), col = "red", pch = "-", cex = 5)
-## med
-points(rep(2, nrow(v2)), v2[,2], pch = 16, col = "blue")
-points(2, mean(v2[,2]), col = "blue", pch = "-", cex = 5)
-# high
-points(rep(3, nrow(v3)), v3[,2], pch = 16, col = "orange")
-points(3, mean(v3[,2]), col = "orange", pch = "-", cex = 5)
-axis(1, at = seq(3), labels = c("Low (2)", "Med (6)", "High (10)"))
-```
-
-$\text{growth}_i = \alpha + \beta_{\text{ration}} + \epsilon_i$
-
-
-## More info arrives
-
-It turns out that targeting the exact ration is hard, but they know how much each fish ate during the trial
-
-
-## Continuous predictor
-
-```{r sim_regr, fig.align='center', fig.height=4, fig.width=5}
-par(mai = c(0.8,0.8,0.1,0.1))
-plot(v1[,1], v1[,2], pch = 16, col = "red",
-     xlim = range(x_cov), ylim = range(yy),
-     xlab = "Ration size (g)", ylab = "Growth (mm)")
-lines(c(0,4), rep(mean(v1[,2]), 2), col = "red", lwd = 3)
-## med
-points(v2[,1], v2[,2], pch = 16, col = "blue")
-lines(c(4,8), rep(mean(v2[,2]), 2), col = "blue", lwd = 3)
-# high
-points(v3[,1], v3[,2], pch = 16, col = "orange")
-lines(c(8,12), rep(mean(v3[,2]), 2), col = "orange", lwd = 3)
-```
-
-
-## Continuous predictor
-
-```{r sim_regr_all, fig.align='center', fig.height=4, fig.width=5}
-par(mai = c(0.8,0.8,0.1,0.1))
-plot(x_cov, yy, pch = 16, 
-     xlab = "Ration size (g)", ylab = "Growth (mm)")
-```
-
-
-## Linear regression
-
-```{r sim_regr_all_2, fig.align='center', fig.height=4, fig.width=5}
-par(mai = c(0.8,0.8,0.1,0.1))
-plot(x_cov, yy, pch = 16, 
-     xlab = "Ration size (g)", ylab = "Growth (mm)")
-abline(a = 15, b = 2)
-```
-
-$\text{growth}_i = \alpha + \beta \text{ration}_i + \epsilon_i$
-
-
-## More info arrives
-
-It also turns out that there are 3 lineages of fish in the trials
-
-
-## Continuous & discrete predictors
-
-```{r sim_ancova, fig.align='center', fig.height=4, fig.width=5}
-
-## all data
-par(mai = c(0.8,0.8,0.1,0.1))
-plot(x_cov[1:nn], yy[1:nn], pch = 16, col = "red", ylim = range(yy),
-     xlab = "Ration size (g)", ylab = "Growth (mm)")
-points(x_cov[1:nn+nn], yy[1:nn+nn], pch = 16, col = "blue")
-points(x_cov[1:nn+nn*2], yy[1:nn+nn*2], pch = 16, col = "orange")
-```
-
-
-## ANCOVA
-
-```{r sim_ancova_fit, fig.align='center', fig.height=4, fig.width=5}
-
-## all data
-par(mai = c(0.8,0.8,0.1,0.1))
-plot(x_cov[1:nn], yy[1:nn], pch = 16, col = "red", ylim = range(yy),
-     xlab = "Ration size (g)", ylab = "Growth (mm)")
-points(x_cov[1:nn+nn], yy[1:nn+nn], pch = 16, col = "blue")
-points(x_cov[1:nn+nn*2], yy[1:nn+nn*2], pch = 16, col = "orange")
-
-abline(a = 10, b = 2, col = "red")
-abline(a = 15, b = 2, col = "blue")
-abline(a = 20, b = 2, col = "orange")
-```
-
-$\text{growth}_i = \alpha + \beta_{1,\text{lineage}} + \beta_2 \text{ration}_i + \epsilon_i$
-
-
-## Notation for categorical effects
-
-Here we have specified categorical effects in AN(C)OVA models as discrete parameters
-
-For example, for a one-way ANOVA with 3 factors
+In general, we have something like
 
 $$
-y_i = \alpha + \beta_j + \epsilon_i
+DATA = MODEL + ERRORS
 $$
 
-the definition of $\beta_j$ is
+Ideally we have something like
 
 $$
-\beta_j = 
-\left\{
-\begin{matrix}
-\beta_1 ~ \text{if factor 1} \\
-\beta_2 ~ \text{if factor 2} \\
-\beta_3 ~ \text{if factor 3}
-\end{matrix}
-\right.
+DATA \approx MODEL
+$$
+
+and hence
+
+$$
+ERRORS \approx 0
 $$
 
 
-## Notation for categorical effects
+## Ordinary least squares
 
-In practice, we will use a combination of -1/0/1 predictors, so our model becomes
+From this it follows that
 
 $$
-y_i = \alpha + \beta_1 x_{1,i} + \beta_2 x_{2,i} + \beta_3 x_{3,i} + \epsilon_i
+\text{Var}(DATA) = \text{Var}(MODEL) + \text{Var}(ERRORS)
 $$
 
-and each of the $x_{j,i}$ indicates whether the $i^{th}$ observation was assigned factor $j$
+Our hope is that
+
+$$
+\text{Var}(DATA) \approx \text{Var}(MODEL)
+$$
+
+and hence
+
+$$
+\text{Var}(ERRORS) \approx 0
+$$
+
+
+## Ordinary least squares
+
+Our model for the data is
+
+$$
+y_i = f(\text{predictors}_i) + e_i
+$$
+
+and our estimate of $y$ is
+
+$$
+\hat{y}_i = f(\text{predictors}_i)
+$$
+
+and therefore the errors (residuals) are given by
+
+$$
+e_i = y_i - \hat{y}_i
+$$
+
+In general, we want to minimize each of the $e_i$
+
+
+## Ordinary least squares
+
+Specifically, we want to minimize the sum of their squares
+
+$$
+\min \sum_{i = 1}^{N}e_i^2 ~ \Rightarrow ~ \min \sum_{i = 1}^{N}(y_i - \hat{y}_i)^2
+$$
+
+
+## Ordinary least squares
+
+For our linear regression model, we have
+
+$$
+\min \sum_{i = 1}^{N}(y_i - \hat{y}_i)^2 \\
+\Downarrow \\
+\min \sum_{i = 1}^{N} \left(y_i - (\hat{\beta}_0 + \hat{\beta}_1 x_i) \right)^2
+$$
+
+
+## An aside on linear algebra
+
+Recall that matrix multiplication works in a row-by-column manner
+
+$$
+\begin{bmatrix}
+a & b \\ c & d
+\end{bmatrix}
+\begin{bmatrix}
+X \\ Y
+\end{bmatrix}
+=
+\begin{bmatrix}
+aX + bY \\ cX + dY
+\end{bmatrix}
+$$
+
+
+## An aside on linear algebra
+
+If $\mathbf{v}$ is an $[n \times 1]$ column vector & $\mathbf{v}^{\top}$ is its $[1 \times n]$ transpose,
+
+multiplying $\mathbf{v}^{\top} \mathbf{v}$ gives the sum of the squared values in $\mathbf{v}$
+
+$$
+\begin{aligned}
+\begin{bmatrix}
+a & b & c
+\end{bmatrix}
+\begin{bmatrix}
+a \\ b \\ c
+\end{bmatrix}
+&=
+\begin{bmatrix}
+a^2 + b^2 + c^2
+\end{bmatrix} \\
+~ \\
+[1 \times n] [n \times 1] &= [1 \times 1]
+\end{aligned}
+$$
+
+
+## Ordinary least squares
+
+Writing our linear regression model in matrix form, we have
+
+$$
+\mathbf{y} = \mathbf{X} \hat{\boldsymbol{\beta}} + \mathbf{e} \\
+\Downarrow \\
+\mathbf{e} = \mathbf{y} - \mathbf{X} \hat{\boldsymbol{\beta}}
+$$
+
+so the sum of squared errors is
+
+$$
+\mathbf{e}^{\top} \mathbf{e} = (\mathbf{y} - \mathbf{X} \hat{\boldsymbol{\beta}})^{\top} (\mathbf{y} - \mathbf{X} \hat{\boldsymbol{\beta}})
+$$
+
+
+## Finding the minimum
+
+For example, at what value of $x$ does this parabola reach its minimum?
+
+$$
+y = 2 x^2 - 3 x + 1
+$$
+
+Recall from calculus that we
+
+1. differentiate $y$ with respect to $x$
+2. set the result to 0
+3. solve for $x$
+
+## Finding the minimum
+
+For example, at what value of $x$ does this parabola reach its minimum?
+
+$$
+y = 2 x^2 - 3 x + 1 \\
+\Downarrow \\
+\frac{dy}{dx} = 4 x - 3 \\
+\Downarrow \\
+4 x - 3 = 0 \\
+x = \tfrac{3}{4}
+$$
+
+
+## Ordinary least squares
+
+We want to minimize the sum of squared errors
+
+$$
+\begin{align}
+\mathbf{e}^{\top} \mathbf{e} &= (\mathbf{y} - \mathbf{X} \hat{\boldsymbol{\beta}})^{\top} (\mathbf{y} - \mathbf{X} \hat{\boldsymbol{\beta}}) \\
+  &= \mathbf{y}^{\top} \mathbf{y} - \mathbf{y}^{\top} \mathbf{X} \hat{\boldsymbol{\beta}} - \hat{\boldsymbol{\beta}}^{\top} \mathbf{X}^{\top} \mathbf{y} + \hat{\boldsymbol{\beta}}^{\top} \mathbf{X}^{\top} \mathbf{X} \hat{\boldsymbol{\beta}}
+\end{align}
+$$
+
+and so we want
+
+$$
+\frac{\partial}{\partial \hat{\boldsymbol{\beta}}} \mathbf{y}^{\top} \mathbf{y} - \mathbf{y}^{\top} \mathbf{X} \hat{\boldsymbol{\beta}} - \hat{\boldsymbol{\beta}}^{\top} \mathbf{X}^{\top} \mathbf{y} + \hat{\boldsymbol{\beta}}^{\top} \mathbf{X}^{\top} \mathbf{X} \hat{\boldsymbol{\beta}}
+$$
+
+
+## Ordinary least squares
+
+<center>(via several steps)</center>
+
+$$
+\frac{\partial SSE}{\partial \hat{\boldsymbol{\beta}}}  = -2 \mathbf{X}^{\top} \mathbf{y} + 2 \mathbf{X}^{\top} \mathbf{X} \hat{\boldsymbol{\beta}} \\
+\Downarrow \\
+-2 \mathbf{X}^{\top} \mathbf{y} + 2 \mathbf{X}^{\top} \mathbf{X} \hat{\boldsymbol{\beta}} = 0 \\
+\mathbf{X}^{\top} \mathbf{X} \hat{\boldsymbol{\beta}} = \mathbf{X}^{\top} \mathbf{y} \\
+\Downarrow \\
+\hat{\boldsymbol{\beta}} = (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^{\top} \mathbf{y}
+$$
+
+
+## Ordinary least squares
+
+Returning to our estimate of the data, we have
+
+$$
+\begin{align}
+\hat{\mathbf{y}} &= \mathbf{X} \hat{\boldsymbol{\beta}} \\
+  &= \mathbf{X} \left( (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^{\top} \mathbf{y} \right) \\
+  &= \underbrace{\mathbf{X} (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^{\top}}_{\mathbf{H}} \mathbf{y} \\
+  &= \mathbf{H} \mathbf{y}
+\end{align}
+$$
+
+
+## Ordinary least squares
+
+```{r model_geom, fig.height=4, fig.width=6, fig.align="center"}
+pgram <- data.frame(x = c(0, 3, 10, 7, 0), y = c(0, 3, 3, 0, 0))
+
+## empty plot space
+par(mai = rep(0,4), omi = rep(0, 4))
+plot(c(0,10), c(0,5), type = "n", xaxt = "n", yaxt = "n",
+     bty = "n", xlab = "", ylab = "")
+## parallelogram
+lines(pgram[,1], pgram[,2])
+text(1, 0.5, expression(paste("subspace spanned by ",bold(X))),
+     pos = 4, cex = 1.2, col = "darkgray")
+## perpendicular
+lines(c(6.6,6.6),c(2,2.3), col = "gray")
+lines(c(6.6,7),c(2.3,2.3), col = "gray")
+## vectors
+## data
+arrows(3, 2, 7, 4, length = 0.15, angle = 10, lwd = 2, col ="purple")
+text(6.5, 4, expression(bold(y)), cex = 1.5)
+## yhat
+arrows(3, 2, 7, 2, length = 0.15, angle = 10, lwd = 2, col ="blue")
+text(6, 1.6, expression(paste(bold(hat(y))," = ",bold(Hy))), cex = 1.5)
+## errors
+arrows(7, 2, 7, 4, length = 0.15, angle = 10, lwd = 2, col ="red")
+text(7.3, 3.5, expression(bold(e)), cex = 1.5)
+```
+
+$\mathbf{H}$ is called the "hat matrix" because it maps $\mathbf{y}$ onto $\hat{\mathbf{y}}$ ("y-hat")
+
+
+## Ordinary least squares
+
+Consider for a moment what it means if
+
+$$
+\hat{\mathbf{y}} = \mathbf{X} (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^{\top} \mathbf{y} 
+$$
+
+
+## Ordinary least squares
+
+Consider for a moment what it means if
+
+$$
+\hat{\mathbf{y}} = \mathbf{X} (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^{\top} \mathbf{y} 
+$$
+
+**We can estimate the data without any model parameters!**
+
+
+## Ordinary least squares | Key assumptions
+
+* Model is linear in parameters$^*$
+
+> - Observations $y_i$ are a random sample from the population    
+
+> - The predictor(s) is/are known without measurement error  
+
+> - The predictor(s) is/are independent of the response
+
+> - If 2+ predictors, they are independent of each other
+
+> - Errors are IID: $e_i \sim \text{N}(0, \sigma^2)$; $\text{Cov}(e_i, e_j) = 0$
+
+$^*$parameters are not multiplied or divided by other parameters, nor do they appear as an exponent
+
+## Independent & identically distributed
+
+How do we know if our errors are IID?
+
+* Knowledge of the problem/design  
+* Examine residual plots  
+* Tests of model fits
 
 <br>
 
-(We'll visit this again when we discuss design matrices)
+We will discuss this more in later lectures
+
+
+## Ordinary least squares
+
+What can we say about $\hat{\boldsymbol{\beta}}$ when estimated this way?
+
+1. It's the *maximum likelihood estimate* (MLE)
+
+2. It's the *best linear unbiased estimate* (BLUE)
+
+**NOTE**: these propoerties only hold if the errors ($e_i$) are *independent and identically distributed* (IID)
+
+
+## Identifiability
+
+Recall the solution for $\hat{\boldsymbol{\beta}}$ where
+
+$$
+\hat{\boldsymbol{\beta}} = (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^{\top} \mathbf{y}
+$$
+
+If the quantity $\mathbf{X}^{\top} \mathbf{X}$ is not invertible, then $\hat{\boldsymbol{\beta}}$ is partially unidentifiable. 
+
+This occurs when the columns of $\mathbf{X}$ are not independent<br>(ie, $\mathbf{X}$ is not of "full rank")
+
+
+## Lack of identifiability | When does it arise?
+
+* analysis of designed experiments (more later)
+
+> - two predictors are perfectly correlated (eg, temperature entered in both degrees F & degrees C)
+
+> - predictors are subsets of one another (eg, counts of trees in 3 categories: DBH $\geq$ 10 cm, DBH $\geq$ 20 cm, DBH $\geq$ 30 cm)
+
+> - number of parameters equals or exceeds the observations  
+    $p = n$: model is *saturated*  
+    $p \geq n$: model is *supersaturated*
+
+
+
+
+
+
+
 
