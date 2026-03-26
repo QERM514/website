@@ -2,7 +2,7 @@
 title: "Design matrices for models"
 subtitle: "Analysis of Ecological and Environmental Data<br>QERM 514"
 author: "Mark Scheuerell"
-date: "20 April 2026"
+date: "22 April 2026"
 output:
   ioslides_presentation:
     wide: true
