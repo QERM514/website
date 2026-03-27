@@ -1,11 +1,16 @@
 ---
 title: "Working with logistic regression models"
 author: "Mark Scheuerell"
-date: "15 May 2020"
+date: "15 May 2026"
 output:
   html_document:
-    theme: journal
+    theme: 
+      bootswatch: journal
+      primary: "#32006e"
     highlight: textmate
+    css: ../lecture_inst.css
+    code_download: true
+    code_folding: hide
     toc: true
     toc_float: true
     toc_depth: 4

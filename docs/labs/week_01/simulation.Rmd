@@ -1,0 +1,27 @@
+---
+title: "Simulating data in R"
+author: "Mark Scheuerell"
+date: "3 April 2026"
+output:
+  html_document:
+    theme: 
+      bootswatch: journal
+      primary: "#32006e"
+    highlight: textmate
+    css: ../lecture_inst.css
+    code_download: true
+    code_folding: show
+    toc: true
+    toc_float: true
+    toc_depth: 3
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Background
+
+
+# Data distributions
+
