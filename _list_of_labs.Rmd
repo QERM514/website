@@ -20,18 +20,30 @@ matrixlab <- list(
   background = c("")
   )
 
-## 1 overview of R Markdown
+## overview of R Markdown
 markdown <- list(
   title = "R Markdown",
   topics = c("Authoring reports with R Markdown"),
   pdf = c(""),
   rmd = c("labs/week_01/intro_rmarkdown.Rmd"),
   html = c("labs/week_01/intro_rmarkdown.html"),
-  zoom = "https://washington.zoom.us/rec/play/vsIpdOn-pj83S92WtwSDUaAvW464LKys0SdKq_RZyknkUiFQOwL1N-cRMzd1BCseNEzjbju3EOzkBdU?continueMode=true",
+  zoom = "",
   data = "",
   background = c("[R Markdown full guide](https://bookdown.org/yihui/rmarkdown/)",
                  "[R Markdown cheat sheet](https://rstudio.com/wp-content/uploads/2016/03/rmarkdown-cheatsheet-2.0.pdf)",
                  "[LaTeX math codes](labs/week_01/latex_math_sheet.pdf)")
+)
+
+## 1 overview of R Markdown
+simulation <- list(
+  title = "Simulating data",
+  topics = c("Simulating data in R"),
+  pdf = c(""),
+  rmd = c("labs/week_01/simulation.Rmd"),
+  html = c("labs/week_01/simulation.html"),
+  zoom = "",
+  data = "",
+  background = c("")
 )
 
 ## 2 fitting linear models
@@ -132,8 +144,8 @@ fitting_glmms <- list(
   )
 
 ## preparations for project presentation
-present_prep <- list(
-  title = "Presentation preparation",
+last_week <- list(
+  title = "Project help (no lab session)",
   topics = c("Troubleshooting project analyses", "Final preparation for presentations"),
   pdf = "",
   rmd = "",
