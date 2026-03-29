@@ -21,7 +21,7 @@ week_labs <- vector("list", 11)
 names(week_labs) <- paste0("L", seq(0, 10))
 ## lab topics
 week_labs$L0 <- markdown
-week_labs$L1 <- simulation
+week_labs$L1 <- helpful_functions
 week_labs$L2 <- fitting_LMs
 week_labs$L3 <- diagnostics_and_errors
 week_labs$L4 <- design_matrices

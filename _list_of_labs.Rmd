@@ -35,12 +35,12 @@ markdown <- list(
 )
 
 ## 1 overview of R Markdown
-simulation <- list(
-  title = "Simulating data",
-  topics = c("Simulating data in R"),
+helpful_functions <- list(
+  title = "Data and models in R",
+  topics = c("Data and models in R"),
   pdf = c(""),
-  rmd = c("labs/week_01/simulation.Rmd"),
-  html = c("labs/week_01/simulation.html"),
+  rmd = c("labs/week_01/helpful_functions.Rmd"),
+  html = c("labs/week_01/helpful_functions.html"),
   zoom = "",
   data = "",
   background = c("")
