@@ -1,0 +1,118 @@
+---
+title: "Data and model summaries in R"
+author: "Mark Scheuerell"
+date: "3 April 2026"
+output:
+  html_document:
+    theme: 
+      bootswatch: journal
+      primary: "#32006e"
+    highlight: textmate
+    css: ../lecture_inst.css
+    code_download: true
+    code_folding: show
+    toc: true
+    toc_float: true
+    toc_depth: 3
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Background
+
+This is meant to be a helpful resource when working with data, fitting models, and interpreting output.
+
+# Data summaries
+
+Here are some functions that are helpful for summarizing data.
+
+`mean()`: computes the arithmetic mean (average) of a vector
+
+`sd()`: computes the standard deviation of a vector
+
+`var()`: computes the variance of a vector
+
+`quantile()`: returns estimates of underlying distribution quantiles
+
+`hist()`: creates a histogram of the data in a vector
+
+
+# Data for models
+
+Sometimes you want or need to be very explicit about how you want R to treat some aspect of your data. For example, when used inside of a model-fitting function, `a + b` will include both `a` and `b` as predictors in a model, but `I(a + b)` will include the sum of `a` and `b` as a single predictor in a model.
+
+`I()`: change the class of an object to indicate that it should be treated ‘as is’
+
+`offset()`: assume a model predictor has a known coefficient of 1 rather than an unknown coefficient to be estimated
+
+`scale()`: shifts and/or scales a vector to have a mean of 0 and variance or 1
+
+
+# Model summaries
+
+You'll see a variety of functions for fitting different types of linear models in this course. The following functions are useful for extracting information about a fitted model, such as estimated coefficients, standard errors, and p-values.
+
+`anova()`: computes analysis of variance (or deviance) table for a fitted model object
+
+`coefficients()`: extracts model coefficients from objects returned by modeling functions
+
+`residuals()`: extracts model residuals from objects returned by modeling functions
+
+`summary()`: returns a list of summary statistics of the fitted linear model
+
+
+# Data distributions
+
+It's common practice to use some form of randomization when estimating and testing models.
+
+`sample()`: draws a sample of a specified size from a group, with or without replacement
+
+The functions for generating random data from a statistic distribution in R all start with `r` (for "random").
+
+## Continuous values
+
+`rnorm()`: draw random samples from a normal distribution
+
+`rlogis()`: draw random samples from a logistic distribution
+
+`runif()`: draw random samples from a uniform distribution
+
+## Discrete values
+
+`rbinom()`: draw random samples from a binomial distribution; can be used for Bernoulli distribution as well
+
+`rpois()`: draw random samples from a Poisson distribution
+
+`rnbinom()`: draw random samples from a negative binomial distribution
+
+
+# Monte Carlo
+
+There is a technique known as a _Monte Carlo_ method (or simulation or experiment), whose name comes from the Monte Carlo Casino in Monaco. The idea is to estimate the uncertainty in a stochastic variable or process via repeated sampling. For example, say you wanted to estimate the probability that a coin would come up "heads" when flipped into the air and allowed to land freely. To do so, you could flip the coin 100 times and after each flip record a 1 if heads or a 0 if tails. At the end count up the number of 1's and divide the sum by 100. Here's a way we might do that in R.
+
+```{r monte_carlo_ex}
+## number of monte carlo experiments
+nn <- 100
+
+## empty vector to record our results
+rr <- rep(NA, nn)
+
+## make this repeatable
+set.seed(514)
+
+## conduct the experiment
+for(i in 1:nn) {
+  ## flip the coin; rbinom(1, 1, 0.5) will return a 0 or 1 with probability 0.5
+  flip <- rbinom(1, 1, 0.5)
+  ## record the result
+  rr[i] <- flip
+}
+
+## estimate probability of heads
+sum(rr) / nn
+```
+
+
+
