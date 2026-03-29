@@ -17,13 +17,14 @@ There will be 2 components to your project: a project plan, a presentation, and 
 
 #### Project plans are due by 11:59 PM on May 10 and constitute 10% of your final grade.
 
-Write a 1-2 page description of your project idea that includes 
+Write an 800-1000 word description of your project idea that includes 
 
-1. question(s) of interest;  
-2. hypothesis/hypotheses you're addressing;  
-3. predictions from hypotheses
-2. data you will use; and  
-3. your general approach to analyzing the data.  
+1. background of research  
+2. question(s) of interest  
+3. hypothesis/hypotheses you're addressing  
+4. predictions from hypotheses  
+5. data you will use  
+6. your general approach to analyzing the data  
 
 Things to consider:
 
