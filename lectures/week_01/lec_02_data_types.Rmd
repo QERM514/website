@@ -6,7 +6,7 @@ date: "1 April 2026"
 output:
   ioslides_presentation:
     widescreen: true
-    css: lecture_slides.css
+    css: ../lecture_slides.css
 ---
 
 ```{r setup, include=FALSE}
@@ -19,6 +19,8 @@ knitr::opts_chunk$set(echo = FALSE)
 
 > - Think critically about what the data *could* tell you
 
+> - Start thinking about the distributional forms for data
+
 
 ## General approach
 
@@ -28,6 +30,11 @@ knitr::opts_chunk$set(echo = FALSE)
 ## General approach
 
 ### <u>Question</u> $\rightarrow$ Data $\rightarrow$ Model $\rightarrow$ Inference $\rightarrow$ Prediction
+
+
+## Common questions in ecology | At the individual level
+
+### Ideas from the audience?
 
 
 ## Common questions in ecology | At the individual level
@@ -45,6 +52,11 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ## Common questions in ecology | At the population level
 
+### Thoughts from you all?
+
+
+## Common questions in ecology | At the population level
+
 ### Abundance?
 
 ### Survival?
@@ -57,6 +69,11 @@ knitr::opts_chunk$set(echo = FALSE)
 ## General approach
 
 ### Question $\rightarrow$ <u>Data</u> $\rightarrow$ Model $\rightarrow$ Inference $\rightarrow$ Prediction
+
+
+## Ecological data | At the individual level
+
+### Ideas, anyone?
 
 
 ## Ecological data | At the individual level
@@ -86,6 +103,11 @@ knitr::opts_chunk$set(echo = FALSE)
 <br>
 
 ### Counts $\rightarrow$ density or survival/movement
+
+
+## Data collection methods
+
+### Can you see where this is going?
 
 
 ## Data collection methods
@@ -128,6 +150,11 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ## Data types | Discrete values
 
+### Anyone have thoughts here?
+
+
+## Data types | Discrete values
+
 ### Sex
 
 ### Age
@@ -136,16 +163,34 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ### Counts/Census
 
-### Survival (individual)
+### Individual survival
+
+
+## Data types | Continuous
+
+### How about this?
 
 
 ## Data types | Continuous
 
 ### Size (length, mass)
 
-### Density
+### Biomass
 
 ### Survival (population)
+
+
+## A note on continuous variables | Approximating rational numbers with real numbers
+
+### Survival (0.78)
+
+<br>
+
+### Composition (~55% age-4)
+
+<br>
+
+### Density (0.14 per ha)
 
 
 ## A note on continuous variables | Approximating rational numbers with real numbers
@@ -172,8 +217,8 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ## {.flexbox .vcenter .bigger}
 
-<font size="10">
-<center>The importance of raw data cannot be overstated</center>
+<font size="14">
+<center>The importance of raw data<br>cannot be overstated</center>
 </font>
 
 ## {.flexbox .vcenter .bigger}
@@ -194,20 +239,89 @@ Distributions of data
 
 <br>
 
+Classic "coin toss"
+
+```{r ex_rbern, echo = TRUE}
+set.seed(514)
+## flip a coin 1000 times
+x <- rbinom(n = 1000, size = 1, prob = 0.5)
+## count tails (0) and heads (1)
+table(x)
+```
+
+## Discrete distributions
+
 ### Count (non-negative integers) $\rightarrow$ [Poisson](https://en.wikipedia.org/wiki/Poisson_distribution) or [Negative-Binomial](https://en.wikipedia.org/wiki/Negative_binomial_distribution)
 
 
 ## Discrete distributions
 
-### Binary (0,1) $\rightarrow$ [Bernoulli](https://en.wikipedia.org/wiki/Bernoulli_distribution)
-
-<br>
-
 ### Count (non-negative integers) $\rightarrow$ [Poisson](https://en.wikipedia.org/wiki/Poisson_distribution) or [Negative-Binomial](https://en.wikipedia.org/wiki/Negative_binomial_distribution)
 
 <br>
 
-### Composition (length-D counts) $\rightarrow$ [Binomial](https://en.wikipedia.org/wiki/Binomial_distribution) (*D* = 2) or [Multinomial](https://en.wikipedia.org/wiki/Multinomial_distribution) (*D* > 2)
+Number of times birds were resighted 
+
+```{r ex_rpois, echo = TRUE}
+set.seed(514)
+## 37 banded birds; number of resightings
+x <- rpois(n = 37, lambda = 1)
+## count up resightings
+table(x)
+```
+
+
+## Discrete distributions
+
+### Composition (_D_ categories) $\rightarrow$ [Binomial](https://en.wikipedia.org/wiki/Binomial_distribution) (*D* = 2) or [Multinomial](https://en.wikipedia.org/wiki/Multinomial_distribution) (*D* > 2)
+
+
+## Discrete distributions
+
+### Composition (_D_ categories) $\rightarrow$ [Binomial](https://en.wikipedia.org/wiki/Binomial_distribution) (*D* = 2) or [Multinomial](https://en.wikipedia.org/wiki/Multinomial_distribution) (*D* > 2)
+
+<br>
+
+Surviving offspring 
+
+```{r ex_rbinom, echo = TRUE}
+set.seed(514)
+## 1357 tagged smolts; probability of survival is 0.05
+x <- rbinom(n = 1357, size = 1, prob = 0.05)
+## number of mortalities (0) and survivors (1)
+table(x)  # p ~= 0.0593
+```
+
+
+## Continuous distributions
+
+### Real numbers (-$\infty$,$\infty$) $\rightarrow$ [Normal](https://en.wikipedia.org/wiki/Normal_distribution)
+
+
+## Continuous distributions
+
+### Real numbers (-$\infty$,$\infty$) $\rightarrow$ [Normal](https://en.wikipedia.org/wiki/Normal_distribution)
+
+<br>
+
+Common "bell-shaped curve"
+
+```{r ex_norm, echo = TRUE, eval = FALSE}
+## normal distribution (mean = 0, sd = 1)
+curve(dnorm(x, mean = 0, sd = sqrt(1)), from = -4, to = 4,
+      main = "", xlab = "", ylab = "Density", bty = "n",
+      cex.lab = 1.5, cex.axis = 1.2, lwd = 2, col = "#32006e")
+```
+
+
+## Continuous distributions
+
+```{r ex_norm_2, echo = FALSE, fig.dim = c(8, 5), fig.align = "center"}
+## normal distribution (mean = 0, sd = 1)
+curve(dnorm(x, mean = 0, sd = sqrt(1)), from = -4, to = 4,
+      main = "", xlab = "", ylab = "Density", bty = "n",
+      cex.lab = 1.5, cex.axis = 1.2, lwd = 2, col = "#32006e")
+```
 
 
 ## Continuous distributions
@@ -221,19 +335,44 @@ Distributions of data
 
 <br>
 
-### Proportion (length-D simplex) $\rightarrow$ [Beta](https://en.wikipedia.org/wiki/Beta_distribution) (*D* = 2) or [Dirichlet](https://en.wikipedia.org/wiki/Dirichlet_distribution) (*D* > 2)
+```{r ex_lognorm, echo = TRUE, eval = FALSE}
+## log-normal distribution (mean = 2, sd = 0.7)
+curve(dlnorm(x, meanlog = 2, sdlog = 0.7), from = 0, to = 20,
+      main = "", xlab = "", ylab = "Density", bty = "n",
+      cex.lab = 1.5, cex.axis = 1.2, lwd = 2,  col = "#32006e")
+```
 
 
 ## Continuous distributions
 
-### Density $\left(\mathbb{R}^{\geq}\right)$ $\rightarrow$ [log-Normal](https://en.wikipedia.org/wiki/Log-normal_distribution) or [Gamma](https://en.wikipedia.org/wiki/Gamma_distribution)
+```{r ex_lognorm_2, echo = FALSE, fig.dim = c(8, 5), fig.align = "center"}
+## log-normal distribution (mean = 2, sd = 0.7)
+curve(dlnorm(x, meanlog = 2, sdlog = 0.7), from = 0, to = 20,
+      main = "", xlab = "", ylab = "Density", bty = "n",
+      cex.lab = 1.5, cex.axis = 1.2, lwd = 2,  col = "#32006e")
+```
 
-<br>
+
+## Continuous distributions
 
 ### Proportion (simplex$^D$) $\rightarrow$ [Beta](https://en.wikipedia.org/wiki/Beta_distribution) (*D* = 2) or [Dirichlet](https://en.wikipedia.org/wiki/Dirichlet_distribution) (*D* > 2)
 
 <br>
 
-### Transformations (real values) $\rightarrow$ [Normal](https://en.wikipedia.org/wiki/Normal_distribution)
+```{r ex_beta, echo = TRUE, eval = FALSE}
+## beta distribution (mean = 2/3)
+curve(dbeta(x, shape1 = 6, shape2 = 3), from = 0, to = 1,
+      main = "", xlab = "", ylab = "Density", bty = "n",
+      cex.lab = 1.5, cex.axis = 1.2, lwd = 2,  col = "#32006e")
+```
 
+
+## Continuous distributions
+
+```{r ex_beta_2, echo = FALSE, fig.dim = c(8, 5), fig.align = "center"}
+## beta distribution (mean = 2/3)
+curve(dbeta(x, shape1 = 6, shape2 = 3), from = 0, to = 1,
+      main = "", xlab = "", ylab = "Density", bty = "n",
+      cex.lab = 1.5, cex.axis = 1.2, lwd = 2,  col = "#32006e")
+```
 
