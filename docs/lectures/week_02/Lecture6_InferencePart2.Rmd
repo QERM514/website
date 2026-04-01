@@ -1,0 +1,394 @@
+---
+title: "Inference, Part 2"
+author: "Sarah Converse"
+date: "11 April 2025"
+output:
+  ioslides_presentation
+subtitle: Analysis of Ecological and Environmental Data<br>QERM 514
+
+---
+  
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(faraway)
+```
+
+```{css, echo = FALSE}
+
+.title-slide hgroup h1 {
+  font-size: 40px;
+}
+.title-slide hgroup h2 {
+  font-size: 30px;
+}
+h2 {
+  font-size: 40px;
+}
+slides > slide {
+  font-size: 20px;
+}
+```
+
+
+## Objectives for today
+
+* Understand how $F$-tests are used to compare (nested) models
+
+* Understand how to calculate confidence intervals
+
+
+## Inferential methods
+
+Once we've estimated the model parameters and their variance, we will want to draw conclusions from our analysis
+
+One question we often ask is which model is "best"
+
+
+## Our wallcreepers example
+
+1. The **year** model: $creepers_i = \beta_0 + \beta_1*year_i$
+
+2. The **year + temperature** model: $creepers_i = \beta_0 + \beta_1*year_i + \beta_2*temperature_i$
+
+Is the complexity of model 2 necessary or is 1 good enough? 
+
+
+## Hypothesis test to compare models
+
+Recall our partitioning of sums-of-squares, where
+
+$$
+SSTO = SSR + SSE
+$$
+
+We might prefer the more complex model (call it $\Theta$) over the simple model (call it $\theta$) if 
+
+$$
+\frac{SSE_{\theta} - SSE_{\Theta}}{SSE_{\Theta}} > \text{a constant}
+$$
+
+Is the proportional decrease in the error enough to justify the additional parameter? 
+
+Note that, by definition $SSE_{\Theta} \leq SSE_{\theta}$
+
+
+## Hypothesis test to compare models
+
+If $\Theta$ has $k_{\Theta}$ parameters and $\theta$ has $k_{\theta}$, we can scale this ratio to arrive at an $F$-statistic that follows an $F$ distribution
+
+$$
+F = \frac{ \left( SSE_{\theta} - SSE_{\Theta} \right)  / (k_{\Theta} - k_{\theta})}{ SSE_{\Theta}  / (n - k_{\Theta})} \sim F_{k_{\Theta} - k_{\theta}, n - k_{\Theta}}
+$$
+
+
+## $F$-distribution
+
+```{r f_dist, fig.height=4, fig.width=6, fig.align="center"}
+par(mai = c(0.5,0.5,0.1,0.1), omi = rep(0,4))
+curve(df(x, df1=2, df2=1), from=0, to=4, lwd = 2, col = "orange",
+      ylab = "", xlab = expression(italic(x)), las = 1)
+curve(df(x, df1=4, df2=10), from=0, to=4, lwd = 2, col = "red", add = TRUE)
+curve(df(x, df1=6, df2=25), from=0, to=4, lwd = 2, col = "blue", add = TRUE)
+curve(df(x, df1=8, df2=50), from=0, to=4, lwd = 2, col = "purple", add = TRUE)
+legend(3, 0.9, legend = c("df1 = 2, df2 = 1",
+         "df1 = 4, df2 = 10",
+         "df1 = 6, df2 = 25",
+         "df1 = 8, df2 = 50"),
+       col = c("orange", "red", "blue", "purple"),
+       lwd = 1.1, bty = "n", xjust = 0.5, y.intersp = 1.2)
+```
+
+
+## $F$-test 
+
+We can use the $F$-test to: 
+
+* Test all the predictors ($H_0: \beta_1 = \cdots = \beta_p = 0$)
+
+* Test one predictor ($H_0: \beta_i = 0| \text{other predictors in the model}$) 
+
+* Test a subset (e.g., $H_0: \beta_i = \beta_j$) such as $y_i = \beta_0 + \beta_1 X1_i + \beta_2 X2_i$ vs $y_i = \beta_0 + \beta_1 (X1_i + X2_i)$
+
+But notice in all of these tests, we can only test nested models. We can’t test, for example:  
+
+* $y_i = \beta_0 + \beta_1 X1_i$ vs. $y_i = \beta_0 + \beta_2 X2_i$
+
+We will address model selection more fully later in the quarter 
+
+
+## Our wallcreepers example
+
+1. The **year** model: $creepers_i = \beta_0 + \beta_1*year_i$
+
+2. The **year + temperature** model: $creepers_i = \beta_0 + \beta_1*year_i + \beta_2*temperature_i$
+
+Is the complexity of model 2 necessary or is 1 good enough? 
+
+```{r, echo = FALSE}
+set.seed(12)
+
+years <- 16
+year <- c(1990:2005)-1989
+temp <- rnorm(16,0,2)
+b0 <- 30 
+b1 <- -0.8
+b2 <- -0.2
+sigma <- 3
+creepers <- b0 + b1*year + b2*temp + rnorm(years,0,sigma)
+
+data <- data.frame(year,creepers, temp)
+```
+
+```{r, echo = TRUE}
+
+#run our models 
+mod1 <- lm(creepers ~ year, data = data)
+mod2 <- lm(creepers ~ year + temp, data = data)
+```
+
+
+## Our wallcreepers example
+
+```{r,echo = TRUE}
+
+#Calculate error SS for each model 
+SSEm1 <- (t(creepers-predict(mod1)))%*%(creepers-predict(mod1))
+SSEm2 <- (t(creepers-predict(mod2)))%*%(creepers-predict(mod2))
+
+#Calculate our F-statistic and p-value
+(F.st <- ((SSEm1 - SSEm2)/(3-2))/ ((SSEm2)/(years-3)))
+pf(F.st, 1, 13, lower.tail = FALSE) 
+
+``` 
+
+
+## Our wallcreepers example
+
+```{r,echo = TRUE}
+
+#Check against model output - it matches! 
+anova(mod2)
+
+``` 
+
+
+## Test of all predictors in a model
+
+We can also test whether the collection of predictors in a model are better than the model of the mean 
+
+$$
+\Theta: \mathbf{y} = \mathbf{X} \boldsymbol{\beta} + \mathbf{e} \\
+\theta: \mathbf{y} = \boldsymbol{\mu} + \mathbf{e} \\
+$$
+
+We write the null hypothesis as
+
+$$
+H_0: \beta_1 = \beta_2 = \dots = \beta_k = 0
+$$
+
+and we would reject $H_0$ if $F > F^{(\alpha)}_{k_{\Theta} - k_{\theta}, n - k_{\Theta}}$
+
+
+## Hypothesis test to compare models
+
+$$
+SSE_{\Theta} = \left( \mathbf{y} - \mathbf{X} \boldsymbol{\beta} \right)^{\top} \left( \mathbf{y} - \mathbf{X} \boldsymbol{\beta} \right) = \mathbf{e}^{\top} \mathbf{e} = SSE \\
+SSE_{\theta} = \left( \mathbf{y} - \bar{y} \right)^{\top} \left( \mathbf{y} - \bar{y} \right) =  SSTO \\
+\Downarrow \\
+F = \frac{ \left( SSTO - SSE \right)  / (k - 1) } { SSE  / (n - k)}
+$$
+
+
+## Our wallcreepers example
+
+```{r, echo = TRUE, size="small"}
+
+#Run models 
+mod0 <- lm(creepers ~ 1, data = data)
+mod2 <- lm(creepers ~ year + temp, data = data)
+
+#Get the SS 
+SSTO <- (t(creepers-predict(mod0)))%*%(creepers-predict(mod0))
+SSE.m2 <- (t(creepers-predict(mod2)))%*%(creepers-predict(mod2))
+
+#Get F-statistic and p-value 
+(F.st <- ((SSTO - SSE.m2)/(3-1))/ ((SSE.m2)/(years-3)))
+pf(F.st, 2, 13, lower.tail = FALSE) 
+
+```
+
+
+## Our wallcreepers example
+
+```{r, echo = TRUE}
+
+#Check against model output - it matches! 
+summary(mod2)$fstatistic
+
+``` 
+
+
+## Caveats about hypothesis testing
+
+Null hypothesis testing can be overused 
+
+* $p$-values are simply the probability of obtaining a test statistic as large or greater than that observed
+
+* $p$-values are **not** weights of evidence
+
+* "Critical" or "threshold" values against which to compare $p$-values must be chosen *a priori*
+
+* Often the null hypothesis $H_0: \beta_1 = 0$ is patently silly 
+
+* We will revisit this subject later 
+
+
+## Think, pair, share  
+
+Will you want to test nested models in your analysis, and what do you think about using null hypothesis tests to do so?  
+
+
+## Confidence intervals for $\beta$
+
+We often use confidence intervals (CI's) to express uncertainty in $\hat{\beta}_i$
+  
+  They take the form
+
+$$
+  100(1 - \alpha)\% ~ \text{CI}: \hat{\beta}_{i} \pm t_{n-p}^{(\alpha / 2)} \operatorname{SE}(\hat{\beta})
+$$
+  
+  where here $\alpha$ is our *predetermined* Type-I error rate
+
+The t-distribution is a symmetrical distribution much like the normal distribution but used because it is more conservative at smaller sample sizes 
+
+As $n \rightarrow \infty$, the $t$-distribution $\rightarrow$ the normal distribution
+
+
+## $t$-distribution
+
+```{r t_dist, fig.height=4, fig.width=6, fig.align="center"}
+x <- c(-5,5)
+par(mai = c(0.5,0.5,0.1,0.1), omi = rep(0,4))
+curve(dt(x, df=5), from=-5, to=5, lwd = 2, col = "orange",
+      ylab = "", xlab = expression(italic(x)), las = 1,ylim = c(0,0.5) )
+curve(dt(x, df=30), from=-5, to=5, lwd = 2, col = "red", add = TRUE)
+curve(dt(x, df=100), from=-5, to=5, lwd = 2, col = "purple", add = TRUE)
+legend(3, 0.3, legend = c("df = 5",
+                          "df = 30",
+                          "df = 100"),
+       col = c("orange", "red", "blue", "purple"),
+       lwd = 1.1, bty = "n", xjust = 0.5, y.intersp = 1.2)
+```
+
+
+## Bootstrap confidence intervals
+
+The $t$-based confidence intervals we have described depend on the assumption of normality
+
+The bootstrap method provides a way to construct CI's without this assumption
+
+Bootstrap procedure:
+
+1. Fit your model to the data  
+
+2. Calculate $\mathbf{\epsilon} = \mathbf{y} - \mathbf{X} \hat{\boldsymbol{\beta}}$ 
+
+3. Do the following *many* times:
+    * Generate $\mathbf{\epsilon}^*$ by sampling *with replacement* from $\mathbf{\epsilon}$  
+    * Calculate $\mathbf{y}^*$ = $\mathbf{X} \hat{\boldsymbol{\beta}} + \mathbf{\epsilon}^*$
+    * Estimate $\hat{\boldsymbol{\beta}}^*$ from $\mathbf{X}$ & $\mathbf{y}^*$  
+
+4. Select the $\tfrac{\alpha}{2}$ and $(1 - \tfrac{\alpha}{2})$ percentiles from the saved $\hat{\boldsymbol{\beta}}^*$
+
+
+## Confidence interval for new predictions
+
+Given a fitted model $\mathbf{y} = \mathbf{X} \hat{\boldsymbol{\beta}} + \mathbf{\epsilon}$, we might want to know the uncertainty around a new estimate $\mathbf{y}^*$ given some new predictor $\mathbf{X}^*$
+
+
+## CI for the mean response
+
+Suppose we wanted to estimate the uncertainty in the *average* response given by
+
+$$
+\hat{\mathbf{y}}^* = \mathbf{X}^* \hat{\boldsymbol{\beta}}
+$$
+
+Recall that the general formula for a CI on a quantity $z$ is
+
+$$
+100(1 - \alpha)\% ~ \text{CI}: \text{E}(z) ~ \pm ~ t^{(\alpha / 2)}_{df}\text{SD}(z)
+$$
+
+So we would have
+
+$$
+\hat{\mathbf{y}}^* ~ \pm ~ t^{(\alpha / 2)}_{df} \sqrt{\text{Var} \left( \hat{\mathbf{y}}^* \right)}
+$$
+
+
+## CI for the mean response
+
+We can calculate the SD of our expectation as
+
+$$
+\begin{aligned}
+\text{Var} \left( \hat{\mathbf{y}}^* \right) &= \text{Var} \left( \mathbf{X}^* \hat{\boldsymbol{\beta}} \right)  \\
+  &= {\mathbf{X}^*} \text{Var}\left( \hat{\boldsymbol{\beta}} \right) {\mathbf{X}^*}^{\top} \\
+  &= {\mathbf{X}^*} \left[ \sigma^2 (\mathbf{X}^{\top} \mathbf{X})^{-1} \right] {\mathbf{X}^*}^{\top} \\
+  &\Downarrow \\
+\text{SD} \left( \hat{\mathbf{y}}^* \right) &= \sigma \sqrt{ {\mathbf{X}^*} (\mathbf{X}^{\top} \mathbf{X})^{-1} {\mathbf{X}^*}^{\top}} 
+\end{aligned}
+$$
+
+
+## CI for the mean response
+
+So our CI on the mean response is given by
+
+$$
+\hat{\mathbf{y}}^* \pm ~ t^{(\alpha / 2)}_{df} \sigma \sqrt{ {\mathbf{X}^*} (\mathbf{X}^{\top} \mathbf{X})^{-1} {\mathbf{X}^*}^{\top}}  
+$$
+
+
+## CI for a specific response
+
+What about the uncertainty in a *specific* prediction?
+
+In that case we need to account for our additional uncertainty owing to the error in our relationship, which is given by
+
+$$
+\hat{\mathbf{y}}^* = \mathbf{X}^* \hat{\boldsymbol{\beta}} + \mathbf{\epsilon}
+$$
+
+## CI for a specific response
+
+The SD of the new prediction is given by
+
+$$
+\begin{aligned}
+\text{Var} \left( \hat{\mathbf{y}}^* \right) &= {\mathbf{X}^*} \text{Var}\left( \hat{\boldsymbol{\beta}} \right) {\mathbf{X}^*}^{\top} + \text{Var} \left( \mathbf{e} \right) \\
+  &= {\mathbf{X}^*} \left[ \sigma^2 (\mathbf{X}^{\top} \mathbf{X})^{-1} \right] {\mathbf{X}^*}^{\top} + \sigma^2\\
+  &= \sigma^2 \left( {\mathbf{X}^*} (\mathbf{X}^{\top} \mathbf{X})^{-1} {\mathbf{X}^*}^{\top} + 1 \right) \\
+  &\Downarrow \\
+\text{SD} \left( \hat{\mathbf{y}}^* \right) &= \sigma \sqrt{1 + {\mathbf{X}^*} (\mathbf{X}^{\top} \mathbf{X})^{-1} {\mathbf{X}^*}^{\top} } 
+\end{aligned}
+$$
+
+## CI for a specific response
+
+So our CI on the new prediction is given by
+
+$$
+\hat{\mathbf{y}}^* \pm ~ t^{(\alpha / 2)}_{df} \sigma \sqrt{1 + {\mathbf{X}^*} (\mathbf{X}^{\top} \mathbf{X})^{-1} {\mathbf{X}^*}^{\top} } 
+$$
+
+<br>
+
+This is typically referred to as the *prediction interval*
+
+
+
+

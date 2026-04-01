@@ -1,0 +1,648 @@
+---
+title: "Design Matrices - Part 2"
+author: "Sarah Converse"
+date: "23 April 2025"
+output:
+  ioslides_presentation
+subtitle: Analysis of Ecological and Environmental Data<br>QERM 514
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(faraway)
+library(MASS)
+library(plot3D)
+```
+
+
+```{css, echo = FALSE}
+
+.title-slide hgroup h1 {
+  font-size: 40px;
+}
+.title-slide hgroup h2 {
+  font-size: 30px;
+}
+h2 {
+  font-size: 40px;
+}
+slides > slide {
+  font-size: 20px;
+}
+```
+
+
+```{r, echo = FALSE, results = FALSE}
+#dataset 
+set.seed(1)
+
+years <- 5
+year <- rep(c(1990:1994)-1989,3)
+temp <- rep(runif(5,15,29),3)
+rainfall <- rep(runif(5,75,125),3)
+region <- c(rep(1,5),rep(2,5),rep(3,5))
+
+region.dummy <- matrix(NA,nrow=years*3,ncol=3); region.dummy[,1] <- c(rep(1,5),rep(0,10));region.dummy[,2] <- c(rep(0,5),rep(1,5),rep(0,5)); region.dummy[,3] <- c(rep(0,10),rep(1,5))
+b0 <- 110
+b1 <- -1.5
+b2 <- 0.03
+b3 <- 0.01
+b4 <- -0.02
+b5 <- 4
+b6 <- -5
+sigma <- 3
+creepers <- b0 + b1*year + b2*temp + b3*rainfall + b4*temp*rainfall + b5*region.dummy[,2] + b6*region.dummy[,3] + rnorm(years*3,0,sigma) 
+
+KW <- data.frame(creepers,year,temp,rainfall,region)
+KW$creepers <- round(KW$creepers,dig=1)
+KW$temp <- round(KW$temp,dig=1)
+KW$rainfall <- round(KW$rainfall,dig=1)
+KW$region <- as.factor(KW$region)
+KW$temp_scale <- scale(KW$temp)[1:15]
+KW$rainfall_scale <- scale(KW$rainfall)[1:15]
+KW$yrfac <- as.factor(KW$year)
+
+write.csv(KW,"Wallcreeper.csv",row.names=FALSE)
+rm(list=ls(all=TRUE))
+
+KW <- read.csv("Wallcreeper.csv")
+
+KW$region <- as.factor(KW$region)
+KW$yrfac <- as.factor(KW$yrfac)
+
+
+``` 
+
+
+## Objectives for today
+
+* Understand advanced design matrix coding, including design matrices with multiple continuous or categorical covariates, both continuous and categorical covariates, interactions, and nested effects
+
+* Be able to interpret the $\boldsymbol{\beta}$ parameters dependent on the design matrix 
+
+
+## Design matrices
+
+* We've seen how to code categorical covariates and continuous covariates 
+
+* Now we'll move on to some more complex models including: 
+
+  - multiple continuous or categorical covariates 
+ 
+  - continuous and categorical covariates in the same model
+ 
+  - interactions and nesting 
+
+* Let's return to our wallcreeper data: we have estimates of occupancy for 3 regions in 5 years, and we have temperature and rainfall 
+
+## Design matrices 
+
+Our data: 
+
+$$
+\begin{bmatrix}
+Region_1,year_1 \\ Region_1,year_2 \\ Region_1,year_3 \\ Region_1,year_4 \\ Region_1,year_5 \\ Region_2,year_1 \\ Region_2,year_2 \\ Region_2,year_3 \\ Region_2,year_4 \\ Region_2,year_5 \\ Region_3,year_1 \\ Region_3,year_2 \\ Region_3,year_3 \\ Region_3,year_4 \\ Region_3,year_5 \\ \end{bmatrix}
+\rightarrow
+\begin{bmatrix}
+\hat{y_1} \\ \hat{y_2} \\ \hat{y_3} \\ \hat{y_4} \\ \hat{y_5} \\ \hat{y_6} \\ \hat{y_7} \\ \hat{y_8} \\ \hat{y_9} \\ \hat{y_{10}} \\ \hat{y_{11}} \\ \hat{y_{12}} \\ \hat{y_{13}} \\ \hat{y_{14}} \\ \hat{y_{15}} \\ \end{bmatrix}
+$$
+
+
+## Multiple continuous covariates 
+
+What is the design matrix for this model: `creepers ~ temp + rainfall`? 
+
+
+## Multiple continuous covariates 
+
+What is the design matrix for this model: `creepers ~ temp + rainfall`? 
+
+```{r, echo = FALSE, results = TRUE}
+
+#run model and look at design matrix 
+temp.rain <- lm(creepers ~ temp + rainfall, KW)
+model.matrix(temp.rain)[1:15,]
+```
+
+
+## Multiple continuous covariates 
+
+What is the design matrix for this model: `creepers ~ temp + rainfall`? 
+
+$$
+\begin{bmatrix}
+\hat{y_1} \\ \hat{y_2} \\ \hat{y_3} \\ \hat{y_4} \\ \hat{y_5} \\ \hat{y_6} \\ \hat{y_7} \\ \hat{y_8} \\ \hat{y_9} \\ \hat{y_{10}} \\ \hat{y_{11}} \\ \hat{y_{12}} \\ \hat{y_{13}} \\ \hat{y_{14}} \\ \hat{y_{15}} \\ \end{bmatrix}
+= 
+\begin{bmatrix}
+\color{red}{1} & `r KW$temp[1]` & `r KW$rainfall[1]`\\ 
+\color{red}{1} & `r KW$temp[2]` & `r KW$rainfall[2]`\\ 
+\color{red}{1} & `r KW$temp[3]` & `r KW$rainfall[3]`\\ 
+\color{red}{1} & `r KW$temp[4]` & `r KW$rainfall[4]`\\ 
+\color{red}{1} & `r KW$temp[5]` & `r KW$rainfall[5]`\\ 
+\color{red}{1} & `r KW$temp[1]` & `r KW$rainfall[1]`\\ 
+\color{red}{1} & `r KW$temp[2]` & `r KW$rainfall[2]`\\ 
+\color{red}{1} & `r KW$temp[3]` & `r KW$rainfall[3]`\\ 
+\color{red}{1} & `r KW$temp[4]` & `r KW$rainfall[4]`\\ 
+\color{red}{1} & `r KW$temp[5]` & `r KW$rainfall[5]`\\ 
+\color{red}{1} & `r KW$temp[1]` & `r KW$rainfall[1]`\\ 
+\color{red}{1} & `r KW$temp[2]` & `r KW$rainfall[2]`\\ 
+\color{red}{1} & `r KW$temp[3]` & `r KW$rainfall[3]`\\ 
+\color{red}{1} & `r KW$temp[4]` & `r KW$rainfall[4]`\\ 
+\color{red}{1} & `r KW$temp[5]` & `r KW$rainfall[5]`\\ 
+\end{bmatrix}
+\begin{bmatrix}
+\hat{\beta_0} \\ \hat{\beta_1} \\ \hat{\beta_2}
+\end{bmatrix}
+$$
+
+
+## Multiple continuous covariates 
+
+* What is the interpretation of each of the $\boldsymbol{\hat{\beta}}$?
+
+
+## Multiple continuous covariates 
+
+* What is the interpretation of each of the $\boldsymbol{\hat{\beta}}$?
+
+   - $\hat{\beta_0}$ is the predicted occupancy when both temperature and rainfall are 0. Note that we don't observe this in our data 
+   
+   - $\hat{\beta_1}$ is the predicted change in occupancy for each 1 degree change in temperature 
+
+   - $\hat{\beta_2}$ is the predicted change in occupancy for each 1 cm change in rainfall  
+
+
+## Multiple continuous covariates 
+
+* It's hard to visualize a 3-D relationship, so let's plot our regression for one predictor while holding the other constant 
+
+   - For the red line, rainfall is held at 75 cm 
+   
+   - For the blue line, rainfall is held at 125 cm
+   
+```{r, echo = FALSE, results = FALSE}
+plot(KW$temp,KW$creepers, ylab = "Percent occupancy", xlab = "Temperature",main = "")
+
+lines(seq(18,27,1),predict(temp.rain,newdata = data.frame(temp = seq(18,27,1), rainfall = rep(75,10))),col="red")
+
+
+lines(seq(18,27,1),predict(temp.rain,newdata = data.frame(temp = seq(18,27,1), rainfall = rep(125,10))),col="blue")
+
+```
+
+
+## Multiple continuous covariates 
+
+* What is the design matrix for this model: `creepers ~ scale(temp) + scale(rainfall)`? 
+
+
+## Multiple continuous covariates 
+
+* What is the design matrix for this model: `creepers ~ scale(temp) + scale(rainfall)`? 
+
+```{r, echo = FALSE, results = TRUE}
+#run model and look at design matrix
+temp.rain.scale <- lm(creepers ~ temp_scale + rainfall_scale, KW)
+model.matrix(temp.rain.scale)[1:15,]
+```
+
+
+## Multiple continuous covariates 
+
+* What is the design matrix for this model: `creepers ~ scale(temp) + scale(rainfall)`? 
+
+$$
+\begin{bmatrix}
+\hat{y_1} \\ \hat{y_2} \\ \hat{y_3} \\ \hat{y_4} \\ \hat{y_5} \\ \hat{y_6} \\ \hat{y_7} \\ \hat{y_8} \\ \hat{y_9} \\ \hat{y_{10}} \\ \hat{y_{11}} \\ \hat{y_{12}} \\ \hat{y_{13}} \\ \hat{y_{14}} \\ \hat{y_{15}} \\ \end{bmatrix}
+= 
+\begin{bmatrix}
+\color{red}{1} & `r scale(KW$temp)[1]` & `r scale(KW$rainfall)[1]`\\ 
+\color{red}{1} & `r scale(KW$temp)[2]` & `r scale(KW$rainfall)[2]`\\ 
+\color{red}{1} & `r scale(KW$temp)[3]` & `r scale(KW$rainfall)[3]`\\ 
+\color{red}{1} & `r scale(KW$temp)[4]` & `r scale(KW$rainfall)[4]`\\ 
+\color{red}{1} & `r scale(KW$temp)[5]` & `r scale(KW$rainfall)[5]`\\ 
+\color{red}{1} & `r scale(KW$temp)[1]` & `r scale(KW$rainfall)[1]`\\ 
+\color{red}{1} & `r scale(KW$temp)[2]` & `r scale(KW$rainfall)[2]`\\ 
+\color{red}{1} & `r scale(KW$temp)[3]` & `r scale(KW$rainfall)[3]`\\ 
+\color{red}{1} & `r scale(KW$temp)[4]` & `r scale(KW$rainfall)[4]`\\ 
+\color{red}{1} & `r scale(KW$temp)[5]` & `r scale(KW$rainfall)[5]`\\ 
+\color{red}{1} & `r scale(KW$temp)[1]` & `r scale(KW$rainfall)[1]`\\ 
+\color{red}{1} & `r scale(KW$temp)[2]` & `r scale(KW$rainfall)[2]`\\ 
+\color{red}{1} & `r scale(KW$temp)[3]` & `r scale(KW$rainfall)[3]`\\ 
+\color{red}{1} & `r scale(KW$temp)[4]` & `r scale(KW$rainfall)[4]`\\ 
+\color{red}{1} & `r scale(KW$temp)[5]` & `r scale(KW$rainfall)[5]`\\ 
+\end{bmatrix}
+\begin{bmatrix}
+\hat{\beta_0} \\ \hat{\beta_1} \\ \hat{\beta_2}
+\end{bmatrix}
+$$
+
+
+## Multiple continuous covariates 
+
+* What is the interpretation of each of the $\boldsymbol{\hat{\beta}}$?
+
+
+## Multiple continuous covariates 
+
+* What is the interpretation of each of the $\boldsymbol{\hat{\beta}}$?
+
+   - $\hat{\beta_0}$ is the predicted occupancy when both `scale(temp)` and `scale(rainfall)` are 0. This occurs when temperature and rainfall are at their mean values
+   
+   - $\hat{\beta_1}$ is the predicted change in occupancy for each 1 SD change in temperature
+
+   - $\hat{\beta_2}$ is the predicted change in occupancy for each 1 SD change in rainfall 
+   
+   
+## Multiple continuous covariates 
+
+* It's hard to visualize a 3-D relationship, so let's plot our regression for one predictor while holding the other constant 
+
+   - For the red line, temperature is held at the mean 
+   
+   - For the blue line, temperature is held at 1 SD above the mean
+   
+```{r, echo = FALSE, results = FALSE}
+plot(KW$rainfall_scale,KW$creepers, ylab = "Percent occupancy", xlab = "Rainfall",main = "")
+
+lines(seq(-2,2,0.5),predict(temp.rain.scale,newdata = data.frame(temp_scale = rep(0,9), rainfall_scale = seq(-2,2,0.5))),col="red")
+
+lines(seq(-2,2,0.5),predict(temp.rain.scale,newdata = data.frame(temp_scale = rep(1,9), rainfall_scale = seq(-2,2,0.5))),col="blue")
+
+```
+
+
+## Multiple categorical covariates 
+
+* What is the design matrix for this model: `creepers ~ factor(year) + factor(region)`? 
+
+
+## Multiple categorical covariates 
+
+* What is the design matrix for this model: `creepers ~ factor(year) + factor(region)`? 
+
+```{r, echo = FALSE, results = TRUE}
+year.region <- lm(creepers ~ yrfac + region, KW)
+model.matrix(year.region)[1:15,]
+```
+
+
+## Multiple categorical covariates 
+
+* What is the design matrix for this model: `creepers ~ factor(year) + factor(region)`? 
+
+$$
+\begin{bmatrix}
+\hat{y_1} \\ \hat{y_2} \\ \hat{y_3} \\ \hat{y_4} \\ \hat{y_5} \\ \hat{y_6} \\ \hat{y_7} \\ \hat{y_8} \\ \hat{y_9} \\ \hat{y_{10}} \\ \hat{y_{11}} \\ \hat{y_{12}} \\ \hat{y_{13}} \\ \hat{y_{14}} \\ \hat{y_{15}} \\ \end{bmatrix}
+= 
+\begin{bmatrix}
+\color{red}{1} & 0 & 0 & 0 & 0 & 0 & 0\\ 
+\color{red}{1} & \color{red}{1} & 0 & 0 & 0 & 0 & 0\\ 
+\color{red}{1} & 0 & \color{red}{1} & 0 & 0 & 0 & 0\\ 
+\color{red}{1} & 0 & 0 & \color{red}{1} & 0 & 0 & 0\\ 
+\color{red}{1} & 0 & 0 & 0 & \color{red}{1} & 0 & 0\\ 
+\color{red}{1} & 0 & 0 & 0 & 0 & \color{red}{1} & 0\\ 
+\color{red}{1} & \color{red}{1} & 0 & 0 & 0 & \color{red}{1} & 0\\ 
+\color{red}{1} & 0 & \color{red}{1} & 0 & 0 & \color{red}{1} & 0\\ 
+\color{red}{1} & 0 & 0 & \color{red}{1} & 0 & \color{red}{1} & 0\\ 
+\color{red}{1} & 0 & 0 & 0 & \color{red}{1} & \color{red}{1} & 0\\ 
+\color{red}{1} & 0 & 0 & 0 & 0 & 0 & \color{red}{1}\\ 
+\color{red}{1} & \color{red}{1} & 0 & 0 & 0 & 0 & \color{red}{1}\\ 
+\color{red}{1} & 0 & \color{red}{1} & 0 & 0 & 0 & \color{red}{1}\\ 
+\color{red}{1} & 0 & 0 & \color{red}{1} & 0 & 0 & \color{red}{1}\\ 
+\color{red}{1} & 0 & 0 & 0 & \color{red}{1} & 0 & \color{red}{1}\\ 
+\end{bmatrix}
+\begin{bmatrix}
+\hat{\beta_0} \\ \hat{\beta_1} \\ \hat{\beta_2} \\ \hat{\beta_3} \\ \hat{\beta_4} \\ \hat{\beta_5} \\ \hat{\beta_6} 
+\end{bmatrix}
+$$
+
+
+## Multiple categorical covariates 
+
+* What is the interpretation of each of the $\boldsymbol{\hat{\beta}}$?
+
+
+## Multiple categorical covariates 
+
+* What is the interpretation of each of the $\boldsymbol{\hat{\beta}}$?
+
+  - $\hat{\beta}_0$ is the prediction for year 1 in region 1 
+  
+  - $\hat{\beta}_1$, $\hat{\beta}_2$, $\hat{\beta}_3$, and $\hat{\beta}_4$ are the differences between years 2, 3, 4, and 5 (respectively) and year 1. These differences are the same across all regions 
+  
+  - $\hat{\beta}_5$ and $\hat{\beta}_6$ are the differences between regions 2 and 3 (respectively) and region 1. These differences are the same across all years 
+
+
+## Multiple categorical covariates 
+
+* Region 1 is red, region 2 is orange, and region 3 is green
+   
+* The distance from the red to the orange line is the effect of region 2 compared to region 1 (i.e., $\hat{\beta}_5$), and the distance from the red to the green line is the effect of region 3 compared to region 1 (i.e., $\hat{\beta}_6$)
+
+```{r, echo = FALSE, results = FALSE}
+
+plot(KW$year,KW$creepers, ylab = "Percent occupancy", xlab = "Year",main = "")
+
+lines(c(1:5),predict(year.region, newdata = data.frame(yrfac =as.factor(c(1:5)),region = as.factor(rep(1,5)))),col = "red")
+
+lines(c(1:5),predict(year.region, newdata = data.frame(yrfac =as.factor(c(1:5)),region = as.factor(rep(2,5)))),col = "orange")
+
+lines(c(1:5),predict(year.region, newdata = data.frame(yrfac =as.factor(c(1:5)),region = as.factor(rep(3,5)))),col = "green")
+
+```
+
+## Categorical and continuous covariates 
+
+* What is the design matrix for this model: `creepers ~ region + temp`? 
+
+
+## Categorical and continuous covariates 
+
+* What is the design matrix for this model: `creepers ~ region + temp`? 
+
+```{r, echo = FALSE, results = TRUE}
+region.temp <- lm(creepers ~ region + temp, KW)
+model.matrix(region.temp)[1:15,]
+```
+
+
+## Categorical and continuous covariates 
+
+* What is the design matrix for this model: `creepers ~ region + temp`? 
+
+$$
+\begin{bmatrix}
+\hat{y_1} \\ \hat{y_2} \\ \hat{y_3} \\ \hat{y_4} \\ \hat{y_5} \\ \hat{y_6} \\ \hat{y_7} \\ \hat{y_8} \\ \hat{y_9} \\ \hat{y_{10}} \\ \hat{y_{11}} \\ \hat{y_{12}} \\ \hat{y_{13}} \\ \hat{y_{14}} \\ \hat{y_{15}} \\ \end{bmatrix}
+= 
+\begin{bmatrix}
+\color{red}{1} & 0 & 0 & `r KW$temp[1]`\\ 
+\color{red}{1} & 0 & 0 & `r KW$temp[2]`\\ 
+\color{red}{1} & 0 & 0 & `r KW$temp[3]`\\ 
+\color{red}{1} & 0 & 0 & `r KW$temp[4]`\\ 
+\color{red}{1} & 0 & 0 & `r KW$temp[5]`\\ 
+\color{red}{1} & \color{red}{1} & 0 & `r KW$temp[6]`\\ 
+\color{red}{1} & \color{red}{1} & 0 & `r KW$temp[7]`\\ 
+\color{red}{1} & \color{red}{1} & 0 & `r KW$temp[8]`\\ 
+\color{red}{1} & \color{red}{1} & 0 & `r KW$temp[9]`\\ 
+\color{red}{1} & \color{red}{1} & 0 & `r KW$temp[10]`\\ 
+\color{red}{1} & 0 & \color{red}{1} & `r KW$temp[11]`\\ 
+\color{red}{1} & 0 & \color{red}{1} & `r KW$temp[12]`\\ 
+\color{red}{1} & 0 & \color{red}{1} & `r KW$temp[13]`\\ 
+\color{red}{1} & 0 & \color{red}{1} & `r KW$temp[14]`\\ 
+\color{red}{1} & 0 & \color{red}{1} & `r KW$temp[15]`\\ 
+\end{bmatrix}
+\begin{bmatrix}
+\hat{\beta_0} \\ \hat{\beta_1} \\ \hat{\beta_2} \\ \hat{\beta_3} 
+\end{bmatrix}
+$$
+
+
+## Categorical and continuous covariates 
+
+* What is the interpretation of each of the $\boldsymbol{\hat{\beta}}$?
+
+  - $\hat{\beta}_0$ is the prediction for region 1 when temperature = 0
+  
+  - $\hat{\beta}_1$ and $\hat{\beta}_2$ are the differences between regions 2 and 3 (respectively) and region 1. These differences are the same regardless of temperature 
+
+  - $\hat{\beta}_3$ is the predicted change in occupancy for each 1 degree change in temperature. This change is the same over all regions   
+
+
+## Categorical and continuous covariates 
+
+* Red is for region 1, orange is for region 2, green is for region 3 
+
+* Each region's regression line will cross the y-axis at a different point, but the lines are forced to be parallel in a plot against temperature 
+
+```{r, echo = FALSE, results = FALSE}
+plot(KW$temp,KW$creepers, ylab = "Percent occupancy", xlab = "Temperature",main = "")
+
+lines(seq(18,27,1),predict(region.temp,newdata = data.frame(temp = seq(18,27,1), region = as.factor(rep(1,10)))),col="red")
+
+lines(seq(18,27,1),predict(region.temp,newdata = data.frame(temp = seq(18,27,1), region = as.factor(rep(2,10)))),col="orange")
+
+lines(seq(18,27,1),predict(region.temp,newdata = data.frame(temp = seq(18,27,1), region = as.factor(rep(3,10)))),col="green")
+```
+
+## Categorical and continuous covariates 
+
+* What is the design matrix for this model: `creepers ~ -1 + region + temp`? 
+
+
+## Categorical and continuous covariates 
+
+* What is the design matrix for this model: `creepers ~ -1 + region + temp`? 
+
+```{r, echo = FALSE, results = TRUE}
+region.temp.nI <- lm(creepers ~ -1 + region + temp, KW)
+model.matrix(region.temp.nI)[1:15,]
+```
+
+
+## Categorical and continuous covariates 
+
+* What is the design matrix for this model: `creepers ~ -1 + region + temp`? 
+
+$$
+\begin{bmatrix}
+\hat{y_1} \\ \hat{y_2} \\ \hat{y_3} \\ \hat{y_4} \\ \hat{y_5} \\ \hat{y_6} \\ \hat{y_7} \\ \hat{y_8} \\ \hat{y_9} \\ \hat{y_{10}} \\ \hat{y_{11}} \\ \hat{y_{12}} \\ \hat{y_{13}} \\ \hat{y_{14}} \\ \hat{y_{15}} \\ \end{bmatrix}
+= 
+\begin{bmatrix}
+\color{red}{1} & 0 & 0 & `r KW$temp[1]`\\ 
+\color{red}{1} & 0 & 0 & `r KW$temp[2]`\\ 
+\color{red}{1} & 0 & 0 & `r KW$temp[3]`\\ 
+\color{red}{1} & 0 & 0 & `r KW$temp[4]`\\ 
+\color{red}{1} & 0 & 0 & `r KW$temp[5]`\\ 
+0 & \color{red}{1} & 0 & `r KW$temp[6]`\\ 
+0 & \color{red}{1} & 0 & `r KW$temp[7]`\\ 
+0 & \color{red}{1} & 0 & `r KW$temp[8]`\\ 
+0 & \color{red}{1} & 0 & `r KW$temp[9]`\\ 
+0 & \color{red}{1} & 0 & `r KW$temp[10]`\\ 
+0 & 0 & \color{red}{1} & `r KW$temp[11]`\\ 
+0 & 0 & \color{red}{1} & `r KW$temp[12]`\\ 
+0 & 0 & \color{red}{1} & `r KW$temp[13]`\\ 
+0 & 0 & \color{red}{1} & `r KW$temp[14]`\\ 
+0 & 0 & \color{red}{1} & `r KW$temp[15]`\\ 
+\end{bmatrix}
+\begin{bmatrix}
+\hat{\beta_0} \\ \hat{\beta_1} \\ \hat{\beta_2} \\ \hat{\beta_3}
+\end{bmatrix}
+$$
+
+
+## Categorical and continuous covariates 
+
+* What is the interpretation of each of the $\boldsymbol{\hat{\beta}}$?
+
+  - $\hat{\beta}_0$, $\hat{\beta}_1$, and $\hat{\beta}_2$ are the predictions for regions 1, 2, and 3 (respectively) when temperature = 0
+  
+  - $\hat{\beta}_4$ is the predicted change in occupancy for each 1 degree change in temperature. This change is the same over all regions  
+  
+  
+## Interactions  
+
+* What is the design matrix for this model: `creepers ~ temp*rainfall`? 
+
+
+## Interactions 
+
+* What is the design matrix for this model: `creepers ~ temp*rainfall`? 
+
+```{r, echo = FALSE, results = TRUE}
+temp.rainfall.intx <- lm(creepers ~ temp*rainfall, KW)
+model.matrix(temp.rainfall.intx)[1:15,]
+```
+
+
+## Interactions 
+
+$$
+\begin{bmatrix}
+\hat{y_1} \\ \hat{y_2} \\ \hat{y_3} \\ \hat{y_4} \\ \hat{y_5} \\ \hat{y_6} \\ \hat{y_7} \\ \hat{y_8} \\ \hat{y_9} \\ \hat{y_{10}} \\ \hat{y_{11}} \\ \hat{y_{12}} \\ \hat{y_{13}} \\ \hat{y_{14}} \\ \hat{y_{15}} \\ \end{bmatrix}
+= 
+\begin{bmatrix}
+\color{red}{1} & `r KW$temp[1]` & `r KW$rainfall[1]` & `r KW$temp[1]*KW$rainfall[1]`\\ 
+\color{red}{1} & `r KW$temp[2]` & `r KW$rainfall[2]` & `r KW$temp[2]*KW$rainfall[2]`\\ 
+\color{red}{1} & `r KW$temp[3]` & `r KW$rainfall[3]` & `r KW$temp[3]*KW$rainfall[3]`\\ 
+\color{red}{1} & `r KW$temp[4]` & `r KW$rainfall[4]` & `r KW$temp[4]*KW$rainfall[4]`\\ 
+\color{red}{1} & `r KW$temp[5]` & `r KW$rainfall[5]` & `r KW$temp[5]*KW$rainfall[5]`\\ 
+\color{red}{1} & `r KW$temp[6]` & `r KW$rainfall[6]` & `r KW$temp[6]*KW$rainfall[6]`\\ 
+\color{red}{1} & `r KW$temp[7]` & `r KW$rainfall[7]` & `r KW$temp[7]*KW$rainfall[7]`\\ 
+\color{red}{1} & `r KW$temp[8]` & `r KW$rainfall[8]` & `r KW$temp[8]*KW$rainfall[8]`\\ 
+\color{red}{1} & `r KW$temp[9]` & `r KW$rainfall[9]` & `r KW$temp[9]*KW$rainfall[9]`\\ 
+\color{red}{1} & `r KW$temp[10]` & `r KW$rainfall[10]` & `r KW$temp[10]*KW$rainfall[10]`\\ 
+\color{red}{1} & `r KW$temp[11]` & `r KW$rainfall[11]` & `r KW$temp[11]*KW$rainfall[11]`\\ 
+\color{red}{1} & `r KW$temp[12]` & `r KW$rainfall[12]` & `r KW$temp[12]*KW$rainfall[12]`\\ 
+\color{red}{1} & `r KW$temp[13]` & `r KW$rainfall[13]` & `r KW$temp[13]*KW$rainfall[13]`\\ 
+\color{red}{1} & `r KW$temp[14]` & `r KW$rainfall[14]` & `r KW$temp[14]*KW$rainfall[14]`\\ 
+\color{red}{1} & `r KW$temp[15]` & `r KW$rainfall[15]` & `r KW$temp[15]*KW$rainfall[15]`\\ 
+\end{bmatrix}
+\begin{bmatrix}
+\hat{\beta_0} \\ \hat{\beta_1} \\ \hat{\beta_2} \\ \hat{\beta_3} \end{bmatrix}
+$$
+
+
+## Interactions 
+
+* What is the interpretation of each of the $\boldsymbol{\hat{\beta}}$?
+
+  - $\hat{\beta}_0$ is the prediction when both temperature and rainfall are 0 
+  
+  - $\hat{\beta}_1$ is the "main effect" of temperature - the predicted change in occupancy for a 1 degree change in temperature **when rainfall = 0** (when rainfall = 0, both $\hat{\beta}_2$ and $\hat{\beta}_3$ drop out)
+
+  - $\hat{\beta}_2$ is the "main effect" of rainfall - the predicted change in occupancy for a 1 cm change in rainfall **when temperature = 0** (when temperature = 0, both $\hat{\beta}_1$ and $\hat{\beta}_3$ drop out)
+  
+  - $\hat{\beta}_3$ is the "interaction" between temperature and rainfall - the change in the effect of temperature and rainfall as the other changes
+
+```{r, echo = FALSE, results = FALSE}
+
+p1 <- predict(temp.rainfall.intx,newdata = data.frame(temp = 20, rainfall = 100))
+
+p2 <- predict(temp.rainfall.intx,newdata = data.frame(temp = 20, rainfall = 101))
+```
+
+
+## Interactions 
+
+* Red is for rainfall = 75 cm; orange = 85 cm; yellow = 95 cm; green = 105 cm
+
+```{r, echo = FALSE, results = FALSE}
+plot(KW$temp,KW$creepers, ylab = "Percent occupancy", xlab = "Temperature",main = "")
+
+lines(seq(18,27,1),predict(temp.rainfall.intx,newdata = data.frame(temp = seq(18,27,1), rainfall = rep(75,10))),col="red")
+
+lines(seq(18,27,1),predict(temp.rainfall.intx,newdata = data.frame(temp = seq(18,27,1), rainfall = rep(85,10))),col="orange")
+
+lines(seq(18,27,1),predict(temp.rainfall.intx,newdata = data.frame(temp = seq(18,27,1), rainfall = rep(95,10))),col="yellow")
+
+lines(seq(18,27,1),predict(temp.rainfall.intx,newdata = data.frame(temp = seq(18,27,1), rainfall = rep(105,10))),col="green")
+```
+
+
+## Nested effects 
+
+* What is the design matrix for this model: `creepers ~ temp:region`? 
+
+
+## Nested effects 
+
+* What is the design matrix for this model: `creepers ~ temp:region`? 
+
+```{r, echo = FALSE, results = TRUE}
+temp.region.nest <- lm(creepers ~ temp:region, KW)
+model.matrix(temp.region.nest)[1:15,]
+```
+
+
+## Nested effects 
+
+* What is the design matrix for this model: `creepers ~ temp:region`? 
+
+$$
+\begin{bmatrix}
+\hat{y_1} \\ \hat{y_2} \\ \hat{y_3} \\ \hat{y_4} \\ \hat{y_5} \\ \hat{y_6} \\ \hat{y_7} \\ \hat{y_8} \\ \hat{y_9} \\ \hat{y_{10}} \\ \hat{y_{11}} \\ \hat{y_{12}} \\ \hat{y_{13}} \\ \hat{y_{14}} \\ \hat{y_{15}} \\ \end{bmatrix}
+= 
+\begin{bmatrix}
+\color{red}{1} & `r KW$temp[1]` & 0 & 0 \\ 
+\color{red}{1} & `r KW$temp[2]` & 0 & 0 \\ 
+\color{red}{1} & `r KW$temp[3]` & 0 & 0 \\ 
+\color{red}{1} & `r KW$temp[4]` & 0 & 0 \\ 
+\color{red}{1} & `r KW$temp[5]` & 0 & 0 \\ 
+\color{red}{1} & 0 & `r KW$temp[1]` & 0 \\ 
+\color{red}{1} & 0 & `r KW$temp[2]` & 0 \\ 
+\color{red}{1} & 0 & `r KW$temp[3]` & 0 \\ 
+\color{red}{1} & 0 & `r KW$temp[4]` & 0 \\ 
+\color{red}{1} & 0 & `r KW$temp[5]` & 0 \\ 
+\color{red}{1} & 0 & 0 & `r KW$temp[1]`\\ 
+\color{red}{1} & 0 & 0 & `r KW$temp[2]`\\ 
+\color{red}{1} & 0 & 0 & `r KW$temp[3]`\\ 
+\color{red}{1} & 0 & 0 & `r KW$temp[4]`\\ 
+\color{red}{1} & 0 & 0 & `r KW$temp[5]`\\ 
+\end{bmatrix}
+\begin{bmatrix}
+\hat{\beta_0} \\ \hat{\beta_1} \\ \hat{\beta_2} \\ \hat{\beta_3} 
+\end{bmatrix}
+$$
+
+
+## Nested effects 
+
+* What is the interpretation of each of the $\boldsymbol{\hat{\beta}}$?
+
+  - $\hat{\beta}_0$ is the prediction when temperature is 0. This is the same in every region  
+  
+  - $\hat{\beta}_1$ , $\hat{\beta}_2$ , $\hat{\beta}_3$ is the predicted change in occupancy for a 1 degree change in temperature in regions 1, 2, and 3, respectively
+
+## Nested effects 
+
+* Let's plot this relationship
+
+   - red is region 1, orange is region 2, green is region 3 
+   
+   - these lines will intersect at the y-axis 
+   
+```{r, echo = FALSE, results = FALSE}
+plot(KW$temp,KW$creepers, ylab = "Percent occupancy", xlab = "Temperature",main = "")
+
+lines(seq(18,27,1),predict(temp.region.nest,newdata = data.frame(temp = seq(18,27,1), region = as.factor(rep(1,10)))),col="red")
+
+lines(seq(18,27,1),predict(temp.region.nest,newdata = data.frame(temp = seq(18,27,1), region = as.factor(rep(2,10)))),col="orange")
+
+lines(seq(18,27,1),predict(temp.region.nest,newdata = data.frame(temp = seq(18,27,1), region = as.factor(rep(3,10)))),col="green")
+
+```
+
+
+## Summary 
+
+Our model is defined by a design matrix $X$
+
+To build and understand our model (e.g., interpret the vector $\hat{\beta}$) we must understand $X$  
+
+There is tremendous flexibility in building models to allow us to make the inference we want to make
+
+
+
+
