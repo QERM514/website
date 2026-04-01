@@ -25,7 +25,7 @@ data_types <- list(
   rmd = c("lectures/week_01/lec_02_data_types.Rmd"),
   html = c("lectures/week_01/lec_02_data_types.html"),
   background = c("[Understanding data](https://punkrockor.com/2019/11/01/data-science-isnt-just-data-wrangling-and-data-analysis-on-understanding-your-data/)",
-                 "[Statistical distributions](http://learnbayes.org/demo/stat-distributions-js/distributionTable.html)",
+                 "[Statistical distributions](https://richarddmorey.github.io/stat-distributions-js/)",
                  "[Distribution relationships](http://www.math.wm.edu/~leemis/chart/UDR/UDR.html)"),
   zoom = ""
 )
