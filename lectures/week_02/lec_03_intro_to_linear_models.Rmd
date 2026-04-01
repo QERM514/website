@@ -6,7 +6,7 @@ date: "3 April 2026"
 output:
   ioslides_presentation:
     wide: true
-    css: lecture_slides.css
+    css: ../lecture_slides.css
 ---
 
 ```{r setup, include=FALSE}
@@ -77,8 +77,6 @@ $3) ~ y_i = \alpha x_i^{\beta}$
 
 $4) ~ y_i = \alpha + \beta x_i + \gamma z_i$
 
-$~$
-
 $5) ~ y_i = \alpha + \beta \frac{1}{x_i}$
 
 $6) ~ y_t = \mu + \phi(y_{t-1} - \mu)$
@@ -101,8 +99,6 @@ $\underline{2) ~ y_i = \alpha + \beta x_i}$
 $3) ~ y_i = \alpha x_i^{\beta}$
 
 $\underline{4) ~ y_i = \alpha + \beta x_i + \gamma z_i}$
-
-$~$
 
 $5) ~ y_i = \alpha + \beta \frac{1}{x_i}$
 
