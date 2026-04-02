@@ -1,6 +1,6 @@
 ---
 title: "Fitting linear models in R"
-author: "Mark Scheuerell"
+author: "<br>Mark Scheuerell"
 date: "10 April 2026"
 output:
   html_document:

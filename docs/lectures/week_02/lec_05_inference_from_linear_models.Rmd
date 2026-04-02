@@ -6,7 +6,7 @@ date: "8 April 2026"
 output:
   ioslides_presentation:
     wide: true
-    css: lecture_slides.css
+    css: ../lecture_slides.css
 ---
 
 ```{r setup, include=FALSE}
@@ -17,9 +17,12 @@ library(faraway)
 ## Goals for today
 
 * Understand the concept and practice of partitioning sums-of-squares
-* Understand the uses of R<sup>2</sup> and adjusted-R<sup>2</sup> for linear models
-* Understand the use of *F*-tests for hypothesis testing
-* Understand how to estimate confidence intervals
+
+> - Understand the uses of R<sup>2</sup> and adjusted-R<sup>2</sup> for linear models
+
+> - Understand the use of *F*-tests for hypothesis testing
+
+> - Understand how to estimate confidence intervals
 
 ## Partitioning variance
 
@@ -41,7 +44,7 @@ $$
 The total deviations in the data equal the sum of those for the model and errors
 
 $$
-\underbrace{y_i - \bar{y}}_{\text{Total}} = \underbrace{\hat{y}_i - \bar{y}}_{\text{Model}} + \underbrace{y_i - \hat{y}_i}_{\text{Error}}
+\underbrace{y_i - \bar{y}}_{\text{Total}} = \underbrace{\widehat{y}_i - \bar{y}}_{\text{Model}} + \underbrace{y_i - \widehat{y}_i}_{\text{Error}}
 $$
 
 
@@ -169,7 +172,7 @@ $$
 The model (regression) sum-of-squares $(SSR)$ measures the variation between the model fits and the mean of the data
 
 $$
-SSR = \sum \left( \hat{y}_i - \bar{y} \right)^2
+SSR = \sum \left( \widehat{y}_i - \bar{y} \right)^2
 $$
 
 
@@ -178,7 +181,7 @@ $$
 The error sum-of-squares $(SSE)$ measures the variation between the data and the model fits
 
 $$
-SSE = \sum \left( y_i - \hat{y}_i \right)^2
+SSE = \sum \left( y_i - \widehat{y}_i \right)^2
 $$
 
 
@@ -187,7 +190,7 @@ $$
 The sums-of-squares have the same additive property as the deviations
 
 $$
-\underbrace{\sum (y_i - \bar{y})^2}_{SSTO} = \underbrace{\sum (\hat{y}_i - \bar{y})^2}_{SSR} + \underbrace{\sum (y_i - \hat{y}_i)^2}_{SSE}
+\underbrace{\sum (y_i - \bar{y})^2}_{SSTO} = \underbrace{\sum (\widehat{y}_i - \bar{y})^2}_{SSR} + \underbrace{\sum (y_i - \widehat{y}_i)^2}_{SSE}
 $$
 
 
@@ -257,7 +260,7 @@ arrows(7, 2, 7, 4, length = 0.15, angle = 10, lwd = 2, col ="red")
 text(7.3, 3.5, expression(bold(e)), cex = 1.5)
 ```
 
-<center>$\mathbf{y}$ is $n$-dim; $\hat{\mathbf{y}}$ is $k$-dim; $\mathbf{e}$ is $(n-k)$-dim</center>
+<center>$\mathbf{y}$ is $n$-dim; $\widehat{\mathbf{y}}$ is $k$-dim; $\mathbf{e}$ is $(n-k)$-dim</center>
 
 
 ## Degrees of freedom | Linear models
@@ -280,10 +283,10 @@ $$
 For the $SSR$ we have
 
 $$
-SSR = \sum \left( \hat{y}_i - \bar{y} \right)^2
+SSR = \sum \left( \widehat{y}_i - \bar{y} \right)^2
 $$
 
-We estimate the data $(\hat{y})$ with a $k$-dimensional model, but we lose 1 $df$ when estimating the mean, so
+We estimate the data $(\widehat{y})$ with a $k$-dimensional model, but we lose 1 $df$ when estimating the mean, so
 
 $$
 df_{SSR} = k - 1
@@ -295,7 +298,7 @@ $$
 The $SSE$ is analogous
 
 $$
-SSE = \sum \left( y_i - \hat{y}_i \right)^2
+SSE = \sum \left( y_i - \widehat{y}_i \right)^2
 $$
 
 The data lie in an $n$-dimensional space and we represent them in a $k$-dimensional subspace, so
@@ -380,7 +383,7 @@ $$
 Recall that our estimate of the model parameters is 
 
 $$
-\hat{\boldsymbol{\beta}} = (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^{\top} \mathbf{y}
+\widehat{\boldsymbol{\beta}} = (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^{\top} \mathbf{y}
 $$
 
 
@@ -399,11 +402,11 @@ The variance of the parameters is therefore
 
 $$
 \begin{aligned}
-\hat{\boldsymbol{\beta}} &= (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^{\top} \mathbf{y} \\
+\widehat{\boldsymbol{\beta}} &= (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^{\top} \mathbf{y} \\
    &= \left[ (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^{\top} \right] \mathbf{y} \\
 \end{aligned} \\
 \Downarrow \\
-\text{Var}(\hat{\boldsymbol{\beta}}) = \left[ (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^{\top} \right] \text{Var}(\mathbf{y}) \left[ (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^{\top} \right]^{\top}
+\text{Var}(\widehat{\boldsymbol{\beta}}) = \left[ (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^{\top} \right] \text{Var}(\mathbf{y}) \left[ (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^{\top} \right]^{\top}
 $$
 
 
@@ -431,11 +434,11 @@ $$
 
 ## Variance estimates | Parameters
 
-Our estimate of $\text{Var}(\hat{\boldsymbol{\beta}})$ is then  
+Our estimate of $\text{Var}(\widehat{\boldsymbol{\beta}})$ is then  
 
 $$
 \begin{aligned}
-\text{Var}(\hat{\boldsymbol{\beta}}) &= \left[ (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^{\top} \right] \text{Var}(\mathbf{y}) \left[ (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^{\top} \right]^{\top} \\
+\text{Var}(\widehat{\boldsymbol{\beta}}) &= \left[ (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^{\top} \right] \text{Var}(\mathbf{y}) \left[ (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^{\top} \right]^{\top} \\
   &= \left[ (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^{\top} \right] \sigma^2 \mathbf{I} \left[ (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^{\top} \right]^{\top} \\
   &= \sigma^2 (\mathbf{X}^{\top} \mathbf{X})^{-1} (\mathbf{X}^{\top} \mathbf{X}) \left[ (\mathbf{X}^{\top} \mathbf{X})^{-1} \right]^{\top} \\
   &= \sigma^2 (\mathbf{X}^{\top} \mathbf{X})^{-1}
@@ -445,10 +448,10 @@ $$
 
 ## Variance estimates | Parameters
 
-Let's think about the variance of $\hat{\boldsymbol{\beta}}$
+Let's think about the variance of $\widehat{\boldsymbol{\beta}}$
 
 $$
-\text{Var}(\hat{\boldsymbol{\beta}}) = \sigma^2 (\mathbf{X}^{\top} \mathbf{X})^{-1}
+\text{Var}(\widehat{\boldsymbol{\beta}}) = \sigma^2 (\mathbf{X}^{\top} \mathbf{X})^{-1}
 $$
 
 This suggests that our confidence in our estimate increases with the spread in $\mathbf{X}$
@@ -643,7 +646,7 @@ $$
 Another option is to estimate a $t$-statistic as
 
 $$
-t_i = \frac{\hat{\beta}_i}{\text{SE} \left( \hat{\beta}_i \right)}
+t_i = \frac{\widehat{\beta}_i}{\text{SE} \left( \widehat{\beta}_i \right)}
 $$
 
 and compare it to a $t$-distribution with $n - k$ degrees of freedom
@@ -699,7 +702,7 @@ $H_0 : \beta_2 = 1$
 We can also modify our $t$-test from before and use it for our comparison by including the hypothesized $\beta_{H_0}$ as an offset
 
 $$
-t_i = \frac{(\hat{\beta_i} - \beta_{H_0})}{\text{SE} \left( \hat{\beta}_i \right)}
+t_i = \frac{(\widehat{\beta_i} - \beta_{H_0})}{\text{SE} \left( \widehat{\beta}_i \right)}
 $$
 
 
@@ -721,12 +724,12 @@ Null hypothesis testing (NHT) is a slippery slope
 
 ## Confidence intervals for $\beta$
 
-We can also use confidence intervals (CI's) to express uncertainty in $\hat{\beta}_i$
+We can also use confidence intervals (CI's) to express uncertainty in $\widehat{\beta}_i$
 
 They take the form
 
 $$
-100(1 - \alpha)\% ~ \text{CI}: \hat{\beta}_{i} \pm t_{n-p}^{(\alpha / 2)} \operatorname{SE}(\hat{\beta})
+100(1 - \alpha)\% ~ \text{CI}: \widehat{\beta}_{i} \pm t_{n-p}^{(\alpha / 2)} \operatorname{SE}(\widehat{\beta})
 $$
 
 where here $\alpha$ is our *predetermined* Type-I error rate
@@ -747,19 +750,19 @@ The bootstrap<sup>$\dagger$</sup> method provides a way to construct CI's withou
 
 1. Fit your model to the data  
 
-2. Calculate $\mathbf{e} = \mathbf{y} - \mathbf{X} \hat{\boldsymbol{\beta}}$ 
+2. Calculate $\mathbf{e} = \mathbf{y} - \mathbf{X} \widehat{\boldsymbol{\beta}}$ 
 
 3. Do the following *many* times:
     * Generate $\mathbf{e}^*$ by sampling *with replacement* from $\mathbf{e}$  
-    * Calculate $\mathbf{y}^*$ = $\mathbf{X} \hat{\boldsymbol{\beta}} + \mathbf{e}^*$
-    * Estimate $\hat{\boldsymbol{\beta}}^*$ from $\mathbf{X}$ & $\mathbf{y}^*$)  
+    * Calculate $\mathbf{y}^*$ = $\mathbf{X} \widehat{\boldsymbol{\beta}} + \mathbf{e}^*$
+    * Estimate $\widehat{\boldsymbol{\beta}}^*$ from $\mathbf{X}$ & $\mathbf{y}^*$)  
 
-4. Select the $\tfrac{\alpha}{2}$ and $(1 - \tfrac{\alpha}{2})$ percentiles from the saved $\hat{\boldsymbol{\beta}}^*$
+4. Select the $\tfrac{\alpha}{2}$ and $(1 - \tfrac{\alpha}{2})$ percentiles from the saved $\widehat{\boldsymbol{\beta}}^*$
 
 
 ## Confidence interval for new predictions
 
-Given a fitted model $\mathbf{y} = \mathbf{X} \hat{\boldsymbol{\beta}} + \mathbf{e}$, we might want to know the uncertainty around a new estimate $\mathbf{y}^*$ given some new predictor $\mathbf{X}^*$
+Given a fitted model $\mathbf{y} = \mathbf{X} \widehat{\boldsymbol{\beta}} + \mathbf{e}$, we might want to know the uncertainty around a new estimate $\mathbf{y}^*$ given some new predictor $\mathbf{X}^*$
 
 
 ## CI for the mean response
@@ -767,7 +770,7 @@ Given a fitted model $\mathbf{y} = \mathbf{X} \hat{\boldsymbol{\beta}} + \mathbf
 Suppose we wanted to estimate the uncertainty in the *average* response given by
 
 $$
-\hat{\mathbf{y}}^* = \mathbf{X}^* \hat{\boldsymbol{\beta}}
+\widehat{\mathbf{y}}^* = \mathbf{X}^* \widehat{\boldsymbol{\beta}}
 $$
 
 Recall that the general formula for a CI on a quantity $z$ is
@@ -779,7 +782,7 @@ $$
 So we would have
 
 $$
-\hat{\mathbf{y}}^* ~ \pm ~ t^{(\alpha / 2)}_{df} \sqrt{\text{Var} \left( \hat{\mathbf{y}}^* \right)}
+\widehat{\mathbf{y}}^* ~ \pm ~ t^{(\alpha / 2)}_{df} \sqrt{\text{Var} \left( \widehat{\mathbf{y}}^* \right)}
 $$
 
 
@@ -789,11 +792,11 @@ We can calculate the SD of our expectation as
 
 $$
 \begin{aligned}
-\text{Var} \left( \hat{\mathbf{y}}^* \right) &= \text{Var} \left( \mathbf{X}^* \hat{\boldsymbol{\beta}} \right)  \\
-  &= {\mathbf{X}^*}^{\top} \text{Var}\left( \hat{\boldsymbol{\beta}} \right) \mathbf{X}^* \\
+\text{Var} \left( \widehat{\mathbf{y}}^* \right) &= \text{Var} \left( \mathbf{X}^* \widehat{\boldsymbol{\beta}} \right)  \\
+  &= {\mathbf{X}^*}^{\top} \text{Var}\left( \widehat{\boldsymbol{\beta}} \right) \mathbf{X}^* \\
   &= {\mathbf{X}^*}^{\top} \left[ \sigma^2 (\mathbf{X}^{\top} \mathbf{X})^{-1} \right] \mathbf{X}^* \\
   &\Downarrow \\
-\text{SD} \left( \hat{\mathbf{y}}^* \right) &= \sigma \sqrt{ {\mathbf{X}^*}^{\top} (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^* } 
+\text{SD} \left( \widehat{\mathbf{y}}^* \right) &= \sigma \sqrt{ {\mathbf{X}^*}^{\top} (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^* } 
 \end{aligned}
 $$
 
@@ -803,7 +806,7 @@ $$
 So our CI on the mean response is given by
 
 $$
-\hat{\mathbf{y}}^* \pm ~ t^{(\alpha / 2)}_{df} \sigma \sqrt{ {\mathbf{X}^*}^{\top} (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^* } 
+\widehat{\mathbf{y}}^* \pm ~ t^{(\alpha / 2)}_{df} \sigma \sqrt{ {\mathbf{X}^*}^{\top} (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^* } 
 $$
 
 
@@ -814,7 +817,7 @@ What about the uncertainty in a *specific* prediction?
 In that case we need to account for our additional uncertainty owing to the error in our relationship, which is given by
 
 $$
-\hat{\mathbf{y}}^* = \mathbf{X}^* \hat{\boldsymbol{\beta}} + \mathbf{e}
+\widehat{\mathbf{y}}^* = \mathbf{X}^* \widehat{\boldsymbol{\beta}} + \mathbf{e}
 $$
 
 ## CI for a specific response
@@ -823,11 +826,11 @@ The SD of the new prediction is given by
 
 $$
 \begin{aligned}
-\text{Var} \left( \hat{\mathbf{y}}^* \right) &= {\mathbf{X}^*}^{\top} \text{Var}\left( \hat{\boldsymbol{\beta}} \right) \mathbf{X}^* + \text{Var} \left( \mathbf{e} \right) \\
+\text{Var} \left( \widehat{\mathbf{y}}^* \right) &= {\mathbf{X}^*}^{\top} \text{Var}\left( \widehat{\boldsymbol{\beta}} \right) \mathbf{X}^* + \text{Var} \left( \mathbf{e} \right) \\
   &= {\mathbf{X}^*}^{\top} \left[ \sigma^2 (\mathbf{X}^{\top} \mathbf{X})^{-1} \right] \mathbf{X}^* + \sigma^2\\
   &= \sigma^2 \left( {\mathbf{X}^*}^{\top} (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^* + 1 \right) \\
   &\Downarrow \\
-\text{SD} \left( \hat{\mathbf{y}}^* \right) &= \sigma \sqrt{1 + {\mathbf{X}^*}^{\top} (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^* } 
+\text{SD} \left( \widehat{\mathbf{y}}^* \right) &= \sigma \sqrt{1 + {\mathbf{X}^*}^{\top} (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^* } 
 \end{aligned}
 $$
 
@@ -836,7 +839,7 @@ $$
 So our CI on the new prediction is given by
 
 $$
-\hat{\mathbf{y}}^* \pm ~ t^{(\alpha / 2)}_{df} \sigma \sqrt{1 + {\mathbf{X}^*}^{\top} (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^* } 
+\widehat{\mathbf{y}}^* \pm ~ t^{(\alpha / 2)}_{df} \sigma \sqrt{1 + {\mathbf{X}^*}^{\top} (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^* } 
 $$
 
 <br>

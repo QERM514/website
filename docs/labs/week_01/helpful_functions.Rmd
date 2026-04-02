@@ -1,6 +1,6 @@
 ---
 title: "Data and model summaries in R"
-author: "Mark Scheuerell"
+author: "<br>Mark Scheuerell"
 date: "3 April 2026"
 output:
   html_document:
@@ -10,7 +10,6 @@ output:
     highlight: textmate
     css: ../lecture_inst.css
     code_download: true
-    code_folding: show
     toc: true
     toc_float: true
     toc_depth: 3
@@ -22,33 +21,189 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Background
 
-This is meant to be a helpful resource when working with data, fitting models, and interpreting output.
+This is meant to be a helpful resource for R functions commonly used when working with data, fitting models, and interpreting output.
+
+***
 
 # Data summaries
 
-Here are some functions that are helpful for summarizing data.
+Here are some functions that are helpful for summarizing data contained in a vector `x`.
 
-`mean()`: computes the arithmetic mean (average) of a vector
+`mean(x)`: computes the arithmetic mean (average) of `x`
 
-`sd()`: computes the standard deviation of a vector
+`sd(x)`: computes the standard deviation of `x`
 
-`var()`: computes the variance of a vector
+`var(x)`: computes the variance of `x`
 
-`quantile()`: returns estimates of underlying distribution quantiles
+`quantile(x)`: returns estimates of underlying distribution quantiles of `x`
 
-`hist()`: creates a histogram of the data in a vector
+`hist(x)`: creates a histogram of `x`
 
 
-# Data for models
+***
+
+# Random numbers
+
+It's common practice to use some form of randomization when estimating and testing models.
+
+`sample()`: draws a sample of a specified size from a group, with or without replacement
+
+```{r ex_sample}
+## make all of this reproducible
+set.seed(514)
+
+## a sequence from 1 to 10
+xx <- seq(1, 10)
+
+## shuffle the order
+sample(xx, size = length(xx), replace = FALSE)
+
+## grab 3 numbers at random
+sample(xx, size = 3, replace = FALSE)
+```
+
+## Distributional forms
+
+The functions for generating random data from a statistic distribution in R all start with `r` (for "random").
+
+### Continuous values
+
+Continuous values can occur anywhere on the entire real number line from -&infin; to &infin;, but some have a necessary lower bound at zero (e.g., densities, concentrations).
+
+#### Normal
+
+`rnorm()`: draw random samples from a normal distribution
+
+```{r, ex_rnorm}
+## 1000 values from a normal distribution with mean = 25 and variance = 5
+xx <- rnorm(n = 1000, mean = 25, sd = sqrt(5))
+
+## estimated mean and variance
+mean(xx); var(xx)
+
+## histogram of values
+hist(xx, main = "",
+     breaks = seq(floor(min(xx)), ceiling(max(xx))))
+```
+
+<br>
+
+#### Logistic
+
+`rlogis()`: draw random samples from a logistic distribution
+
+#### Uniform
+
+`runif()`: draw random samples from a uniform distribution
+
+<br>
+
+### Discrete values
+
+Discrete values are integers that typically only take on non-negative values (e.g., presence/absence, counts).
+
+#### Bernoulli & Binomial
+
+`rbinom()`: draw random samples from a binomial distribution; can be used for Bernoulli distribution as well
+
+<u>Simulated "coin toss" via Bernoulli</u>
+
+```{r ex_rbern}
+## flip a coin 1000 times
+xx <- rbinom(n = 1000, size = 1, prob = 0.5)
+
+## count tails (0) and heads (1)
+table(xx)
+```
+
+<u>Simulated survival</u>
+
+```{r ex_rbinom}
+## 1357 tagged smolts; probability of survival is 0.05
+xx <- rbinom(n = 1357, size = 1, prob = 0.05)
+
+## number of mortalities (0) and survivors (1)
+table(xx)  # p ~= 0.0528
+```
+
+#### Poisson
+
+`rpois()`: draw random samples from a Poisson distribution
+
+```{r, ex_rpois}
+## 1000 values from a Poisson distribution with mean = variance = 25
+xx <- rpois(n = 1000, lambda = 25)
+
+## estimated mean and variance
+mean(xx); var(xx)
+
+## histogram of values
+hist(xx, main = "",
+     breaks = seq(floor(min(xx)), ceiling(max(xx))))
+```
+
+<br>
+
+#### Negative binomial
+
+`rnbinom()`: draw random samples from a negative binomial distribution
+
+```{r, ex_rnbinom}
+## 1000 values from a negative binomial distribution with mean = 25 and variance = 50
+xx <- rnbinom(n = 1000, mu = 25, size = 25)
+
+## estimated mean and variance
+mean(xx); var(xx)
+
+## histogram of values
+hist(xx, main = "",
+     breaks = seq(floor(min(xx)), ceiling(max(xx))))
+```
+
+
+***
+
+# Data in models
 
 Sometimes you want or need to be very explicit about how you want R to treat some aspect of your data. For example, when used inside of a model-fitting function, `a + b` will include both `a` and `b` as predictors in a model, but `I(a + b)` will include the sum of `a` and `b` as a single predictor in a model.
 
 `I()`: change the class of an object to indicate that it should be treated ‘as is’
 
+```{r ex_I, eval = FALSE}
+lm(y ~ I(x + z))
+```
+
 `offset()`: assume a model predictor has a known coefficient of 1 rather than an unknown coefficient to be estimated
+
+For example, if we counted 6 plants inside a 2 m<sup>2</sup> quadrat, we might express the density of plants as 3 plants per m<sup>2</sup>. As you will see later, models for counts often assume a log-linear relationship, such that 
+
+$$
+\log (\text{density}) = \alpha + \beta x \\
+\Downarrow \\
+\log(\text{number} ~/~ \text{m}^2) = \alpha + \beta x \\
+\log(\text{number}) - \log(\text{m}^2) = \alpha + \beta x \\
+\log(\text{number}) = \alpha + \beta x + \log(\text{m}^2)\\
+$$
+
+We might model this relationship in R with something like
+
+```{r ex_offset, eval = FALSE}
+## log-linear regression
+lm(log(number) ~ x + offset(log(area)))
+```
 
 `scale()`: shifts and/or scales a vector to have a mean of 0 and variance or 1
 
+```{r}
+## random variate with mean of 5 and variance of 2
+xx <- rnorm(100, mean = 5, sd = sqrt(2))
+
+## scaled values with mean = 0 and variance = 1
+zz <- scale(xx)
+mean(zz); var(zz)
+```
+
+***
 
 # Model summaries
 
@@ -63,38 +218,15 @@ You'll see a variety of functions for fitting different types of linear models i
 `summary()`: returns a list of summary statistics of the fitted linear model
 
 
-# Data distributions
-
-It's common practice to use some form of randomization when estimating and testing models.
-
-`sample()`: draws a sample of a specified size from a group, with or without replacement
-
-The functions for generating random data from a statistic distribution in R all start with `r` (for "random").
-
-## Continuous values
-
-`rnorm()`: draw random samples from a normal distribution
-
-`rlogis()`: draw random samples from a logistic distribution
-
-`runif()`: draw random samples from a uniform distribution
-
-## Discrete values
-
-`rbinom()`: draw random samples from a binomial distribution; can be used for Bernoulli distribution as well
-
-`rpois()`: draw random samples from a Poisson distribution
-
-`rnbinom()`: draw random samples from a negative binomial distribution
-
+***
 
 # Monte Carlo
 
-There is a technique known as a _Monte Carlo_ method (or simulation or experiment), whose name comes from the Monte Carlo Casino in Monaco. The idea is to estimate the uncertainty in a stochastic variable or process via repeated sampling. For example, say you wanted to estimate the probability that a coin would come up "heads" when flipped into the air and allowed to land freely. To do so, you could flip the coin 100 times and after each flip record a 1 if heads or a 0 if tails. At the end count up the number of 1's and divide the sum by 100. Here's a way we might do that in R.
+There is a technique known as a _Monte Carlo_ method (or simulation or experiment), whose name comes from the Monte Carlo Casino in Monaco. The idea is to estimate the uncertainty in a stochastic variable or process via repeated sampling. For example, say you wanted to estimate the probability that a coin would come up "heads" when flipped into the air and allowed to land freely. To do so, you could flip the coin 1000 times and after each flip record a 1 if heads or a 0 if tails. At the end count up the number of 1's and divide the sum by 1000. Here's a way we might do that in R.
 
 ```{r monte_carlo_ex}
 ## number of monte carlo experiments
-nn <- 100
+nn <- 1000
 
 ## empty vector to record our results
 rr <- rep(NA, nn)
