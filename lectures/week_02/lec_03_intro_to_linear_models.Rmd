@@ -16,9 +16,12 @@ knitr::opts_chunk$set(echo = FALSE)
 ## Goals for today
 
 * Identify whether a model is linear in the predictors
-* Recognize that linear models can approximate nonlinear functions
-* Understand the difference between categorical and continuous models
-* Recognize the difference between written and coded factors
+
+> - Recognize that linear models can approximate nonlinear functions
+
+> - Understand the difference between categorical and continuous models
+
+> - Recognize the difference between written and coded factors
 
 
 ## Forms of linear models
@@ -92,17 +95,17 @@ $8) ~ y_i =   \frac{\alpha x_i}{1 + \beta x_i}$
 
 <div class="columns-2">
 
-$\underline{1) ~ y_i = \delta x_i}$
+$1) ~ y_i = \delta x_i$ &#10004;
 
-$\underline{2) ~ y_i = \alpha + \beta x_i}$
+$2) ~ y_i = \alpha + \beta x_i$ &#10004;
 
 $3) ~ y_i = \alpha x_i^{\beta}$
 
-$\underline{4) ~ y_i = \alpha + \beta x_i + \gamma z_i}$
+$4) ~ y_i = \alpha + \beta x_i + \gamma z_i$ &#10004;
 
 $5) ~ y_i = \alpha + \beta \frac{1}{x_i}$
 
-$\underline{6) ~ y_t = \mu + \phi(y_{t-1} - \mu)}$
+$6) ~ y_t = \mu + \phi(y_{t-1} - \mu)$ &#10004;
 
 $7) ~ y_i =   (\alpha + x_i) \beta x_i$
 
@@ -211,7 +214,7 @@ In nonlinear models, common inference tools (*p*-values, confidence intervals) m
 
 ## Locally linear models
 
-If we reduce the scale (interval) enough, we can approximate a nonlinear function with a linear model
+If we reduce the interval of interest enough, we can approximate a nonlinear function with a linear model
 
 $$
 y = x^2 \\
@@ -310,7 +313,7 @@ In **R**, we use `coef()` to extract the intercept(s) and slope(s)
 `coef(fitted_regr_model)` 
 
 
-## Locally linear models {.smaller}
+## Locally linear models
 
 ```{r coef_quad_2, echo = TRUE}
 ## intercept and slope for model 2
@@ -318,7 +321,7 @@ coef(fit_2)
 ```
 
 
-## Locally linear models {.smaller}
+## Locally linear models
 
 ```{r coef_quad_2b, echo = TRUE}
 ## intercept and slope for model 2
@@ -356,11 +359,11 @@ Estimate: $\hat{y} \approx 1.1 + 2.7 x + 0 x^2$
 
 We classify linear models by the form of their deterministic part
 
-Discrete predictor $\rightarrow$ ANalysis Of VAriance (ANOVA)
+Discrete predictor $\rightarrow$ **AN**alysis **O**f **VA**riance (ANOVA)
 
 Continuous predictor $\rightarrow$ Regression
 
-Both $\rightarrow$ ANalysis of COVAriance (ANCOVA)
+Both $\rightarrow$ **AN**alysis of **COVA**riance (ANCOVA)
 
 
 ## Possible models for growth of fish
@@ -378,7 +381,7 @@ Both $\rightarrow$ ANalysis of COVAriance (ANCOVA)
 
 * A biologist at the WA Dept of Fish & Wildlife contacts you for help with an experiment
 
-* She wants to know how growth of hatchery salmon is affected by their ration size
+* She wants to know how growth of hatchery salmon is affected by ration size
 
 * She sends you a spreadsheet with 2 cols:  
 
@@ -386,10 +389,9 @@ Both $\rightarrow$ ANalysis of COVAriance (ANCOVA)
     2. ration size (2g, 4g, 6g)
 
 
-## ANOVA model
+## Fish growth data
 
-```{r sim_anova, fig.align='center', fig.height=4, fig.width=5}
-set.seed(514)
+```{r fish_data, fig.align='center', fig.height=4, fig.width=5}
 ## sample size
 nn <- 30
 ## groups
@@ -421,11 +423,32 @@ v1 <- vv[x_cov <=4, ]
 v2 <- vv[x_cov > 4 & x_cov <=8, ]
 v3 <- vv[x_cov > 8 & x_cov <=12, ]
 ## plot all data
-par(mai = c(0.8,0.8,0.1,0.1))
+par(mai = c(0.9,0.9,0.1,0.1))
 ## low
 plot(rep(1, nrow(v1)), v1[,2], pch = 16, col = "red",
      xlim = c(0.5,3.5), ylim = range(yy),
      xaxt = "n",
+     cex.lab = 1.5, cex.axis = 1.2,
+     xlab = "Ration size (g)", ylab = "Growth (mm)")
+## med
+points(rep(2, nrow(v2)), v2[,2], pch = 16, col = "blue")
+# high
+points(rep(3, nrow(v3)), v3[,2], pch = 16, col = "orange")
+axis(1, at = seq(3), cex.axis = 1.2,
+     labels = c("Low (2)", "Med (6)", "High (10)"))
+```
+
+
+## ANOVA model
+
+```{r sim_anova, fig.align='center', fig.height=4, fig.width=5}
+## plot all data
+par(mai = c(0.9,0.9,0.1,0.1))
+## low
+plot(rep(1, nrow(v1)), v1[,2], pch = 16, col = "red",
+     xlim = c(0.5,3.5), ylim = range(yy),
+     xaxt = "n",
+     cex.lab = 1.5, cex.axis = 1.2,
      xlab = "Ration size (g)", ylab = "Growth (mm)")
 points(1, mean(v1[,2]), col = "red", pch = "-", cex = 5)
 ## med
@@ -434,7 +457,8 @@ points(2, mean(v2[,2]), col = "blue", pch = "-", cex = 5)
 # high
 points(rep(3, nrow(v3)), v3[,2], pch = 16, col = "orange")
 points(3, mean(v3[,2]), col = "orange", pch = "-", cex = 5)
-axis(1, at = seq(3), labels = c("Low (2)", "Med (6)", "High (10)"))
+axis(1, at = seq(3), cex.axis = 1.2,
+     labels = c("Low (2)", "Med (6)", "High (10)"))
 ```
 
 $\text{growth}_i = \alpha + \beta_{\text{ration}} + \epsilon_i$
@@ -448,8 +472,9 @@ It turns out that targeting the exact ration is hard, but they know how much eac
 ## Continuous predictor
 
 ```{r sim_regr, fig.align='center', fig.height=4, fig.width=5}
-par(mai = c(0.8,0.8,0.1,0.1))
+par(mai = c(0.9,0.9,0.1,0.1))
 plot(v1[,1], v1[,2], pch = 16, col = "red",
+     cex.lab = 1.5, cex.axis = 1.2,
      xlim = range(x_cov), ylim = range(yy),
      xlab = "Ration size (g)", ylab = "Growth (mm)")
 lines(c(0,4), rep(mean(v1[,2]), 2), col = "red", lwd = 3)
@@ -461,12 +486,15 @@ points(v3[,1], v3[,2], pch = 16, col = "orange")
 lines(c(8,12), rep(mean(v3[,2]), 2), col = "orange", lwd = 3)
 ```
 
+$\text{growth}_i = \alpha + \beta_{\text{ration}} + \epsilon_i$
+
 
 ## Continuous predictor
 
 ```{r sim_regr_all, fig.align='center', fig.height=4, fig.width=5}
-par(mai = c(0.8,0.8,0.1,0.1))
+par(mai = c(0.9,0.9,0.1,0.1))
 plot(x_cov, yy, pch = 16, 
+     cex.lab = 1.5, cex.axis = 1.2,
      xlab = "Ration size (g)", ylab = "Growth (mm)")
 ```
 
@@ -474,8 +502,9 @@ plot(x_cov, yy, pch = 16,
 ## Linear regression
 
 ```{r sim_regr_all_2, fig.align='center', fig.height=4, fig.width=5}
-par(mai = c(0.8,0.8,0.1,0.1))
+par(mai = c(0.9,0.9,0.1,0.1))
 plot(x_cov, yy, pch = 16, 
+     cex.lab = 1.5, cex.axis = 1.2,
      xlab = "Ration size (g)", ylab = "Growth (mm)")
 abline(a = 15, b = 2)
 ```
@@ -493,8 +522,9 @@ It also turns out that there are 3 lineages of fish in the trials
 ```{r sim_ancova, fig.align='center', fig.height=4, fig.width=5}
 
 ## all data
-par(mai = c(0.8,0.8,0.1,0.1))
+par(mai = c(0.9,0.9,0.1,0.1))
 plot(x_cov[1:nn], yy[1:nn], pch = 16, col = "red", ylim = range(yy),
+     cex.lab = 1.5, cex.axis = 1.2,
      xlab = "Ration size (g)", ylab = "Growth (mm)")
 points(x_cov[1:nn+nn], yy[1:nn+nn], pch = 16, col = "blue")
 points(x_cov[1:nn+nn*2], yy[1:nn+nn*2], pch = 16, col = "orange")
@@ -506,8 +536,9 @@ points(x_cov[1:nn+nn*2], yy[1:nn+nn*2], pch = 16, col = "orange")
 ```{r sim_ancova_fit, fig.align='center', fig.height=4, fig.width=5}
 
 ## all data
-par(mai = c(0.8,0.8,0.1,0.1))
+par(mai = c(0.9,0.9,0.1,0.1))
 plot(x_cov[1:nn], yy[1:nn], pch = 16, col = "red", ylim = range(yy),
+     cex.lab = 1.5, cex.axis = 1.2,
      xlab = "Ration size (g)", ylab = "Growth (mm)")
 points(x_cov[1:nn+nn], yy[1:nn+nn], pch = 16, col = "blue")
 points(x_cov[1:nn+nn*2], yy[1:nn+nn*2], pch = 16, col = "orange")
