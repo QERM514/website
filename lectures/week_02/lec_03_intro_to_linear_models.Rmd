@@ -154,7 +154,16 @@ $$
 * the predictor can be a transformed variable
 
 
+## Is this a linear model?
+
+$$
+y_i = \alpha + \beta x_i^2 \\
+$$
+
+
 ## Linear transformations
+
+Yes, if we allow for a transformation
 
 $$
 y_i = \alpha + \beta x_i^2 \\
@@ -238,7 +247,7 @@ curve(alpha + beta*x + x^2, 0, 1,
 ```
 
 
-## Locally linear models | A stochastic example with $y = \tfrac{1}{2} + 2 x + x^2 + \epsilon_i$
+## Locally linear models | A stochastic example with $y = 2 + \tfrac{1}{2} x + x^2 + \epsilon_i$
 
 ```{r sim_quadratic, echo = TRUE}
 set.seed(514)
@@ -253,7 +262,7 @@ y_loc <- y_all[x_all >= 0 & x_all <= 1]
 ```
 
 
-## Locally linear models | A stochastic example with $y = \tfrac{1}{2} + 2 x + x^2 + \epsilon_i$
+## Locally linear models | A stochastic example with $y = 2 + \tfrac{1}{2} x + x^2 + \epsilon_i$
 
 ```{r plot_sim_quadratic, fig.align='center', fig.height=3.5, fig.width=7}
 par(mfrow = c(1,2), mai = c(0.9,0.9,0.1,0.1))
