@@ -931,7 +931,7 @@ What can we say about $\hat{\boldsymbol{\beta}}$ when estimated this way?
 
 2. It's the *best linear unbiased estimate* (BLUE)
 
-**NOTE**: these propoerties only hold if the errors ($e_i$) are *independent and identically distributed* (IID)
+**NOTE**: these properties only hold if the errors ($e_i$) are *independent and identically distributed* (IID)
 
 
 ## Identifiability
