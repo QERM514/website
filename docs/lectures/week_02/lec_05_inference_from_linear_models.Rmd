@@ -20,9 +20,30 @@ library(faraway)
 
 > - Understand the uses of R<sup>2</sup> and adjusted-R<sup>2</sup> for linear models
 
-> - Understand the use of *F*-tests for hypothesis testing
 
-> - Understand how to estimate confidence intervals
+## General approach
+
+### Question $\rightarrow$ Data $\rightarrow$ Model $\rightarrow$ <u>Inference</u> $\rightarrow$ Prediction
+
+
+## Inference | Relationship(s) between predictor(s) and response
+
+* How big is an effect? Is an effect "important"? 
+
+> - How certain are we about the sign and size of the effect?  
+
+
+## General approach
+
+### Question $\rightarrow$ Data $\rightarrow$ Model $\rightarrow$ Inference $\rightarrow$ <u>Prediction</u>
+
+
+## Prediction 
+
+* What do we predict for a novel case? 
+      
+> - How good will our predictions be? 
+
 
 ## Partitioning variance
 
@@ -48,60 +69,105 @@ $$
 $$
 
 
-## Partitioning total deviations
+## Partitioning variance | An example
 
-Here is a plot of some data $y$ and a predictor $x$
+Let's consider a model for the relationship between
 
-```{r intro_SS, echo = FALSE, fig.width = 3.5, fig.height = 3.5, fig.align="center"}
-## set random seed for reproducibility
-set.seed(514)
+* soil surface temperature (C) measured across 15 small plots on a hill, and
 
-## sample size
-nn <- 30
-## some values for the predictor x
-xx <- sort(runif(nn, 0, 20))
-## intercept
-beta_0 <- 1
-## slope
-beta_1 <- 0.5
-## random errors (mean = 0, SD = 1)
-epsilon <- rnorm(nn)
-## observed data
-yy <- beta_0 + beta_1*xx + epsilon
+* the aspect of each plot (direction in degrees; N to S)
 
-## fit a regression model
-mm <- lm(yy ~ xx)
-## get predicted values
-yhat <- predict(mm)
 
-par(mai = c(0.3,0.3,0.1,0.1), omi = c(0, 0, 0, 0), cex = 0.7)
+## Partitioning variance | An example
+
+```{r ex_SS, echo = FALSE, fig.width = 5, fig.height = 4, fig.align = "center"}
+nn <- 15
+
+aspect <- round(runif(nn, 0, 180))
+
+b1 <- 5
+b2 <- 0.05
+
+ee <- rnorm(nn, 0, 1.5)
+
+temp <- b1 + b2 * aspect + ee
+
+par(mai = c(0.9,0.9,0.1,0.1), omi = c(0, 0, 0, 0))
 
 ## plot the data
-plot(xx, yy, type = "p", pch = 19,
-     bty = "l", xaxt = "n", yaxt = "n",
-     xlab = "",
-     ylab = "")
-mtext(expression(italic(x)), 1, line=0.2, cex=1.1, at=max(xx))
-mtext(expression(italic(y)), 2, line=0.3, cex=1.1, at=max(yy), las=1)
-
+plot(aspect, temp, type = "p", pch = 19, las = 1,
+     ylim = c(floor(min(temp)) - 1, ceiling(max(temp))),
+     bty = "l", cex.axis = 1.2, cex.lab = 1.3,
+     xlab = "Aspect (Degrees)",
+     ylab = "Temperature (C)")
 ```
 
 
-## Partitioning total deviations
+## Partitioning variance | An example
 
-And let's consider this model: $y_i = \alpha + \beta x_i + e_i$
+Let's fit this model:
 
-```{r intro_SS_2, echo = FALSE, fig.width = 3.5, fig.height = 3.5, fig.align="center"}
+$$temperature_i = \beta_0 + \beta_1 \times aspect_i + e_i$$
+
+and find $\hat{\boldsymbol{\beta}}$ and $\hat{\boldsymbol{y}}$
+
+<br>
+
+<center>_Let's use matrix algebra like we learned last time!_</center>
+
+
+## Partitioning variance | An example 
+
+Create our design matrix $\mathbf{X}$ 
+
+```{r ex_SS_2, echo=TRUE}
+## construct our "Design matrix"
+XX <- cbind(intercept = rep(1, nn), x = aspect)
+head(XX)
+``` 
+
+## Partitioning variance | An example  
+
+We can calculate our betas using
+
+$\hat{\boldsymbol{\beta}} = (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^{\top} \mathbf{y}$
+
+```{r ex_SS_3, echo = TRUE}
+## calculate betas  
+beta_hat <- solve(t(XX) %*% XX) %*% t(XX) %*% temp
+``` 
+
+<br>
+
+Recall that `t()` transforms (rotates) a matrix and `solve()` inverts it
+
+
+## Partitioning variance | An example  
+
+We can calculate our model estimates ($\hat{\mathbf{y}}$) using
+
+$\hat{\mathbf{y}} = \mathbf{X}\hat{\boldsymbol{\beta}}$
+
+```{r ex_SS_4, echo = TRUE}
+## calculate model estimates  
+temp_hat <- XX %*% beta_hat
+``` 
+
+
+## Partitioning variance | An example  
+
+Let's plot our model estimates (ie, the fitted regression line)
+
+```{r ex_S_5, echo = FALSE, fig.width = 5, fig.height = 4, fig.align = "center"}
+par(mai = c(0.9,0.9,0.1,0.1), omi = c(0, 0, 0, 0))
+
 ## plot the data
-par(mai = c(0.3,0.3,0.1,0.1),
-    omi = c(0, 0, 0, 0),
-    cex = 0.7)
-plot(xx, yy, type = "p", pch = 19,
-     bty = "l", xaxt = "n", yaxt = "n",
-     xlab = "",
-     ylab = "")
-mtext(expression(italic(x)), 1, line=0.2, cex=1.1, at=max(xx))
-mtext(expression(italic(y)), 2, line=0.3, cex=1.1, at=max(yy), las=1)
+plot(aspect, temp, type = "p", pch = 19, las = 1,
+     ylim = c(floor(min(temp)) - 1, ceiling(max(temp))),
+     bty = "l", cex.axis = 1.2, cex.lab = 1.3,
+     xlab = "Aspect (Degrees)",
+     ylab = "Temperature (C)")
+abline(a = beta_hat[1], b = beta_hat[2], col = "blue", lwd = 2)
 ```
 
 
@@ -115,47 +181,59 @@ par(mfrow = c(1,3),
     cex = 0.7)
 
 ## SSTO - plot y and mean(y)
-plot(xx, yy, type = "n",
+plot(aspect, temp, type = "n",
+     ylim = c(floor(min(temp)) - 1, ceiling(max(temp))),
      bty = "l", xaxt = "n", yaxt = "n",
      xlab = "",
      ylab = "")
-segments(x0 = xx, y0 = yy, y1 = mean(yhat), col = "gray")
-abline(h = mean(yy), lty = "dashed")
-points(xx, yy, pch = 19)
+segments(x0 = aspect, y0 = temp, y1 = mean(temp), col = "gray")
+abline(h = mean(temp), lty = "dashed")
+points(aspect, temp, pch = 19)
 mtext(expression(Total: ~ italic(y[i])-bar(italic(y))), side = 3, line = 1)
-mtext(expression(italic(x)), 1, line=0.2, cex=1.1, at=max(xx))
-mtext(expression(italic(y)), 2, line=0.3, cex=1.1, at=max(yy), las=1)
-mtext(expression(italic(bar(y))), 2, line=0.3, cex=1.1, at=mean(yy), las=1)
+mtext(expression(italic(x)), 1, line=0.2, cex=1.1, at=max(aspect))
+mtext(expression(italic(y)), 2, line=0.3, cex=1.1, at=max(temp), las=1)
+mtext(expression(italic(bar(y))), 2, line=0.3, cex=1.1, at=mean(temp), las=1)
 
-## SSR - plot yhat and mean(yhat)
-plot(xx, yy, type = "n",
+## SSR - plot temp and mean(temp)
+plot(aspect, temp, type = "n",
+     ylim = c(floor(min(temp)) - 1, ceiling(max(temp))),
      bty = "l", xaxt = "n", yaxt = "n",
      xlab = "",
      ylab = "")
-segments(x0 = xx, y0 = yhat, y1 = mean(yhat), col = "gray")
-points(xx, yhat, pch = 21, bg = "white")
-abline(a = coef(mm)[1], b = coef(mm)[2])
-abline(h = mean(yy), lty = "dashed")
-points(xx, yhat, pch = 21, bg = "white")
+segments(x0 = aspect, y0 = temp_hat, y1 = mean(temp_hat), col = "gray")
+points(aspect, temp_hat, pch = 21, bg = "white")
+abline(a = beta_hat[1], b = beta_hat[2])
+abline(h = mean(temp), lty = "dashed")
+points(aspect, temp_hat, pch = 21, bg = "white")
 mtext(expression(Model: ~ italic(hat(y)[i])-bar(italic(y))), side = 3, line = 1)
-mtext(expression(italic(x)), 1, line=0.2, cex=1.1, at=max(xx))
-mtext(expression(italic(y)), 2, line=0.3, cex=1.1, at=max(yy), las=1)
-mtext(expression(italic(bar(y))), 2, line=0.3, cex=1.1, at=mean(yy), las=1)
-mtext(expression(italic(hat(y))), 4, line=0.2, cex=1.1, at=max(yy), las=1)
+mtext(expression(italic(x)), 1, line=0.2, cex=1.1, at=max(aspect))
+mtext(expression(italic(y)), 2, line=0.3, cex=1.1, at=max(temp), las=1)
+mtext(expression(italic(bar(y))), 2, line=0.3, cex=1.1, at=mean(temp), las=1)
+mtext(expression(italic(hat(y))), 4, line=0.2, cex=1.1, at=max(temp), las=1)
 
-## SSE - plot observed and yhat
-plot(xx, yy, type = "n",
+## SSE - plot observed and temp
+plot(aspect, temp, type = "n",
+     ylim = c(floor(min(temp)) - 1, ceiling(max(temp))),
      bty = "l", xaxt = "n", yaxt = "n",
      xlab = "",
      ylab = "")
-segments(x0 = xx, y0 = yhat, y1 = yy, col = "gray")
-points(xx, yy, pch = 19)
-abline(a = coef(mm)[1], b = coef(mm)[2])
+segments(x0 = aspect, y0 = temp_hat, y1 = temp, col = "gray")
+points(aspect, temp, pch = 19)
+abline(a = beta_hat[1], b = beta_hat[2])
 mtext(expression(Error: ~ italic(y[i])-italic(hat(y)[i])), side = 3, line = 1)
-mtext(expression(italic(x)), 1, line=0.3, cex=1.1, at=max(xx))
-mtext(expression(italic(y)), 2, line=0.3, cex=1.1, at=max(yy), las=1)
-mtext(expression(italic(hat(y))), 4, line=0.2, cex=1.1, at=max(yy), las=1)
+mtext(expression(italic(x)), 1, line=0.3, cex=1.1, at=max(aspect))
+mtext(expression(italic(y)), 2, line=0.3, cex=1.1, at=max(temp), las=1)
+mtext(expression(italic(hat(y))), 4, line=0.2, cex=1.1, at=max(temp), las=1)
 ```
+
+
+## Partitioning sums-of-squares
+
+The sums-of-squares have the same additive property as the deviations
+
+$$
+\underbrace{\sum (y_i - \bar{y})^2}_{SSTO} = \underbrace{\sum (\widehat{y}_i - \bar{y})^2}_{SSR} + \underbrace{\sum (y_i - \widehat{y}_i)^2}_{SSE}
+$$
 
 
 ## Sum-of-squares: Total
@@ -185,13 +263,52 @@ SSE = \sum \left( y_i - \widehat{y}_i \right)^2
 $$
 
 
-## Partitioning sums-of-squares
+## Sum-of-squares | An example  
 
-The sums-of-squares have the same additive property as the deviations
+Let's calculate the total sum-of-squares (SSTO) using
 
-$$
-\underbrace{\sum (y_i - \bar{y})^2}_{SSTO} = \underbrace{\sum (\widehat{y}_i - \bar{y})^2}_{SSR} + \underbrace{\sum (y_i - \widehat{y}_i)^2}_{SSE}
-$$
+$SSTO = \sum \left( y_i - \bar{y} \right)^2$
+
+```{r ex_SS_6, echo = TRUE}
+## mean of the response
+y_bar <- mean(temp)
+
+## total sum-of-squares
+SSTO <- t(temp - y_bar) %*% (temp - y_bar)
+``` 
+
+<br>
+
+Recall that $\mathbf{x}^{\top} \mathbf{x}$ will give the sum of the squared elements in $\mathbf{x}$
+
+
+## Sum-of-squares | An example  
+
+Let's calculate the model sum-of-squares (SSR) using
+
+$SSR = \sum \left( \widehat{y}_i - \bar{y} \right)^2$
+
+
+```{r ex_SS_7, echo = TRUE}
+## model sum-of-squares
+SSR <- t(temp_hat - y_bar) %*% (temp_hat - y_bar)
+``` 
+
+
+## Sum-of-squares | An example  
+
+Let's calculate the error sum-of-squares (SSE) using
+
+$SSE = \sum \left( y_i - \widehat{y}_i \right)^2$
+
+
+```{r ex_SS_8, echo = TRUE}
+## error sum-of-squares
+SSE <- t(temp - temp_hat) %*% (temp - temp_hat)
+``` 
+
+
+# QUESTIONS?
 
 
 ## Goodness-of-fit
@@ -214,6 +331,18 @@ R^2 = \frac{SSR}{SSTO} = 1 - \frac{SSE}{SSTO} \\
 ~ \\
 0 < R^2 < 1
 $$
+
+
+## Goodness-of-fit | An example
+
+Let's calculate the $(R^2)$ for our model
+
+```{r ex_SS_9, echo = TRUE}
+## coefficient of determination
+SSR / SSTO
+## or via
+1 - SSE / SSTO
+``` 
 
 
 ## Degrees of freedom
@@ -446,6 +575,81 @@ $$
 $$
 
 
+## Partitioning total deviations
+
+Here is a plot of some data $y$ and a predictor $x$
+
+```{r intro_SS, echo = FALSE, fig.width = 3.5, fig.height = 3.5, fig.align="center"}
+## set random seed for reproducibility
+set.seed(514)
+
+## sample size
+nn <- 30
+## some values for the predictor x
+xx <- sort(runif(nn, 0, 20))
+## intercept
+beta_0 <- 1
+## slope
+beta_1 <- 0.5
+## random errors (mean = 0, SD = 1)
+epsilon <- rnorm(nn)
+## observed data
+yy <- beta_0 + beta_1*xx + epsilon
+
+## fit a regression model
+mm <- lm(yy ~ xx)
+## get predicted values
+yhat <- predict(mm)
+
+par(mai = c(0.3,0.3,0.1,0.1), omi = c(0, 0, 0, 0), cex = 0.7)
+
+## plot the data
+plot(xx, yy, type = "p", pch = 19,
+     bty = "l", xaxt = "n", yaxt = "n",
+     xlab = "",
+     ylab = "")
+mtext(expression(italic(x)), 1, line=0.2, cex=1.1, at=max(xx))
+mtext(expression(italic(y)), 2, line=0.3, cex=1.1, at=max(yy), las=1)
+
+```
+
+
+## Partitioning total deviations
+
+And let's consider this model: $y_i = \alpha + \beta x_i + e_i$
+
+```{r intro_SS_2, echo = FALSE, fig.width = 3.5, fig.height = 3.5, fig.align="center"}
+## plot the data
+par(mai = c(0.3,0.3,0.1,0.1),
+    omi = c(0, 0, 0, 0),
+    cex = 0.7)
+plot(xx, yy, type = "p", pch = 19,
+     bty = "l", xaxt = "n", yaxt = "n",
+     xlab = "",
+     ylab = "")
+mtext(expression(italic(x)), 1, line=0.2, cex=1.1, at=max(xx))
+mtext(expression(italic(y)), 2, line=0.3, cex=1.1, at=max(yy), las=1)
+```
+
+
+## Partitioning total deviations
+
+Here is our model fit to the data
+
+```{r intro_SS_3, echo = FALSE, fig.width = 3.5, fig.height = 3.5, fig.align="center"}
+par(mai = c(0.3,0.3,0.1,0.1), omi = c(0, 0, 0, 0), cex = 0.7)
+
+## plot the data
+plot(xx, yy, type = "p", pch = 19,
+     bty = "l", xaxt = "n", yaxt = "n",
+     xlab = "",
+     ylab = "")
+mtext(expression(italic(x)), 1, line=0.2, cex=1.1, at=max(xx))
+mtext(expression(italic(y)), 2, line=0.3, cex=1.1, at=max(yy), las=1)
+abline(a = beta_hat[1], b = beta_hat[2], col = "blue", lwd = 2)
+```
+
+
 ## Variance estimates | Parameters
 
 Let's think about the variance of $\widehat{\boldsymbol{\beta}}$
@@ -481,370 +685,18 @@ se_b2 <- round(sqrt(anova(m2)[["Mean Sq"]][2] * solve(t(XS) %*% XS)[2,2]), 3)
 
 
 par(mfrow = c(1,2), mai = c(0.5, 0.5, 0.1, 0.1), omi = c(0,0,0,0))
-## small range in X
+## large range in X
 plot(xx, yy, pch = 16, xlim = range(xx), ylim = range(yy),
      xlab = expression(italic(y)), ylab = expression(italic(y)))
 lines(xx, yy_ci[,"fit"])
 text(1, 10.5, substitute(paste(SE(hat(beta))," = ", seb1), list(seb1 = se_b1)), pos = 4)
 
-## large range in X
+## small range in X
 plot(xs, ys, pch = 16, xlim = range(xx), ylim = range(yy),
      xlab = "", ylab = "",
      yaxt = "n")
 lines(xs, ys_ci[,"fit"])
 text(1, 10.5, substitute(paste(SE(hat(beta))," = ", seb2), list(seb2 = se_b2)), pos = 4)
 ```
-
-
-# QUESTIONS?
-
-
-## Inferential methods
-
-Once we've estimated the model parameters and their variance, we might want to draw conclusions from our analysis
-
-
-## Comparing models
-
-Imagine we had 2 linear models of varying complexity: 
-
-1. a model with one predictor
-
-2. a model with five predictors
-
-It would seem logical to ask whether the complexity of (2) is necessary?
-
-
-## Hypothesis test to compare models
-
-Recall our partitioning of sums-of-squares, where
-
-$$
-SSTO = SSR + SSE
-$$
-
-We might prefer the more complex model (call it $\Theta$) over the simple model (call it $\theta$) if 
-
-$$
-SSE_{\Theta} < SSE_{\theta}
-$$
-
-or, more formally, if
-
-$$
-\frac{SSE_{\theta} - SSE_{\Theta}}{SSE_{\Theta}} > \text{a constant}
-$$
-
-
-## Hypothesis test to compare models
-
-If $\Theta$ has $k_{\Theta}$ parameters and $\theta$ has $k_{\theta}$, we can scale this ratio to arrive at an $F$-statistic that follows an $F$ distribution
-
-$$
-F = \frac{ \left( SSE_{\theta} - SSE_{\Theta} \right)  / (k_{\Theta} - k_{\theta})}{ SSE_{\Theta}  / (n - k_{\Theta})} \sim F_{k_{\Theta} - k_{\theta}, n - k_{\Theta}}
-$$
-
-
-## $F$-distribution
-
-The $F$-distribution is the ratio of two random variates, each with a $\chi^2_{n}$ distribution
-
-If $A \sim \chi_{df_{A}}^{2}$ and $B \sim \chi_{df_{B}}^{2}$ are independent, then
-
-$$
-\frac{\left( \frac{A}{df_{A}} \right) }{ \left( \frac{B}{df_{B}} \right) }  \sim F _{df_{A},df_{B}}
-$$
-
-
-## $F$-distribution
-
-```{r f_dist, fig.height=4, fig.width=6, fig.align="center"}
-par(mai = c(0.5,0.5,0.1,0.1), omi = rep(0,4))
-curve(df(x, df1=2, df2=1), from=0, to=4, lwd = 2, col = "orange",
-      ylab = "", xlab = expression(italic(x)), las = 1)
-curve(df(x, df1=4, df2=10), from=0, to=4, lwd = 2, col = "red", add = TRUE)
-curve(df(x, df1=6, df2=25), from=0, to=4, lwd = 2, col = "blue", add = TRUE)
-curve(df(x, df1=8, df2=50), from=0, to=4, lwd = 2, col = "purple", add = TRUE)
-legend(3, 0.9, legend = c("df1 = 2, df2 = 1",
-         "df1 = 4, df2 = 10",
-         "df1 = 6, df2 = 25",
-         "df1 = 8, df2 = 50"),
-       col = c("orange", "red", "blue", "purple"),
-       lwd = 1.1, bty = "n", xjust = 0.5, y.intersp = 1.2)
-```
-
-
-## Test of *all* predictors in a model
-
-Suppose we wanted to test whether the collection of predictors in a model were better than simply estimating the data by their mean.
-
-$$
-\Theta: \mathbf{y} = \mathbf{X} \boldsymbol{\beta} + \mathbf{e} \\
-\theta: \mathbf{y} = \boldsymbol{\mu} + \mathbf{e} \\
-$$
-
-We write the null hypothesis as
-
-$$
-H_0: \beta_1 = \beta_2 = \dots = \beta_k = 0
-$$
-
-and we would reject $H_0$ if $F > F^{(\alpha)}_{k_{\Theta} - k_{\theta}, n - k_{\Theta}}$
-
-
-## Hypothesis test to compare models
-
-$$
-SSE_{\Theta} = \left( \mathbf{y} - \mathbf{X} \boldsymbol{\beta} \right)^{\top} \left( \mathbf{y} - \mathbf{X} \boldsymbol{\beta} \right) = \mathbf{e}^{\top} \mathbf{e} = SSE \\
-SSE_{\theta} = \left( \mathbf{y} - \bar{y} \right)^{\top} \left( \mathbf{y} - \bar{y} \right) =  SSTO \\
-\Downarrow \\
-F = \frac{ \left( SSTO - SSE \right)  / (k - 1) } { SSE  / (n - k)}
-$$
-
-
-## Predictors of plant diversity
-
-Later in lab we will work with the `gala` dataset<sup>$\dagger$</sup> in the **faraway** package, which contains data on the diversity of plant species across 30 Galapagos islands
-
-For now let's hypothesize that
-
-<center>diversity = $f$(area, elevation, distance to nearest island)</center>
-
-<br><br>
-
-<sup>$\dagger$</sup>From Johnson & Raven (1973) *Science* 179:893-895
-
-
-## Testing one predictor
-
-We might ask whether any one predictor could be dropped from a model
-
-For example, can $\text{nearest}$ be dropped from ourf full model?
-
-$$
-\text{species}_i = \alpha + \beta_1 \text{area}_i + \beta_2 \text{elevation}_i + \beta_3 \text{nearest}_i + \epsilon_i
-$$
-
-
-## Testing one predictor
-
-One option is to fit these two models and compare them via our $F$-test with $H_0: \beta_3 = 0$
-
-<br>
-
-$$
-\begin{aligned}
-\text{species}_i &= \alpha + \beta_1 \text{area}_i + \beta_2 \text{elevation}_i + \beta_3 \text{nearest}_i + \epsilon_i \\
-~ \\ 
-\text{species}_i &= \alpha + \beta_1 \text{area}_i + \beta_2 \text{elevation}_i + \epsilon_i
-\end{aligned}
-$$
-
-
-## Testing one predictor
-
-Another option is to estimate a $t$-statistic as
-
-$$
-t_i = \frac{\widehat{\beta}_i}{\text{SE} \left( \widehat{\beta}_i \right)}
-$$
-
-and compare it to a $t$-distribution with $n - k$ degrees of freedom
-
-
-## Testing 2+ predictors
-
-Sometimes we might want to know whether we can drop 2+ predictors from a model
-
-For example, can we drop both $\text{elevation}$ and $\text{nearest}$ from our full model?
-
-$$
-\begin{aligned}
-\text{species}_i &= \alpha + \beta_1 \text{area}_i + \beta_2 \text{elevation}_i + \beta_3 \text{nearest}_i + \epsilon_i \\
-~ \\ 
-\text{species}_i &= \alpha + \beta_1 \text{area}_i + \epsilon_i
-\end{aligned}
-$$
-
-$H_0 : \beta_2 = \beta_3 = 0$
-
-
-## Testing a subspace
-
-Some tests cannot be expressed in terms of the inclusion or exclusion of predictors
-
-Consider a test of whether the areas of the current and adjacent island could be added together and used in place of the two separate predictors
-
-$$
-\text{species}_i = \alpha + \beta_1 \text{area}_i + \beta_2 \text{adjacent}_i + \dots + \epsilon_i \\
-~ \\
-\text{species}_i = \alpha + \beta_1 \text{(area + adjacent)}_i + \dots + \epsilon_i
-$$
-
-$H_0 : \beta_{\text{area}} = \beta_{\text{adjacent}}$
-
-
-## Testing a subspace
-
-What if we wanted to test whether a predictor had a specific (non-zero) value?
-
-For example, is there a 1:1 relationship between $\text{species}$ and $\text{elevation}$ after controlling for the other predictors?
-
-$$
-\text{species}_i = \alpha + \beta_1 \text{area}_i + \underline{1} \text{elevation}_i + \beta_3 \text{nearest}_i + \epsilon_i
-$$
-
-$H_0 : \beta_2 = 1$
-
-
-## Testing a subspace
-
-We can also modify our $t$-test from before and use it for our comparison by including the hypothesized $\beta_{H_0}$ as an offset
-
-$$
-t_i = \frac{(\widehat{\beta_i} - \beta_{H_0})}{\text{SE} \left( \widehat{\beta}_i \right)}
-$$
-
-
-## Caveats about hypothesis testing
-
-Null hypothesis testing (NHT) is a slippery slope
-
-> - $p$-values are simply the probability of obtaining a test statistic as large or greater than that observed
-
-> - $p$-values are **not** weights of evidence
-
-> - "Critical" or "threshold" values against which to compare $p$-values must be chosen *a priori*
-
-> - Be aware of "$p$ hacking" where researchers make *many* tests to find significance
-
-
-# QUESTIONS?
-
-
-## Confidence intervals for $\beta$
-
-We can also use confidence intervals (CI's) to express uncertainty in $\widehat{\beta}_i$
-
-They take the form
-
-$$
-100(1 - \alpha)\% ~ \text{CI}: \widehat{\beta}_{i} \pm t_{n-p}^{(\alpha / 2)} \operatorname{SE}(\widehat{\beta})
-$$
-
-where here $\alpha$ is our *predetermined* Type-I error rate
-
-
-## Bootstrap confidence intervals
-
-The $F$- and $t$-based CI's we have described depend on the assumption of normality
-
-The bootstrap<sup>$\dagger$</sup> method provides a way to construct CI's without this assumption
-
-<br><br>
-
-<sup>$\dagger$</sup>Efron (1979) *The Annals of Statistics* 7:1–26
-
-
-## Bootstrap procedure
-
-1. Fit your model to the data  
-
-2. Calculate $\mathbf{e} = \mathbf{y} - \mathbf{X} \widehat{\boldsymbol{\beta}}$ 
-
-3. Do the following *many* times:
-    * Generate $\mathbf{e}^*$ by sampling *with replacement* from $\mathbf{e}$  
-    * Calculate $\mathbf{y}^*$ = $\mathbf{X} \widehat{\boldsymbol{\beta}} + \mathbf{e}^*$
-    * Estimate $\widehat{\boldsymbol{\beta}}^*$ from $\mathbf{X}$ & $\mathbf{y}^*$)  
-
-4. Select the $\tfrac{\alpha}{2}$ and $(1 - \tfrac{\alpha}{2})$ percentiles from the saved $\widehat{\boldsymbol{\beta}}^*$
-
-
-## Confidence interval for new predictions
-
-Given a fitted model $\mathbf{y} = \mathbf{X} \widehat{\boldsymbol{\beta}} + \mathbf{e}$, we might want to know the uncertainty around a new estimate $\mathbf{y}^*$ given some new predictor $\mathbf{X}^*$
-
-
-## CI for the mean response
-
-Suppose we wanted to estimate the uncertainty in the *average* response given by
-
-$$
-\widehat{\mathbf{y}}^* = \mathbf{X}^* \widehat{\boldsymbol{\beta}}
-$$
-
-Recall that the general formula for a CI on a quantity $z$ is
-
-$$
-100(1 - \alpha)\% ~ \text{CI}: \text{E}(z) ~ \pm ~ t^{(\alpha / 2)}_{df}\text{SD}(z)
-$$
-
-So we would have
-
-$$
-\widehat{\mathbf{y}}^* ~ \pm ~ t^{(\alpha / 2)}_{df} \sqrt{\text{Var} \left( \widehat{\mathbf{y}}^* \right)}
-$$
-
-
-## CI for the mean response
-
-We can calculate the SD of our expectation as
-
-$$
-\begin{aligned}
-\text{Var} \left( \widehat{\mathbf{y}}^* \right) &= \text{Var} \left( \mathbf{X}^* \widehat{\boldsymbol{\beta}} \right)  \\
-  &= {\mathbf{X}^*}^{\top} \text{Var}\left( \widehat{\boldsymbol{\beta}} \right) \mathbf{X}^* \\
-  &= {\mathbf{X}^*}^{\top} \left[ \sigma^2 (\mathbf{X}^{\top} \mathbf{X})^{-1} \right] \mathbf{X}^* \\
-  &\Downarrow \\
-\text{SD} \left( \widehat{\mathbf{y}}^* \right) &= \sigma \sqrt{ {\mathbf{X}^*}^{\top} (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^* } 
-\end{aligned}
-$$
-
-
-## CI for the mean response
-
-So our CI on the mean response is given by
-
-$$
-\widehat{\mathbf{y}}^* \pm ~ t^{(\alpha / 2)}_{df} \sigma \sqrt{ {\mathbf{X}^*}^{\top} (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^* } 
-$$
-
-
-## CI for a specific response
-
-What about the uncertainty in a *specific* prediction?
-
-In that case we need to account for our additional uncertainty owing to the error in our relationship, which is given by
-
-$$
-\widehat{\mathbf{y}}^* = \mathbf{X}^* \widehat{\boldsymbol{\beta}} + \mathbf{e}
-$$
-
-## CI for a specific response
-
-The SD of the new prediction is given by
-
-$$
-\begin{aligned}
-\text{Var} \left( \widehat{\mathbf{y}}^* \right) &= {\mathbf{X}^*}^{\top} \text{Var}\left( \widehat{\boldsymbol{\beta}} \right) \mathbf{X}^* + \text{Var} \left( \mathbf{e} \right) \\
-  &= {\mathbf{X}^*}^{\top} \left[ \sigma^2 (\mathbf{X}^{\top} \mathbf{X})^{-1} \right] \mathbf{X}^* + \sigma^2\\
-  &= \sigma^2 \left( {\mathbf{X}^*}^{\top} (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^* + 1 \right) \\
-  &\Downarrow \\
-\text{SD} \left( \widehat{\mathbf{y}}^* \right) &= \sigma \sqrt{1 + {\mathbf{X}^*}^{\top} (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^* } 
-\end{aligned}
-$$
-
-## CI for a specific response
-
-So our CI on the new prediction is given by
-
-$$
-\widehat{\mathbf{y}}^* \pm ~ t^{(\alpha / 2)}_{df} \sigma \sqrt{1 + {\mathbf{X}^*}^{\top} (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^* } 
-$$
-
-<br>
-
-This is typically referred to as the *prediction interval*
-
 
 
