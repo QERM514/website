@@ -6,7 +6,7 @@ date: "10 April 2026"
 output:
   ioslides_presentation:
     wide: true
-    css: lecture_slides.css
+    css: ../lecture_slides.css
 ---
 
 ```{r setup, include=FALSE}
@@ -21,9 +21,18 @@ library(faraway)
 > - Understand how to estimate confidence intervals
 
 
+## Our general approach
+
+### Question $\rightarrow$ Data $\rightarrow$ Model $\rightarrow$ <u>Inference</u> $\rightarrow$ Prediction
+
+
 ## Inferential methods
 
-Once we've estimated the model parameters and their variance, we might want to draw conclusions from our analysis
+We've see how model parameters and their variance, we might want to draw conclusions from our analysis
+
+We might also want to try several forms of models and ask,
+
+<center>"Which of them is the 'best'?"</center>
 
 
 ## Comparing models
@@ -32,7 +41,7 @@ Imagine we had 2 linear models of varying complexity:
 
 1. a model with one predictor
 
-2. a model with five predictors
+2. a model with two predictors
 
 It would seem logical to ask whether the complexity of (2) is necessary?
 
@@ -45,25 +54,25 @@ $$
 SSTO = SSR + SSE
 $$
 
-We might prefer the more complex model (call it $\Theta$) over the simple model (call it $\theta$) if 
+We might prefer the more complex model (call it $C$) over the simple model (call it $S$) if 
 
 $$
-SSE_{\Theta} < SSE_{\theta}
+SSE_{C} < SSE_{S}
 $$
 
 or, more formally, if
 
 $$
-\frac{SSE_{\theta} - SSE_{\Theta}}{SSE_{\Theta}} > \text{a constant}
+\frac{SSE_{S} - SSE_{C}}{SSE_{C}} > \text{constant}
 $$
 
 
 ## Hypothesis test to compare models
 
-If $\Theta$ has $k_{\Theta}$ parameters and $\theta$ has $k_{\theta}$, we can scale this ratio to arrive at an $F$-statistic that follows an $F$ distribution
+If $C$ has $k$ parameters and $S$ has $j$, we can scale this ratio to arrive at an $F$-statistic that follows an $F$ distribution
 
 $$
-F = \frac{ \left( SSE_{\theta} - SSE_{\Theta} \right)  / (k_{\Theta} - k_{\theta})}{ SSE_{\Theta}  / (n - k_{\Theta})} \sim F_{k_{\Theta} - k_{\theta}, n - k_{\Theta}}
+F = \frac{ \left( SSE_{S} - SSE_{C} \right)  / (k - j)}{ SSE_{C}  / (n - k)} \sim F_{(k - j),(n - k)}
 $$
 
 
@@ -80,8 +89,8 @@ $$
 
 ## $F$-distribution
 
-```{r f_dist, fig.height=4, fig.width=6, fig.align="center"}
-par(mai = c(0.5,0.5,0.1,0.1), omi = rep(0,4))
+```{r f_dist, fig.height = 4, fig.width = 6, fig.align = "center"}
+par(mai = c(0.5, 0.5, 0.1, 0.1), omi = rep(0, 4))
 curve(df(x, df1=2, df2=1), from=0, to=4, lwd = 2, col = "orange",
       ylab = "", xlab = expression(italic(x)), las = 1)
 curve(df(x, df1=4, df2=10), from=0, to=4, lwd = 2, col = "red", add = TRUE)
@@ -96,31 +105,62 @@ legend(3, 0.9, legend = c("df1 = 2, df2 = 1",
 ```
 
 
+## $F$-tests for nested models
+
+| Test | $H_0$ | Ex full model | Ex reduced model |
+|:----:|:-----:|:----------:|:-------------:|
+| All predictors | $\beta_1 = \cdots = \beta_p = 0$ | $y_i = \beta_0 + \beta_1 x_{1,i} + \beta_2 x_{2,i}$ | $y_i = \beta_0$ |
+| One predictor | $\beta_i = 0 | \text{other predictors}$ | $y_i = \beta_0 + \beta_1 x_{1,i} + \beta_2 x_{2,i}$ | $y_i = \beta_0 + \beta_1 x_{1,i}$ |
+| Subset of predictors | $\beta_i = \beta_j$ | $y_i = \beta_0 + \beta_1 x_{1,i} + \beta_2 x_{2,i}$ | $y_i = \beta_0 + \beta_1 x_{1,i} + \beta_1 x_{2,i}$ |
+
+
+## $F$-tests for nested models
+
+Note that we can only test nested models
+
+For example, we can't test
+
+$y_i = \beta_0 + \beta_1 x_{1,i}$ versus $y_i = \beta_0 + \beta_2 x_{2,i}$
+
+<br>
+
+We will address model selection more fully later in the quarter 
+
+
 ## Test of *all* predictors in a model
 
-Suppose we wanted to test whether the collection of predictors in a model were better than simply estimating the data by their mean.
+Suppose we wanted to test whether the collection of predictors in a model were better than simply estimating the data by their mean
 
 $$
-\Theta: \mathbf{y} = \mathbf{X} \boldsymbol{\beta} + \mathbf{e} \\
-\theta: \mathbf{y} = \boldsymbol{\mu} + \mathbf{e} \\
+C: \mathbf{y} = \mathbf{X} \boldsymbol{\beta} + \mathbf{e} \\
+S: \mathbf{y} = \boldsymbol{\mu} + \mathbf{e} \\
 $$
 
-We write the null hypothesis as
+We would write the null hypothesis as
 
 $$
 H_0: \beta_1 = \beta_2 = \dots = \beta_k = 0
 $$
 
-and we would reject $H_0$ if $F > F^{(\alpha)}_{k_{\Theta} - k_{\theta}, n - k_{\Theta}}$
+and we would reject $H_0$ if $F > F^{(\alpha)}_{k - j, n - k}$
 
 
 ## Hypothesis test to compare models
 
+Our $F$ statistic is given by
+
 $$
-SSE_{\Theta} = \left( \mathbf{y} - \mathbf{X} \boldsymbol{\beta} \right)^{\top} \left( \mathbf{y} - \mathbf{X} \boldsymbol{\beta} \right) = \mathbf{e}^{\top} \mathbf{e} = SSE \\
-SSE_{\theta} = \left( \mathbf{y} - \bar{y} \right)^{\top} \left( \mathbf{y} - \bar{y} \right) =  SSTO \\
-\Downarrow \\
-F = \frac{ \left( SSTO - SSE \right)  / (k - 1) } { SSE  / (n - k)}
+F = \frac{ \left( SSE_{S} - SSE_{C} \right)  / (k - j)}{ SSE_{C}  / (n - k)} \sim F_{(k - j),(n - k)}
+$$
+
+<br>
+
+and the sum-of-squares terms are given by
+
+$$
+SSE_{S}  = \mathbf{e}^{\top} \mathbf{e} = \left( \mathbf{y} - \bar{y} \right)^{\top} \left( \mathbf{y} - \bar{y} \right) \\
+~ \\
+SSE_{C}  = \mathbf{e}^{\top} \mathbf{e} = \left( \mathbf{y} - \mathbf{X} \boldsymbol{\beta} \right)^{\top} \left( \mathbf{y} - \mathbf{X} \boldsymbol{\beta} \right)
 $$
 
 
@@ -141,7 +181,7 @@ For now let's hypothesize that
 
 We might ask whether any one predictor could be dropped from a model
 
-For example, can $\text{nearest}$ be dropped from ourf full model?
+For example, can $\text{nearest}$ be dropped from our full model?
 
 $$
 \text{species}_i = \alpha + \beta_1 \text{area}_i + \beta_2 \text{elevation}_i + \beta_3 \text{nearest}_i + \epsilon_i
@@ -150,11 +190,13 @@ $$
 
 ## Testing one predictor
 
-One option is to fit these two models and compare them via our $F$-test with $H_0: \beta_3 = 0$
+One option is to fit these two models and compare them via our $F$-test
 
 <br>
 
 $$
+H_0: \beta_3 = 0 \\
+~ \\
 \begin{aligned}
 \text{species}_i &= \alpha + \beta_1 \text{area}_i + \beta_2 \text{elevation}_i + \beta_3 \text{nearest}_i + \epsilon_i \\
 ~ \\ 
@@ -176,19 +218,21 @@ and compare it to a $t$-distribution with $n - k$ degrees of freedom
 
 ## Testing 2+ predictors
 
-Sometimes we might want to know whether we can drop 2+ predictors from a model
+We might want to know whether we can drop 2+ predictors from a model
 
 For example, can we drop both $\text{elevation}$ and $\text{nearest}$ from our full model?
 
+<br>
+
 $$
+H_0 : \beta_2 = \beta_3 = 0 \\
+~ \\
 \begin{aligned}
 \text{species}_i &= \alpha + \beta_1 \text{area}_i + \beta_2 \text{elevation}_i + \beta_3 \text{nearest}_i + \epsilon_i \\
 ~ \\ 
 \text{species}_i &= \alpha + \beta_1 \text{area}_i + \epsilon_i
 \end{aligned}
 $$
-
-$H_0 : \beta_2 = \beta_3 = 0$
 
 
 ## Testing a subspace
@@ -198,12 +242,12 @@ Some tests cannot be expressed in terms of the inclusion or exclusion of predict
 Consider a test of whether the areas of the current and adjacent island could be added together and used in place of the two separate predictors
 
 $$
+H_0 : \beta_{\text{area}} = \beta_{\text{adjacent}} \\
+~ \\
 \text{species}_i = \alpha + \beta_1 \text{area}_i + \beta_2 \text{adjacent}_i + \dots + \epsilon_i \\
 ~ \\
 \text{species}_i = \alpha + \beta_1 \text{(area + adjacent)}_i + \dots + \epsilon_i
 $$
-
-$H_0 : \beta_{\text{area}} = \beta_{\text{adjacent}}$
 
 
 ## Testing a subspace
@@ -213,10 +257,10 @@ What if we wanted to test whether a predictor had a specific (non-zero) value?
 For example, is there a 1:1 relationship between $\text{species}$ and $\text{elevation}$ after controlling for the other predictors?
 
 $$
+H_0 : \beta_2 = 1 \\
+~ \\
 \text{species}_i = \alpha + \beta_1 \text{area}_i + \underline{1} \text{elevation}_i + \beta_3 \text{nearest}_i + \epsilon_i
 $$
-
-$H_0 : \beta_2 = 1$
 
 
 ## Testing a subspace
@@ -228,7 +272,7 @@ t_i = \frac{(\widehat{\beta_i} - \beta_{H_0})}{\text{SE} \left( \widehat{\beta}_
 $$
 
 
-## Caveats about hypothesis testing
+## Caveats about null hypothesis testing
 
 Null hypothesis testing (NHT) is a slippery slope
 
@@ -238,7 +282,9 @@ Null hypothesis testing (NHT) is a slippery slope
 
 > - "Critical" or "threshold" values against which to compare $p$-values must be chosen *a priori*
 
-> - Be aware of "$p$ hacking" where researchers make *many* tests to find significance
+> - Null hypotheses can be extremely weak (eg, $H_0: \beta_1 = 0$)
+
+> - Beware of "$p$ hacking" where researchers make *many* tests to find significance
 
 
 # QUESTIONS?
@@ -251,10 +297,47 @@ We can also use confidence intervals (CI's) to express uncertainty in $\widehat{
 They take the form
 
 $$
-100(1 - \alpha)\% ~ \text{CI}: \widehat{\beta}_{i} \pm t_{n-p}^{(\alpha / 2)} \operatorname{SE}(\widehat{\beta})
+100(1 - \alpha)\% ~ \text{CI}: \widehat{\beta}_{i} \pm t_{n-k}^{(\alpha / 2)} \operatorname{SE}(\widehat{\beta})
 $$
 
-where here $\alpha$ is our *predetermined* Type-I error rate
+where $\alpha$ is our *predetermined* Type-I error rate
+
+
+## $t$-distribution
+
+The $t$-distribution is symmetrical like the normal distribution but used because it is more conservative at smaller sample sizes 
+
+```{r t_dist, fig.height = 4, fig.width = 6, fig.align = "center"}
+x <- c(-5,5)
+par(mai = c(0.9, 0.9, 0.1, 0.1), omi = rep(0, 4))
+curve(dt(x, df=2), from=-5, to=5, lwd = 2, col = "orange",
+      ylab = "", xlab = expression(italic(x)), las = 1, ylim = c(0, 0.4) )
+curve(dt(x, df=20), from=-5, to=5, lwd = 2, col = "red", add = TRUE)
+curve(dt(x, df=200), from=-5, to=5, lwd = 2, col = "blue", add = TRUE)
+legend(3, 0.35, legend = c("df = 2",
+                           "df = 20",
+                           "df = 200"),
+       col = c("orange", "red", "blue"),
+       lwd = 2, bty = "n", xjust = 0.5, y.intersp = 1.2)
+```
+
+
+## $t$-distribution
+
+As $n$ approaches $\infty$ the $t$-distribution approaches the normal distribution
+
+
+```{r t_vs_norm, fig.height = 4, fig.width = 6, fig.align = "center"}
+x <- c(-5,5)
+par(mai = c(0.9, 0.9, 0.1, 0.1), omi = rep(0, 4))
+curve(dnorm(x, 0, 1), from=-5, to=5, lwd = 6, col = "darkgray",
+      ylab = "", xlab = expression(italic(x)), las = 1, ylim = c(0, 0.4) )
+curve(dt(x, df = 200), from=-5, to=5, lwd = 2, col = "blue", add = TRUE)
+legend(3, 0.35, legend = c("Normal (0, 1)",
+                           "t (df = 200)"),
+       col = c("darkgray", "blue"),
+       lwd = 2, bty = "n", xjust = 0.5, y.intersp = 1.2)
+```
 
 
 ## Bootstrap confidence intervals
@@ -263,7 +346,7 @@ The $F$- and $t$-based CI's we have described depend on the assumption of normal
 
 The bootstrap<sup>$\dagger$</sup> method provides a way to construct CI's without this assumption
 
-<br><br>
+<br><br><br>
 
 <sup>$\dagger$</sup>Efron (1979) *The Annals of Statistics* 7:1–26
 
@@ -275,11 +358,41 @@ The bootstrap<sup>$\dagger$</sup> method provides a way to construct CI's withou
 2. Calculate $\mathbf{e} = \mathbf{y} - \mathbf{X} \widehat{\boldsymbol{\beta}}$ 
 
 3. Do the following *many* times:
+
     * Generate $\mathbf{e}^*$ by sampling *with replacement* from $\mathbf{e}$  
+    
     * Calculate $\mathbf{y}^*$ = $\mathbf{X} \widehat{\boldsymbol{\beta}} + \mathbf{e}^*$
-    * Estimate $\widehat{\boldsymbol{\beta}}^*$ from $\mathbf{X}$ & $\mathbf{y}^*$)  
+    
+    * Estimate $\widehat{\boldsymbol{\beta}}^*$ from $\mathbf{X}$ & $\mathbf{y}^*$  
 
 4. Select the $\tfrac{\alpha}{2}$ and $(1 - \tfrac{\alpha}{2})$ percentiles from the saved $\widehat{\boldsymbol{\beta}}^*$
+
+
+## Bootstrap pseudocode {.smaller}
+
+```{r ex_bootstrap, eval = FALSE, echo = TRUE}
+## number of bootstrap samples
+n_boot <- 1000
+## empty vector for results
+betas <- rep(NA, n_boot)
+## fit initial model: y = alpha + beta*x + e
+mod_fit <- lm(y ~ x)
+## iterate many times
+for(i in 1:n_boot) {
+  ## get residuals
+  e <- residuals(mod_fit)
+  ## sample with replacement
+  e_star <- sample(x = e, size = length(y), replace = TRUE)
+  ## get model parameters
+  alpha <- coef(mod_fit)[1];  betas[i] <- coef(mod_fit)[2]
+  ## calculate new y
+  y_star <- alpha + betas[i] * x + e_star
+  ## refit model with new y
+  mod_fit <- lm(y_star ~ x)
+}
+## sort results and pick out 95th percentiles
+CI_95 <- sort(betas)[c(25, 975)]
+```
 
 
 ## Confidence interval for new predictions
