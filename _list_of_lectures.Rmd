@@ -50,7 +50,7 @@ linear_models_2 <- list(
 
 inference_1 <- list(
   title = "Inference",
-  topics = c("<b>Inference</b>", "Variance partitioning", "F-tests for nested models", "Confidence intervals"),
+  topics = c("<b>Inference</b>", "Variance partitioning", "Sum of squares"),
   rmd = c("lectures/week_02/lec_05_inference_from_linear_models.Rmd"),
   html = c("lectures/week_02/lec_05_inference_from_linear_models.html"),
   background = c("[Farraway (2015) Chap 3](references/Faraway_2015_Linear_models_with_R.pdf)",
@@ -61,7 +61,7 @@ inference_1 <- list(
 
 inference_2 <- list(
   title = "Inference",
-  topics = c("<b>Inference</b>", "Variance partitioning", "F-tests for nested models", "Confidence intervals"),
+  topics = c("<b>Inference</b>", "F-tests for nested models", "Confidence intervals"),
   rmd = c("lectures/week_02/lec_06_inference_from_linear_models.Rmd"),
   html = c("lectures/week_02/lec_06_inference_from_linear_models.html"),
   background = c("[Farraway (2015) Chap 3](references/Faraway_2015_Linear_models_with_R.pdf)",
