@@ -34,7 +34,7 @@ The `gala` dataset is included in the **{faraway}** package.
 
 ::: task
 
-Load the package and inspect the data.
+Load the **{faraway}** package and inspect the data.
 
 :::
 
@@ -70,19 +70,19 @@ Plot the number of species (response) against island area (predictor) to see wha
 
 :::
 
-```{r plot_gala, echo = FALSE, fig.height = 4.5, fig.width = 5, fig.align = "center", fig.alt = "Bivariate plot of the number of species on an island versus the area of the island in kilometers."}
+```{r plot_gala, echo = FALSE, fig.height = 4, fig.width = 4.5, fig.align = "center", fig.alt = "Bivariate plot of the number of species on an island versus the area of the island in kilometers."}
 par(mai = c(0.9, 0.9, 0.3, 0.1), omi = rep(0, 4))
 plot(gala$Area, gala$Species, pch = 16, col = "dark green",
      ylab = "Number of species",
      xlab = expression(paste("Area of island (", km^2, ")")))
 ```
 
-## Estimating $\boldsymbol{\hat{\beta}}$
+## Estimating $\boldsymbol{\widehat{\beta}}$
 
 We saw in lecture that we can estimate the regression parameters as
 
 $$
-\boldsymbol{\hat{\beta}} = (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^{\top} \mathbf{y}.
+\boldsymbol{\widehat{\beta}} = (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^{\top} \mathbf{y}.
 $$
 
 ::: task
@@ -104,7 +104,7 @@ head(yy)
 
 ::: task
 
-Next let's create the matrix of predictors $\mathbf{X}$. There is only one predictor in the model (`Area`), so our matrix should consist of a column of 1's and a column with the area of each island.
+Next create the matrix of predictors $\mathbf{X}$. There is only one predictor in the model (`Area`), so our matrix should consist of a column of 1's and a column with the area of each island.
 
 :::
 
@@ -130,7 +130,7 @@ Matrix multiplication in **R** uses the `%*%` operator. You can transpose a matr
 
 ::: task
 
-Estimate the regression parameters in $\boldsymbol{\hat{\beta}}$.
+Estimate the regression parameters in $\boldsymbol{\widehat{\beta}}$.
 
 :::
 
@@ -146,13 +146,13 @@ We can interpret these coefficients to mean that an island with an area of 0 km<
 :::
 
 
-## Estimating $\mathbf{\hat{y}}$
+## Estimating $\mathbf{\widehat{y}}$
 
 Recall that the estimated (fitted) values are given by
 
 $$
 \begin{align}
-\mathbf{\hat{y}} &= \mathbf{X} \boldsymbol{\hat{\beta}} \\
+\mathbf{\widehat{y}} &= \mathbf{X} \boldsymbol{\widehat{\beta}} \\
   &= \mathbf{X} \left( (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^{\top} \mathbf{y} \right) \\
   &= \mathbf{X} (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^{\top} \mathbf{y} \\
   &= \mathbf{H} \mathbf{y}.
@@ -161,7 +161,7 @@ $$
 
 ::: task
 
-Calculate the hat matrix $\mathbf{H}$ and solve for $\mathbf{\hat{y}}$
+Calculate the hat matrix $\mathbf{H}$ and solve for $\mathbf{\widehat{y}}$
 
 :::
 
@@ -179,7 +179,7 @@ Add the predicted values to our plot of the data.
 
 :::
 
-```{r plot_gala_fit, fig.height = 4.5, fig.width = 5, fig.align = "center", fig.alt = "Bivariate plot of the number of species on an island versus the area of the island in kilometers, including the estimated regression line through the data."}
+```{r plot_gala_fit, fig.height = 4, fig.width = 4.5, fig.align = "center", fig.alt = "Bivariate plot of the number of species on an island versus the area of the island in kilometers, including the estimated regression line through the data."}
 par(mai = c(0.9, 0.9, 0.3, 0.1), omi = rep(0, 4))
 ## plot the data
 plot(gala$Area, gala$Species, pch = 16, col = "dark green",
@@ -227,7 +227,7 @@ Note that these are the same estimates for alpha (intercept) and beta (slope) th
 
 ::: tip
 
-We can obtain the estimates of the fitted values $\mathbf{\hat{y}}$ via one of two functions in **R**: `fitted()` and `predict()`. We'll see later that `predict()` has additional functionality that we can use.
+We can obtain the estimates of the fitted values $\mathbf{\widehat{y}}$ via one of two functions in **R**: `fitted()` and `predict()`. We'll see later that `predict()` has additional functionality that we can use.
 
 :::
 
@@ -305,6 +305,12 @@ We can demonstrate this with a simple example. Suppose we added another predicto
 ::: tip
 
 You can use `rnorm(mean = mu, sd = sigma, n)` to generate `n` random draws from a normal distribution with mean $\mu$ and standard deviation $\sigma$.
+
+:::
+
+::: task
+
+Create a new predictor variable that's just white noise and fit a new regression model that includes both `Area` and the white noise component. Check the adjusted $R^2$ value.
 
 :::
 
@@ -394,14 +400,14 @@ Our estimates for the intercept $\beta_0$ and the effect of island area $\beta_1
 
 We saw in lecture a number of different hypothesis tests we might wish to undertake in a scenario like this. Let's run through examples of those here.
 
-### Test of *all* predictors in a model
+### Test *all* predictors in a model
 
 Suppose we wanted to test whether this collection of 3 predictors in our model were better than simply estimating the data by their mean. In mathematical notation, we could express these two models as
 
 $$
-\Theta: \mathbf{y} = \mathbf{X} \boldsymbol{\beta} + \mathbf{e} \\
+C: \mathbf{y} = \mathbf{X} \boldsymbol{\beta} + \mathbf{e} \\
 ~ \\
-\theta: \mathbf{y} = \boldsymbol{\mu} + \mathbf{e} 
+S: \mathbf{y} = \boldsymbol{\mu} + \mathbf{e} 
 $$
 
 Our null hypothesis for this test is given by
@@ -410,20 +416,30 @@ $$
 H_0: \beta_1 = \beta_2 = \dots = \beta_k = 0
 $$
 
-and we would reject $H_0$ if $F > F^{(\alpha)}_{k_{\Theta} - k_{\theta}, n - k_{\Theta}}$
+and we would reject $H_0$ if $F > F^{(\alpha)}_{k - j, n - k}$
 
 Recall that we will base this test on an $F$-distribution, such that
 
 $$
-SSE_{\Theta} = \left( \mathbf{y} - \mathbf{X} \boldsymbol{\beta} \right)^{\top} \left( \mathbf{y} - \mathbf{X} \boldsymbol{\beta} \right) = \mathbf{e}^{\top} \mathbf{e} = SSE \\
-SSE_{\theta} = \left( \mathbf{y} - \bar{y} \right)^{\top} \left( \mathbf{y} - \bar{y} \right) =  SSTO \\
-\Downarrow \\
-F = \frac{ \left( SSTO - SSE \right)  / (k - 1) } { SSE  / (n - k)}
+F = \frac{ \left( SSE_S - SSE_C \right)  / (k - 1) } { SSE_C  / (n - k)}
+$$
+
+with
+
+$$
+SSE_{C} = \left( \mathbf{y} - \mathbf{X} \boldsymbol{\beta} \right)^{\top} \left( \mathbf{y} - \mathbf{X} \boldsymbol{\beta} \right) \\
+SSE_{S} = \left( \mathbf{y} - \bar{y} \right)^{\top} \left( \mathbf{y} - \bar{y} \right)
 $$
 
 #### $F$-test by hand
 
 Calculating the sums-of-squares in **R** is straightforward with matrix operations.
+
+::: task
+
+Calculate the SSE for both models, the subsequent $F$ statistic, and the p-value.
+
+:::
 
 ::: tip
 
@@ -461,7 +477,7 @@ This $F$-statistic is quite large and the $p$-value is very small, so we would r
 
 ::: tip
 
-We can use the `anova()` function in **R** to conduct this $F$-test.
+We can instead use `anova(simple_model, complex_model)` to conduct this $F$-test.
 
 :::
 
@@ -486,9 +502,9 @@ We might ask whether any single predictor could be dropped from our model. For e
 
 $$
 \begin{aligned}
-\Theta: \text{species}_i &= \beta_0 + \beta_1 \text{area}_i + \beta_2 \text{elevation}_i + \beta_3 \text{nearest}_i + e_i \\
+C: \text{species}_i &= \beta_0 + \beta_1 \text{area}_i + \beta_2 \text{elevation}_i + \beta_3 \text{nearest}_i + e_i \\
 ~ \\ 
-\theta: \text{species}_i &= \beta_0 + \beta_1 \text{area}_i + \beta_2 \text{elevation}_i + e_i
+S: \text{species}_i &= \beta_0 + \beta_1 \text{area}_i + \beta_2 \text{elevation}_i + e_i
 \end{aligned}
 $$
 
@@ -548,9 +564,9 @@ Sometimes we might want to know whether we can drop 2+ predictors from a model. 
 
 $$
 \begin{aligned}
-\Theta: \text{species}_i &= \beta_0 + \beta_1 \text{area}_i + \beta_2 \text{elevation}_i + \beta_3 \text{nearest}_i + e_i \\
+C: \text{species}_i &= \beta_0 + \beta_1 \text{area}_i + \beta_2 \text{elevation}_i + \beta_3 \text{nearest}_i + e_i \\
 ~ \\ 
-\theta: \text{species}_i &= \beta_0 + \beta_2 \text{elevation}_i + e_i
+S: \text{species}_i &= \beta_0 + \beta_2 \text{elevation}_i + e_i
 \end{aligned}
 $$
 
@@ -558,7 +574,7 @@ $H_0 : \beta_1 = \beta_3 = 0$
 
 ::: tip
 
-Again we can conduct this test by fitting both models and calculating $F$.
+Again we can conduct this test by fitting both models and calculating $F$ via `anova()`.
 
 :::
 
@@ -658,15 +674,15 @@ The $F$-statistic is very large and the $p$-value is tiny so we reject $H_0$.
 
 #### Using a $t$-test
 
-We can also modify our $t$-test from before and use it for our comparison by including the hypothesized $\hat{\beta}_{H_0}$ as an offset.
+We can also modify our $t$-test from before and use it for our comparison by including the hypothesized $\widehat{\beta}_{H_0}$ as an offset.
 
 $$
-t_i = \frac{(\hat{\beta_i} - \beta_{H_0})}{\text{SE} \left( \hat{\beta}_i \right)}
+t_i = \frac{(\widehat{\beta_i} - \beta_{H_0})}{\text{SE} \left( \widehat{\beta}_i \right)}
 $$
 
 ::: tip
 
-We can get $\hat{\beta}_{\text{elevation}}$ and $\text{SE}(\hat{\beta}_{\text{elevation}})$ from our model summary.
+We can get $\widehat{\beta}_{\text{elevation}}$ and $\text{SE}(\widehat{\beta}_{\text{elevation}})$ from our model summary.
 
 :::
 
@@ -675,7 +691,7 @@ We can get $\hat{\beta}_{\text{elevation}}$ and $\text{SE}(\hat{\beta}_{\text{el
 sumary(full_mod)
 ```
 
-This leaves us with $\hat{\beta}_{\text{elevation}} \approx 0.171$ and $\text{SE}(\hat{\beta}_{\text{elevation}}) \approx 0.0545$. 
+This leaves us with $\widehat{\beta}_{\text{elevation}} \approx 0.171$ and $\text{SE}(\widehat{\beta}_{\text{elevation}}) \approx 0.0545$. 
 
 ::: task
 
@@ -700,13 +716,14 @@ The $p$-value is the same and $t^2 = F$ as before
 
 :::
 
+***
 
-## Confidence intervals for $\beta$
+# Confidence intervals for $\beta$
 
-We can also use confidence intervals (CI's) to express uncertainty in $\hat{\beta_i}$, which take the form
+We can also use confidence intervals (CI's) to express uncertainty in $\widehat{\beta_i}$, which take the form
 
 $$
-100(1 - \alpha)\% ~ \text{CI}: \hat{\beta_i} \pm t_{n-p}^{(\alpha / 2)} \operatorname{SE} ( \hat{\beta} )
+100(1 - \alpha)\% ~ \text{CI}: \widehat{\beta_i} \pm t_{n-p}^{(\alpha / 2)} \operatorname{SE} ( \widehat{\beta} )
 $$
 
 where here $\alpha$ is our *predetermined* Type-I error rate. To do so, we need the information from the model summary.
@@ -718,7 +735,7 @@ sumary(full_mod)
 
 ::: tip
 
-We can construct a 95% CI on $\hat{\beta}$ using the 2.5% and 97.5% percentiles of the $t$-distribution with $df = 30 - 4 = 26$.
+We can construct a 95% CI on $\widehat{\beta}$ using the 2.5% and 97.5% percentiles of the $t$-distribution with $df = 30 - 4 = 26$.
 
 :::
 
@@ -738,7 +755,7 @@ This 95% CI includes zero so we would conclude that we cannot reject the null hy
 
 :::
 
-### Confidence intervals for all $\beta$
+## Confidence intervals for all $\beta$
 
 ::: tip
 
@@ -752,11 +769,13 @@ confint(full_mod) |> round(3)
 ```
 
 
-## Bootstrap confidence intervals
+***
+
+# Bootstrap confidence intervals
 
 The above $F$- and $t$-based CI's depend on the assumption of normality. Recall that the bootstrap method provides a way to construct CI's without this assumption.
 
-### Bootstrap procedure
+## Bootstrap procedure
 
 ::: task
 
@@ -766,7 +785,7 @@ Step 1: Fit your model to the data
 ## we already fit `full_mod` above
 ```
 
-Step 2: Calculate $\mathbf{e} = \mathbf{y} - \mathbf{X} \boldsymbol{\hat{\beta}}$ 
+Step 2: Calculate $\mathbf{e} = \mathbf{y} - \mathbf{X} \boldsymbol{\widehat{\beta}}$ 
 
 ```{r bootstrap_CI_1-2, echo = TRUE}
 ## residuals from our full model
@@ -774,8 +793,8 @@ resids <- residuals(full_mod)
 ```
 
 Step 3a: Generate $\mathbf{e}^*$ by sampling *with replacement* from $\mathbf{e}$  
-Step 3b: Calculate $\mathbf{y}^* = \mathbf{X} \boldsymbol{\hat{\beta}} + \mathbf{e}^*$  
-Step 3c: Estimate $\boldsymbol{\hat{\beta}}^*$ from $\mathbf{X}$ & $\mathbf{y}^*$  
+Step 3b: Calculate $\mathbf{y}^* = \mathbf{X} \boldsymbol{\widehat{\beta}} + \mathbf{e}^*$  
+Step 3c: Estimate $\boldsymbol{\widehat{\beta}}^*$ from $\mathbf{X}$ & $\mathbf{y}^*$  
 
 ```{r bootstrap_CI_3, echo = TRUE}
 ## number of boostrap samples
@@ -797,7 +816,7 @@ for(i in 1:nb) {
 }
 ```
 
-Step 4: Select the $\tfrac{\alpha}{2}$ and $(1 - \tfrac{\alpha}{2})$ percentiles from the saved $\boldsymbol{\hat{\beta}}^*$
+Step 4: Select the $\tfrac{\alpha}{2}$ and $(1 - \tfrac{\alpha}{2})$ percentiles from the saved $\boldsymbol{\widehat{\beta}}^*$
 
 ```{r bootstrap_CI_4, echo = TRUE}
 ## extract 2.5% and 97.5% values
@@ -808,11 +827,13 @@ t(round(CI95, 3))
 
 :::
 
-## Confidence interval for new predictions
+***
+
+# Confidence interval for new predictions
 
 Given a fitted model $\mathbf{y} = \mathbf{X} \boldsymbol{\beta} + \mathbf{e}$, we might want to know the uncertainty around a new estimate $\mathbf{y}^*$ given some new predictor $\mathbf{X}^*$. 
 
-### CI for the mean response
+## CI for the mean response
 
 Think back to our simple model for plant diversity as a function of island area, such that
 
@@ -823,13 +844,13 @@ $$
 Suppose we wanted to estimate the uncertainty in the *average* diversity for an island with an area of 2000 km<sup>2</sup>. Recall that our CI on the mean response is given by
 
 $$
-\mathbf{\hat{y}}^* \pm ~ t^{(\alpha / 2)}_{df} \sigma \sqrt{ {\mathbf{X}^*}^{\top} (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^* } 
+\mathbf{\widehat{y}}^* \pm ~ t^{(\alpha / 2)}_{df} \sigma \sqrt{ {\mathbf{X}^*}^{\top} (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^* } 
 $$
 
 and here $\mathbf{X}^* = [1 ~~ 2000]$ (ie, a $1 \times 2$ row matrix).
 
 
-#### CI by hand
+### CI by hand
 
 ::: task
 
@@ -860,7 +881,7 @@ y_star <- sum(X_star * coef(simple_model))
 y_star + c(-1,1) * t_crit * sigma * sqrt(inner_X)
 ```
 
-#### CI with `predict()`
+### CI with `predict()`
 
 ::: tip
 
@@ -881,12 +902,15 @@ The estimated lower and upper bounds are the same as those we obtained by hand.
 
 :::
 
-### Prediction interval for a new response
 
-We saw in lecture that we can also estimate the uncertainty for a *specific* prediction rather than the average response. Let's now imagine we wanted to predict how many plant species we might find on a hypothetical island that might one day emerge from an underwater volcano and is ultimately 2000 km<sup>2</sup>. Recall that a PI is given by 
+***
+
+# Prediction interval for a new response
+
+We saw in lecture that we can also estimate the uncertainty for a *specific* prediction rather than the average response. Let's now imagine we wanted to predict how many plant species we might find on a hypothetical island that might one day emerge from an underwater volcano and is ultimately 2000 km<sup>2</sup>. Recall that a prediction interval (PI) is given by 
 
 $$
-\mathbf{\hat{y}}^* \pm ~ t^{(\alpha / 2)}_{df} \sigma \sqrt{1 + {\mathbf{X}^*}^{\top} (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^* } 
+\mathbf{\widehat{y}}^* \pm ~ t^{(\alpha / 2)}_{df} \sigma \sqrt{1 + {\mathbf{X}^*}^{\top} (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^* } 
 $$
 
 ::: tip
