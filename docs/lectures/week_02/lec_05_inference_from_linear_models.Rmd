@@ -81,6 +81,9 @@ Let's consider a model for the relationship between
 ## Partitioning variance | An example
 
 ```{r ex_SS, echo = FALSE, fig.width = 5, fig.height = 4, fig.align = "center"}
+## set random seed for reproducibility
+set.seed(514)
+
 nn <- 15
 
 aspect <- round(runif(nn, 0, 180))
@@ -109,7 +112,9 @@ Let's fit this model:
 
 $$temperature_i = \beta_0 + \beta_1 \times aspect_i + e_i$$
 
-and find $\hat{\boldsymbol{\beta}}$ and $\hat{\boldsymbol{y}}$
+<br>
+
+and estimate $\hat{\boldsymbol{\beta}}$ and $\hat{\boldsymbol{y}}$
 
 <br>
 
@@ -121,7 +126,7 @@ and find $\hat{\boldsymbol{\beta}}$ and $\hat{\boldsymbol{y}}$
 Create our design matrix $\mathbf{X}$ 
 
 ```{r ex_SS_2, echo=TRUE}
-## construct our "Design matrix"
+## construct our "design matrix"
 XX <- cbind(intercept = rep(1, nn), x = aspect)
 head(XX)
 ``` 
@@ -139,7 +144,9 @@ beta_hat <- solve(t(XX) %*% XX) %*% t(XX) %*% temp
 
 <br>
 
-Recall that `t()` transforms (rotates) a matrix and `solve()` inverts it
+`t()` transforms (rotates) a matrix and `solve()` inverts it
+
+`%*%` denotes matrix multiplication
 
 
 ## Partitioning variance | An example  
@@ -271,10 +278,10 @@ $SSTO = \sum \left( y_i - \bar{y} \right)^2$
 
 ```{r ex_SS_6, echo = TRUE}
 ## mean of the response
-y_bar <- mean(temp)
+temp_bar <- mean(temp)
 
 ## total sum-of-squares
-SSTO <- t(temp - y_bar) %*% (temp - y_bar)
+SSTO <- t(temp - temp_bar) %*% (temp - temp_bar)
 ``` 
 
 <br>
@@ -291,7 +298,7 @@ $SSR = \sum \left( \widehat{y}_i - \bar{y} \right)^2$
 
 ```{r ex_SS_7, echo = TRUE}
 ## model sum-of-squares
-SSR <- t(temp_hat - y_bar) %*% (temp_hat - y_bar)
+SSR <- t(temp_hat - temp_bar) %*% (temp_hat - temp_bar)
 ``` 
 
 
@@ -352,7 +359,7 @@ The number of *independent* elements that are free to vary when estimating quant
 
 ## Degrees of freedom | An example
 
-* Imagine you have 7 hats and you want to wear a different one on each day of the week.
+* Imagine you have 7 hats and you want to wear a different one on each day of the week
 
 > - On day 1 you can choose any of the 7, on day 2 any of the remaining 6, and so forth
 
@@ -441,13 +448,29 @@ $$
 
 The expectation of the sum-of-squares or "mean square" gives an indication of the variance for the model and errors
 
+
+## Mean squares
+
+The expectation of the sum-of-squares or "mean square" gives an indication of the variance for the model and errors
+
 A mean square is a sum-of-squares divided by its degrees of freedom
 
 $$
 MS = \frac{SS}{df} \\
-\Downarrow \\
-MSR = \frac{SSR}{k - 1} ~~~ \& ~~~ MSE = \frac{SSE}{n - k} 
 $$
+
+
+## Mean squares
+
+Mean square model
+
+$MSR = \frac{SSR}{k - 1}$
+
+<br>
+
+Mean square error
+
+$MSE = \frac{SSE}{n - k}$
 
 
 ## Variance estimates
@@ -471,22 +494,35 @@ The problem is that we don't know $\sigma^2$ and therefore we must estimate it
 If $z_i \sim \text{N}(0, 1)$ then
 
 $$
-\sum_{i = 1}^{n} z_i^2 = \mathbf{z}^{\top}\mathbf{z} \sim \chi^2_{n}
+\sum_{i = 1}^{n} z_i^2 = \mathbf{z}^{\top}\mathbf{z} \\
+\Downarrow \\
+\mathbf{z}^{\top}\mathbf{z} \sim \chi^2_{n}
 $$
 
 
 ## Variance estimates | Residuals
 
-If $z_i \sim \text{N}(0, 1)$ then
-
-$$
-\sum_{i = 1}^{n} z_i^2 = \mathbf{z}^{\top}\mathbf{z} \sim \chi^2_{n}
-$$
-
 In our linear model, $e_i \sim \text{N}(0, \sigma^2)$ so
 
 $$
-\sum_{i = 1}^{n} e_i^2 = \mathbf{e}^{\top}\mathbf{e} \sim \sigma^2 \cdot \chi^2_{n - k} 
+\sum_{i = 1}^{n} e_i^2 = \mathbf{e}^{\top}\mathbf{e} \\
+\Downarrow \\
+\mathbf{e}^{\top}\mathbf{e} \sim \sigma^2 \cdot \chi^2_{n - k}
+$$
+
+
+## Variance estimates | Residuals
+
+So, if 
+
+$$
+\mathbf{e}^{\top}\mathbf{e} \sim \sigma^2 \cdot \chi^2_{n - k}
+$$
+
+then the _expectation_ (mean) is 
+
+$$
+\text{E}(\mathbf{e}^{\top}\mathbf{e}) = \sigma^2 ~ \text{E}(\chi^2_{n - k})
 $$
 
 
@@ -495,15 +531,11 @@ $$
 Thus, given 
 
 $$
-\mathbf{e}^{\top}\mathbf{e} \sim \sigma^2 \cdot \chi^2_{n - k} \\
-\text{E}(\chi^2_{n - k}) = n - k \\
-\text{E}(\mathbf{e}^{\top}\mathbf{e}) = SSE
-$$
-
-then
-
-$$
-SSE = \sigma^2 (n - k) ~ \Rightarrow ~ \sigma^2 = \frac{SSE}{n - k} = MSE
+\text{E}(\mathbf{e}^{\top}\mathbf{e}) = \sigma^2 ~ \text{E}(\chi^2_{n - k}) \\
+\Downarrow \\
+SSE = \sigma^2 (n - k) \\
+\Downarrow \\
+\sigma^2 = \frac{SSE}{n - k} = MSE
 $$
 
 
@@ -520,9 +552,9 @@ $$
 
 Estimating the variance of the model parameters $\boldsymbol{\beta}$ requires some linear algebra
 
-For a scalar $z$, if $\text{Var}(z) = \sigma^2$ then $\text{Var}(az) = a^2 \sigma^2$
+* for a scalar $z$, if $\text{Var}(z) = \sigma^2$ then $\text{Var}(az) = a^2 \sigma^2$
 
-For a vector $\mathbf{z}$, if $\text{Var}(\mathbf{z}) = \mathbf{\Sigma}$ then $\text{Var}(\mathbf{A z}) = \mathbf{A} \mathbf{\Sigma} \mathbf{A}^{\top}$
+> - for a vector $\mathbf{z}$, if $\text{Var}(\mathbf{z}) = \mathbf{\Sigma}$ then $\text{Var}(\mathbf{A z}) = \mathbf{A} \mathbf{\Sigma} \mathbf{A}^{\top}$
 
 
 ## Variance estimates | Parameters
@@ -544,45 +576,89 @@ $$
 Recall that we can write our model in matrix form as
 
 $$
+y_i = \beta_0 + \beta_1 x_i + e_i \\
+e_i \sim \text{N}(0, \sigma^2) \\
+\Downarrow \\
 \mathbf{y} = \mathbf{X} \boldsymbol{\beta} + \mathbf{e} \\
 \mathbf{e} \sim \text{MVN}(\mathbf{0}, \sigma^2 \mathbf{I})
 $$
 
+<br>
+
+Note that $\mathbf{I}$ is the _identity matrix_, which has 1's on the diagonal and 0's elsewhere
+
 
 ## Variance estimates | Parameters
 
-We can rewrite our model more compactly as
+We can rewrite our matrix form of the model more compactly
 
 $$
 \mathbf{y} = \mathbf{X} \boldsymbol{\beta} + \mathbf{e} \\
 \mathbf{e} \sim \text{MVN}(\mathbf{0}, \sigma^2 \mathbf{I}) \\
 \Downarrow \\
-\mathbf{y} \sim \text{MVN}(\mathbf{X} \boldsymbol{\beta}, \underbrace{\sigma^2 \mathbf{I}}_{\text{Var}(\mathbf{y} | \mathbf{X} \boldsymbol{\beta})}) \\
+\mathbf{y} \sim \text{MVN} ( \mathbf{X} \boldsymbol{\beta}, \sigma^2 \mathbf{I} ) \\
+$$
+
+where $\sigma^2 \mathbf{I}$ is the variance of $\mathbf{y}$ conditional on $(\mathbf{X} \boldsymbol{\beta})$
+
+
+## Variance estimates | Parameters
+
+Returning to our estimate of the variance of $\widehat{\boldsymbol{\beta}}$  
+
+$$
+\text{Var}(\widehat{\boldsymbol{\beta}}) = \left[ (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^{\top} \right] \text{Var}(\mathbf{y}) \left[ (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^{\top} \right]^{\top}
 $$
 
 
 ## Variance estimates | Parameters
 
-Our estimate of $\text{Var}(\widehat{\boldsymbol{\beta}})$ is then  
+Returning to our estimate of the variance of $\widehat{\boldsymbol{\beta}}$  
 
 $$
+\text{Var}(\widehat{\boldsymbol{\beta}}) = \left[ (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^{\top} \right] \text{Var}(\mathbf{y}) \left[ (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^{\top} \right]^{\top} \\
+\Downarrow \\
 \begin{aligned}
-\text{Var}(\widehat{\boldsymbol{\beta}}) &= \left[ (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^{\top} \right] \text{Var}(\mathbf{y}) \left[ (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^{\top} \right]^{\top} \\
-  &= \left[ (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^{\top} \right] \sigma^2 \mathbf{I} \left[ (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^{\top} \right]^{\top} \\
+\text{Var}(\widehat{\boldsymbol{\beta}}) &= \left[ (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^{\top} \right] \sigma^2 \mathbf{I} \left[ (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^{\top} \right]^{\top} \\
   &= \sigma^2 (\mathbf{X}^{\top} \mathbf{X})^{-1} (\mathbf{X}^{\top} \mathbf{X}) \left[ (\mathbf{X}^{\top} \mathbf{X})^{-1} \right]^{\top} \\
   &= \sigma^2 (\mathbf{X}^{\top} \mathbf{X})^{-1}
 \end{aligned}
 $$
 
 
-## Partitioning total deviations
+## Variance estimates | Parameters
 
-Here is a plot of some data $y$ and a predictor $x$
+Let's think about the variance of $\widehat{\boldsymbol{\beta}}$ with respect to $\mathbf{X}$
 
-```{r intro_SS, echo = FALSE, fig.width = 3.5, fig.height = 3.5, fig.align="center"}
-## set random seed for reproducibility
-set.seed(514)
+$$
+\text{Var}(\widehat{\boldsymbol{\beta}}) = \sigma^2 (\mathbf{X}^{\top} \mathbf{X})^{-1}
+$$
 
+<br>
+
+What happens as the spread (variance) in $\mathbf{X}$ increases?
+
+
+## Variance estimates | Parameters
+
+Let's think about the variance of $\widehat{\boldsymbol{\beta}}$ with respect to $\mathbf{X}$
+
+$$
+\text{Var}(\widehat{\boldsymbol{\beta}}) = \sigma^2 (\mathbf{X}^{\top} \mathbf{X})^{-1}
+$$
+
+<br>
+
+What happens as the spread (variance) in $\mathbf{X}$ increases?
+
+The variance in our parameter estimates decreases with the spread in $\mathbf{X}$
+
+
+## Effect of $\mathbf{X}$ on parameter precision
+
+Consider these two scenarios where the slope of the relationship is identical
+
+```{r slope_comp, fig.height=3.5, fig.width=7, fig.align="center"}
 ## sample size
 nn <- 30
 ## some values for the predictor x
@@ -601,71 +677,6 @@ mm <- lm(yy ~ xx)
 ## get predicted values
 yhat <- predict(mm)
 
-par(mai = c(0.3,0.3,0.1,0.1), omi = c(0, 0, 0, 0), cex = 0.7)
-
-## plot the data
-plot(xx, yy, type = "p", pch = 19,
-     bty = "l", xaxt = "n", yaxt = "n",
-     xlab = "",
-     ylab = "")
-mtext(expression(italic(x)), 1, line=0.2, cex=1.1, at=max(xx))
-mtext(expression(italic(y)), 2, line=0.3, cex=1.1, at=max(yy), las=1)
-
-```
-
-
-## Partitioning total deviations
-
-And let's consider this model: $y_i = \alpha + \beta x_i + e_i$
-
-```{r intro_SS_2, echo = FALSE, fig.width = 3.5, fig.height = 3.5, fig.align="center"}
-## plot the data
-par(mai = c(0.3,0.3,0.1,0.1),
-    omi = c(0, 0, 0, 0),
-    cex = 0.7)
-plot(xx, yy, type = "p", pch = 19,
-     bty = "l", xaxt = "n", yaxt = "n",
-     xlab = "",
-     ylab = "")
-mtext(expression(italic(x)), 1, line=0.2, cex=1.1, at=max(xx))
-mtext(expression(italic(y)), 2, line=0.3, cex=1.1, at=max(yy), las=1)
-```
-
-
-## Partitioning total deviations
-
-Here is our model fit to the data
-
-```{r intro_SS_3, echo = FALSE, fig.width = 3.5, fig.height = 3.5, fig.align="center"}
-par(mai = c(0.3,0.3,0.1,0.1), omi = c(0, 0, 0, 0), cex = 0.7)
-
-## plot the data
-plot(xx, yy, type = "p", pch = 19,
-     bty = "l", xaxt = "n", yaxt = "n",
-     xlab = "",
-     ylab = "")
-mtext(expression(italic(x)), 1, line=0.2, cex=1.1, at=max(xx))
-mtext(expression(italic(y)), 2, line=0.3, cex=1.1, at=max(yy), las=1)
-abline(a = beta_hat[1], b = beta_hat[2], col = "blue", lwd = 2)
-```
-
-
-## Variance estimates | Parameters
-
-Let's think about the variance of $\widehat{\boldsymbol{\beta}}$
-
-$$
-\text{Var}(\widehat{\boldsymbol{\beta}}) = \sigma^2 (\mathbf{X}^{\top} \mathbf{X})^{-1}
-$$
-
-This suggests that our confidence in our estimate increases with the spread in $\mathbf{X}$
-
-
-## Effect of $\mathbf{X}$ on parameter precision
-
-Consider these two scenarios where the slope of the relationship is identical
-
-```{r slope_comp, fig.height=3.5, fig.width=7, fig.align="center"}
 ## new x
 xs <- sort(runif(nn, 5, 15))
 ## random errors (mean = 0, SD = 1)
@@ -689,14 +700,14 @@ par(mfrow = c(1,2), mai = c(0.5, 0.5, 0.1, 0.1), omi = c(0,0,0,0))
 plot(xx, yy, pch = 16, xlim = range(xx), ylim = range(yy),
      xlab = expression(italic(y)), ylab = expression(italic(y)))
 lines(xx, yy_ci[,"fit"])
-text(1, 10.5, substitute(paste(SE(hat(beta))," = ", seb1), list(seb1 = se_b1)), pos = 4)
+text(1, 9, substitute(paste(SE(hat(beta))," = ", seb1), list(seb1 = se_b1)), pos = 4)
 
 ## small range in X
 plot(xs, ys, pch = 16, xlim = range(xx), ylim = range(yy),
      xlab = "", ylab = "",
      yaxt = "n")
 lines(xs, ys_ci[,"fit"])
-text(1, 10.5, substitute(paste(SE(hat(beta))," = ", seb2), list(seb2 = se_b2)), pos = 4)
+text(1, 9, substitute(paste(SE(hat(beta))," = ", seb2), list(seb2 = se_b2)), pos = 4)
 ```
 
 
