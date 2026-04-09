@@ -34,10 +34,10 @@ markdown <- list(
 linear_models <- list(
   title = "Fitting linear models",
   topics = c("Fitting linear models"),
-  pdf = "", # "homework/week_02/hw_02_fitting_lm.pdf",
-  rmd = "", # "homework/week_02/hw_02_fitting_lm.Rmd",
+  pdf = "homework/week_02/hw_02_fitting_lm.pdf",
+  rmd = "homework/week_02/hw_02_fitting_lm.Rmd",
   html = "",
-  data = "", # "homework/week_02/L_Washington_plankton.csv",
+  data = "homework/week_02/L_Washington_plankton.csv",
   key = "" # "homework/week_02/hw_02_fitting_lm_key.pdf"
 )
 
