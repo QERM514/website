@@ -35,4 +35,4 @@ output:
       # #   google: "JetBrains Mono"
     highlight: textmate
     pandoc_args: ["--variable", "lang=en-US"]
-    
+include: [".nojekyll"]
