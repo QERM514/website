@@ -6,7 +6,7 @@ date: "13 April 2026"
 output:
   ioslides_presentation:
     wide: true
-    css: lecture_slides.css
+    css: ../lecture_slides.css
 ---
 
 ```{r setup, include=FALSE}
@@ -69,7 +69,7 @@ To check this assumption, we can plot our estimates $\hat{\epsilon}_i = e_i = y-
 
 ## Checking error assumptions | Constant variance
 
-```{r nonconstant_variance, echo = FALSE, fig.width = 8, fig.height = 3.5, fig.align="center"}
+```{r nonconstant_variance, echo = FALSE, fig.width = 9, fig.height = 4, fig.align = "center"}
 set.seed(514)
 ## sample size
 nn <- 30
@@ -86,7 +86,7 @@ e3 <- 0.1 * (y_hat - 5)^2 - 1 + e1
 ## set plot area
 par(mfrow = c(1,3),
     mai = c(0.9,0.5,0.5,0.2),
-    omi = c(0, 0.4, 0, 0),
+    omi = c(0, 0, 0, 0),
     cex = 0.7)
 
 ## plot errors
@@ -114,7 +114,7 @@ The distribution of $| \hat{\epsilon}_i |$ is a skewed half-normal on the positi
 
 ## Checking error assumptions | Constant variance
 
-```{r nonconstant_variance_2, echo = FALSE, fig.width = 8, fig.height = 3.5, fig.align="center"}
+```{r nonconstant_variance_2, echo = FALSE, fig.width = 8, fig.height = 3.5, fig.align = "center"}
 ## calculate the sqrt of abs value
 ## expectation
 e1s <- sqrt(abs(e1))
@@ -195,7 +195,7 @@ If we see a (linear) pattern, then consider including that predictor in a new mo
 
 ## Checking error assumptions | Residuals vs other predictors for $y_i = \alpha + \beta x_{1,i} + e_i$
 
-```{r resids_vs_x, echo = FALSE, fig.width = 7, fig.height = 3.5, fig.align="center"}
+```{r resids_vs_x, echo = FALSE, fig.width = 7, fig.height = 3.5, fig.align = "center"}
 xx1 <- runif(nn, 0, 10)
 xx2 <- runif(nn, 0, 10)
 ee <- rnorm(nn)
@@ -229,7 +229,7 @@ The easiest way is via a so-called $Q$-$Q$ plot (for quantile-quantile)
 
 ## Checking error assumptions | Expected quantiles for $\epsilon \sim \text{N}(0,1)$
 
-```{r QQ_theory, echo = FALSE, fig.width = 4.5, fig.height = 4, fig.align="center"}
+```{r QQ_theory, echo = FALSE, fig.width = 4.5, fig.height = 4, fig.align = "center"}
 ## set plot area
 par(mai = c(1,1,0.1,0.1),
     omi = c(0, 0, 0, 0),
@@ -247,7 +247,7 @@ abline(v = qnorm(c(0.025, 0.975)), lty = "dashed", col = "red")
 
 ## Checking error assumptions | Heavy-tailed (*leptokurtic*)
 
-```{r QQ_theory_lepto, echo = FALSE, fig.width = 4.5, fig.height = 4, fig.align="center"}
+```{r QQ_theory_lepto, echo = FALSE, fig.width = 4.5, fig.height = 4, fig.align = "center"}
 ## set plot area
 par(mai = c(1,1,0.1,0.1),
     omi = c(0, 0, 0, 0),
@@ -268,7 +268,7 @@ abline(v = qcauchy(c(0.025, 0.975)), lty = "dashed", col = "red")
 
 ## Checking error assumptions | Short-tailed (*platykurtic*)
 
-```{r QQ_theory_platy, echo = FALSE, fig.width = 4.5, fig.height = 4, fig.align="center"}
+```{r QQ_theory_platy, echo = FALSE, fig.width = 4.5, fig.height = 4, fig.align = "center"}
 ## set plot area
 par(mai = c(1,1,0.1,0.1),
     omi = c(0, 0, 0, 0),
@@ -301,7 +301,7 @@ abline(v = qb[c(1,7)], lty = "dashed", col = "red")
 
 ## Checking error assumptions | $Q$-$Q$ plots via `qqnorm(x)` in **R**
 
-```{r qq_plots, echo = FALSE, fig.width = 8, fig.height = 3.5, fig.align="center"}
+```{r qq_plots, echo = FALSE, fig.width = 8, fig.height = 3.5, fig.align = "center"}
 ## set plot area
 par(mfrow = c(1,3),
     mai = c(0.9,0.5,0.5,0.2),
@@ -348,7 +348,7 @@ We might expect to find correlated errors when working with
 
 Consider a model for tree growth as a function of temperature
 
-```{r tree_rings, , echo = FALSE, fig.width = 4.5, fig.height = 4, fig.align="center"}
+```{r tree_rings, , echo = FALSE, fig.width = 4.5, fig.height = 4, fig.align = "center"}
 ## get raw data
 data(globwarm, package = "faraway")
 ## trim to recent years
@@ -375,7 +375,7 @@ plot(dat$nhtemp, dat$wusa, pch = 16, las = 1, xpd = NA,
 
 Closer examination of the residuals reveals a problem
 
-```{r tree_rings_ee, echo = FALSE, fig.width = 7.5, fig.height = 3.5, fig.align="center"}
+```{r tree_rings_ee, echo = FALSE, fig.width = 7.5, fig.height = 3.5, fig.align = "center"}
 ## set plot area
 par(mfrow = c(1,2),
     mai = c(0.9,0.9,0.1,0.1),
@@ -396,7 +396,7 @@ plot(ee[1:(length(ee)-1)], ee[2:length(ee)], pch = 16, las = 1,
 
 We can estimate the *autocorrelation function* in **R** with `acf()`
 
-```{r tree_rings_acf, , echo = FALSE, fig.width = 5, fig.height = 4, fig.align="center"}
+```{r tree_rings_acf, , echo = FALSE, fig.width = 5, fig.height = 4, fig.align = "center"}
 ## set plot area
 par(mai = c(0.9,0.9,0.1,0.1),
     omi = c(0, 0.4, 0, 0))
@@ -433,7 +433,7 @@ They may or may not affect model fit
 
 ## Unusual observations | Examples
 
-```{r outliers, echo = FALSE, fig.width = 8, fig.height = 3.5, fig.align="center"}
+```{r outliers, echo = FALSE, fig.width = 8, fig.height = 3.5, fig.align = "center"}
 xr <- round(1:10 + rnorm(10, 0, 0.2), 1)
 testdata <- data.frame(x = xr,
                        y = xr + rnorm(10))
@@ -523,7 +523,7 @@ hv > th
 
 We can also identify high leverage via a half-normal plot (R)
 
-```{r leverage_plots, echo = FALSE, fig.width = 8, fig.height = 3.5, fig.align="center"}
+```{r leverage_plots, echo = FALSE, fig.width = 8, fig.height = 3.5, fig.align = "center"}
 ## revised `halfnorm` from Faraway
 halfnorm <- function(x, nlab = 1, ylab = "Sorted data") {
   x <- abs(x)
@@ -572,7 +572,7 @@ Doing so allows for easy examination via $Q$-$Q$ plots as values should lie on t
 
 Standardized residuals from the high leverage example
 
-```{r std_resid, echo = FALSE, fig.width = 4, fig.height = 4, fig.align="center"}
+```{r std_resid, echo = FALSE, fig.width = 4, fig.height = 4, fig.align = "center"}
 par(mai = c(0.9,0.9,0.1,0.1), omi = c(0, 0, 0, 0), cex = 1)
 ## standardized r
 qqnorm(rstandard(m2), pch = 16, las = 1, main = "")
@@ -667,6 +667,15 @@ What can be done about outliers?
 > * Be wary of automatic discarding of outliers
 
 
+## Unusual observations {.smaller}
+
+```{r, out.width = "60%", fig.align = "center"}
+knitr::include_graphics("peterson_outliers.png")
+```
+
+[Peterson et al (2014)](https://www.jstor.org/stable/24862214)
+
+
 ## Unusual observations | Influential observations
 
 Influential observations might not be outliers nor have high leverage, but we want to identify them
@@ -684,7 +693,7 @@ $D_i$ scales the errors by their $df$ and leverage
 
 We can evaulate Cook's $D$ with a half-normal plot
 
-```{r cooks_d, echo = FALSE, fig.width = 4, fig.height = 4, fig.align="center"}
+```{r cooks_d, echo = FALSE, fig.width = 4, fig.height = 4, fig.align = "center"}
 par(mai = c(0.9,0.9,0.1,0.1), omi = c(0, 0, 0, 0), cex = 1)
 ## Cook's D
 cook <- cooks.distance(m2)
