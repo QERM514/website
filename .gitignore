@@ -35,8 +35,5 @@ vignettes/*.pdf
 *.utf8.md
 *.knit.md
 
-# no jekyll build
-docs/.nojekyll
-
 # R Environment Variables
 .Renviron
