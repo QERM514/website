@@ -46,6 +46,24 @@ Imagine we had 2 linear models of varying complexity:
 It would seem logical to ask whether the complexity of (2) is necessary?
 
 
+## Hypothesis testing | Null hypothesis ($H_0$)
+
+* A statement that the effect of interest does **not** exist
+
+> - Can be exact (eg, $H_0: \beta = 0$) or inexact (eg, $H_0: \beta \geq 1$)
+
+
+## Hypothesis testing | p-value
+
+* Probability of obtaining a test statistic as large (or larger), assuming the null hypothesis is correct
+
+> - Provides evidence against the null hypothesis
+
+> - **Not** the probability that the null hypothesis is true
+
+> - **Not** the probability that the results were produced by random chance alone
+
+
 ## Hypothesis test to compare models
 
 Recall our partitioning of sums-of-squares, where
