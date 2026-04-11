@@ -11,7 +11,7 @@ library(kableExtra)
 
 Each student will produce and report on a thoughtful and thorough analysis of a data set. You should start with a research question that relates to your interests. You then should obtain a data set, analyze it (with full consideration of issues including checking your assumptions, model selection, parameter estimation, and prediction), and report on your findings. When thinking about your project, remember our class themes: moving from a question to a model or models, and moving from a model or model(s) to inference. I want to clearly see your thought process.
 
-There will be 2 components to your project: a project plan, a presentation, and a final report. Both of these elements will contribute a total of 30% toward your final grade.
+There will be 2 components to your project: a project plan and a final report. Both of these elements will contribute a total of 30% toward your final grade.
 
 ## 1. Plan
 
