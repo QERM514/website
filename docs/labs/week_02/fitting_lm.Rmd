@@ -587,7 +587,7 @@ anova(reduced_mod, full_mod)
 
 ::: note
 
-The $F$-statistic is rather small and the $p$-value is big so we cannot reject $H_0$, suggesting we would be justified in dropping area and elevation from the model.
+The $F$-statistic is rather small and the $p$-value is big so we cannot reject $H_0$, suggesting we would be justified in dropping area and nearest from the model.
 
 :::
 
