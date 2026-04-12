@@ -1,6 +1,6 @@
 ---
 title: "<br>Analysis of Ecological and Environmental Data"
-subtitle: "QERM 514 &nbsp; &nbsp; University of Washington &nbsp; &nbsp; Spring 2026"
+subtitle: "<br>QERM 514 &nbsp; &nbsp; University of Washington &nbsp; &nbsp; Spring 2026"
 output: html_document
 ---
 
