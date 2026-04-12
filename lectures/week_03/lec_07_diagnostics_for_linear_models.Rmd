@@ -9,7 +9,6 @@ output:
     css: ../lecture_slides.css
 header-includes:
   - \usepackage{amsmath,amssymb,xcolor}
-  # - \newcommand\BLU{\color{blue}}
 ---
 
 ```{r setup, include=FALSE}
