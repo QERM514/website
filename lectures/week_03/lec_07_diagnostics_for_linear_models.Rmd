@@ -22,6 +22,13 @@ knitr::opts_chunk$set(echo = FALSE)
 > - Learn how to check for outlying or influential observations
 
 
+## Model structure
+
+Our focus here is on linear models, and we saw previously that we can use linear models to approximate nonlinear functions
+
+The specific form of the model should reflect our understanding of the system and any particular hypotheses we'd like to test
+
+
 ## Model diagnostics
 
 We have seen how to fit models, estimate parameters with uncertainty, and conduct hypothesis tests
@@ -33,13 +40,6 @@ All of these rely on a number of assumptions about
 > - the errors (independent, equal variance, normally distributed)
 
 > - observations and predictors (no undue influence)
-
-
-## Model structure
-
-Our focus here is on linear models, and we saw previously that we can use linear models to approximate nonlinear functions
-
-The specific form of the model should reflect our understanding of the system and any particular hypotheses we'd like to test
 
 
 ## Checking error assumptions
@@ -56,15 +56,15 @@ Let's begin with the notion of "identically distributed", which suggests no chan
 For example, if our errors are assumed to be normally distributed, such that
 
 $$
-\epsilon_i \sim \text{N}(0, \sigma^2) ~ \Rightarrow ~ \boldsymbol{\epsilon} \sim \text{MVN}(\mathbf{0}, \sigma^2 \mathbf{I})
+e_i \sim \text{N}(0, \sigma^2) ~ \Rightarrow ~ \boldsymbol{e} \sim \text{MVN}(\mathbf{0}, \sigma^2 \mathbf{I})
 $$
 
-then we expect no difference in $\sigma^2$ among any of the $\epsilon_i$.
+then we expect no difference in $\sigma^2$ among any of the $e_i$
 
 
 ## Checking error assumptions | Constant variance
 
-To check this assumption, we can plot our estimates $\hat{\epsilon}_i = e_i = y- \hat{y}$ against our fitted values $\hat{y}_i$ and look for any patterns
+To check this assumption, we can plot our estimates $\hat{e}_i = e_i = y- \hat{y}$ against our fitted values $\hat{y}_i$ and look for any patterns
 
 
 ## Checking error assumptions | Constant variance
@@ -87,7 +87,7 @@ e3 <- 0.1 * (y_hat - 5)^2 - 1 + e1
 par(mfrow = c(1,3),
     mai = c(0.9,0.5,0.5,0.2),
     omi = c(0, 0, 0, 0),
-    cex = 0.7)
+    cex = 0.85)
 
 ## plot errors
 plot(y_hat, e1, pch = 16, las = 1, xpd = NA,
@@ -107,14 +107,14 @@ abline(h = 0, lty ="dashed")
 
 ## Checking error assumptions | Constant variance
 
-For a finer resolution, we can also plot $\sqrt{| \hat{\epsilon}_i |}$ against our fitted values $\hat{y}_i$ and look for any patterns
+For a finer resolution, we can also plot $\sqrt{| \hat{e}_i |}$ against our fitted values $\hat{y}_i$ and look for any patterns
 
-The distribution of $| \hat{\epsilon}_i |$ is a skewed half-normal on the positive interval; the square-root transformation makes them less skewed 
+The distribution of $| \hat{e}_i |$ is a skewed half-normal on the positive interval; the square-root transformation makes them less skewed 
 
 
 ## Checking error assumptions | Constant variance
 
-```{r nonconstant_variance_2, echo = FALSE, fig.width = 8, fig.height = 3.5, fig.align = "center"}
+```{r nonconstant_variance_2, echo = FALSE, fig.width = 9, fig.height = 4, fig.align = "center"}
 ## calculate the sqrt of abs value
 ## expectation
 e1s <- sqrt(abs(e1))
@@ -126,12 +126,12 @@ e3s <- sqrt(abs(e3))
 ## set plot area
 par(mfrow = c(1,3),
     mai = c(0.9,0.5,0.5,0.2),
-    omi = c(0, 0.4, 0, 0),
-    cex = 0.7)
+    omi = c(0, 0, 0, 0),
+    cex = 0.85)
 
 ## plot errors
 plot(y_hat, e1s, pch = 16, las = 1, xpd = NA,
-     cex.lab = 1.5, xlab = "Fitted values", ylab = expression(sqrt(abs(epsilon))),
+     cex.lab = 1.5, xlab = "Fitted values", ylab = expression(sqrt(abs(italic(e)))),
      main = "No problem")
 plot(y_hat, e2s, pch = 16, las = 1,
      cex.lab = 1.5, xlab = "Fitted values", ylab = "",
@@ -152,7 +152,11 @@ $$
 
 <br>
 
-Levene's test is a one-way ANOVA of the residuals
+Levene's test is a one-way ANOVA of the residuals with
+
+$$
+H_0: ~ \sigma^2_1 = \sigma^2_2 = \dots = \sigma^2_k
+$$
 
 
 ## Checking error assumptions | Constant variance
@@ -163,7 +167,7 @@ $$
 W=\frac{(n-k)}{(k-1)} \cdot \frac{\sum_{j=1}^{k} n_{j}\left(Z_{j} - \bar{Z} \right)^{2}}{\sum_{j=1}^{k} \sum_{i=1}^{n_{j}} \left( Z_{i j} - \bar{Z_{i}} \right)^{2}}
 $$
 
-The test statistic $W$ is approximately $F$-distributed with $k-1$ and $N-k$ degrees of freedom
+The test statistic $W$ is approximately $F$-distributed with $k-1$ and $n-k$ degrees of freedom
 
 
 ## Checking error assumptions {.smaller}
@@ -171,7 +175,7 @@ The test statistic $W$ is approximately $F$-distributed with $k-1$ and $N-k$ deg
 Levene's Test is easy to compute in **R**
 
 ```{r levene, echo = TRUE}
-## split residuals (ee) into 2 groups
+## split residuals (ee) into 2 groups: less than and greater than the median
 g1 <- ee[ee < median(ee)]
 g2 <- ee[ee > median(ee)]
 ## Levene's Test
@@ -227,7 +231,7 @@ We seek a method for assessing whether our residuals are indeed normally distrib
 The easiest way is via a so-called $Q$-$Q$ plot (for quantile-quantile)
 
 
-## Checking error assumptions | Expected quantiles for $\epsilon \sim \text{N}(0,1)$
+## Checking error assumptions | Expected quantiles for $e \sim \text{N}(0,1)$
 
 ```{r QQ_theory, echo = FALSE, fig.width = 4.5, fig.height = 4, fig.align = "center"}
 ## set plot area
@@ -237,7 +241,7 @@ par(mai = c(1,1,0.1,0.1),
 
 ## plot Gaussian pdf
 curve(dnorm, -4, 4, las = 1, bty = "n", lwd = 2,
-      ylab = "Density", xlab = expression(epsilon))
+      ylab = "Density", xlab = expression(italic(e)))
 abline(v = qnorm(c(0.5)), lty = "dashed")
 abline(v = qnorm(c(0.25, 0.75)), lty = "dashed", col = "purple")
 abline(v = qnorm(c(0.1, 0.9)), lty = "dashed", col = "blue")
@@ -255,10 +259,10 @@ par(mai = c(1,1,0.1,0.1),
 
 ## plot Gaussian pdf
 curve(dnorm, -4, 4, las = 1, bty = "n", lwd = 2, col = "gray",
-      ylab = "Density", xlab = expression(epsilon))
+      ylab = "Density", xlab = expression(italic(e)))
 ## plot Cauchy
 curve(dcauchy(x, 0, 0.8), -4, 4, las = 1, bty = "n", lwd = 2, add = TRUE,
-      ylab = "Density", xlab = expression(epsilon))
+      ylab = "Density", xlab = expression(italic(e)))
 abline(v = qcauchy(c(0.5)), lty = "dashed")
 abline(v = qcauchy(c(0.25, 0.75)), lty = "dashed", col = "purple")
 abline(v = qcauchy(c(0.1, 0.9)), lty = "dashed", col = "blue")
@@ -288,10 +292,10 @@ for(i in 1:length(ww)) {
 qb <- quantile(vv, c(2.5, 10, 25, 50, 75, 90, 97.5)/100)
 ## plot Gaussian pdf
 curve(dnorm, -4, 4, las = 1, bty = "n", lwd = 2, col = "gray",
-      ylab = "Density", xlab = expression(epsilon))
+      ylab = "Density", xlab = expression(italic(e)))
 ## plot Butterworth
 curve(butter(x, 1, 4), -4, 4, las = 1, bty = "n", lwd = 2, add = TRUE,
-      ylab = "Density", xlab = expression(epsilon))
+      ylab = "Density", xlab = expression(italic(e)))
 abline(v = qb[4], lty = "dashed")
 abline(v = qb[c(3,5)], lty = "dashed", col = "purple")
 abline(v = qb[c(2,6)], lty = "dashed", col = "blue")
@@ -301,13 +305,12 @@ abline(v = qb[c(1,7)], lty = "dashed", col = "red")
 
 ## Checking error assumptions | $Q$-$Q$ plots via `qqnorm(x)` in **R**
 
-```{r qq_plots, echo = FALSE, fig.width = 8, fig.height = 3.5, fig.align = "center"}
+```{r qq_plots, echo = FALSE, fig.width = 9, fig.height = 4, fig.align = "center"}
 ## set plot area
 par(mfrow = c(1,3),
     mai = c(0.9,0.5,0.5,0.2),
-    omi = c(0, 0.4, 0, 0),
-    cex = 1.1)
-
+    omi = c(0, 0, 0, 0),
+    cex = 1)
 
 ## Q-Q plots
 ## normal
@@ -373,7 +376,7 @@ plot(dat$nhtemp, dat$wusa, pch = 16, las = 1, xpd = NA,
 
 ## Correlated errors
 
-Closer examination of the residuals reveals a problem
+Closer examination of the residuals reveals a problem: correlated errors
 
 ```{r tree_rings_ee, echo = FALSE, fig.width = 7.5, fig.height = 3.5, fig.align = "center"}
 ## set plot area
@@ -488,10 +491,10 @@ The values along the diagonal $h_i = \mathbf{H}_{ii}$ are the leverages
 Also recall that
 
 $$
-\text{Var}(\hat{\epsilon}_i) = \sigma^2 (1 - h_i)
+\text{Var}(\hat{e}_i) = \sigma^2 (1 - h_i)
 $$
 
-Large $h_i$ lead to small variances of $\epsilon_i$ & hence $\hat{y}_i$ tends to $y_i$
+Large $h_i$ lead to small variances of $e_i$ & hence $\hat{y}_i$ tends to $y_i$
 
 
 ## Unusual observations | Identifying leverage points
@@ -562,7 +565,7 @@ halfnorm(hv)
 We can use the leverages to scale the residuals so their variance is 1
 
 $$
-r_i = \frac{\hat{\epsilon}_i}{\hat{\sigma} \sqrt{1 - h_i} }
+r_i = \frac{\hat{e}_i}{\hat{\sigma} \sqrt{1 - h_i} }
 $$
 
 Doing so allows for easy examination via $Q$-$Q$ plots as values should lie on the 1:1 line
