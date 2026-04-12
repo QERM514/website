@@ -3282,7 +3282,7 @@ background-color: white;
 <li>Understand how robust methods can be used when the errors are non-normal or when we have influential observations</li>
 </ul>
 
-</article></slide><slide class=""><hgroup><h2>Concerns re: model assumptions</h2></hgroup><article  id="concerns-re-model-assumptions">
+</article></slide><slide class=""><hgroup><h2>Concerns about model assumptions</h2></hgroup><article  id="concerns-about-model-assumptions">
 
 <ol>
 <li><p>Adequacy of the model</p></li>
@@ -3336,10 +3336,10 @@ e_i \sim \text{N}(0, \sigma^2)
 \mu_n 
 \end{bmatrix},
 \begin{bmatrix}
-\sigma^2_1 &amp; \gamma_{12} &amp; \cdots &amp; \gamma_{1n} \\
-\gamma_{21} &amp; \sigma^2_2 &amp; \cdots &amp; \gamma_{2n} \\
+\sigma^2_1 &amp; \gamma_{1,2} &amp; \cdots &amp; \gamma_{1,n} \\
+\gamma_{2,1} &amp; \sigma^2_2 &amp; \cdots &amp; \gamma_{2n} \\
 \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
-\gamma_{n1} &amp; \gamma_{n2} &amp; \cdots &amp; \sigma^2_n 
+\gamma_{n,1} &amp; \gamma_{n2} &amp; \cdots &amp; \sigma^2_n 
 \end{bmatrix} 
 \right)
 \]</p>
@@ -3349,21 +3349,42 @@ e_i \sim \text{N}(0, \sigma^2)
 <p>More specifically for \(\boldsymbol{\Sigma}\)</p>
 
 <ul>
-<li><p>the diagonal contains the variances \(\sigma^2_i\)</p></li>
-<li><p>the off-diagonals are the covariances \(\gamma_{ij} = \gamma_{ji}\)</p></li>
+<li><p>the diagonal contains the variances \(\color{blue}{\sigma^2_i}\)</p></li>
+<li><p>the off-diagonals are the covariances \(\gamma_{i,j}\)</p></li>
 </ul>
 
 <p>\[
 \boldsymbol{\Sigma} =
 \begin{bmatrix}
-\sigma^2_1 &amp; \gamma_{12} &amp; \cdots &amp; \gamma_{1n} \\
-\gamma_{21} &amp; \sigma^2_2 &amp; \cdots &amp; \gamma_{2n} \\
+\color{blue}{\sigma^2_1} &amp; \gamma_{1,2} &amp; \cdots &amp; \gamma_{1,n} \\
+\gamma_{2,1} &amp; \color{blue}{\sigma^2_2} &amp; \cdots &amp; \gamma_{2,n} \\
 \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
-\gamma_{n1} &amp; \gamma_{n2} &amp; \cdots &amp; \sigma^2_n 
+\gamma_{n,1} &amp; \gamma_{n,2} &amp; \cdots &amp; \color{blue}{\sigma^2_n} 
 \end{bmatrix}
 \]</p>
 
 </article></slide><slide class=""><hgroup><h2>An aside on multivariate normals</h2></hgroup><article  id="an-aside-on-multivariate-normals-2">
+
+<p>More specifically for \(\boldsymbol{\Sigma}\)</p>
+
+<ul>
+<li><p>the diagonal contains the variances \(\sigma^2_i\)</p></li>
+<li><p>the off-diagonals are the covariances \(\gamma_{i,j}\)</p></li>
+</ul>
+
+<p>\[
+\boldsymbol{\Sigma} =
+\begin{bmatrix}
+\sigma^2_1 &amp; \color{purple}{\gamma_{1,2}} &amp; \cdots &amp; \color{red}{\gamma_{1,n}} \\
+\color{purple}{\gamma_{2,1}} &amp; \sigma^2_2 &amp; \cdots &amp; \color{teal}{\gamma_{2,n}} \\
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+\color{red}{\gamma_{n,1}} &amp; \color{teal}{\gamma_{n,2}} &amp; \cdots &amp; \sigma^2_n 
+\end{bmatrix}
+\]</p>
+
+<p>Also note that \(\boldsymbol{\Sigma}\) is <em>symmetric</em> such that \(\gamma_{i,j} = \gamma_{j,i}\)</p>
+
+</article></slide><slide class=""><hgroup><h2>An aside on multivariate normals</h2></hgroup><article  id="an-aside-on-multivariate-normals-3">
 
 <p>One of our key assumptions in ordinary least squares is that the errors \(\mathbf{e}\) are <em>independent and identically distributed</em> (IID)</p>
 
@@ -3379,7 +3400,7 @@ e_i \sim \text{N}(0, \sigma^2)
 \end{bmatrix}
 \]</p>
 
-</article></slide><slide class=""><hgroup><h2>An aside on multivariate normals</h2></hgroup><article  id="an-aside-on-multivariate-normals-3">
+</article></slide><slide class=""><hgroup><h2>An aside on multivariate normals</h2></hgroup><article  id="an-aside-on-multivariate-normals-4">
 
 <p><em>Identically distributed</em> means the variances are all the same</p>
 
@@ -3408,10 +3429,10 @@ e_i \sim \text{N}(0, \sigma^2)
 <p>\[
 \boldsymbol{\Sigma} =
 \begin{bmatrix}
-\sigma^2_1 &amp; \gamma_{12} &amp; \cdots &amp; \gamma_{1n} \\
-\gamma_{21} &amp; \sigma^2_2 &amp; \cdots &amp; \gamma_{2n} \\
+\sigma^2_1 &amp; \gamma_{1,2} &amp; \cdots &amp; \gamma_{1,n} \\
+\gamma_{2,1} &amp; \sigma^2_2 &amp; \cdots &amp; \gamma_{2n} \\
 \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
-\gamma_{n1} &amp; \gamma_{n2} &amp; \cdots &amp; \sigma^2_n 
+\gamma_{n,1} &amp; \gamma_{n2} &amp; \cdots &amp; \sigma^2_n 
 \end{bmatrix}
 \]</p>
 
@@ -3422,10 +3443,10 @@ e_i \sim \text{N}(0, \sigma^2)
 <p>\[
 \boldsymbol{\Sigma} =
 \sigma^2 \begin{bmatrix}
-c_{11} &amp; c_{12} &amp; \cdots &amp; c_{1n} \\
-c_{21} &amp; c_{22} &amp; \cdots &amp; c_{21} \\
+c_{1,1} &amp; c_{1,2} &amp; \cdots &amp; c_{1,n} \\
+c_{2,1} &amp; c_{2,2} &amp; \cdots &amp; c_{2,1} \\
 \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
-c_{n1} &amp; c_{n2} &amp; \cdots &amp; c_{nn} 
+c_{n,1} &amp; c_{n,2} &amp; \cdots &amp; c_{n,n} 
 \end{bmatrix}
 \]</p>
 
@@ -3442,10 +3463,10 @@ c_{n1} &amp; c_{n2} &amp; \cdots &amp; c_{nn}
 <p>\[
 \mathbf{S} =
 \begin{bmatrix}
-s_{11} &amp; 0 &amp; \cdots &amp; 0 \\
-s_{21} &amp; s_{22} &amp; \cdots &amp; 0 \\
+s_{1,1} &amp; 0 &amp; \cdots &amp; 0 \\
+s_{2,1} &amp; s_{2,2} &amp; \cdots &amp; 0 \\
 \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
-s_{n1} &amp; s_{n2} &amp; \cdots &amp; s_{nn} 
+s_{n,1} &amp; s_{n,2} &amp; \cdots &amp; s_{n,n} 
 \end{bmatrix}
 \]</p>
 
@@ -3576,7 +3597,7 @@ e_t \sim \text{N}(\phi e_{t-1}, \tau^2)
 
 <p><br></p>
 
-<p>To do this in <strong>R</strong> we need additional packages not included with the base installation (eg, <strong>nlme</strong>)</p>
+<p>To do this in <strong>R</strong> we need additional packages not included with the base installation (eg, <strong>{nlme}</strong>)</p>
 
 </article></slide><slide class=""><hgroup><h2>Weighted least squares</h2></hgroup><article  id="weighted-least-squares">
 
@@ -3605,6 +3626,8 @@ e_t \sim \text{N}(\phi e_{t-1}, \tau^2)
 0 &amp; 0 &amp; \cdots &amp; \sigma^2_n 
 \end{bmatrix}
 \]</p>
+
+<p><br></p>
 
 <p>In these cases we can use a subset of generalized least squares called <em>weighted least squares</em></p>
 
@@ -3652,11 +3675,12 @@ c_1 &amp; 0 &amp; 0 &amp; 0 \\
 
 </article></slide><slide class=""><hgroup><h2>Weighted least squares</h2></hgroup><article  id="weighted-least-squares-5">
 
-<p>From this we can define a weights matrix\(\mathbf{W}\) as</p>
+<p>From this we can define a weights matrix \(\mathbf{W}\) as</p>
 
 <p>\[
 \begin{aligned}
 \mathbf{W} &amp;= \mathbf{S} \mathbf{S}^{\top} \\
+~ \\
  &amp;=
 \begin{bmatrix}
 w_1 &amp; 0 &amp; 0 &amp; 0 \\
@@ -3667,40 +3691,42 @@ w_1 &amp; 0 &amp; 0 &amp; 0 \\
 \end{aligned}
 \]</p>
 
+<p><br></p>
+
 <p>How do we choose the weights?</p>
 
-</article></slide><slide class=""><hgroup><h2>Weighted least squares </h2><h3> Errors proportional to the predictor</h3></hgroup><article  id="weighted-least-squares-errors-proportional-to-the-predictor">
+</article></slide><slide class=""><hgroup><h2>Weighted least squares </h2><h3> When errors are proportional to the predictor</h3></hgroup><article  id="weighted-least-squares-when-errors-are-proportional-to-the-predictor">
 
-<p>In general, the weights \(w_i\) should reflect differences in the variance of the errors \(\epsilon_i\)</p>
+<p>The weights \(w_i\) should reflect differences in the variance of the errors \(e_i\)</p>
 
-<p>In many ecological applications, we find that the variance is proportional to a predictor</p>
+<p>In many ecological applications, the variance is proportional to some predictor \(x\)</p>
 
 <p>\[
-\text{Var}(\epsilon_i) = x_i \sigma^2
+\text{Var}(e_i) = x_i \sigma^2
 \]</p>
 
 <p>This suggests \(w_i = \frac{1}{x_i}\)</p>
 
-</article></slide><slide class=""><hgroup><h2>Weighted least squares </h2><h3> Observations are averages</h3></hgroup><article  id="weighted-least-squares-observations-are-averages">
+</article></slide><slide class=""><hgroup><h2>Weighted least squares </h2><h3> When observations are averages</h3></hgroup><article  id="weighted-least-squares-when-observations-are-averages">
 
-<p>It’s not uncommon that the observations \(y_i\) are actually averages of several pieces of raw data</p>
+<p>Often the observations \(y_i\) are averages of several pieces of raw data</p>
 
 <p>In that case</p>
 
 <p>\[
-\text{Var}(\epsilon_i) = \frac{\sigma^2}{n_i}
+\text{Var}(e_i) = \frac{\sigma^2}{n_i}
 \]</p>
 
 <p>This suggests \(w_i = n_i\)</p>
 
-</article></slide><slide class=""><hgroup><h2>Weighted least squares </h2><h3> Observations are sums</h3></hgroup><article  id="weighted-least-squares-observations-are-sums">
+</article></slide><slide class=""><hgroup><h2>Weighted least squares </h2><h3> When observations are sums</h3></hgroup><article  id="weighted-least-squares-when-observations-are-sums">
 
 <p>Similarly, the observations \(y_i\) might be sums of several pieces of raw data</p>
 
 <p>In that case</p>
 
 <p>\[
-\text{Var}(\epsilon_i) =n_i \sigma^2
+\text{Var}(e_i) =n_i \sigma^2
 \]</p>
 
 <p>This suggests \(w_i = \frac{1}{n_i}\)</p>
@@ -3719,14 +3745,14 @@ w_1 &amp; 0 &amp; 0 &amp; 0 \\
 
 </article></slide><slide class=""><hgroup><h2>Robust regression</h2></hgroup><article  id="robust-regression-1">
 
-<p>We saw in the last lecture that non-normal errors &amp; unusual observations can affect model fits</p>
+<p>We saw in the last lecture that non-normal errors &amp; unusual observations can affect model fits, such as</p>
 
 <ul>
 <li><p>heteroscedastic errors where \(\text{Var}(e_i) \propto n_i\)</p></li>
 <li><p>outliers that do not come from the data generating process</p></li>
 </ul>
 
-<p>In these case we can use so-called <em>robust regression</em></p>
+<p>In these cases we can use so-called <em>robust regression</em></p>
 
 </article></slide><slide class=""><hgroup><h2>Robust regression </h2><h3> M-estimation</h3></hgroup><article  id="robust-regression-m-estimation">
 
@@ -3736,6 +3762,8 @@ w_1 &amp; 0 &amp; 0 &amp; 0 \\
 SSE = \sum^n_{i = 1} (y_i - \boldsymbol{\beta} \mathbf{x}_i)^2
 \]</p>
 
+<p><br></p>
+
 <p>The objective function is the squared differences between the data and their estimates</p>
 
 </article></slide><slide class=""><hgroup><h2>Robust regression </h2><h3> M-estimation</h3></hgroup><article  id="robust-regression-m-estimation-1">
@@ -3743,11 +3771,9 @@ SSE = \sum^n_{i = 1} (y_i - \boldsymbol{\beta} \mathbf{x}_i)^2
 <p>An alternative is to minimize a different function</p>
 
 <p>\[
-\begin{aligned}
-SSE &amp;= \sum^n_{i = 1} (y_i - \boldsymbol{\beta} \mathbf{x}_i)^2 \\
-&amp;\Downarrow \\
-SSE &amp;= \sum^n_{i = 1} f(z)
-\end{aligned}
+SSE = \sum^n_{i = 1} (y_i - \boldsymbol{\beta} \mathbf{x}_i)^2 \\
+\Downarrow \\
+SSE = \sum^n_{i = 1} f(z)
 \]</p>
 
 </article></slide><slide class=""><hgroup><h2>Robust regression </h2><h3> M-estimation</h3></hgroup><article  id="robust-regression-m-estimation-2">
@@ -3773,7 +3799,7 @@ c \left| z \right| - \frac{c^2}{2} &amp; \text{otherwise}
 \right.
 \]</p>
 
-<p>and \(c = \hat{\sigma} \propto \text{Median}(\left| \hat{\epsilon} \right|)\)</p>
+<p>and \(c = \hat{\sigma} \propto \text{Median}(\left| e \right|)\)</p>
 
 </article></slide><slide class=""><hgroup><h2>Robust regression </h2><h3> M-estimation via Huber’s method</h3></hgroup><article  id="robust-regression-m-estimation-via-hubers-method">
 
@@ -3781,33 +3807,39 @@ c \left| z \right| - \frac{c^2}{2} &amp; \text{otherwise}
 
 </article></slide><slide class=""><hgroup><h2>Robust regression </h2><h3> M-estimation via Huber’s method</h3></hgroup><article  id="robust-regression-m-estimation-via-hubers-method-1">
 
-<p>Note the following:</p>
+<p>Note the following about M-estimation:</p>
 
 <ul>
-<li><p>M-estimation does not address points with large leverage</p></li>
+<li><p>it does not address points with large leverage</p></li>
 <li><p>it says nothing about which predictors to include</p></li>
 <li><p>it says nothing about which transformations to make</p></li>
 </ul>
 
 </article></slide><slide class=""><hgroup><h2>Robust regression </h2><h3> Least trimmed squares</h3></hgroup><article  id="robust-regression-least-trimmed-squares">
 
-<p>M-estimation will fail if the large errors are numerous and extreme in value</p>
+<p>Also note:</p>
 
-<p><em>Least trimmed squares</em> (LTS) is a resistant regression method that deals well with this situation</p>
+<ul>
+<li>M-estimation will fail if the large errors are numerous and extreme in value</li>
+</ul>
+
+<ul class = 'build'>
+<li><em>Least trimmed squares</em> (LTS) is a resistant regression method that deals well with this situation</li>
+</ul>
 
 </article></slide><slide class=""><hgroup><h2>Robust regression </h2><h3> Least trimmed squares</h3></hgroup><article  id="robust-regression-least-trimmed-squares-1">
 
 <p>LTS minimizes the sum of squares of the \(q\) smallest residuals</p>
 
 <p>\[
-SSE = \sum^n_{i = 1} e^2_{i} ~ \rightarrow ~ SSE_q = \sum^q_{i = 1} e^2_{(i)}
+SSE = \sum^n_{i = 1} e^2_{i} ~ \rightarrow ~ SSE_q = \sum^q_{i = 1} e^2_{s(i)}
 \]</p>
 
-<p>and \((i)\) indicates the residuals are sorted in ascending order</p>
+<p>where \(s(i)\) indicates the residuals are sorted in ascending order</p>
 
-<p>The default is \(q = \lfloor n/2 \rfloor + \lfloor (k + 1) / 2 \rfloor\)</p>
+<p><br></p>
 
-<p>where \(\lfloor \cdot \rfloor\) is the floor function</p>
+<p>The default is \(q = \lfloor n/2 \rfloor + \lfloor (k + 1) / 2 \rfloor\) where \(\lfloor \cdot \rfloor\) is the <a href='https://en.wikipedia.org/wiki/Floor_and_ceiling_functions' title=''>floor function</a></p>
 
 </article></slide><slide class=""><hgroup><h2>Robust regression </h2><h3> Least trimmed squares</h3></hgroup><article  id="robust-regression-least-trimmed-squares-2">
 

@@ -7,6 +7,8 @@ output:
   ioslides_presentation:
     wide: true
     css: ../lecture_slides.css
+header-includes:
+  - \usepackage{amsmath,amssymb,xcolor}
 ---
 
 ```{r setup, include=FALSE}
@@ -22,7 +24,7 @@ knitr::opts_chunk$set(echo = FALSE)
 > - Understand how robust methods can be used when the errors are non-normal or when we have influential observations
 
 
-## Concerns re: model assumptions
+## Concerns about model assumptions
 
 1. Adequacy of the model
 
@@ -81,10 +83,10 @@ $$
 \mu_n 
 \end{bmatrix},
 \begin{bmatrix}
-\sigma^2_1 & \gamma_{12} & \cdots & \gamma_{1n} \\
-\gamma_{21} & \sigma^2_2 & \cdots & \gamma_{2n} \\
+\sigma^2_1 & \gamma_{1,2} & \cdots & \gamma_{1,n} \\
+\gamma_{2,1} & \sigma^2_2 & \cdots & \gamma_{2n} \\
 \vdots & \vdots & \ddots & \vdots \\
-\gamma_{n1} & \gamma_{n2} & \cdots & \sigma^2_n 
+\gamma_{n,1} & \gamma_{n2} & \cdots & \sigma^2_n 
 \end{bmatrix} 
 \right)
 $$
@@ -94,19 +96,40 @@ $$
 
 More specifically for $\boldsymbol{\Sigma}$
 
-* the diagonal contains the variances $\sigma^2_i$
+* the diagonal contains the variances $\color{blue}{\sigma^2_i}$
 
-* the off-diagonals are the covariances $\gamma_{ij} = \gamma_{ji}$
+* the off-diagonals are the covariances $\gamma_{i,j}$
 
 $$
 \boldsymbol{\Sigma} =
 \begin{bmatrix}
-\sigma^2_1 & \gamma_{12} & \cdots & \gamma_{1n} \\
-\gamma_{21} & \sigma^2_2 & \cdots & \gamma_{2n} \\
+\color{blue}{\sigma^2_1} & \gamma_{1,2} & \cdots & \gamma_{1,n} \\
+\gamma_{2,1} & \color{blue}{\sigma^2_2} & \cdots & \gamma_{2,n} \\
 \vdots & \vdots & \ddots & \vdots \\
-\gamma_{n1} & \gamma_{n2} & \cdots & \sigma^2_n 
+\gamma_{n,1} & \gamma_{n,2} & \cdots & \color{blue}{\sigma^2_n} 
 \end{bmatrix}
 $$
+
+
+## An aside on multivariate normals
+
+More specifically for $\boldsymbol{\Sigma}$
+
+* the diagonal contains the variances $\sigma^2_i$
+
+* the off-diagonals are the covariances $\gamma_{i,j}$
+
+$$
+\boldsymbol{\Sigma} =
+\begin{bmatrix}
+\sigma^2_1 & \color{purple}{\gamma_{1,2}} & \cdots & \color{red}{\gamma_{1,n}} \\
+\color{purple}{\gamma_{2,1}} & \sigma^2_2 & \cdots & \color{teal}{\gamma_{2,n}} \\
+\vdots & \vdots & \ddots & \vdots \\
+\color{red}{\gamma_{n,1}} & \color{teal}{\gamma_{n,2}} & \cdots & \sigma^2_n 
+\end{bmatrix}
+$$
+
+Also note that $\boldsymbol{\Sigma}$ is _symmetric_ such that $\gamma_{i,j} = \gamma_{j,i}$
 
 
 ## An aside on multivariate normals
@@ -156,10 +179,10 @@ In cases where the variances are not equal or the covariances are not zero, we c
 $$
 \boldsymbol{\Sigma} =
 \begin{bmatrix}
-\sigma^2_1 & \gamma_{12} & \cdots & \gamma_{1n} \\
-\gamma_{21} & \sigma^2_2 & \cdots & \gamma_{2n} \\
+\sigma^2_1 & \gamma_{1,2} & \cdots & \gamma_{1,n} \\
+\gamma_{2,1} & \sigma^2_2 & \cdots & \gamma_{2n} \\
 \vdots & \vdots & \ddots & \vdots \\
-\gamma_{n1} & \gamma_{n2} & \cdots & \sigma^2_n 
+\gamma_{n,1} & \gamma_{n2} & \cdots & \sigma^2_n 
 \end{bmatrix}
 $$
 
@@ -171,10 +194,10 @@ Let's begin by expressing $\Sigma$ as a product of $\sigma^2$ and a matrix $\mat
 $$
 \boldsymbol{\Sigma} =
 \sigma^2 \begin{bmatrix}
-c_{11} & c_{12} & \cdots & c_{1n} \\
-c_{21} & c_{22} & \cdots & c_{21} \\
+c_{1,1} & c_{1,2} & \cdots & c_{1,n} \\
+c_{2,1} & c_{2,2} & \cdots & c_{2,1} \\
 \vdots & \vdots & \ddots & \vdots \\
-c_{n1} & c_{n2} & \cdots & c_{nn} 
+c_{n,1} & c_{n,2} & \cdots & c_{n,n} 
 \end{bmatrix}
 $$
 
@@ -194,10 +217,10 @@ where $\mathbf{S}$ is a *lower triangular* matrix
 $$
 \mathbf{S} =
 \begin{bmatrix}
-s_{11} & 0 & \cdots & 0 \\
-s_{21} & s_{22} & \cdots & 0 \\
+s_{1,1} & 0 & \cdots & 0 \\
+s_{2,1} & s_{2,2} & \cdots & 0 \\
 \vdots & \vdots & \ddots & \vdots \\
-s_{n1} & s_{n2} & \cdots & s_{nn} 
+s_{n,1} & s_{n,2} & \cdots & s_{n,n} 
 \end{bmatrix}
 $$
 
@@ -326,7 +349,7 @@ $$
 
 <br>
 
-To do this in **R** we need additional packages not included with the base installation (eg, **nlme**)
+To do this in **R** we need additional packages not included with the base installation (eg, **{nlme}**)
 
 
 ## Weighted least squares
@@ -357,6 +380,8 @@ $$
 0 & 0 & \cdots & \sigma^2_n 
 \end{bmatrix}
 $$
+
+<br>
 
 In these cases we can use a subset of generalized least squares called *weighted least squares*
 
@@ -408,11 +433,12 @@ $$
 
 ## Weighted least squares
 
-From this we can define a weights matrix$\mathbf{W}$ as
+From this we can define a weights matrix $\mathbf{W}$ as
 
 $$
 \begin{aligned}
 \mathbf{W} &= \mathbf{S} \mathbf{S}^{\top} \\
+~ \\
  &=
 \begin{bmatrix}
 w_1 & 0 & 0 & 0 \\
@@ -423,43 +449,45 @@ w_1 & 0 & 0 & 0 \\
 \end{aligned}
 $$
 
+<br>
+
 How do we choose the weights?
 
 
-## Weighted least squares | Errors proportional to the predictor
+## Weighted least squares | When errors are proportional to the predictor
 
-In general, the weights $w_i$ should reflect differences in the variance of the errors $\epsilon_i$
+The weights $w_i$ should reflect differences in the variance of the errors $e_i$
 
-In many ecological applications, we find that the variance is proportional to a predictor
+In many ecological applications, the variance is proportional to some predictor $x$
 
 $$
-\text{Var}(\epsilon_i) = x_i \sigma^2
+\text{Var}(e_i) = x_i \sigma^2
 $$
 
 This suggests $w_i = \frac{1}{x_i}$
 
 
-## Weighted least squares | Observations are averages
+## Weighted least squares | When observations are averages
 
-It's not uncommon that the observations $y_i$ are actually averages of several pieces of raw data
+Often the observations $y_i$ are averages of several pieces of raw data
 
 In that case
 
 $$
-\text{Var}(\epsilon_i) = \frac{\sigma^2}{n_i}
+\text{Var}(e_i) = \frac{\sigma^2}{n_i}
 $$
 
 This suggests $w_i = n_i$
 
 
-## Weighted least squares | Observations are sums
+## Weighted least squares | When observations are sums
 
 Similarly, the observations $y_i$ might be sums of several pieces of raw data
 
 In that case
 
 $$
-\text{Var}(\epsilon_i) =n_i \sigma^2
+\text{Var}(e_i) =n_i \sigma^2
 $$
 
 This suggests $w_i = \frac{1}{n_i}$
@@ -476,13 +504,13 @@ We saw in the last lecture that non-normal errors & unusual observations can aff
 
 ## Robust regression
 
-We saw in the last lecture that non-normal errors & unusual observations can affect model fits
+We saw in the last lecture that non-normal errors & unusual observations can affect model fits, such as
 
 * heteroscedastic errors where $\text{Var}(e_i) \propto n_i$
 
 * outliers that do not come from the data generating process
 
-In these case we can use so-called *robust regression*
+In these cases we can use so-called *robust regression*
 
 
 ## Robust regression | M-estimation
@@ -493,6 +521,8 @@ $$
 SSE = \sum^n_{i = 1} (y_i - \boldsymbol{\beta} \mathbf{x}_i)^2
 $$
 
+<br>
+
 The objective function is the squared differences between the data and their estimates
 
 
@@ -501,11 +531,9 @@ The objective function is the squared differences between the data and their est
 An alternative is to minimize a different function
 
 $$
-\begin{aligned}
-SSE &= \sum^n_{i = 1} (y_i - \boldsymbol{\beta} \mathbf{x}_i)^2 \\
-&\Downarrow \\
-SSE &= \sum^n_{i = 1} f(z)
-\end{aligned}
+SSE = \sum^n_{i = 1} (y_i - \boldsymbol{\beta} \mathbf{x}_i)^2 \\
+\Downarrow \\
+SSE = \sum^n_{i = 1} f(z)
 $$
 
 
@@ -533,7 +561,7 @@ c \left| z \right| - \frac{c^2}{2} & \text{otherwise}
 \right.
 $$
 
-and $c = \hat{\sigma} \propto \text{Median}(\left| \hat{\epsilon} \right|)$
+and $c = \hat{\sigma} \propto \text{Median}(\left| e \right|)$
 
 
 ## Robust regression | M-estimation via Huber's method
@@ -555,9 +583,9 @@ text(x = c(-3,3), y = c(0.2, 0.2), expression(''*italic(c)*"|"*italic(z)*"|"*-it
 
 ## Robust regression | M-estimation via Huber's method
 
-Note the following:
+Note the following about M-estimation:
 
-* M-estimation does not address points with large leverage
+* it does not address points with large leverage
 
 * it says nothing about which predictors to include
 
@@ -566,9 +594,11 @@ Note the following:
 
 ## Robust regression | Least trimmed squares
 
-M-estimation will fail if the large errors are numerous and extreme in value
+Also note:
 
-*Least trimmed squares* (LTS) is a resistant regression method that deals well with this situation
+* M-estimation will fail if the large errors are numerous and extreme in value
+
+> - *Least trimmed squares* (LTS) is a resistant regression method that deals well with this situation
 
 
 ## Robust regression | Least trimmed squares
@@ -576,14 +606,14 @@ M-estimation will fail if the large errors are numerous and extreme in value
 LTS minimizes the sum of squares of the $q$ smallest residuals
 
 $$
-SSE = \sum^n_{i = 1} e^2_{i} ~ \rightarrow ~ SSE_q = \sum^q_{i = 1} e^2_{(i)}
+SSE = \sum^n_{i = 1} e^2_{i} ~ \rightarrow ~ SSE_q = \sum^q_{i = 1} e^2_{s(i)}
 $$
 
-and $(i)$ indicates the residuals are sorted in ascending order
+where $s(i)$ indicates the residuals are sorted in ascending order
 
-The default is $q = \lfloor n/2 \rfloor + \lfloor (k + 1) / 2 \rfloor$
+<br>
 
-where $\lfloor \cdot \rfloor$ is the floor function
+The default is $q = \lfloor n/2 \rfloor + \lfloor (k + 1) / 2 \rfloor$ where $\lfloor \cdot \rfloor$ is the [floor function](https://en.wikipedia.org/wiki/Floor_and_ceiling_functions)
 
 
 ## Robust regression | Least trimmed squares
