@@ -7,6 +7,8 @@ output:
   ioslides_presentation:
     wide: true
     css: ../lecture_slides.css
+header-includes:
+  - \usepackage{amsmath,amssymb,xcolor}
 ---
 
 ```{r setup, include=FALSE}
@@ -15,7 +17,7 @@ knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 
 ## Goals for today
 
-* Identify possible transformations of the response when your errors have unequal variance or are skewed
+* Identify possible transformations of the response variable when your errors have unequal variance or are skewed
 
 > - Understand how to use common transformations and make inference from the resulting model
 
@@ -30,23 +32,25 @@ We have made a number of assumptions about our models, which include
 
 * linear relationship(s) between the response and predictor(s)
 
+<br>
+
 What can we do when these assumptions are not met?
 
 
 ## What can you transform?
 
-It's possible to transform both sides of our models to
+It's possible to transform either or both sides of our models to
 
-* achieve constant variance $(y)$
+* achieve constant variance $\rightarrow$ transform $y$
 
-* correct for skewness $(y)$
+* correct for skewness $\rightarrow$ transform $y$
 
-* linearize the relationship $(y, x)$
+* linearize the relationship $\rightarrow$ transform $x$ and/or $y$
 
 
 ## Types of transformations
 
-The most common form is where $y' = y^\lambda$
+The most common form is where $y^* = y^\lambda$
 
 and $\lambda > 1$ (powers)
 
@@ -56,14 +60,14 @@ or $0 < \lambda < 1$ (roots)
 
 For example
 
-$\lambda = 2 \Rightarrow y' = y^2$
+$\lambda = 2 \Rightarrow y^* = y^2$
 
-$\lambda = \frac{1}{2} \Rightarrow y' = \sqrt{y}$
+$\lambda = \frac{1}{2} \Rightarrow y^* = \sqrt{y}$
 
 
 ## Types of transformations
 
-One can also use inverses where $y' = y^{-\lambda}$
+One can also use inverses where $y^* = y^{-\lambda}$
 
 and $\lambda > 1$ (powers)
 
@@ -73,19 +77,19 @@ or $0 < \lambda < 1$ (roots)
 
 For example
 
-$\lambda = 2 \Rightarrow y' = \frac{1}{y^2}$
+$\lambda = 2 \Rightarrow y^* = \frac{1}{y^2}$
 
-$\lambda = \frac{1}{2} \Rightarrow y' = \frac{1}{\sqrt{y}}$
+$\lambda = \frac{1}{2} \Rightarrow y^* = \frac{1}{\sqrt{y}}$
 
 
 ## Box-Cox transformation
 
-The Box-Cox transformation is a popular method for stabilizing the variance of errors
+The Box-Cox transformation is popular for stabilizing the variance of errors
 
 It is defined as
 
 $$
-y' = \frac{y^{\lambda} - 1}{\lambda}
+y^* = \frac{y^{\lambda} - 1}{\lambda}
 $$
 
 for all $y > 0$
@@ -101,7 +105,7 @@ $$
 we instead use
 
 $$
-y' = \left\{ 
+y^* = \left\{ 
 \begin{matrix}
 \frac{y^{\lambda} - 1}{\lambda} ~ \text{if} ~ \lambda \neq 0 \\
 \log(y) ~ \text{if} ~ \lambda = 0
@@ -112,13 +116,13 @@ $$
 
 ## Box-Cox transformation
 
-How does one choose $\lambda$?
+How does one actually _choose_ $\lambda$?
 
 By using *profile likelihoods* (which we will see in a later lecture)
 
 <br>
 
-(We'll use the `boxcox()` function in the **MASS** package)
+We'll use the `boxcox()` function from the **{MASS}** package
 
 
 ## Box-Cox transformation | An example
@@ -157,7 +161,9 @@ mtext(side = 3, line = 0.5, at = lm, substitute(hat(lambda) == lm, list(lm = lm)
 
 ## Box-Cox transformation
 
-After transformation, how do we interpret $\lambda = 0.17$?
+Okay, so how do we interpret $\lambda = 0.17$?
+
+<br>
 
 Box-Cox transformations work well, but sometimes we can do better with an approximation to $\lambda$
 
@@ -192,7 +198,7 @@ General considerations
 
 * If some $y_i$ < 0, we can add a constant to all the $y$
 
-* If the range in $y$ is small, then the Box–Cox transformation will not have much effect
+* If the range in $y$ is small, then the Box–Cox transformation has little effect
 
 Recall that linear models work well for *local* non-linear functions
 
@@ -204,10 +210,10 @@ Consider the fecundity of a fish versus its length
 ```{r sim_fecund, echo = FALSE, fig.width = 5, fig.height = 4, fig.align="center"}
 set.seed(514)
 nn <- 100
-ll <- runif(nn, 3, 8)
+ll <- runif(nn, 30, 80)
 ee <- rnorm(nn, 0, 3)
 b0 <- 5
-b1 <- 12
+b1 <- 1.2
 ff <- (b0 + b1*ll + ee)^2
 ## set plot area
 par(mai = c(1.0,1.0,0.1,0.1),
@@ -215,7 +221,7 @@ par(mai = c(1.0,1.0,0.1,0.1),
     cex = 1)
 ## plot data
 plot(ll, ff, pch = 16, xpd = NA,
-     ylab = "Number of eggs", xlab = "Length (dm)", cex.lab = 1.5)
+     ylab = "Number of eggs", xlab = "Length (cm)", cex.lab = 1.5)
 ```
 
 
@@ -232,7 +238,7 @@ par(mai = c(1.0,1.0,0.1,0.1),
     cex = 1)
 ## plot data
 plot(ll, ff, pch = 16, xpd = NA,
-     ylab = "Number of eggs", xlab = "Length (dm)", cex.lab = 1.5)
+     ylab = "Number of eggs", xlab = "Length (cm)", cex.lab = 1.5)
 abline(coef(mm))
 ```
 
@@ -255,7 +261,7 @@ abline(h = 0, lty = "dashed")
 
 ## Alternative to Box-Cox
 
-This $\hat{\lambda}$ is really close to 0.5 (ie, a square root transform)
+This $\hat{\lambda}$ is really close to 0.5 which is a square-root transform $(x^\frac{1}{2} = \sqrt{x})$
 
 ```{r boxcox_fecund, echo = FALSE, fig.width = 5, fig.height = 4, fig.align="center"}
 ## set plot area
@@ -305,7 +311,7 @@ abline(h = 0, lty = "dashed")
 
 ## Predictions from a transformed model
 
-Using `predict()` will give fits on the transformed scale
+Using `predict()` will give fitted values $(\hat{y})$ on the transformed scale
 
 ```{r ex_trans_fits, echo = TRUE}
 ## expected sqrt(fecundity) for length = 5 dm
@@ -315,7 +321,7 @@ predict(ms, data.frame(ll = 5), interval = "confidence")
 
 ## Predictions from a transformed model
 
-We need to incude the back-transformation on `predict()`
+We need to include the back-transformation on `predict()`
 
 $$
 \begin{aligned}
@@ -328,11 +334,11 @@ $$
 
 ## Back-transformed fit
 
-Here's the fit and prediction interval on the natural scale
+Here are the fitted values and prediction interval on the natural scale
 
 ```{r fecund_fit_sqrt_back, echo = FALSE, fig.width = 5, fig.height = 4, fig.align="center"}
 ## back-transformed predictions
-tp <- predict(ms, data.frame(ll = seq(30,80)/10), interval = "prediction")
+tp <- predict(ms, data.frame(ll = seq(30,80)), interval = "prediction")
 ## set plot area
 par(mai = c(1.0,1.0,0.1,0.1),
     omi = c(0, 0, 0, 0),
@@ -340,7 +346,9 @@ par(mai = c(1.0,1.0,0.1,0.1),
 ## plot data
 plot(ll, ff, pch = 16, xpd = NA,
      ylab = expression(Number~of~eggs), xlab = "Length (dm)", cex.lab = 1.5)
-matlines(seq(30,80)/10, (tp)^2, lty = c(1, 2, 2), col = c("blue", "red", "red"))
+matlines(seq(30,80), (tp)^2, 
+         lty = c(1, 2, 2), lwd = 2, 
+         col = c("blue", "red", "red"))
 ```
 
 
@@ -349,10 +357,10 @@ matlines(seq(30,80)/10, (tp)^2, lty = c(1, 2, 2), col = c("blue", "red", "red"))
 Think back to an early lecture where we transformed a nonlinear polynomial into a linear model
 
 $$
-y_i = \beta_0 + \beta_1 x_{1,i} + \beta_2 x_{2,i}^2 + \epsilon_i \\
+y_i = \beta_0 + \beta_1 x_{1,i} + \beta_2 \color{blue}{x_{2,i}^2} + e_i \\
 \Downarrow \\
-y_i = \beta_0 + \beta_1 x_{1,i} + \beta_2 z_{2,i} + \epsilon_i \\
-z_{2,i} = x_{2,i}^2
+y_i = \beta_0 + \beta_1 x_{1,i} + \beta_2 \color{blue}{z_{2,i}} + e_i \\
+\color{blue}{z_{2,i}} = \color{blue}{x_{2,i}^2}
 $$
 
 ## Transformed polynomials
@@ -368,11 +376,17 @@ Polynomials are an easy way to model nonlinearities in data, such as
 
 Many ecological observations only take positive values $(y > 0)$
 
-* length or mass or fecundity
+* length or mass
+
+* fecundity
 
 * species counts/density
 
+* concentration
+
 * latency periods for infectious diseases
+
+<br>
 
 The distributions of these data also tend to be "long-tailed"
 
@@ -416,9 +430,9 @@ hist(log(gala$Species), breaks = seq(0, 7, 0.5),
 A log-transformation is a really common way to deal with ecological data that are constrained to be positive
 
 $$
-y_i = \exp(\beta_0 + \beta_1 x_{i} + \epsilon_i) \\
+y_i = \exp(\beta_0 + \beta_1 x_{i} + e_i) \\
 \Downarrow \\
-\log(y_i) = \beta_0 + \beta_1 x_{i} + \epsilon_i
+\log(y_i) = \beta_0 + \beta_1 x_{i} + e_i
 $$
 
 
@@ -427,8 +441,10 @@ $$
 Consider allometric scaling laws in ecology of the form
 
 $$
-y_i = \alpha x_i^\beta \epsilon_i
+y_i = \alpha \cdot x_i^\beta \cdot \delta_i
 $$
+
+<br>
 
 For example, body mass as a function of length
 
@@ -438,11 +454,11 @@ For example, body mass as a function of length
 Log-log transformations are an easy way to linearize power models
 
 $$
-m_i = \alpha l_i^\beta \epsilon_i \\
+m_i = \alpha \cdot l_i^\beta \cdot \delta_i \\
 \Downarrow \\
-\log(m_i) = \log(\alpha) + \beta ~ \log(l_i) + \log(\epsilon_i) \\
+\log(m_i) = \log(\alpha) + \beta ~ \log(l_i) + \log(\delta_i) \\
 \Downarrow \\
-y_i = \alpha' + \beta x_i + \epsilon'_i
+y_i = \beta_0 + \beta_1 x_i + e_i
 $$
 
 
@@ -470,7 +486,7 @@ plot(10^(L10_length), 10^(L10_mass), pch = 16, log = "xy",
 
 > - $\log(y)$ is good for skewed data
 
-> - $\log(y + a)$ with $a$ small relative to the data is good for skewed data with some 0's
+> - $\log(y + a)$ with small $a$ is good for skewed data with some 0's
 
 > - We will see later that there are model alternatives to transformations (GLMs)
 
