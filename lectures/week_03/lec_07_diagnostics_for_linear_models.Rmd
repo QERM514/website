@@ -499,9 +499,9 @@ $\text{var}(e_i) = \sigma^2$
 
 In a regression context it becomes 
 
-$\text{var}(e_i) = \sigma^2(1 - h_{i,i})$
+$\text{var}(e_i) = \sigma^2(1 - h_i)$
 
-where $h_{i,i}$ is the leverage of observation (datum) $i$
+where $h_i$ is the leverage of observation (datum) $i$
 
 
 ## What are leverages?
@@ -520,28 +520,29 @@ h_{n,1} & h_{n,2} & \dots & \color{blue}{h_{n,n}}
 \end{bmatrix}
 $$
 
-with $\color{blue}{h_{i,i}} \leq 1$
-
-## Leverages and residual variance
-
-So given that 
-
-$\text{Var}(e_i) = \sigma^2 (1 - h_{i,i})$ and ${h_{i,i}} \leq 1$
-
-<br>
-
-What happens as $h_{i,i} \rightarrow 1$?
+with $\color{blue}{h_{i,i}} \leq 1$; we'll simply $h_{i,i}$ to be $h_i$
 
 
 ## Leverages and residual variance
 
 So given that 
 
-$\text{Var}(e_i) = \sigma^2 (1 - h_{i,i})$ and ${h_{i,i}} \leq 1$
+$\text{Var}(e_i) = \sigma^2 (1 - h_i)$ and ${h_i} \leq 1$
 
 <br>
 
-What happens as $h_{i,i} \rightarrow 1$?
+What happens as $h_i \rightarrow 1$?
+
+
+## Leverages and residual variance
+
+So given that 
+
+$\text{Var}(e_i) = \sigma^2 (1 - h_i)$ and ${h_i} \leq 1$
+
+<br>
+
+What happens as $h_i \rightarrow 1$?
 
 <br>
 
@@ -584,19 +585,19 @@ abline(m3, lty=2, col ="red")
 $\mathbf{H}$ has dimensions $n \times n$ and
 
 $$
-\text{trace}(\mathbf{H}) = \sum_{i = 1}^n h_{i,i}
+\text{trace}(\mathbf{H}) = \sum_{i = 1}^n h_i
 $$
 
-Thus, on average we should expect that $\bar{h}_{i,i} = \frac{k}{n}$
+Thus, on average we should expect that $\bar{h}_i = \frac{k}{n}$
 
 <br>
 
-Any $h_{i,i} > \frac{2 k}{n}$ deserve closer inspection
+Any $h_i > \frac{2 k}{n}$ deserve closer inspection
 
 
 ## Identifying leverage points
 
-We can easily compute the $h_{i,i}$ in **R** via the function `hatvalues()`
+We can easily compute the $h_i$ in **R** via the function `hatvalues()`
 
 ```{r ex_hat_values, echo = TRUE}
 ## leverages of points in middle plot on slide 37
@@ -673,6 +674,11 @@ abline(0, 1)
 
 One way to detect outliers is to estimate $n$ different models where we exclude one data point from each model
 
+
+## Unusual observations | Identifying outliers
+
+One way to detect outliers is to estimate $n$ different models where we exclude one data point from each model
+
 More formally we have
 
 $$
@@ -719,13 +725,17 @@ which are distributed as a $t$ distribution with $n - k - 1$ df
 
 ## Unusual observations | Identifying outliers
 
-There is an easer way to do this without fitting $n$ different models, where
+There is an easer way to do this without fitting $n$ different models
+
+Instead, we can define
 
 $$
 t_i = \frac{y_{i} - \hat{y}_{(i)}}{ \hat{\sigma}_{(i)} \sqrt{ 1 - h_i } } = e_i \sqrt{ \frac{n - k - 1}{n - k - e_i^2} }
 $$
 
-and $r_i$ is the residual for the $i$<sup>th</sup> case based on a model that includes *all* of the data
+<br>
+
+where $e_i$ is a residual based on a model that includes *all* of the data
 
 
 ## Unusual observations | Identifying outliers
@@ -783,11 +793,13 @@ $D_i$ scales the errors by their $df$ and leverage
 We can evaulate Cook's $D$ with a half-normal plot
 
 ```{r cooks_d, echo = FALSE, fig.width = 4, fig.height = 4, fig.align = "center"}
-par(mai = c(0.9,0.9,0.1,0.1), omi = c(0, 0, 0, 0), cex = 1)
+par(mai = c(1.1, 1.1, 0.1, 0.1),
+    omi = c(0, 0, 0, 0),
+    cex = 1.2)
 ## Cook's D
 cook <- cooks.distance(m2)
 ## half-normal plot
-halfnorm(cook, 2, ylab="Cook’s Distance")
+halfnorm(cook, 2, ylab = "Cook’s Distance")
 ```
 
 
