@@ -1,6 +1,6 @@
 ---
-title: "Model diagnostics and<br>problems with errors"
-author: "Mark Scheuerell"
+title: "Model diagnostics & problems with errors"
+author: "<br>Mark Scheuerell"
 date: "17 April 2026"
 output:
   html_document:
@@ -25,6 +25,8 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE)
 The models we have been discussing in class assume that the errors are *independent and identically distributed* (IID). In this lab we will explore some options for identifying problems with our errors, and taking corrective actions after we identify them.
 
 
+***
+
 # Checking error assumptions
 
 ## Constant variance
@@ -32,10 +34,10 @@ The models we have been discussing in class assume that the errors are *independ
 Let's begin with the notion of "identically distributed", which suggests no change in the variance across the model space. For example, if our errors are assumed to be normally distributed, such that
 
 $$
-\epsilon_i \sim \text{N}(0, \sigma^2) ~ \Rightarrow ~ \boldsymbol{\epsilon} \sim \text{MVN}(\mathbf{0}, \sigma^2 \mathbf{I})
+e_i \sim \text{N}(0, \sigma^2) ~ \Rightarrow ~ \mathbf{e} \sim \text{MVN}(\mathbf{0}, \sigma^2 \mathbf{I})
 $$
 
-then we expect no difference in $\sigma^2$ among any of the $\epsilon_i$.
+then we expect no difference in $\sigma^2$ among any of the $e_i$.
 
 ### Residuals versus fitted values
 
@@ -92,6 +94,7 @@ plot(fitted(m3), e3, pch = 16, las = 1,
 abline(h = 0, lty ="dashed")
 ```
 
+<br>
 
 ### Levene's test
 
@@ -114,7 +117,7 @@ where
 * $\bar{Z_{i}}$ is the mean of the $Z_{ij}$ in group $j$
 * $\bar{Z}$ is the overall mean of all the $Z_{ij}$
 
-The test statistic $W$ is approximately $F$-distributed with $k-1$ and $N-k$ degrees of freedom. 
+The test statistic $W$ is approximately $F$-distributed with $k-1$ and $n-k$ degrees of freedom. 
 
 ::: tip
 
@@ -176,9 +179,11 @@ abline(v = qnorm(c(0.1, 0.9)), lty = "dashed", col = "blue")
 abline(v = qnorm(c(0.025, 0.975)), lty = "dashed", col = "red")
 ```
 
+<br>
+
 ### Heavy-tailed distribution
 
-In contrast, here are the quantiles for a heavy-tailed (leptokurtic) distribution.
+In contrast, here are the quantiles for a heavy-tailed (leptokurtic) distribution with the normal distribution above shown in gray for comparison.
 
 ```{r QQ_theory_lepto, echo = TRUE, fig.width = 6, fig.height = 5, fig.align="center"}
 ## set plot area
@@ -198,9 +203,11 @@ abline(v = qcauchy(c(0.1, 0.9)), lty = "dashed", col = "blue")
 abline(v = qcauchy(c(0.025, 0.975)), lty = "dashed", col = "red")
 ```
 
+<br>
+
 ### Short-tailed distribution
 
-Here is a short-tailed (platykurtic) distribution. Notice that I made up a pdf based on a [Butterworth function](https://en.wikipedia.org/wiki/Butterworth_filter).
+Here is a short-tailed (platykurtic) distribution with the normal distribution above shown in gray for comparison. Notice that I made up a pdf based on a [Butterworth function](https://en.wikipedia.org/wiki/Butterworth_filter).
 
 ```{r QQ_theory_platy, echo = TRUE, fig.width = 6, fig.height = 5, fig.align="center"}
 ## set plot area
@@ -232,9 +239,11 @@ abline(v = qb[c(2,6)], lty = "dashed", col = "blue")
 abline(v = qb[c(1,7)], lty = "dashed", col = "red")
 ```
 
+<br>
+
 ::: tip
 
-Here is a comparisons of the $Q$-$Q$ plots for these three examples via `qqnorm(x)`.
+Compare the $Q$-$Q$ plots for these three examples via `qqnorm(x)`.
 
 :::
 
@@ -336,9 +345,11 @@ plot(ee[1:(length(ee)-1)], ee[2:length(ee)],
      main = "")
 ```
 
-::: tip
+<br>
 
-We can estimate the *autocorrelation function* in **R** with the `acf()` function.
+::: task
+
+Estimate the *autocorrelation function* of the model residuals with the `acf()` function.
 
 :::
 
@@ -359,15 +370,15 @@ acf(ee,
 This suggests we should instead use a model along the lines of
 
 $$
-y_t = \mathbf{X}_t \boldsymbol{\beta} + \epsilon_t  \\
-\epsilon_t \sim \text{N}(\phi \epsilon_{t-1}, \sigma^2).
+y_t = \mathbf{X}_t \boldsymbol{\beta} + e_t  \\
+e_t \sim \text{N}(\phi e_{t-1}, \sigma^2).
 $$
 
 :::
 
 ::: note
 
-We cannot fit this model using the base function `lm()` in **R**, but we can use the `gls()` function in the [**nlme** package](https://cran.r-project.org/web/packages/nlme/index.html).
+We cannot fit this model using the base function `lm()` in **R**, but we can use the `gls()` function in the [**{nlme}** package](https://cran.r-project.org/web/packages/nlme/index.html).
 
 :::
 
@@ -399,6 +410,8 @@ We can get the 95% confidence intervals around the regression and AR(1) paramete
 ```{r confint_AR1}
 intervals(glmod)
 ```
+
+***
 
 # Unusual observations
 
@@ -463,8 +476,8 @@ Recall that we can use the "hat matrix" $(\mathbf{H})$ to project the $n$-dimens
 As a reminder, for our linear model given by
 
 $$
-\mathbf{y} = \mathbf{X} \boldsymbol{\beta} + \boldsymbol{\epsilon}  \\
-\boldsymbol{\epsilon} \sim \text{MVN}(\mathbf{0}, \sigma^2 \mathbf{I})
+\mathbf{y} = \mathbf{X} \boldsymbol{\beta} + \mathbf{e}  \\
+\mathbf{e} \sim \text{MVN}(\mathbf{0}, \sigma^2 \mathbf{I})
 $$
 
 we have
@@ -482,7 +495,7 @@ The values along the diagonal of $\mathbf{H}$ are known as the *leverages* (wher
 
 $$
 \begin{aligned}
-\boldsymbol{\hat{\epsilon}} &= \mathbf{e} \\
+\mathbf{\hat{e}} &= \mathbf{e} \\
   &= \mathbf{y} - \mathbf{\hat{y}} \\
   &= \mathbf{y} - \mathbf{H} \mathbf{y} \\
   &= \mathbf{y} (\mathbf{I} - \mathbf{H}).
@@ -493,7 +506,7 @@ From this it follows that
 
 $$
 \begin{aligned}
-\text{Var}(\boldsymbol{\hat{\epsilon}}) &= \text{Var}(\mathbf{e}) \\
+\text{Var}(\mathbf{\hat{e}}) &= \text{Var}(\mathbf{e}) \\
   &= \text{Var}(\mathbf{y} (\mathbf{I} - \mathbf{H})) \\
   &= (\mathbf{I} - \mathbf{H}) \text{Var}(\mathbf{y} ) (\mathbf{I} - \mathbf{H})^{\top} \\
   &= \sigma^2 (\mathbf{I} - \mathbf{H})^2 \\
@@ -504,20 +517,20 @@ $$
 and therefore the variance of an individual residual is 
 
 $$
-\text{Var}(\widehat{\epsilon}_{i}) = \sigma^2 (1 - h_i).
+\text{Var}(\widehat{e}_{i}) = \sigma^2 (1 - h_i).
 $$
 
-From this relationship we can see that large $h_i$ lead to small variances of $\hat{\epsilon}_i$ & hence $\hat{y}_i$ tends to $y_i$. The hat matrix $\mathbf{H}$ has dimensions $n \times n$ and
+From this relationship we can see that large $h_i$ lead to small variances of $\hat{e}_i$ & hence $\hat{y}_i$ tends to $y_i$. The hat matrix $\mathbf{H}$ has dimensions $n \times n$ and
 
 $$
 \text{trace}(\mathbf{H}) = \sum_{i = 1}^n h_i = k
 $$
 
-Thus, on average we should expect that the average leverage value is $\bar{h}_i = \frac{k}{n}$. Any $h_i > 2 \frac{k}{n}$ deserve closer inspection.
+Thus, on average we should expect that the average leverage value is $\bar{h}_i = \frac{k}{n}$. Any $h_i > \frac{2 k}{n}$ deserve closer inspection.
 
-::: tip
+::: task
 
-We can easily compute the $h_i$ in **R** via the function `hatvalues()` as shown here.
+Compute the $h_i$ in **R** via the function `hatvalues()`.
 
 :::
 
@@ -576,6 +589,8 @@ abline(h = Eh, lty = "dashed")
 ## half-normal plot of the leverages (right)
 halfnorm(hv)
 ```
+
+<br>
 
 ## Identifying outliers
 
@@ -643,6 +658,8 @@ halfnorm(cook, nlab = 2, ylab = "Cook’s Distance")
 
 <br>
 
+***
+
 # Problems with errors
 
 The models we have been using assume that the errors are independent and identically distributed (IID). Let's explore some of the options for dealing with situations where those assumptions may be violated.
@@ -707,7 +724,7 @@ c \left| z \right| - \frac{c^2}{2} & \text{otherwise}
 \right.
 $$
 
-and $c = \widehat{\sigma} \propto \text{Median}(\left| \widehat{\epsilon} \right|)$.
+and $c = \widehat{\sigma} \propto \text{Median}(\left| \widehat{e} \right|)$.
 
 As an example, let's return to the plant data from the Galapagos Archipelago that we used last week in lab. 
 
