@@ -34,22 +34,22 @@ markdown <- list(
 linear_models <- list(
   title = "Fitting linear models",
   topics = c("Fitting linear models"),
-  pdf = "homework/week_02/hw_02_fitting_lm.pdf",
-  rmd = "homework/week_02/hw_02_fitting_lm.Rmd",
+  pdf = "homework/hw_1/hw_01_fitting_lm.pdf",
+  rmd = "homework/hw_1/hw_01_fitting_lm.Rmd",
   html = "",
-  data = "homework/week_02/L_Washington_plankton.csv",
-  key = "" # "homework/week_02/hw_02_fitting_lm_key.pdf"
+  data = "homework/hw_1/L_Washington_plankton.csv",
+  key = "" # "homework/hw_1/hw_02_fitting_lm_key.pdf"
 )
 
 ## 3 diagnostics
 diagnostics <- list(
   title = "Checking model diagnostics",
   topics = c("Checking model diagnostics"),
-  pdf = "", # "homework/week_03/hw_03_diagnostics.pdf",
-  rmd = "", # "homework/week_03/hw_03_diagnostics.Rmd",
+  pdf = "", # "homework/hw_2/hw_03_diagnostics.pdf",
+  rmd = "", # "homework/hw_2/hw_03_diagnostics.Rmd",
   html = "",
-  data = "", # "homework/week_03/usfws_bull_trout.csv",
-  key = "" # "homework/week_03/hw_03_diagnostics_key.pdf"
+  data = "", # "homework/hw_2/usfws_bull_trout.csv",
+  key = "" # "homework/hw_2/hw_03_diagnostics_key.pdf"
 )
 
 ## 4 pvalues
@@ -78,22 +78,22 @@ model_selection <- list(
 mixed_models <- list(
   title = "Fitting mixed models",
   topics = "Fitting mixed models",
-  pdf = "", # "homework/week_06/hw_06_mixed_models.pdf",
-  rmd = "", # "homework/week_06/hw_06_mixed_models.Rmd",
+  pdf = "", # "homework/hw_3/hw_06_mixed_models.pdf",
+  rmd = "", # "homework/hw_3/hw_06_mixed_models.Rmd",
   html = "",
-  data = "", # "homework/week_06/ps_chinook.csv",
-  key = "" # "homework/week_06/hw_06_mixed_models_key.pdf"
+  data = "", # "homework/hw_3/ps_chinook.csv",
+  key = "" # "homework/hw_3/hw_06_mixed_models_key.pdf"
 )
 
 ## 7 logistic regr
 logistic_regr <- list(
   title = "Fitting logistic regression models",
   topics = "Fitting logistic regression models",
-  pdf = "", # "homework/week_07/hw_07_logistic_regr.pdf",
-  rmd = "", # "homework/week_07/hw_07_logistic_regr.Rmd",
+  pdf = "", # "homework/hw_4/hw_07_logistic_regr.pdf",
+  rmd = "", # "homework/hw_4/hw_07_logistic_regr.Rmd",
   html = "",
-  data = "", # "homework/week_07/srss_chin_sar.csv",
-  key = "" # "homework/week_07/hw_07_logistic_regr_key.pdf"
+  data = "", # "homework/hw_4/srss_chin_sar.csv",
+  key = "" # "homework/hw_4/hw_07_logistic_regr_key.pdf"
 )
 
 ## 8 count models
