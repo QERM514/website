@@ -44,7 +44,7 @@ then we expect no difference in $\sigma^2$ among any of the $e_i$.
 To check this assumption, we can plot our estimates of the residuals $e_i = y- \hat{y}$ against our fitted values $\hat{y}_i$ and look for any patterns. Here are three examples of simple linear regression models fit to to three simulated data sets. The first is linear, but the other two exhibit some classical problems.
 
 ```{r fit_nonconstant_variance, echo = TRUE}
-set.seed(514)
+set.seed(666)
 ## sample size
 nn <- 40
 ## set x & e
@@ -144,6 +144,7 @@ Repeat the test for a set of residuals with clear heteroscedasticity as in the `
 
 ```{r levene_bad, echo = TRUE}
 ## split residuals (e2) into 2 groups
+yh <- fitted(m2)
 g1 <- e2[yh <= median(yh)]
 g2 <- e2[yh > median(yh)]
 ## Levene's test
