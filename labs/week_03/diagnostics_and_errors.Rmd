@@ -389,7 +389,7 @@ Specifically, we specify the `correlation` argument using the function `corAR1(v
 ## load nlme pkg
 require(nlme)
 ## fit model with AR(1) errors
-glmod <- gls(nhtemp ~ wusa,
+glmod <- gls(wusa ~ nhtemp,
              correlation = corAR1(form = ~ year),
              data = na.omit(globwarm))
 ## examine parameters
@@ -398,7 +398,7 @@ summary(glmod)
 
 ::: note
 
-We can see that the AR(1) coefficient $\phi$ is ~0.75, which is rather high. 
+We can see that the AR(1) coefficient $\phi$ is ~0.99, which is very high. 
 
 :::
 
@@ -408,7 +408,8 @@ We can get the 95% confidence intervals around the regression and AR(1) paramete
 
 :::
 
-```{r confint_AR1}
+```{r confint_AR1, eval = FALSE}
+## this won't work bc the estimate var-cov matrix is not positive-definite
 intervals(glmod)
 ```
 
