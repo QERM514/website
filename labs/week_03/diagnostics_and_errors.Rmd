@@ -779,7 +779,7 @@ Four of the islands have been discounted in the estimation procedure.
 
 :::
 
-### Trimmed least squares
+### Least trimmed squares
 
 M-estimation will fail if the large errors are numerous and extreme in value. If this is the case, then we can use *least trimmed squares* (LTS) as a resistant regression method that deals well with this situation. LTS minimizes the sum of squares of the $q$ smallest residuals, such that
 
@@ -829,8 +829,10 @@ for(i in 1:nb) {
   beta_est[i,] <- coef(beta_star)
 }
 ## extract 2.5% and 97.5% values (with the median)
-CI95 <- apply(beta_est, 2, quantile, c(0.025, 0.5, 0.975))
+CI95 <- cbind(sort(beta_est[,1])[c(25, 500, 975)],
+              sort(beta_est[,2])[c(25, 500, 975)])
 colnames(CI95) <- c("Intercept", "Area")
+rownames(CI95) <- c("lower 95%", "median", "upper 95%")
 t(round(CI95, 2))
 ```
 
