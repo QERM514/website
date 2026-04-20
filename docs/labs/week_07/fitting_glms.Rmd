@@ -1,6 +1,6 @@
 ---
 title: "Working with logistic regression models"
-author: "Mark Scheuerell"
+author: "<br>Mark Scheuerell"
 date: "15 May 2026"
 output:
   html_document:

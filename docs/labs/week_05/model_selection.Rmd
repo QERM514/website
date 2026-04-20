@@ -1,6 +1,6 @@
 ---
 title: "Model selection and multi-model inference"
-author: "Mark Scheuerell"
+author: "<br>Mark Scheuerell"
 date: "1 May 2026"
 output:
   html_document:

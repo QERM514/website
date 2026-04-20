@@ -2,7 +2,7 @@
 title: "Data transformations"
 subtitle: "Analysis of Ecological and Environmental Data<br>QERM 514"
 author: "Mark Scheuerell"
-date: "17 April 2026"
+date: "20 April 2026"
 output:
   ioslides_presentation:
     wide: true
