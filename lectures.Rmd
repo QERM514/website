@@ -34,12 +34,12 @@ week_lecs$L4 <- linear_models_2
 week_lecs$L5 <- inference_1
 week_lecs$L6 <- inference_2
 ## week 3
-week_lecs$L7 <- diagnostics
-week_lecs$L8 <- non_IID_errors
-week_lecs$L9 <- transformations
+week_lecs$L7 <- diagnostics_1
+week_lecs$L8 <- diagnostics_2
+week_lecs$L9 <- non_IID_errors
 ## week 4
-week_lecs$L10 <- design_matrices_1
-week_lecs$L11 <- design_matrices_2
+week_lecs$L10 <- transformations
+week_lecs$L11 <- design_matrices_1
 week_lecs$L12 <- max_likelihood
 ## week 5
 week_lecs$L13 <- model_selection_1

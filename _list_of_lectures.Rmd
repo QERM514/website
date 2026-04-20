@@ -70,9 +70,18 @@ inference_2 <- list(
   zoom = ""
 )
 
-diagnostics <- list(
+diagnostics_1 <- list(
   title = "Model diagnostics",
   topics = c("<b>Model diagnostics</b>", "Assumptions about errors", "Leverage", "Outliers"),
+  rmd = c("lectures/week_03/lec_07_diagnostics_for_linear_models.Rmd"),
+  html = c("lectures/week_03/lec_07_diagnostics_for_linear_models.html"),
+  background = c("[Farraway (2015) Chap 6](references/Faraway_2015_Linear_models_with_R.pdf)"),
+  zoom = ""
+)
+
+diagnostics_2 <- list(
+  title = "Model diagnostics",
+  topics = c("<b>Model diagnostics</b>", "Assumptions about errors", "Unusual observations", "Influential observations"),
   rmd = c("lectures/week_03/lec_07_diagnostics_for_linear_models.Rmd"),
   html = c("lectures/week_03/lec_07_diagnostics_for_linear_models.html"),
   background = c("[Farraway (2015) Chap 6](references/Faraway_2015_Linear_models_with_R.pdf)"),
@@ -163,8 +172,8 @@ mixed_models_1 <- list(
   title = c("Mixed effects models", "<br><b>Project plan due</b>"),
   topics = c("<b>Mixed effects models</b>", "Fixed vs Random effects", "Shrinkage",
              "Costs/benefits"),
-  rmd = "lectures/week_05/lec_16_intro_mixed_effects.Rmd",
-  html = "lectures/week_05/lec_16_intro_mixed_effects.html",
+  rmd = "lectures/week_06/lec_16_intro_mixed_effects.Rmd",
+  html = "lectures/week_06/lec_16_intro_mixed_effects.html",
   background = c("[Freeman's visualization](http://mfviz.com/hierarchical-models/)",
                  "[Harrison et al (2018)](references/Harrison_2018_intro_mixed_models.pdf)",
                  "[Zuur et al (2009) Chap 5](references/Zuur_2009_mixed_effects_models_in_R.pdf)"),
