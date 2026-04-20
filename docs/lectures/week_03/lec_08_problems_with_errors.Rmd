@@ -19,7 +19,7 @@ knitr::opts_chunk$set(echo = FALSE)
 
 * Understand how generalized least squares can be used when the errors are correlated
 
-> - Understand how weighted least squares can be used when the errors have nonconstant variance
+> - Understand how weighted least squares can be used when the errors have non-constant variance
 
 > - Understand how robust methods can be used when the errors are non-normal or when we have influential observations
 
@@ -241,7 +241,7 @@ CC
 ## Generalized least squares {.smaller}
 
 ```{r chol_demo_2, echo = TRUE}
-## Choleshky decomposition; `chol()` returns t(S)
+## Cholesky decomposition; `chol()` returns t(S)
 SS <- t(chol(CC))
 round(SS, 2)
 ## reassemble Sigma
@@ -320,7 +320,7 @@ $$
 
 ## Generalized least squares
 
-This all looks great, but typcially we do not know $\mathbf{C}$
+This all looks great, but typically we do not know $\mathbf{C}$
 
 Let's think about situations where the $e_i$ are not independent
 
@@ -553,12 +553,10 @@ Another possibility is *Huber's method* where
 $$
 SSE = \sum^n_{i = 1} f(z) \\
 ~ \\
-f(z) = \left\{ 
-\begin{matrix}
-\frac{z^2}{2} & \text{if} ~ \left| z \right| \leq c \\
-c \left| z \right| - \frac{c^2}{2} & \text{otherwise}
-\end{matrix}
-\right.
+f(z) = \begin{cases} 
+\frac{z^2}{2} & \text{if} \left| z \right| \leq c \\
+c \left| z \right| - \frac{c^2}{2} & \text{otherwise} 
+\end{cases}
 $$
 
 and $c = \hat{\sigma} \propto \text{Median}(\left| e \right|)$

@@ -724,7 +724,7 @@ which are distributed as a $t$ distribution with $n - k - 1$ df
 
 ## Unusual observations | Identifying outliers
 
-There is an easer way to do this without fitting $n$ different models
+There is an easier way to do this without fitting $n$ different models
 
 Instead, we can define
 
@@ -789,7 +789,7 @@ $D_i$ scales the errors by their $df$ and leverage
 
 ## Unusual observations
 
-We can evaulate Cook's $D$ with a half-normal plot
+We can evaluate Cook's $D$ with a half-normal plot
 
 ```{r cooks_d, echo = FALSE, fig.width = 4, fig.height = 4, fig.align = "center"}
 par(mai = c(1.1, 1.1, 0.1, 0.1),
