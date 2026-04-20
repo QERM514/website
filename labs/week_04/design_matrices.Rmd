@@ -1,6 +1,6 @@
 ---
 title: "Creating design matrices"
-author: "Mark Scheuerell"
+author: "<br>Mark Scheuerell"
 date: "24 April 2026"
 output:
   html_document:

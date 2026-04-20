@@ -1,6 +1,6 @@
 ---
 title: "Working with generalized linear mixed models"
-author: "Mark Scheuerell"
+author: "<br>Mark Scheuerell"
 date: "29 May 2026"
 output:
   html_document:
