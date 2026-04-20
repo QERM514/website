@@ -3275,7 +3275,7 @@ background-color: white;
 </ul>
 
 <ul class = 'build'>
-<li>Understand how weighted least squares can be used when the errors have nonconstant variance</li>
+<li>Understand how weighted least squares can be used when the errors have non-constant variance</li>
 </ul>
 
 <ul class = 'build'>
@@ -3487,7 +3487,7 @@ CC</pre>
 
 </article></slide><slide class=""><hgroup><h2>Generalized least squares</h2></hgroup><article  id="generalized-least-squares-5" class="smaller">
 
-<pre class = 'prettyprint lang-r'>## Choleshky decomposition; `chol()` returns t(S)
+<pre class = 'prettyprint lang-r'>## Cholesky decomposition; `chol()` returns t(S)
 SS &lt;- t(chol(CC))
 round(SS, 2)</pre>
 
@@ -3570,7 +3570,7 @@ SS %*% t(SS)</pre>
 
 </article></slide><slide class=""><hgroup><h2>Generalized least squares</h2></hgroup><article  id="generalized-least-squares-10">
 
-<p>This all looks great, but typcially we do not know \(\mathbf{C}\)</p>
+<p>This all looks great, but typically we do not know \(\mathbf{C}\)</p>
 
 <p>Let’s think about situations where the \(e_i\) are not independent</p>
 
@@ -3791,12 +3791,10 @@ SSE = \sum^n_{i = 1} \left| y_i - \boldsymbol{\beta} \mathbf{x}_i \right| \\
 <p>\[
 SSE = \sum^n_{i = 1} f(z) \\
 ~ \\
-f(z) = \left\{ 
-\begin{matrix}
-\frac{z^2}{2} &amp; \text{if} ~ \left| z \right| \leq c \\
-c \left| z \right| - \frac{c^2}{2} &amp; \text{otherwise}
-\end{matrix}
-\right.
+f(z) = \begin{cases} 
+\frac{z^2}{2} &amp; \text{if} \left| z \right| \leq c \\
+c \left| z \right| - \frac{c^2}{2} &amp; \text{otherwise} 
+\end{cases}
 \]</p>
 
 <p>and \(c = \hat{\sigma} \propto \text{Median}(\left| e \right|)\)</p>
