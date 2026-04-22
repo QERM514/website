@@ -6,7 +6,7 @@ date: "22 April 2026"
 output:
   ioslides_presentation:
     wide: true
-    css: lecture_slides.css
+    css: ../lecture_slides.css
 ---
 
 ```{r setup, include=FALSE}
@@ -58,7 +58,36 @@ e_1 \\ e_2 \\ \vdots \\ e_n
 \end{bmatrix}
 $$
 
-The columns in $\mathbf{X}$ define the *design* of the analysis
+
+## Models in matrix form
+
+Let's write out this model in more detail
+
+$$
+\mathbf{y} = \mathbf{X} \boldsymbol{\beta} + \mathbf{e} \\
+\Downarrow \\
+\begin{bmatrix}
+y_1 \\ y_2 \\ \vdots \\ y_n
+\end{bmatrix}
+= 
+\begin{bmatrix}
+1 & x_{1,1} & \cdots & x_{n,1} \\
+1 & x_{1,2} & \cdots & x_{n,2} \\
+\vdots & \vdots & \ddots & \vdots \\
+1 & x_{1,n} & \cdots & x_{n,n} 
+\end{bmatrix}
+\begin{bmatrix}
+\beta_0 \\ \beta_1 \\ \vdots \\ \beta_n
+\end{bmatrix}
++
+\begin{bmatrix}
+e_1 \\ e_2 \\ \vdots \\ e_n
+\end{bmatrix}
+$$
+
+<br>
+
+We say the columns in $\mathbf{X}$ define the *design* of the analysis
 
 
 ## Ordinary least squares
@@ -108,7 +137,7 @@ Both $\rightarrow$ ANalysis of COVAriance (ANCOVA)
 
 ## Defining models with $\mathbf{X}$  | Mean only
 
-What would $\mathbf{X}$ look like for a simple model of the data $\mathbf{y}$ that included a mean only?
+How would we write $\mathbf{X}$ for a simple model that included a mean only?
 
 $$
 \mathbf{y} = \boldsymbol{\mu} + \mathbf{e}
@@ -117,32 +146,54 @@ $$
 
 ## Defining models with $\mathbf{X}$  | Mean only
 
-Let's start by rewriting our model as
+Let's start by rewriting our model
 
 $$
-\begin{aligned}
-\mathbf{y} &= \boldsymbol{\beta}_0 + \mathbf{e} \\
-  &= 
+\mathbf{y} = \boldsymbol{\mu} + \mathbf{e} \\
+\Downarrow \\
+\mathbf{y} = \boldsymbol{\beta}_0 + \mathbf{e} \\
+\Downarrow \\
+\mathbf{y}  = 
   \begin{bmatrix}
   \beta_0 \\ \beta_0 \\ \vdots \\ \beta_0
   \end{bmatrix} 
-  + \mathbf{e} \\
-\end{aligned}
+  + \mathbf{e}
 $$
 
 
 ## Defining models with $\mathbf{X}$  | Mean only
 
+and factor out the $\beta$'s
+
 $$
-\begin{aligned}
-\mathbf{y} &= 
+\mathbf{y}  = 
+  \begin{bmatrix}
+  \beta_0 \\ \beta_0 \\ \vdots \\ \beta_0
+  \end{bmatrix} 
+  + \mathbf{e}
+~~~ \Rightarrow ~~~
+\mathbf{y} = 
   \begin{bmatrix}
   1 \\ 1 \\ \vdots \\ 1
   \end{bmatrix} 
   \beta_0
-  + \mathbf{e} \\
-  &= \mathbf{X} \boldsymbol{\beta} + \mathbf{e}
-\end{aligned}
+  + \mathbf{e}
+$$
+
+
+## Defining models with $\mathbf{X}$  | Mean only
+
+and then redefine $\mathbf{X}$ and $\boldsymbol{\beta}$
+
+$$
+\mathbf{y} = 
+  \begin{bmatrix}
+  1 \\ 1 \\ \vdots \\ 1
+  \end{bmatrix} 
+  \beta_0
+  + \mathbf{e}
+~~~ \Rightarrow ~~~
+\mathbf{y} = \mathbf{X} \boldsymbol{\beta} + \mathbf{e}
 $$
 
 <br>
@@ -188,7 +239,7 @@ $$
 
 ## Defining models with $\mathbf{X}$  | Regression
 
-What would $\mathbf{X}$ look like for model with an intercept and linear increase over time $t$?
+What about a model with an intercept and linear increase over time $t$?
 
 $$
 y_t = \beta_0 + \beta_1 t + e_t \\
@@ -259,7 +310,7 @@ ANOVA is used to analyze *differences among group means*
 
 Recall our analysis of fish growth as a function of ration
 
-```{r sim_data, fig.align='center', fig.height=4, fig.width=5}
+```{r sim_data, fig.align='center', fig.height=4.5, fig.width=5.5}
 set.seed(514)
 ## sample size
 nn <- 30
@@ -294,8 +345,8 @@ ee <- rnorm(nn*pp, 0, 2)
 ## simulated data
 yy <- xx %*% BETA + ee
 ## plot all data
-par(mai = c(0.9,0.9,0.1,0.1),
-    cex = 1.1)
+par(mai = c(1, 1,0.1,0.1),
+    cex = 1.2)
 ## low
 plot(rep(1, nn), yy[i1], pch = 16, col = "red", las = 1,
      xlim = c(0.5,3.5), ylim = range(yy),
@@ -333,13 +384,11 @@ $$
 y_i = \mu_i + e_i \\
 ~ \\
 \mu_i = 
-\left\{
-\begin{matrix}
-\mu_1 ~ \text{if fed ration 1} \\
-\mu_2 ~ \text{if fed ration 2} \\
-\mu_3 ~ \text{if fed ration 3}
-\end{matrix}
-\right.
+\begin{cases}
+  \mu_1 & \text{if fed ration 1} \\
+  \mu_2 & \text{if fed ration 2} \\
+  \mu_3 & \text{if fed ration 3}
+\end{cases}
 $$
 
 
@@ -389,7 +438,7 @@ $$
 
 ## Defining models with $\mathbf{X}$
 
-Let's now re-order all of the observations into their groups
+Let's now re-order all of the observations into their 3 ration groups
 
 $$
 \mathbf{y} = 
@@ -454,7 +503,7 @@ And here are the results of our ANOVA model
 ```{r fit_anova, echo = TRUE}
 ## fit ANOVA w/ `- 1` to remove intercept
 m1 <- lm(yy ~ ration - 1)
-coef(m1)
+coef(m1) |> round(1)
 ```
 
 This confirms that we have fit a model of means
@@ -462,11 +511,11 @@ This confirms that we have fit a model of means
 
 ## Defining models with $\mathbf{X}$ | ANOVA
 
-```{r plot_means_only, fig.align='center', fig.height=4, fig.width=5}
+```{r plot_means_only, fig.align='center', fig.height=4.5, fig.width=5.5}
 ## plot all data
-par(mai = c(0.9,0.9,0.1,0.1),
-    omi = c(0, 0, 0, 0.2),
-    cex = 1.1)
+par(mai = c(1, 1,0.1,0.1),
+    omi = c(0.1, 0.1, 0, 0.2),
+    cex = 1.2)
 ## low
 plot(rep(1, nn), yy[i1], pch = 16, col = "red", las = 1,
      xlim = c(0.5,3.5), ylim = range(yy),
@@ -543,10 +592,10 @@ And here are the results of our ANOVA model
 X <- cbind(rep(1,nn*pp), ration)
 ## fit ANOVA w/ `- 1` to remove intercept
 m2 <- lm(yy ~ X - 1)
-coef(m2)
+coef(m2) |> round(1)
 ```
 
-**Wait--what happened here?!**
+**Wait -- what happened here?!**
 
 
 ## Defining models with $\mathbf{X}$
@@ -571,6 +620,8 @@ $$
 
 ## Defining models with $\mathbf{X}$ | ANOVA
 
+Let's estimate the $\beta_i$'s by hand
+
 ```{r singular_X, eval = FALSE, echo = TRUE}
 ## solve for beta by hand
 beta <- solve(t(X) %*% X) %*% t(X) %*% yy
@@ -581,9 +632,12 @@ beta <- solve(t(X) %*% X) %*% t(X) %*% yy
 ##   system is computationally singular: reciprocal condition number
 ```
 
+**This is not going well...**
+
+
 ## Defining models with $\mathbf{X}$
 
-$\mathbf{X}$ is not *full rank* $(\mathbf{X}_{(\cdot 1)} = \mathbf{X}_{(\cdot 2)} + \mathbf{X}_{(\cdot 3)} + \mathbf{X}_{(\cdot 4)})$
+$\mathbf{X}$ is *rank-deficient* because $\mathbf{X}_{(\cdot 1)} = \mathbf{X}_{(\cdot 2)} + \mathbf{X}_{(\cdot 3)} + \mathbf{X}_{(\cdot 4)}$
 
 $$
 \mathbf{X} = 
@@ -635,13 +689,21 @@ $$
 \Downarrow \\
 \mu = \frac{(\mu + \beta_1) + (\mu + \beta_2) + (\mu + \beta_3)}{3} \\
 \Downarrow \\
-\beta_1 + \beta_2 + \beta_3 = 0
+\mu = \frac{3 \mu + (\beta_1 + \beta_2 + \beta_3)}{3} \\
+\Downarrow \\
+(\beta_1 + \beta_2 + \beta_3) = 0
 $$
 
 
 ## Defining models with $\mathbf{X}$ | ANOVA
 
-Now we can rewrite our model as
+If we substitute for $\beta_3$
+
+$$
+(\beta_1 + \beta_2 + \beta_3) = 0 ~ \Rightarrow ~ \beta_3 = \text{-} \beta_1 + \text{-} \beta_2
+$$
+
+we can rewrite our model as
 
 $$
 y_i = \mu + \beta_1 x_{1,i} + \beta_2 x_{2,i} + (\text{-} \beta_1 + \text{-} \beta_2) x_{3,i} + e_i
@@ -748,11 +810,11 @@ coef(m1)
 
 ## Comparing group means
 
-```{r plot_anova_gm, fig.align='center', fig.height=4, fig.width=5}
+```{r plot_anova_gm, fig.align='center', fig.height=5, fig.width=6}
 ## plot all data
-par(mai = c(0.9,0.9,0.1,0.1),
-    omi = c(0, 0, 0, 0.2),
-    cex = 1.1)
+par(mai = c(1, 1,0.1,0.1),
+    omi = c(0.1, 0.1, 0, 0.2),
+    cex = 1.2)
 ## plot space
 plot(rep(1, nn), yy[i1], type = "n", las = 1,
      xlim = c(0.5,3.5), ylim = range(yy),
@@ -865,11 +927,11 @@ Bvec["beta_1"] + Bvec["beta_3"]
 
 ## Comparing group means
 
-```{r plot_anova_ref, fig.align='center', fig.height=4, fig.width=5}
+```{r plot_anova_ref, fig.align='center', fig.height=5, fig.width=6}
 ## plot all data
-par(mai = c(0.9,0.9,0.1,0.1),
-    omi = c(0, 0, 0, 0.2),
-    cex = 1.1)
+par(mai = c(1, 1,0.1,0.1),
+    omi = c(0.1, 0.1, 0, 0.2),
+    cex = 1.2)
 ## plot space
 plot(rep(1, nn), yy[i1], type = "n", las = 1,
      xlim = c(0.5,3.5), ylim = range(yy),
@@ -899,13 +961,14 @@ axis(1, at = seq(3), labels = c("Low (2)", "Med (6)", "High (10)"))
 
 ## Analysis of covariance (ANCOVA)
 
-```{r plot_ancova, fig.align='center', fig.height=4, fig.width=5}
+```{r plot_ancova, fig.align='center', fig.height=5, fig.width=6}
 ## plot all data
-par(mai = c(0.9,0.9,0.1,0.1),
-    omi = c(0, 0, 0, 0.2),
-    cex = 1.1)
+par(mai = c(1, 1,0.1,0.1),
+    omi = c(0.1, 0.1, 0, 0.2),
+    cex = 1.2)
 ## plot all data
-plot(x_cov[1:nn], yy[1:nn], pch = 16, col = "red", ylim = range(yy),
+plot(x_cov[1:nn], yy[1:nn], pch = 16, col = "red",
+     xlim = c(0, 12), ylim = c(10, 45),
      las = 1, xlab = "Ration size (g)", ylab = "Growth (mm)")
 points(x_cov[1:nn+nn], yy[1:nn+nn], pch = 16, col = "blue")
 points(x_cov[1:nn+nn*2], yy[1:nn+nn*2], pch = 16, col = "orange")
@@ -964,10 +1027,10 @@ $$
 
 ```{r fit_ancova, echo = TRUE}
 ## create design matrix
-XX <- cbind(L1 = rep(c(1,0,0), ea = nn), # effect of lineage 1
-            L2 = rep(c(0,1,0), ea = nn), # effect of lineage 2
-            L3 = rep(c(0,0,1), ea = nn), # effect of lineage 3
-            RA = x_cov)                  # effect of ration
+XX <- cbind(L1 = rep(c(1,0,0), ea = nn), # col 1: effect of lineage 1
+            L2 = rep(c(0,1,0), ea = nn), # col 2: effect of lineage 2
+            L3 = rep(c(0,0,1), ea = nn), # col 3: effect of lineage 3
+            RA = x_cov)                  # col 4: effect of ration
 ## fit model
 Bvec <- coef(lm(yy ~ XX - 1))
 names(Bvec) <- c("beta_1", "beta_2", "beta_3", "beta_4")
@@ -977,13 +1040,14 @@ Bvec
 
 ## Analysis of covariance (ANCOVA)
 
-```{r plot_ancova_fit, fig.align='center', fig.height=4, fig.width=5}
+```{r plot_ancova_fit, fig.align='center', fig.height=5, fig.width=6}
 ## plot all data
-par(mai = c(0.9,0.9,0.1,0.1),
-    omi = c(0, 0, 0, 0.2),
-    cex = 1.1)
+par(mai = c(1, 1, 0.1, 0.1),
+    omi = c(0.1, 0.1, 0, 0.2),
+    cex = 1.2)
 ## blank plot
-plot(x_cov[1:nn], yy[1:nn], type = "n", ylim = range(yy),
+plot(x_cov[1:nn], yy[1:nn], type = "n",
+     xlim = c(0, 12), ylim = c(10, 45),
      las = 1, xlab = "Ration size (g)", ylab = "Growth (mm)")
 ## add fits
 abline(a = Bvec[1], b = Bvec[4], col = "red")
