@@ -75,7 +75,7 @@ $$
 Similar to above, we can just define a new variable and rewrite our equation as
 
 $$
-z_i = \beta_0 + \beta_1 d_{i} + \beta_2 z_{i} + e_i \\
+y_i = \beta_0 + \beta_1 d_{i} + \beta_2 z_{i} + e_i \\
 z_i = d_i^2
 $$
 
