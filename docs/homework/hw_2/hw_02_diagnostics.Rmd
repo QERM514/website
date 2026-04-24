@@ -1,7 +1,7 @@
 ---
 title: "Examining model diagnostics"
-subtitle: "QERM 514 - Homework 3"
-date: "17 April 2020"
+subtitle: "QERM 514 - Homework 2"
+date: "24 April 2026"
 output:
   pdf_document:
     highlight: haddock
@@ -77,24 +77,22 @@ As you work through the following problems, make sure to explain your thought pr
 
 # Problems
 
-a) Fit a linear model to the dataset that includes all 8 predictor variables. What is the $R^2$ for the model? Does is seem like a promising model?
+a) Fit a linear model to the dataset that includes all 8 predictor variables. What is the $R^2$ for the model? Does is seem like a promising model? (4 pts)
 
-b) Make a plot of the residuals against the model predictions. Name at least two things you should be looking for in a plot like this. What do you see?
+b) Make a plot of the residuals against the model predictions. Name at least two things you should be looking for in a plot like this. What do you see? (4 pts)
 
-c) Make a plot of the residuals against the predictor variable `stage`. Do you find this plot useful? Why or why not?
+c) Make a plot of the residuals against the predictor variable `stage`. Do you find this plot useful? Why or why not? (3 pts)
 
-d) Produce a $Q$-$Q$ plot of the model residuals and include a $Q$-$Q$ line. Describe what you would hope to see here. Do you?
+d) Produce a $Q$-$Q$ plot of the model residuals and include a $Q$-$Q$ line. Describe what you would hope to see here. Do you? (3 pts)
 
-e) Would it make sense to plot $e_t$ against $e_{t+1}$ for this model? Explain why or why not.
+e) Would it make sense to plot $e_t$ against $e_{t+1}$ for this model? Explain why or why not. (4 pts)
 
-f) Which projects have the 3 largest leverages? Briefly explain what this tells us.
+f) Which projects have the 3 largest leverages? Briefly explain what this tells us. (4 pts)
 
-g) What rule of thumb could you use to assess whether any leverages are particularly large? Under this rule of thumb, do you have any particularly large leverages? If yes, which projects?
+g) What rule of thumb could you use to assess whether any leverages are particularly large? Under this rule of thumb, do you have any particularly large leverages? If yes, which projects? (4 pts)
 
-h) Calculate the studentized residuals to look for outliers. Remember to use a Bonferroni correction, and explain why you should use it. What did you find? Which project has the largest studentized residual?
+h) Calculate the studentized residuals to look for outliers. Remember to use a Bonferroni correction, and explain why you should use it. What did you find? Which project has the largest studentized residual? (4 pts)
 
-i) Calculate Cook's Distances and produce a halfnormal plot of them. Label the 3 largest $D_i$ in the plot with the project names. Are these the same sites as the top 3 projects you identified in (g)? Briefly explain why or why not.
+i) Calculate Cook's Distances and produce a halfnormal plot of them. Label the 3 largest $D_i$ in the plot with the project names. Are these the same sites as the top 3 projects you identified in (g)? Briefly explain why or why not. (4 pts)
 
-j) In a few sentences, summarize what you have learned about this analysis in terms of heteroscedasticity, normality, and influential observations.
-
-
+j) In a few sentences, summarize what you have learned about this analysis in terms of heteroscedasticity, normality, and influential observations. (6 pts)
