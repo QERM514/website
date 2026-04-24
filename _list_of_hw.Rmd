@@ -45,10 +45,10 @@ linear_models <- list(
 diagnostics <- list(
   title = "Checking model diagnostics",
   topics = c("Checking model diagnostics"),
-  pdf = "", # "homework/hw_2/hw_03_diagnostics.pdf",
-  rmd = "", # "homework/hw_2/hw_03_diagnostics.Rmd",
+  pdf = "homework/hw_2/hw_02_diagnostics.pdf",
+  rmd = "homework/hw_2/hw_02_diagnostics.Rmd",
   html = "",
-  data = "", # "homework/hw_2/usfws_bull_trout.csv",
+  data = "homework/hw_2/usfws_bull_trout.csv",
   key = "" # "homework/hw_2/hw_03_diagnostics_key.pdf"
 )
 
