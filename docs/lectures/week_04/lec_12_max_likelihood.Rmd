@@ -6,7 +6,7 @@ date: "24 April 2026"
 output:
   ioslides_presentation:
     wide: true
-    css: lecture_slides.css
+    css: ../lecture_slides.css
 ---
 
 ```{r setup, include=FALSE}
@@ -81,7 +81,7 @@ For *discrete* data, $f_{\theta}(y)$ is the *probability mass function* (pmf)
 
 For *continuous* data, $f_{\theta}(y)$ is the *probability density function* (pdf)
 
-The pmf of pdf can be for *any* distribution
+The pmf or pdf can be for *any* distribution
 
 
 ## Gaussian likelihood function
@@ -91,7 +91,7 @@ Let's begin with the pdf for a Gaussian (normal) distribution
 $$
 f(y ; \mu, \sigma^{2}) \sim \text{N}(\mu, \sigma^{2}) \\
 ~ \\
-f(y ; \mu, \sigma^{2}) = \left( \frac{1}{2 \pi \sigma^{2}} \right)^{1/2} \exp \left[ - \frac{(y - \mu)^2}{2 \sigma^2} \right]
+f(y ; \mu, \sigma^{2}) = \left( \frac{1}{2 \pi \sigma^{2}} \right)^{1/2} \exp \left[ \text{-} \frac{(y - \mu)^2}{2 \sigma^2} \right]
 $$
 
 
@@ -126,7 +126,7 @@ The pdf gives you *densities* for given values of $y$, $\mu$ & $\sigma^{2}$
 It's only constraint is
 
 $$
-\int^{+\infty}_{-\infty} f(y) dy = 1
+\int^{+\infty}_{\text{-}\infty} f(y) dy = 1
 $$
 
 
@@ -497,7 +497,7 @@ Lastly, we have been focused on minimizing functions, so we'll minimize the *neg
 $$
 \hat{\theta} = \max_{\theta} \frac{1}{n} \sum_{i = 1}^n \log f_{\theta}(y_i) \\
 \Downarrow \\
-\hat{\theta}= \min_{\theta} -\frac{1}{n} \sum_{i = 1}^n \log f_{\theta}(y_i)
+\hat{\theta}= \min_{\theta} \text{-}\frac{1}{n} \sum_{i = 1}^n \log f_{\theta}(y_i)
 $$
 
 
@@ -506,7 +506,7 @@ $$
 Let's return to the pdf for a normal distribution
 
 $$
-f(y ; \mu, \sigma^{2}) = \left( \frac{1}{2 \pi \sigma^{2}} \right)^{1/2} \exp \left[ - \frac{(y - \mu)^2}{2 \sigma^2} \right] \\
+f(y ; \mu, \sigma^{2}) = \left( \frac{1}{2 \pi \sigma^{2}} \right)^{1/2} \exp \left[ \text{-} \frac{(y - \mu)^2}{2 \sigma^2} \right] \\
 $$
 
 
@@ -515,11 +515,11 @@ $$
 Let's return to the pdf for a normal distribution
 
 $$
-f(y ; \mu, \sigma^{2}) = \left( \frac{1}{2 \pi \sigma^{2}} \right)^{1/2} \exp \left[ - \frac{(y - \mu)^2}{2 \sigma^2} \right] \\
+f(y ; \mu, \sigma^{2}) = \left( \frac{1}{2 \pi \sigma^{2}} \right)^{1/2} \exp \left[ \text{-} \frac{(y - \mu)^2}{2 \sigma^2} \right] \\
 \Downarrow \\
 \begin{align}
 f(y_1, \dots, y_n ; \mu, \sigma^{2}) &= \prod_{i = 1}^n f(y_i ; \mu, \sigma^{2}) \\
- &= \left( \frac{1}{2 \pi \sigma^{2}} \right)^{n/2}  \exp \left[ -  \frac{\sum_{i = 1}^n (y_i - \mu)^2}{2 \sigma^2}  \right]
+ &= \left( \frac{1}{2 \pi \sigma^{2}} \right)^{n/2}  \exp \left[ \text{-}  \frac{\sum_{i = 1}^n (y_i - \mu)^2}{2 \sigma^2}  \right]
 \end{align}
 $$
 
@@ -529,9 +529,9 @@ $$
 The log-likelihood is then
 
 $$
-f(y ; \mu, \sigma^{2}) = \left( \frac{1}{2 \pi \sigma^{2}} \right)^{1/2} \exp \left[ - \frac{(y - \mu)^2}{2 \sigma^2} \right]\\
+f(y ; \mu, \sigma^{2}) = \left( \frac{1}{2 \pi \sigma^{2}} \right)^{1/2} \exp \left[ \text{-} \frac{(y - \mu)^2}{2 \sigma^2} \right]\\
 \Downarrow \\
-\log f(y ; \mu, \sigma^{2}) = -\frac{n}{2} \log(2 \pi \sigma^{2}) -\frac{1}{2 \sigma^2} \sum_{i = 1}^n (y_i - \mu)^2
+\log f(y ; \mu, \sigma^{2}) = \text{-}\frac{n}{2} \log(2 \pi \sigma^{2}) -\frac{1}{2 \sigma^2} \sum_{i = 1}^n (y_i - \mu)^2
 $$
 
 
@@ -545,9 +545,9 @@ We need to take some derivatives!
 ## Gaussian MLE | Mean
 
 $$
-\frac{\partial}{\partial \mu} \log f(y ; \mu, \sigma^{2}) = 0 - \frac{-2 n (\bar{y} - \mu)}{2 \sigma^2} = 0 \\
+\frac{\partial}{\partial \mu} \log f(y ; \mu, \sigma^{2}) = 0 - \frac{\text{-}2 n (\bar{y} - \mu)}{2 \sigma^2} = 0 \\
 \Downarrow \\
-\frac{-2 n (\bar{y} - \mu)}{2 \sigma^2} = 0 \\
+\frac{\text{-}2 n (\bar{y} - \mu)}{2 \sigma^2} = 0 \\
 \Downarrow \\
 \hat{\mu} = \bar{y} = \frac{1}{n} \sum_{i = 1}^n y_i
 $$
@@ -556,7 +556,7 @@ $$
 ## Gaussian MLE | Variance
 
 $$
-\frac{\partial}{\partial \sigma} \log f(y ; \mu, \sigma^{2}) = -\frac{n}{\sigma} - \frac{1}{\sigma^3} \sum_{i = 1}^n (y_i - \mu) = 0 \\
+\frac{\partial}{\partial \sigma} \log f(y ; \mu, \sigma^{2}) = \text{-}\frac{n}{\sigma} - \frac{1}{\sigma^3} \sum_{i = 1}^n (y_i - \mu) = 0 \\
 \Downarrow \\
 \frac{n}{\sigma} = \frac{1}{\sigma^3} \sum_{i = 1}^n (y_i - \mu) \\
 \Downarrow \\
@@ -613,7 +613,7 @@ Invariance: if $\hat{\theta}$ is MLE of $\theta$ then $f(\hat{\theta})$ is MLE o
 
 For cases where $\mathbf{y} \sim \text{N}(\mathbf{X} \boldsymbol{\beta}, \Sigma)$ then
 
-$\hat{\boldsymbol{\beta}} = (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^{\top} \mathbf{y}$
+$\hat{\boldsymbol{\beta}} = (\mathbf{X}^{\top} \mathbf{X})^{\text{-}1} \mathbf{X}^{\top} \mathbf{y}$
 
 is also the MLE for $\boldsymbol{\beta}$
 

@@ -6,7 +6,7 @@ date: "27 April 2026"
 output:
   ioslides_presentation:
     wide: true
-    css: lecture_slides.css
+    css: ../lecture_slides.css
 ---
 
 ```{r setup, include=FALSE}
@@ -47,7 +47,7 @@ How much do the predictions $\hat{f}(x)$ vary among our different models?
 
 ## Variance in models
 
-```{r model_var, fig.align='center', fig.height=4, fig.width=4}
+```{r model_var, fig.align='center', fig.height = 4.5, fig.width = 4.5}
 set.seed(514)
 ## num of bullet holes
 nn <- 7
@@ -81,7 +81,7 @@ How close is the *expected* prediction of our model to the *true* value $f(x)$?
 
 ## Bias in models
 
-```{r model_bias, fig.align='center', fig.height=4, fig.width=4}
+```{r model_bias, fig.align='center', fig.height = 4.5, fig.width = 4.5}
 ## setup plot
 par(mai = c(0, 0, 0, 0),
     omi = c(0, 0, 0, 0))
@@ -99,7 +99,7 @@ $\text{Bias}(\hat{f}) = f - \text{E}(\hat{f})$
 
 ## Bias versus variance
 
-```{r bias_vs_var, fig.align='center', fig.height=4.5, fig.width=5}
+```{r bias_vs_var, fig.align='center', fig.height = 5, fig.width = 5.5}
 ## load shape pkg
 library(shape)
 set.seed(514)
@@ -125,14 +125,14 @@ for(i in 1:4) {
   points(x, y, pch=16)
   ## label plots
   if(i == 1) {
-    mtext("Low bias", side = 2, line = 1, cex = 1.2)
-    mtext("Low variance", side = 3, line = 1, cex = 1.2)
+    mtext("Low bias", side = 2, line = 1, cex = 1.3)
+    mtext("Low variance", side = 3, line = 1, cex = 1.3)
   }
   if(i == 2) {
-    mtext("High variance", side = 3, line = 1, cex = 1.2)
+    mtext("High variance", side = 3, line = 1, cex = 1.3)
   }
   if(i == 3) {
-    mtext("High bias", side = 2, line = 1, cex = 1.2)
+    mtext("High bias", side = 2, line = 1, cex = 1.3)
   }
 }
 ```
@@ -140,7 +140,7 @@ for(i in 1:4) {
 
 ## Accuracy versus precision
 
-```{r acc_vs_prec, fig.align='center', fig.height=4.5, fig.width=5}
+```{r acc_vs_prec, fig.align='center', fig.height = 5, fig.width = 5.5}
 set.seed(514)
 ## setup plot
 par(mfrow = c(2,2),
@@ -159,14 +159,14 @@ for(i in 1:4) {
   points(x, y, pch=16)
   ## label plots
   if(i == 1) {
-    mtext("High accuracy", side = 2, line = 1, cex = 1.2)
-    mtext("High precision", side = 3, line = 1, cex = 1.2)
+    mtext("High accuracy", side = 2, line = 1, cex = 1.3)
+    mtext("High precision", side = 3, line = 1, cex = 1.3)
   }
   if(i == 2) {
-    mtext("Low precision", side = 3, line = 1, cex = 1.2)
+    mtext("Low precision", side = 3, line = 1, cex = 1.3)
   }
   if(i == 3) {
-    mtext("Low accuracy", side = 2, line = 1, cex = 1.2)
+    mtext("Low accuracy", side = 2, line = 1, cex = 1.3)
   }
 }
 ```
@@ -216,7 +216,7 @@ There is a trade-off between a model's ability to simultaneously minimize both b
 
 ## Bias-variance trade-off
 
-```{r var_bias_trade-off, fig.align='center', fig.height=4.5, fig.width=5.5}
+```{r var_bias_trade-off, fig.align='center', fig.height = 5, fig.width = 5.5}
 ## create dummy variance and bias^2
 a1 <- 1
 b1 <- 0.2
@@ -233,7 +233,7 @@ mn <- both == min(both)
 ## plot them
 par(mai = c(0, 0, 0, 0),
     omi = c(0.5,0.5,0.05,0.05),
-    cex = 1.2)
+    cex = 1.3)
 ## combination
 plot(xx, both, type = "l", col="black", lwd=2, ylim=c(0,max(both)*1.05),
      xlab="", ylab="", xaxt="n", yaxt="n", xaxs="r", yaxs="i")
@@ -408,8 +408,8 @@ More formally, given the likelihoods from a full model $\mathcal{L}(y; \Theta)$ 
 
 $$
 \begin{aligned}
-\lambda &= -2 \log (LR) \\
-  &= -2 \log \left( \frac{\mathcal{L}(y; \theta)}{\mathcal{L}(y; \Theta)}  \right)
+\lambda &= \text{-}2 \log (LR) \\
+  &= \text{-}2 \log \left( \frac{\mathcal{L}(y; \theta)}{\mathcal{L}(y; \Theta)}  \right)
 \end{aligned}
 $$
 
@@ -431,8 +431,8 @@ Alternatively, the test can be expressed in terms of log-likelihoods
 
 $$
 \begin{aligned}
-\lambda  &= -2 \log \left( \frac{\mathcal{L}(y; \theta)}{\mathcal{L}(y; \Theta)}  \right) \\
-&= -2 \left[ \log \mathcal{L}(y; \theta) - \log \mathcal{L}(y; \Theta)  \right]
+\lambda  &= \text{-}2 \log \left( \frac{\mathcal{L}(y; \theta)}{\mathcal{L}(y; \Theta)}  \right) \\
+&= \text{-}2 \left[ \log \mathcal{L}(y; \theta) - \log \mathcal{L}(y; \Theta)  \right]
 \end{aligned}
 $$
 
@@ -511,7 +511,7 @@ faraway::sumary(m2)
 
 ## Likelihood ratio test
 
-$\lambda = -2 \left[ \log \mathcal{L}(y; \theta) - \log \mathcal{L}(y; \Theta)  \right]$
+$\lambda = \text{-}2 \left[ \log \mathcal{L}(y; \theta) - \log \mathcal{L}(y; \Theta)  \right]$
 
 ```{r LR_test, echo = TRUE}
 ## test statistic
