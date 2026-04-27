@@ -52,15 +52,19 @@ As you work through the following problems, make sure to explain your thought pr
 
 a) Write out the equation for a linear regression model that expresses *Daphnia* abundance as a function of its preferred prey, green algae, and describe the terms in your model. (4 pts)
 
+> ANSWER: \textit{There are many ways to do this, but here's one}.  
+
 $$
 D_i = \alpha + \beta G_i + e_i
 $$
 
-> The index of abundance for Daphnia $(D_i)$ is a linear function of an intercept $(\alpha)$, the index of abundance for green algas $(G_i)$, and an error term $(e_i)$, which we assume to be normally distributed as $e_i \sim \text{N}(0, \sigma^2)$.
+> ANSWER: The index of abundance for Daphnia $(D_i)$ is a linear function of an intercept $(\alpha)$, the index of abundance for green algas $(\beta G_i)$, and an error term $(e_i)$, which we assume to be normally distributed as $e_i \sim \text{N}(0, \sigma^2)$.
 
 ***
 
 b) Produce a scatterplot that shows the relationship between `Daphnia` and `Greens`. Make sure to label your plot accordingly and give it an informative caption. Describe the relationship between `Daphnia` and `Greens`. Does a linear model seem reasonable here? (4 pts)
+
+> ANSWER: \textit{There are many ways to do this, but here's one}.  
 
 ```{r Q1b, fig.width=4, fig.height=4, fig.align='center', fig.cap="Index of Daphnia abundance as a function of the abundance of green algae in Lake Washington."}
 ## read data
@@ -74,11 +78,13 @@ plot(dat$Greens, dat$Daphnia, pch = 16,
 
 \vspace{0.2in}
 
-> There appears to be a positive, but weak, relationship between the abundance of green algae and the abundance of *Daphnia*. It would seem that a linear model might be appropriate here in that there is no obvious nonlinear relationship.
+> ANSWER: There appears to be a positive, but weak, relationship between the abundance of green algae and the abundance of *Daphnia*. It would seem that a linear model might be appropriate here in that there is no obvious nonlinear relationship.
 
 ***
 
 c) Produce the step-by-step **R** code required to fit your model **via linear algebra** to generate estimates the model parameters and the data. Be sure to show the construction of the design matrix $(\mathbf{X})$, the calculation of the parameter estimates $(\hat{\beta_i})$, the calculation of the hat matrix $(\mathbf{H})$, and the calculation of the model predictions $(\hat{y_i})$. (6 pts)
+
+> ANSWER: \textit{There are many ways to do this, but here's one}.  
 
 ```{r Q1c}
 ## sample size
@@ -89,8 +95,8 @@ yy <- dat$Daphnia
 XX <- cbind(rep(1, nn),  # for intercept
             dat$Greens)  # green algae
 ## estimate parameters
-beta <- solve(t(XX) %*% XX) %*% t(XX) %*% yy
-beta
+beta_hat <- solve(t(XX) %*% XX) %*% t(XX) %*% yy
+beta_hat
 ## hat matrix
 HH <- XX %*% solve(t(XX) %*% XX) %*% t(XX)
 ## peak at part of [36 x 36] hat matrix
@@ -107,7 +113,7 @@ head(y_hat)
 
 d) Calculate and report your estimate of the residual variance $(\sigma^2)$. (4 pts)
 
-> Recall that the residual variance is given by
+> ANSWER: Recall that the residual variance is given by
 
 $$
 \hat{\sigma}^2 = MSE = \frac{SSE}{n-k} = \frac{\mathbf{e}^{\top} \mathbf{e}}{n - k}
@@ -116,10 +122,11 @@ $$
 ```{r Q1d}
 ## get residuals
 ee <- yy - y_hat
-## SSE
+## calculate SSE
 SSE <- t(ee) %*% ee
-## MSE
-kk <- length(beta)
+## number of model parameters
+kk <- length(beta_hat)
+## calculate MSE
 sigma2 <- SSE / (nn - kk)
 sigma2
 ```
@@ -130,7 +137,7 @@ sigma2
 
 e) Give a prediction of what you might expect the specific abundance of *Daphnia* to be on the next sampling occasion if the abundance of green algae is 1.5 units. Also provide an estimate of the interval around your estimate that conveys 95% confidence in your prediction. Again, do so via direct calculations rather than relying on **R**'s built-in functions. (5 pts)
 
-> We need to first calculate a point estimate for *Daphnia* $(\hat{D}_i)$ when $G_i = 1.5$ and then estimate a *prediction interval* (PI) around $\hat{D}_i$. Recall that a PI is given by 
+> ANSWER: We need to first calculate a point estimate for *Daphnia* $(\hat{D}_i)$ when $G_i = 1.5$ and then estimate a *prediction interval* (PI) around $\hat{D}_i$. Recall that a PI is given by 
 
 $$
 \hat{\mathbf{y}}^* \pm ~ t^{(\alpha / 2)}_{df} \sigma \sqrt{1 + {\mathbf{X}^*}^{\top} (\mathbf{X}^{\top} \mathbf{X})^{-1} \mathbf{X}^* } 
@@ -142,7 +149,7 @@ $$
 ## new row for design matrix
 X_new <- matrix(c(1, 1.5), nrow = 1, ncol = 2)
 ## point estimate
-D_new <- X_new %*% beta
+D_new <- X_new %*% beta_hat
 D_new
 ## critical t-value
 t_crit <- qt(0.975, df = nn - kk)
@@ -164,13 +171,13 @@ $$
 D_i = \alpha + \beta_1 G_i + \beta_2 C_i + \beta_3 T_i + e_i
 $$
 
-> The index of abundance for Daphnia $(D_i)$ is a linear function of an intercept $(\alpha)$, the index of abundance for green algas $(G_i)$, the index of abundance for *Cyclops* $(C_i)$, water temperature $(T_i)$, and an error term $(e_i)$, which we assume to be normally distributed as $e_i \sim \text{N}(0, \sigma^2)$.
+> ANSWER: The index of abundance for Daphnia $(D_i)$ is a linear function of an intercept $(\alpha)$, the index of abundance for green algas $(G_i)$, the index of abundance for *Cyclops* $(C_i)$, water temperature $(T_i)$, and an error term $(e_i)$, which we assume to be normally distributed as $e_i \sim \text{N}(0, \sigma^2)$.
 
 ***
 
 b) Using **R**'s built-in functions, fit the model from (a) and show the resulting table of results. For each of the $p$-values shown in the table, describe the null hypothesis being tested. (5 pts)
 
-> Here we can `lm()` to fit our regression model, which will include the effects of 3 predictors (covariates). Remember that the intercept term $(\alpha)$ is implicit in the typical call to `lm()`.
+> ANSWER: Here we can `lm()` to fit our regression model, which will include the effects of 3 predictors (covariates). Remember that the intercept term $(\alpha)$ is implicit in the typical call to `lm()`.
 
 ```{r Q2b}
 ## fit the full model
@@ -181,7 +188,7 @@ summary(full_mod)
 
 \vspace{0.2in}
 
-> There are 4 $p$-values shown in the ANOVA table above. The first $p$-value for `(Intercept)` gives the result of the $t$-test for
+> ANSWER: There are 4 $p$-values shown in the ANOVA table above. The first $p$-value for `(Intercept)` gives the result of the $t$-test for
 
 > $H_0: \alpha = 0$,
 
@@ -199,14 +206,14 @@ summary(full_mod)
 
 c) Test the hypothesis that $\beta_{Greens} = \beta_{Cyclops} = \beta_{Temp} = 0$. What is the $F$-statistic, the associated $df$, and the $p$-value? What can you conclude from this test? (4 pts)
 
-> **Method 1**: calculate the $F$-test by hand
+> ANSWER: **Method 1**: calculate the $F$-test by hand
 
 ```{r Q2c_1}
 ## get matrix of predictors
 XX <- model.matrix(full_mod)
 ## number of parameters
 kk <- ncol(XX)
-## method 1: y_hat via X%*% beta
+## method 1: y_hat via X %*% beta_hat
 beta_hat <- solve(t(XX) %*% XX) %*% t(XX) %*% yy
 yhat <- XX %*% beta_hat
 ## method 2: y_hat via hat matrix
@@ -223,28 +230,31 @@ SSTO <- t(yy - mean(yy)) %*% (yy - mean(yy))
 (df_denom <- nn - kk)
 ## F test
 pf(F_stat, df_numer, df_denom, lower.tail = F)
+## reject H0 because p < 0.05
 ```
 
 \vspace{0.2in}
 
-> **Method 2**: perform the test via the `anova()` function, which is much more simple.
+> ANSWER: **Method 2**: perform the test via the `anova()` function, which is much more straightforward from a coding perspective.
 
 ```{r Q2c_2}
 ## null model; the '1' indicates an intercept-only model
 null_mod <- lm(Daphnia ~ 1, dat)
 ## use `anova('simple', 'complex')` to get the F-test results
 anova(null_mod, full_mod)
+## F-test
+## reject H0 because F is large and p is very small
 ```
 
 \vspace{0.2in}
 
-> Both of these methods yield the same result: the $F$ statistic is large and the $p$-value is small, indicating we would reject the null hypothesis that the effects of all 3 predictors is zero.
+> ANSWER: Both of these methods yield the same result: the $F$ statistic is large and the $p$-value is small, indicating we would reject the null hypothesis that the effects of all 3 predictors is zero.
 
 ***
 
 d) It has come to your attention that someone has done lab experiments suggesting the effect of temperature on *Daphnia* abundance is 0.4 per degree Celsius after controlling for the effects of prey (green algae) and competitors (*Cyclops*). Create a null hypothesis test to evaluate the evidence for this finding from the data collected in the field. Specify $H_0$ and report the results of your test. What do you conclude? (4 pts)
 
-> Our null hypothesis is $H_0: \beta_2 = 0.4$. To test this, we can make use of the `offset()` function within our call to `lm()`.
+> ANSWER: Our null hypothesis is $H_0: \beta_2 = 0.4$. To test this, we can make use of the `offset()` function within our call to `lm()`.
 
 ```{r Q2d}
 ## fit the model with beta_2 = 0.4
@@ -256,4 +266,4 @@ anova(fixed_mod, full_mod)
 
 \vspace{0.2in}
 
-> The $F$ statistic is large and the $p$-value < 0.05, so we would reject our null hypothesis and conclude that the effect of temperature on *Daphnia* abundance is 0.4 per degree Celsius after controlling for the effects of prey (green algae) and competitors (*Cyclops*).
+> ANSWER: The $F$ statistic is large and the $p$-value < 0.05, so we would reject our null hypothesis and reasonably assume that the effect of temperature on *Daphnia* abundance is 0.4 per degree Celsius after controlling for the effects of prey (green algae) and competitors (*Cyclops*).
