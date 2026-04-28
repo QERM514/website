@@ -266,4 +266,4 @@ anova(fixed_mod, full_mod)
 
 \vspace{0.2in}
 
-> ANSWER: The $F$ statistic is large and the $p$-value < 0.05, so we would reject our null hypothesis and reasonably assume that the effect of temperature on *Daphnia* abundance is 0.4 per degree Celsius after controlling for the effects of prey (green algae) and competitors (*Cyclops*).
+> ANSWER: The $F$ statistic is large and the $p$-value < 0.05, so we would reject our null hypothesis and reasonably assume that the effect of temperature on *Daphnia* abundance is not 0.4 per degree Celsius after controlling for the effects of prey (green algae) and competitors (*Cyclops*).
