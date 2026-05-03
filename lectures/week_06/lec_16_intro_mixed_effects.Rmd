@@ -6,7 +6,7 @@ date: "4 May 2026"
 output:
   ioslides_presentation:
     wide: true
-    css: lecture_slides.css
+    css: ../lecture_slides.css
 ---
 
 ```{r setup, include=FALSE}
@@ -23,6 +23,120 @@ knitr::opts_chunk$set(echo = FALSE)
 > - Understand restricted maximum likelihood
 
 > - Understand approaches to make inference from mixed models
+
+
+## General types of models
+
+| Errors | Single random process | Multiple random processes |
+|:-------|:--------------:|:------------------:|
+| Normal Errors | Linear Model (LM) | Linear Mixed Model (LMM) |
+| Multiple Forms of Errors | Generalized Linear Model (GLM) | Generalized Linear Mixed Model (GLMM) |
+
+
+## Multiple random processes | Linear mixed models 
+
+We are now moving into linear models with *multiple* random processes
+
+> * the first still describes our model *errors* (as before)
+
+> * the other(s) describe the *random effect(s)* of some factor(s)
+
+
+## What do we mean by random effects? 
+
+Let's start with *fixed effects*, which are what we've been estimating
+
+
+## Fixed effects
+
+We use fixed effects for 
+
+* Continuous predictors 
+
+
+## Fixed effects
+
+We use fixed effects for 
+
+* Continuous predictors 
+
+* Categorical predictors (factors) when 
+
+   * we are interested in the specific levels (eg, "N", "P", "N & P", "Control")  
+
+
+## Fixed effects 
+
+We use fixed effects for: 
+
+* Continuous predictors 
+
+* Categorical predictors (factors) when 
+
+   * we are interested in the specific levels (eg, "N", "P", "N & P", "Control")  
+
+   * the factors don't come from a larger population (eg, "Age 1", "Age 2", "Age 3+")
+
+
+## Fixed effects 
+
+We use fixed effects for: 
+
+* Continuous predictors 
+
+* Categorical predictors (factors) when
+
+   * we are interested in the specific levels (eg, "N", "P", "N & P", "Control")  
+
+   * the factors don't come from a larger population (eg, "Age 1", "Age 2", "Age 3+")
+   
+   * we only have a few levels (eg, "Plot 1", "Plot 2", "Plot 3")
+
+
+## Fixed vs. random effects? 
+
+We use random effects for
+
+* factor levels sampled from a distribution (eg, we randomly chose 12 study plots)
+
+
+## Fixed vs. random effects? 
+
+We use random effects for
+
+* factor levels sampled from a distribution (eg, we randomly chose 12 study plots)
+
+* correlated errors when data are
+
+   - nested (eg, plants within plots & multiple plots sampled)
+
+
+## Fixed vs. random effects? 
+
+We use random effects for
+
+* factor levels sampled from a distribution (eg, we randomly chose 12 study plots)
+
+* correlated errors when data are  
+
+   - nested (eg, plants within plots & multiple plots sampled)
+
+   - time series (eg, productivity of captive birds over many years) 
+
+
+## Fixed vs. random effects? 
+
+We use random effects for
+
+* factor levels sampled from a distribution (eg, we randomly chose 12 study plots)
+
+* correlated errors when data are  
+
+   - nested (eg, plants within plots & multiple plots sampled)
+
+   - time series (eg, productivity of captive birds over many years) 
+
+   - spatial (eg, multiple ponds under study) 
 
 
 ## Model for means
@@ -649,220 +763,15 @@ abline(h=0, lty = "dashed")
 ```
 
 
-# QUESTIONS?
-
-
-## General linear model
-
-We have seen how to write a general linear model as
-
-$$
-\mathbf{y} = \mathbf{X} \boldsymbol{\beta} + \mathbf{e}
-$$
-
-where $\mathbf{X}$ is the design matrix and $\boldsymbol{\beta}$ contains the *fixed effects* of $\mathbf{X}$ on $\mathbf{y}$ 
-
-
-## General linear mixed model
-
-We can extend the general linear model to include both of fixed and random effects (a *mixed effects model*)
-
-$$
-\mathbf{y} = \mathbf{X} \boldsymbol{\beta} + \mathbf{Z} \boldsymbol{\alpha} + \mathbf{e}
-$$
-
-where $\mathbf{Z}$ is also a design matrix and $\mathbf{Z}$ contains a mix of $z \in \{-1,0,1\}$ and $z \in \mathbb{R}$
-
-
-## General linear mixed model
-
-We can extend the general linear model to include both of fixed and random effects (a *mixed effects model*)
-
-$$
-\mathbf{y} = \mathbf{X} \boldsymbol{\beta} + \mathbf{Z} \boldsymbol{\alpha} + \mathbf{e} \\
-~ \\
-\mathbf{e} \sim \text{MVN}(\mathbf{0}, \sigma^2 \mathbf{I}) \\
-~ \\
-\boldsymbol{\alpha} \sim \text{MVN}(\mathbf{0}, \sigma^2 \mathbf{D})
-$$
-
-where $\mathbf{I}$ is the identity matrix and $\mathbf{D}$ is a square matrix of constants
-
-
-## General linear mixed model
-
-Variance decomposition
-
-$$
-\mathbf{y} = \mathbf{X} \boldsymbol{\beta} + \mathbf{Z} \boldsymbol{\alpha} + \mathbf{e} \\
-\Downarrow \\
-\text{Var}(\mathbf{y}) = \text{Var}(\mathbf{\mathbf{X} \boldsymbol{\beta}}) + \text{Var}(\mathbf{Z} \boldsymbol{\alpha}) + \text{Var}(\mathbf{e})
-$$
-
-
-## General linear mixed model
-
-Variance of random components
-
-$$
-\text{Var}(\mathbf{y} | \mathbf{\mathbf{X} \boldsymbol{\beta}}) = \text{Var}(\mathbf{Z} \boldsymbol{\alpha}) + \text{Var}(\mathbf{e}) \\
-\Downarrow \\
-\begin{aligned}
-\mathbf{V} &= \mathbf{Z} \text{Var} (\boldsymbol{\alpha}) \mathbf{Z}^\top + \text{Var}(\mathbf{e}) \\
-&= \mathbf{Z} (\sigma^2 \mathbf{D}) \mathbf{Z}^\top + \sigma^2 \mathbf{I} \\
-&= \sigma^2 (\mathbf{Z} \mathbf{D} \mathbf{Z}^\top + \mathbf{I})
-\end{aligned}
-$$
-
-
-## Log-likelihood for fixed effects
-
-Recall that we think of likelihoods in terms of the *observed data*
-
-But the random effects in our model are *unobserved* random variables, so we need to integrate them out of the likelihood
-
-
-## Log-likelihood for fixed effects
-
-The log-likelihood for the fixed effects $\boldsymbol{\beta}$
-
-$$
-\log \mathcal{L}(\mathbf{y}; \boldsymbol{\beta}, \sigma^2) = - \frac{1}{2} \log \left| \mathbf{V} \right| - \frac{1}{2}( \mathbf{y} - \mathbf{X} \boldsymbol{\beta})^\top \mathbf{V}^{-1} (\mathbf{y} - \mathbf{X} \boldsymbol{\beta})
-$$
-
-
-## Estimate of fixed effects
-
-This leads us to our familiar statement for the weighted least squares estimate for $\boldsymbol{\beta}$
-
-$$
-\begin{aligned}
-\hat{\boldsymbol{\beta}} &= \min ~ (\mathbf{y} - \mathbf{X} \boldsymbol{\beta})^{\top} \mathbf{V}^{-1} (\mathbf{y} - \mathbf{X} \boldsymbol{\beta}) \\
-  &= (\mathbf{X}^{\top} \mathbf{V}^{-1} \mathbf{X}) \mathbf{X}^{\top} \mathbf{V}^{-1} \mathbf{y}
-\end{aligned}
-$$
-
-
-## Variance of fixed effects
-
-Our variance estimate for $\boldsymbol{\beta}$ is then
-
-$$
-\text{Var}(\hat{\boldsymbol{\beta}}) = (\mathbf{X}^{\top} \mathbf{V}^{-1} \mathbf{X})^{-1}
-$$
-
-
-## Log-likelihood for random effects
-
-The log-likelihood for the random effects is given by
-
-$$
-\begin{aligned}
-\log \mathcal{L}(\mathbf{y}; \boldsymbol{\beta}, \sigma^2) = 
-- \frac{\sigma^2}{2} &- 
-\frac{1}{2 \sigma^2}( \mathbf{y} - \mathbf{X} \boldsymbol{\beta} - \mathbf{Z} \boldsymbol{\alpha})^\top  (\mathbf{y} - \mathbf{X} \boldsymbol{\beta} - \mathbf{Z} \boldsymbol{\alpha}) \\
-&- \frac{1}{2} \left| \mathbf{Z} \mathbf{D} \mathbf{Z}^\top\right| - \frac{1}{2} \boldsymbol{\alpha}^\top (\mathbf{Z} \mathbf{D} \mathbf{Z}^\top)^{-1} \boldsymbol{\alpha}
-\end{aligned}
-$$
-
-
-## Estimate of random effects
-
-This leads to the *best linear unbiased predictor* for $\boldsymbol{\alpha}$
-
-$$
-\hat{\boldsymbol{\alpha}} = \sigma^2 (\mathbf{Z} \mathbf{D} \mathbf{Z}^\top) \mathbf{Z}^\top \mathbf{V}^{-1} (\mathbf{y} - \mathbf{X} \boldsymbol{\beta})
-$$
-
-
-## Restricted maximum likelihood
-
-Estimating the parameters in a mixed effects model requires *restricted maximum likelihood* (REML)
-
-REML works by
-
-1. estimating the fixed effects $(\hat{\boldsymbol{\beta}})$ via ML
-
-2. using the $\hat{\boldsymbol{\beta}}$ to estimate the $\hat{\boldsymbol{\alpha}}$
-
-**lme4** makes this easy for us
-
-
-## Inference for mixed models
-
-With random effects models, we can't use our standard inference tools because we don't know the distributions for our test statistic
-
-(**lme4** won't give $p$-values)
-
-
-## Inference for mixed models | Likelihood ratio test
-
-We can use a likelihood ratio test for nested models, but the assumption of a $\chi^2$ distribution can be poor
-
-
-## Inference for mixed models | $F$ test
-
-We can also use $F$-tests to evaluate a single fixed effect, but again the assumption of a $F$ distribution can be poor
-
-
-## Inference for mixed models | Bootstrapping
-
-We can use bootstrapping to conduct likelihood ratio tests
-
-1. simulate data from the simple model
-
-2. fit simple & full model and calculate likelihood ratio
-
-3. see where test statistic falls within estimated distribution from (2)
-
-
-## Inference for mixed models
-
-We can report parameter estimates and CI's via bootstrapping
-
-We can generate predictions given fixed and random effects and estimate their uncertainty via bootstrapping
-
-
-## Model selection
-
-Recall that $AIC = 2 k - 2 \log \mathcal{L}$
-
-The problem with mixed effects models is that it's not clear what $k$ equals
-
-It works well to select among fixed effects if random effects are held constant
-
-
-## Model selection
-
-To use AIC, we can follow these steps
-
-1. Fit a model with *all* of the possible fixed-effects included
-
-2. Keep the fixed effects constant and search for random effects
-
-3. Keep random effects as is and fit different fixed effects
-
-
-## Model selection
-
-Other options include
-
-* BIC
-
-* cross-validation
-
-
 ## Summary
 
 * Think hard about your question and data
-    - are there groups or levels?
-    - are the temporal or spatial components?   
+
+    - Are there groups or levels?
+    
+    - Are there temporal or spatial dimensions?   
+
+<br>
 
 * Decide what random effects make sense
-
-* Once random effects are chosen, select fixed effects
-
-* Inference will generally require bootstrapping
-
-
 
