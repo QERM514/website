@@ -192,7 +192,7 @@ mixed_models_2 <- list(
 
 paper_discussion <- list(
   title = "Guest: Dr. Sarah Converse",
-  topics = c("<b>Guest lecture:</b>", "<b>Dr. Sarah Converse</b>", "<i>Research questions, hypotheses & predictions</i>"),
+  topics = c("<b>Guest discussion</b>", "<b>Dr. Sarah Converse</b>", "<i>Research questions, hypotheses & predictions</i>"),
   rmd = "",
   html = "",
   background = c("[Chamberlin (1890)](references/Chamberlin_1890_multiple-working-hypotheses.pdf)",
