@@ -93,7 +93,7 @@ fmod <- lm(score ~ stage + form + cond + risk + unit + prog + BMP + degflex, dat
 summary(fmod)
 ```
 
-The $R^2$ for this model is `r round(summary(fmod)$r.squared, 2)` and the adjusted $R^2$ is `r round(summary(fmod)$adj.r.squared, 2)`. These $R^2$ values are pretty high, so this does indeed seem like a promising model.
+The $R^2$ for this model is `r round(summary(fmod)$r.squared, 2)` and the adjusted $R^2$ is `r round(summary(fmod)$adj.r.squared, 2)`, which suggests some of the predictors are correlated with one another. These $R^2$ values are pretty high, so this does indeed seem like a promising model.
 
 ***
 
@@ -227,6 +227,8 @@ In **R**, we can use the `rstudent()` function to avoid doing these calculations
 ```{r student_e}
 ## get studentized residuals
 (stud_e <- rstudent(fmod))
+## assign their names
+names(stud_e) <- dat$ProjectName
 ## get sample size
 n <- nrow(dat)
 ## Bonferroni correction: alpha / n
@@ -236,11 +238,13 @@ df <- n - length(coef(fmod)) - 1
 t_crit <- qt(1 - alpha/2, df)
 ## compare t_stud to t_crit
 sum(stud_e > t_crit, na.rm = TRUE)
+## largest residual
+which.max(stud_e)
 ```
 
 \vspace{0.2in}
 
-This analysis indicates that none of the studentized residuals were greater than the critical value of `r round(t_crit, 3)`, but 2 of the projects had studentized residuals equal to `NaN` (`Gail` and `Vernon`). Those are the same 2 projects with leverages equal to 1, which means dividing by 0 in the $r_i$ calculations (ie, $r_i = \infty$).
+This analysis indicates that `Lummi` (10) had the largest studentized residual of 3.52, but none of the studentized residuals were greater than the critical value of `r round(t_crit, 3)`, but 2 of the projects had studentized residuals equal to `NaN` (`Gail` and `Vernon`). Those are the same 2 projects with leverages equal to 1, which means dividing by 0 in the $r_i$ calculations (ie, $r_i = \infty$).
 
 ***
 
