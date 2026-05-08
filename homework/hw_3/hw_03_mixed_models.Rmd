@@ -75,9 +75,11 @@ The data for this assignment come from 21 populations of Chinook salmon (*Oncorh
 
 As you work through the following problems, be sure to show all of the code necessary to produce your answers. (Hint: You will need to define a new response variable before you can do any model fitting.)
 
-a) Plot the number of recruits by population $(y)$ against the number of spawners by population $(x)$, and add a line indicating the replacement level where recruits = spawners. Describe what you see.
+a) List 3 hypotheses concerning the possible random effect of population on the intrinsic growth rate and/or the intrinsic growth rate scaled by the carrying capacity. (3 pts)
 
-b) Fit the following model and report your estimates for $\alpha$ and $\beta$. Also report your estimate of $\sigma_\epsilon^2$. Based on the $R^2$ value, does this seem like a promising model?
+b) Plot the number of recruits by population $(y)$ against the number of spawners by population $(x)$, and add a line indicating the replacement level where recruits = spawners. Describe what you see. (4 pts)
+
+c) How would you describe the following model with respect to "pooling"? Fit the model and report your estimates for $\alpha$ and $\beta$. Also report your estimate of $\sigma_\epsilon^2$. Based on the $R^2$ value, does this seem like a promising model? (5 pts)
 
 \begin{equation}
 \begin{gathered} \nonumber 
@@ -88,46 +90,15 @@ b) Fit the following model and report your estimates for $\alpha$ and $\beta$. A
 
 \vspace{0.25in}
 
-c) Fit the following model and report your estimates for $\alpha$, each of the $\delta_i$, and $\beta$. Also report your estimate of $\sigma_\epsilon^2$ and $\sigma_\delta^2$. Based on the $R^2$ value, how does this model compare to that from part (b)?
+d) Modify the model in (c) to include a random effect of population $(\delta_i)$ on the intrinsic growth rate. Write out the specific form for the model, including any error terms, and then fit it. Report your estimates for $\alpha$, each of the random effects $\delta_i$, and $\beta$. Also report your estimate of $\sigma_\epsilon^2$ and $\sigma_\delta^2$. Based on the $R^2$ value, how does this model compare to that from part (c)? (5 pts)
 
-\begin{equation}
-\begin{gathered} \nonumber 
-\log (R_{i,t} / S_{i,t}) = (\alpha + \delta_i) - \beta S_{i,t} + \epsilon_{i,t} \\
-\delta_{i} \sim \text{N}(0, \sigma_\delta^2) \\
-\epsilon_{i,t} \sim \text{N}(0, \sigma_\epsilon^2)
-\end{gathered}
-\end{equation}
+e) Modify the model in (c) to include a random effect of population $(\eta_i)$ on the intrinsic growth rate scaled by the carrying capacity. Write out the specific form for the model, including any error terms, and then fit it. Report your estimates for $\alpha$, each of the $\eta_i$, and $\beta$. Also report your estimate of $\sigma_\epsilon^2$ and $\sigma_\eta^2$. Based on the $R^2$ value, how does this model compare to those from parts (c) and (d)? (5 pts)
 
-\vspace{0.25in}
+f) Modify the model in (c) to include random effects of population on both the intrinsic growth rate and intrinsic growth rate scaled by the carrying capacity. Write out the specific form for the model, including any error terms, and then fit it. Report your estimates for $\alpha$, each of the $\delta_i$, $\beta$, and each of the $\eta_i$. Also report your estimate of $\sigma_\epsilon^2$, $\sigma_\delta^2$, and $\sigma_\eta^2$. Based on the $R^2$ value, how does this model compare to those from parts (c), (d), and (e)? (5 pts)
 
-d) Fit the following model and report your estimates for $\alpha$, each of the $\eta_i$, and $\beta$. Also report your estimate of $\sigma_\epsilon^2$ and $\sigma_\eta^2$. Based on the $R^2$ value, how does this model compare to that from part (c)?
+g) Based on the 3 models you fit in parts (d - f), test whether or not there is data support for including a random effect for population-level intrinsic growth rates. Also test whether or not there is data support for including a random effect for population-level intrinsic growth rates scaled by the carrying capacity. Make sure to specify your null hypothesis for both of the tests. (4 pts)
 
-\begin{equation}
-\begin{gathered} \nonumber 
-\log (R_{i,t} / S_{i,t}) = \alpha - (\beta + \eta_i) S_{i,t} + \epsilon_{i,t} \\
-\eta_{i} \sim \text{N}(0, \sigma_\eta^2) \\
-\epsilon_{i,t} \sim \text{N}(0, \sigma_\epsilon^2)
-\end{gathered}
-\end{equation}
-
-\vspace{0.25in}
-
-e) Fit the following model and report your estimates for $\alpha$, each of the $\delta_i$, $\beta$, and each of the $\eta_i$. Also report your estimate of $\sigma_\epsilon^2$, $\sigma_\delta^2$, and $\sigma_\eta^2$. Based on the $R^2$ value, how does this model compare to that from part (d)?
-
-\begin{equation}
-\begin{gathered} \nonumber 
-\log (R_{i,t} / S_{i,t}) = (\alpha + \delta_i) - (\beta + \eta_i) S_{i,t} + \epsilon_{i,t} \\
-\delta_{i} \sim \text{N}(0, \sigma_\delta^2) \\
-\eta_{i} \sim \text{N}(0, \sigma_\eta^2) \\
-\epsilon_{i,t} \sim \text{N}(0, \sigma_\epsilon^2)
-\end{gathered}
-\end{equation}
-
-\vspace{0.25in}
-
-f) Based on the 3 models you fit in parts (c - e), test whether or not there is data support for including a random effect for population-level intercepts. Also test whether or not there is data support for including a random effect for population-level slopes. Make sure to specify your null hypothesis for both of the tests.
-
-g) Now fit the following model and report your estimates for $\alpha$, each of the $\delta_i$, $\beta$, each of the $\eta_i$, and each of the $\gamma_t$. Also report your estimate of $\sigma_\epsilon^2$, $\sigma_\delta^2$, $\sigma_\gamma^2$, and $\sigma_\eta^2$. Based on the $R^2$ value, how does this model compare to that from part (d)? 
+h) Now fit the following model, which includes an additional random effect of year, and report your estimates for $\alpha$, each of the $\delta_i$, $\beta$, each of the $\eta_i$, and each of the $\gamma_t$. Also report your estimate of $\sigma_\epsilon^2$, $\sigma_\delta^2$, $\sigma_\gamma^2$, and $\sigma_\eta^2$. Based on the $R^2$ value, how does this model compare to all of the previous models? (5 pts)
 
 \begin{equation}
 \begin{gathered} \nonumber 
@@ -139,8 +110,6 @@ g) Now fit the following model and report your estimates for $\alpha$, each of t
 \end{gathered}
 \end{equation}
 
-\vspace{0.25in}
-
-h) Conduct a diagnostic check of the model you fit in (g) to evaluate the adequacy of the model assumptions. Do you see any cause for concern?
+i) Conduct a diagnostic check of the model you fit in (h) to evaluate the adequacy of the model assumptions. Do you see any cause for concern? (4 pts)
 
 
