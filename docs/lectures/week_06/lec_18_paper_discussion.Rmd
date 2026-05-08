@@ -1,0 +1,54 @@
+---
+title: "Questions, hypotheses & predictions"
+subtitle: "Analysis of Ecological and Environmental Data<br>QERM 514"
+author: "Sarah Converse"
+date: "8 May 2026"
+output:
+  ioslides_presentation:
+    wide: true
+    css: ../lecture_slides.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+# FOR DISCUSSION
+
+
+## Models vs Hypotheses
+
+When do candidate models represent distinct scientific hypotheses?
+
+
+## Addressing uncertainty
+
+How should uncertainty be interpreted when multiple hypotheses remain plausible?
+
+
+## (Un)conscious bias
+
+What is the statistical cost of favoring one hypothesis too early?
+
+
+## Competing explanations
+
+Which design features most strongly determine whether competing explanations can actually be distinguished?
+
+
+## A scenario for discussion
+
+_Suppose two mechanisms could explain observed variation in species abundance: habitat quality and dispersal ability/limitation. You have observational data from 50 sites sampled over 5 years._
+
+What would a design look like that could discriminate between these mechanisms?
+
+How would you translate competing hypotheses into candidate models?
+
+Would model comparison alone be persuasive? Why or why not?
+
+
+## Some reflection
+
+What might you do differently in your own research after reading these papers?
+
