@@ -78,10 +78,10 @@ model_selection <- list(
 mixed_models <- list(
   title = "Fitting mixed models",
   topics = "Fitting mixed models",
-  pdf = "", # "homework/hw_3/hw_06_mixed_models.pdf",
-  rmd = "", # "homework/hw_3/hw_06_mixed_models.Rmd",
+  pdf = "homework/hw_3/hw_03_mixed_models.pdf",
+  rmd = "homework/hw_3/hw_03_mixed_models.Rmd",
   html = "",
-  data = "", # "homework/hw_3/ps_chinook.csv",
+  data = "homework/hw_3/ps_chinook.csv",
   key = "" # "homework/hw_3/hw_06_mixed_models_key.pdf"
 )
 
