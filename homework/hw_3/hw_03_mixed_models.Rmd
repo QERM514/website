@@ -1,7 +1,7 @@
 ---
 title: "Fitting mixed models and selecting among them"
-subtitle: "QERM 514 - Homework 6"
-date: "8 May 2020"
+subtitle: "QERM 514 - Homework 3"
+date: "8 May 2026"
 output:
   pdf_document:
     highlight: haddock
