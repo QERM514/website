@@ -193,8 +193,8 @@ mixed_models_2 <- list(
 paper_discussion <- list(
   title = "Guest: Dr. Sarah Converse",
   topics = c("<b>Guest discussion</b>", "<b>Dr. Sarah Converse</b>", "<i>Research questions, hypotheses & predictions</i>"),
-  rmd = "",
-  html = "",
+  rmd = "lectures/week_06/lec_18_paper_discussion.Rmd",
+  html = "lectures/week_06/lec_18_paper_discussion.html",
   background = c("[Chamberlin (1890)](references/Chamberlin_1890_multiple-working-hypotheses.pdf)",
                  "[Garton et al (2020)](references/Garton_2020_research-design.pdf)"),
   zoom = ""
