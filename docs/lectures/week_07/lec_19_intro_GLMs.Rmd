@@ -1,12 +1,12 @@
 ---
-title: "A gentle introduction to generalized linear models"
+title: "Introduction to generalized linear models"
 subtitle: "Analysis of Ecological and Environmental Data<br>QERM 514"
 author: "Mark Scheuerell"
 date: "11 May 2026"
 output:
   ioslides_presentation:
     wide: true
-    css: lecture_slides.css
+    css: ../lecture_slides.css
 ---
 
 ```{r setup, include=FALSE}
@@ -56,44 +56,44 @@ text(25, 26, "multiple forms of errors", pos = 4)
 
 ## Ecological data | At the individual level
 
-### 1 Detection $\rightarrow$ presence/absence
+1 Detection $\rightarrow$ presence/absence
 
-### 2+ Detections $\rightarrow$ survival, movement
+2+ Detections $\rightarrow$ survival, movement
 
 
 ## Ecological data | At the individual level
 
-### 1 Detection $\rightarrow$ presence/absence
+1 Detection $\rightarrow$ presence/absence
 
-### 2+ Detections $\rightarrow$ survival, movement
+2+ Detections $\rightarrow$ survival, movement
 
 <br>
 
-### 1 Measurement $\rightarrow$ fecundity, age, size
+1 Measurement $\rightarrow$ fecundity, age, size
 
-### 2+ Measurements $\rightarrow$ growth
+2+ Measurements $\rightarrow$ growth
 
 
 ## Ecological data | At the population level
 
-### Detections $\rightarrow$ presence/absence
+Detections $\rightarrow$ presence/absence
 
 <br>
 
-### Counts $\rightarrow$ density or survival/movement
+Counts $\rightarrow$ density or survival/movement
 
 
 ## Data types | Discrete values
 
-### Sex
+Sex
 
-### Age
+Age
 
-### Fecundity
+Fecundity
 
-### Counts/Census
+Counts/Census
 
-### Survival (individual)
+Survival (individual)
 
 
 ## Discrete data
@@ -143,16 +143,18 @@ It gives the probability of a given number of events occurring in a fixed interv
 
 ## Poisson distribution | Examples
 
-* the number of Prussian soldiers killed by horse kicks per year from 1868 - 1931
+* the number of rabbits seen outside my office window each day
 
-> - the number of new COVID-19 infections per day in the US
+> - the number of fish caught in a 15-minute bottom trawl
 
 > - the number of email messages I receive per week from students in QERM 514
 
 
 ## Poisson distribution
 
-It's unique in that it has one parameter $\lambda$ to describe both the mean *and* variance
+Has _only one_ parameter $\lambda$ to describe both the mean *and* variance
+
+<br>
 
 $$
 y_i \sim \text{Poisson}(\lambda)
@@ -177,7 +179,7 @@ They convey proportions such as
 
 ## Distribution for the ratio of counts
 
-The simplest ratio has as denominator of 1 & and numerator of either 0 or 1
+The simplest ratio has as denominator of 1 and a numerator of either 0 or 1
 
 For an individual, this can represent
 
@@ -190,7 +192,9 @@ For an individual, this can represent
 
 ## Bernoulli distribution
 
-The Bernoulli distribution describes the probability of a single "event" $y_i$ occurring
+The Bernoulli distribution describes the probability of a _single event_ $y_i$ occurring
+
+<br>
 
 $$
 y_i \sim \text{Bernoulli}(p)
@@ -199,7 +203,9 @@ $$
 where
 
 $$
-\text{Mean}(y) = p ~ ~ ~ ~ ~ \text{Var}(y) = p(1 - p)
+\text{Mean}(y) = p \\
+~ \\
+\text{Var}(y) = p(1 - p)
 $$
 
 
@@ -207,7 +213,7 @@ $$
 
 The binomial distribution is closely related to the Bernoulli
 
-It describes the number of $k$ "successes" in a sequence of $n$ independent Bernoulli "trials"
+It describes the number of "successes" $(k)$ in a sequence of $n$ independent Bernoulli "trials"
 
 For example, the number of heads in 4 coin tosses
 
@@ -218,9 +224,9 @@ For a population, these could be
 
 * $k$ survivors out of $n$ tagged individuals
 
-* $k$ infected individuals out of $n$ susceptible individuals
+> * $k$ infected individuals out of $n$ susceptible individuals
 
-* $k$ counts of allele A in $n$ total chromosomes
+> * $k$ counts of allele A in $n$ total chromosomes
 
 
 ## Generalized linear models (GLMs)
@@ -260,19 +266,19 @@ $\eta = \mathbf{X} \boldsymbol{\beta}$
 
 | Distribution | Link function | Mean function |
 |:------------:|:-------------:|:-------------:|
-| Normal | $1(\mu) = \mathbf{X} \boldsymbol{\beta}$ | $\mu = \mathbf{X} \boldsymbol{\beta}$ |
-| Poisson  | $\log (\mu) = \mathbf{X} \boldsymbol{\beta}$ | $\mu = \exp (\mathbf{X} \boldsymbol{\beta})$ |
-| Binomial  | $\log \left( \frac{\mu}{1 - \mu} \right) = \mathbf{X} \boldsymbol{\beta}$ | $\mu = \frac{\exp (\mathbf{X} \boldsymbol{\beta})}{1 + \exp (\mathbf{X} \boldsymbol{\beta})}$ |
+| Normal | _Identity_: $1(\mu) = \mathbf{X} \boldsymbol{\beta}$ | $\mu = \mathbf{X} \boldsymbol{\beta}$ |
+| Poisson  | _Log_: $\log (\mu) = \mathbf{X} \boldsymbol{\beta}$ | $\mu = \exp (\mathbf{X} \boldsymbol{\beta})$ |
+| Binomial  | _Logit_: $\log \left( \frac{\mu}{1 - \mu} \right) = \mathbf{X} \boldsymbol{\beta}$ | $\mu = \frac{\exp (\mathbf{X} \boldsymbol{\beta})}{1 + \exp (\mathbf{X} \boldsymbol{\beta})}$ |
 
 
 ## Common link functions
 
-```{r link_funcs, fig.height=4, fig.width=8, fig.align='center'}
+```{r link_funcs, fig.height=4.5, fig.width=10, fig.align='center'}
 ## set plot area
 par(mfrow = c(1, 3),
     mai = c(0.9, 0.7, 0.6, 0.1),
     omi = c(0, 0, 0, 0),
-    cex.lab = 1.5, cex.main = 1.5)
+    cex.axis = 1.5, cex.lab = 1.6, cex.main = 1.6)
 
 ## identity link
 plot(seq(-100,100)/10, seq(-100,100)/10, las = 1, type = "l", lwd = 2, col = "blue",
@@ -458,6 +464,8 @@ $$
 
 Log-density of live trees per unit area $y_i$ as a function of fire intensity $F_i$
 
+<br>
+
 $$
 \begin{aligned}
 \text{data distribution:} & ~~ y_i \sim \text{N}(\mu_i,\sigma^2) \\ \\
@@ -471,6 +479,8 @@ $$
 
 We have been considering (log) density itself as a response
 
+<br>
+
 $$
 \text{Density}_i = f (\text{Count}_i, \text{Area}_i) \\
 \Downarrow \\
@@ -480,15 +490,9 @@ $$
 
 ## Rethinking density
 
-We have been considering (log) density itself as a response
+With GLMs, we can shift our focus to counts as a function of area
 
-$$
-\text{Density}_i = f (\text{Count}_i, \text{Area}_i) \\
-\Downarrow \\
-\text{Density}_i = \frac{\text{Count}_i}{\text{Area}_i} \\
-$$
-
-With GLMs, we can shift our focus to
+<br>
 
 $$
 \text{Count}_i = f (\text{Area}_i)
@@ -498,6 +502,8 @@ $$
 ## Example of a GLM
 
 Counts of live trees $y_i$ as a function of area surveyed $A_i$ and fire intensity $F_i$
+
+<br>
 
 $$
 \begin{aligned}
@@ -512,6 +518,8 @@ $$
 
 Probability of spotting a sparrow $p_i$ as a function of vegetation height $H_i$
 
+<br>
+
 $$
 \begin{aligned}
 \text{data distribution:} & ~~ y_i \sim \text{Bernoulli}(p_i) \\ \\
@@ -523,7 +531,9 @@ $$
 
 ## Example of a GLM
 
-Survival of salmon from parr to smolt $s_i$ as a function of water temperature $T_i$
+Survival $s_i$ of $N_i$ salmon eggs to $y_i$ fry as a function of water temperature $T_i$
+
+<br>
 
 $$
 \begin{aligned}
