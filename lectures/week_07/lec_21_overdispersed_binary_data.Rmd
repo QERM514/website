@@ -727,7 +727,7 @@ summary(elk_betabin)
 There are several ways to model overdispersed binomial data, each with its own pros and cons
 
 | Model             | Pros | Cons |
-|:------------------|:-----|:-----|
+|:------------------|:---------------|:---------------|
 | binomial          | Easy | Underestimates variance |
 | binomial with VIF | Easy; estimate of variance | Ad hoc |
 | quasi-binomial    | Easy; estimate of variance | No distribution for inference |
