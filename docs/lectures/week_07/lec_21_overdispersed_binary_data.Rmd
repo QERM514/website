@@ -210,26 +210,26 @@ sum(diag(ct)) / nn
 ```
 
 
-## Classification scoring | Specificity
-
-Ability to predict age-1 when fish *do* smolt at age-1
-
-```{r class_spec}
-xtabs(~ obs_age + pred_age)
-```
-
-35 / (35 + 6) = 85.4%
-
-
 ## Classification scoring | Sensitivity
 
-Ability to predict age-2 when fish *do* smolt at age-2
+Ability to predict age-2 when fish *do* smolt at age-2 ("true positive")
 
 ```{r class_sens}
 xtabs(~ obs_age + pred_age)
 ```
 
-34 / (5 + 34) = 87.1%
+37 / (5 + 37) = 88.1%
+
+
+## Classification scoring | Specificity
+
+Ability to predict age-1 when fish *do* smolt at age-1 ("true negative")
+
+```{r class_spec}
+xtabs(~ obs_age + pred_age)
+```
+
+35 / (35 + 3) = 92.1%
 
 
 ## Proportion of variance explained
