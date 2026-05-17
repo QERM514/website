@@ -293,15 +293,17 @@ We have talked a bit about odds with respect to evidence ratios
 
 Odds $o$ are an unbounded alternative to probability $p$
 
-If we represent the $k$-to-1 odds against something as $1 / k$, then the following holds
+If the odds are $k$-to-1 against something, which we can write as $o = 1/k$, then
 
 $$
-o = \frac{1}{1 - p} ~ \Rightarrow ~ p = \frac{o}{1 + o}
+p = \frac{1}{1 + k} ~ \Rightarrow ~ k = \frac{1 - p}{p}
 $$
 
 <br>
 
-For example, if $p$ = 0.8, then $o = \frac{1}{1 - 0.8} = 5$
+For example, if $k$ = 4, then $p = \frac{1}{1 + 4} = 0.2$
+
+For example, if $p$ = 0.8, then $k = \frac{1 - 0.8}{0.8} = \frac{1}{4}$
 
 
 ## Logistic regression and odds
