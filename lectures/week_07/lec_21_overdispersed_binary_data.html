@@ -3394,27 +3394,27 @@ sum(diag(ct)) / nn</pre>
 
 <pre >## [1] 0.9</pre>
 
-</article></slide><slide class=""><hgroup><h2>Classification scoring </h2><h3> Specificity</h3></hgroup><article  id="classification-scoring-specificity">
-
-<p>Ability to predict age-1 when fish <em>do</em> smolt at age-1</p>
-
-<pre >##        pred_age
-## obs_age  1  2
-##       1 35  3
-##       2  5 37</pre>
-
-<p>35 / (35 + 6) = 85.4%</p>
-
 </article></slide><slide class=""><hgroup><h2>Classification scoring </h2><h3> Sensitivity</h3></hgroup><article  id="classification-scoring-sensitivity">
 
-<p>Ability to predict age-2 when fish <em>do</em> smolt at age-2</p>
+<p>Ability to predict age-2 when fish <em>do</em> smolt at age-2 (&ldquo;true positive&rdquo;)</p>
 
 <pre >##        pred_age
 ## obs_age  1  2
 ##       1 35  3
 ##       2  5 37</pre>
 
-<p>34 / (5 + 34) = 87.1%</p>
+<p>37 / (5 + 37) = 88.1%</p>
+
+</article></slide><slide class=""><hgroup><h2>Classification scoring </h2><h3> Specificity</h3></hgroup><article  id="classification-scoring-specificity">
+
+<p>Ability to predict age-1 when fish <em>do</em> smolt at age-1 (&ldquo;true negative&rdquo;)</p>
+
+<pre >##        pred_age
+## obs_age  1  2
+##       1 35  3
+##       2  5 37</pre>
+
+<p>35 / (35 + 3) = 92.1%</p>
 
 </article></slide><slide class=""><hgroup><h2>Proportion of variance explained</h2></hgroup><article  id="proportion-of-variance-explained">
 
