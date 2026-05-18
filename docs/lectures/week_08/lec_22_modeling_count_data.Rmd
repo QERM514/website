@@ -6,7 +6,7 @@ date: "18 May 2026"
 output:
   ioslides_presentation:
     wide: true
-    css: lecture_slides.css
+    css: ../lecture_slides.css
 ---
 
 ```{r setup, include=FALSE}
@@ -72,23 +72,13 @@ The Poisson distribution is perhaps the best known
 It gives the probability of a given number of events occurring in a fixed interval of time or space
 
 
-## Poisson distribution | Examples
-
-* the number of Prussian soldiers killed by horse kicks per year from 1868 - 1931
-
-* the number of new COVID-19 infections per day in the US
-
-* the number of email messages I receive per week from students in QERM 514
-
-
 ## Poisson distribution
 
-It's unique in that it has one parameter $\lambda$ to describe both the mean *and* variance
+Recall that it has one parameter $\lambda$ to describe both the mean *and* variance
 
 $$
-y_i \sim \text{Poisson}(\lambda)
-$$
-$$
+y_i \sim \text{Poisson}(\lambda) \\
+~ \\
 \text{Mean}(y) = \text{Var}(y) = \lambda
 $$
 
@@ -97,13 +87,13 @@ $$
 
 As $\lambda \rightarrow \infty$ the Poisson $\rightarrow$ Normal
 
-```{r pois_normal, fig.height = 4, fig.width = 8, fig.align = 'center'}
+```{r pois_normal, fig.height = 4.5, fig.width = 8.5, fig.align = 'center'}
 set.seed(514)
 
 par(mfrow = c(1, 3),
     mai = c(0.7, 0.2, 0.3, 0.1),
     omi = c(0, 0.6, 0, 0), bg = NA,
-    cex.main = 1.5, cex.lab = 1.5)
+    cex.main = 2, cex.axis = 1.5, cex.lab = 2)
 
 nn <- 1e6
 
@@ -123,19 +113,6 @@ hist(rpois(nn, 100), las = 1, breaks = 20,
      yaxt = "n", ylab = "", xlab = expression(italic(y)),
      main = expression(lambda == 100))
 ```
-
-
-## Poisson distribution
-
-$$
-f(y; \theta, \phi) = \exp \left( \frac{y \theta - b(\theta)}{a(\phi)} - c(y, \phi)\right) \\
-\Downarrow \\
-f(y; \mu) = \frac{\exp (- \mu) \mu^y}{y!} \\
-$$
-
-with $\theta = \log (\mu)$ and $\phi = 1$
-
-$a(\phi) = 1 ~~~~~~ b(\theta) = \exp (\theta) ~~~~~~ c(y, \phi) = - \log (y!)$
 
 
 ## Poisson distribution
@@ -231,7 +208,9 @@ $$
 
 ## Example of a Poisson regression
 
-Catches of spot prawns $y_i$ as a function of bait type $C_i$ and water temperature $T_i$
+Catches of prawns $y_i$ as a function of bait type $C_i$ and water temperature $T_i$
+
+<br>
 
 $$
 \begin{aligned}
@@ -249,9 +228,9 @@ nn <- 113
 ## average catch
 b0 = 3.5
 ## effect of chicken as bait
-b_bait <- 0.1
+b_bait <- 0.08
 ## effect of temperature
-b_temp <- 0.03
+b_temp <- 0.04
 ## bait type
 fish <- sample(c(0, 1), nn, replace = TRUE)
 ## water temp
@@ -468,7 +447,7 @@ We cannot reject the $H_0$
 
 ## Fitted values & CI's
 
-```{r fitted_ci, fig.height=4.5, fig.width=4.5, fig.align='center'}
+```{r fitted_ci, fig.height=5, fig.width=5, fig.align='center'}
 ## set plot area
 par(mai = c(0.9, 0.9, 0.1, 0.1),
     omi = c(0, 0, 0, 0),
@@ -485,18 +464,18 @@ chkn <- predict(cmod, cdat, se.fit = TRUE, type = "response")
 t_crit <- qt(0.975, nn - length(coef(cmod)))
 
 ## temp vs catch
-plot(temp, catch, pch = 16, las = 1,
+plot(temp, catch, pch = 16, las = 1, ylim = range(catch),
      ylab = "Catch", xlab ="Temperature (C)")
 ## with fish bait
-lines(fdat$temp, fish$fit, lwd = 2, col = "blue")
+lines(fdat$temp, fish$fit, lwd = 3, col = "blue")
 lines(fdat$temp, fish$fit + t_crit * fish$se.fit, lwd = 1, col = "blue")
 lines(fdat$temp, fish$fit - t_crit * fish$se.fit, lwd = 1, col = "blue")
-text(7, 65, "Fish bait", pos = 4, col = "blue")
+text(7, 65, "Fish bait", pos = 4, col = "blue", cex = 1.5)
 ## with chicken bait
-lines(cdat$temp, chkn$fit, lwd = 2, col = "darkred")
+lines(cdat$temp, chkn$fit, lwd = 3, col = "darkred")
 lines(cdat$temp, chkn$fit + t_crit * chkn$se.fit, lwd = 1, col = "darkred")
 lines(cdat$temp, chkn$fit - t_crit * chkn$se.fit, lwd = 1, col = "darkred")
-text(7, 30, "Chicken bait", pos = 4, col = "darkred")
+text(7, 40, "Chicken bait", pos = 4, col = "darkred", cex = 1.5)
 ```
 
 
