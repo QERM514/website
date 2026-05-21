@@ -362,7 +362,7 @@ In general, there are 4 different types of errors that cause zeros
 4) Process error (habitat is suitable but unused)
 
 
-## Sources of zeros {.smaller data-background=zero_sources.png data-background-size=75%}
+## Sources of zeros {.smaller data-background=zero_sources.png data-background-size=70%}
 
 <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
@@ -389,7 +389,7 @@ The data are treated as 2 distinct groups:
 2) Non-zero counts
 
 
-## Hurdle models {.smaller data-background=hippo_za.png data-background-size=75%}
+## Hurdle models {.smaller data-background=hippo_za.png data-background-size=70%}
 
 <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
@@ -458,7 +458,7 @@ We'll assume the following
 
 ## Counts of hippos
 
-```{r hippo_data, fig.height=4.5, fig.width=6, fig.align='center'}
+```{r hippo_data, fig.height=5, fig.width=6.5, fig.align='center'}
 ## Hurdle model
 rtpois <- function(n, lambda, tol = 1e-10) {
   ## Simulate from zero-truncated Poisson
@@ -503,7 +503,7 @@ y <- z * pos_count
 
 par(mai = c(0.9, 0.9, 0.1, 0.1),
     omi = c(0, 0, 0, 0), bg = NA,
-    cex.main = 1.2, cex.lab = 1.2)
+    cex.main = 1.4, cex.lab = 1.4)
 ## histogram of counts
 hist(y, breaks = seq(0, max(y)), las = 1, col = "dodgerblue", border = "gray",
      main = "", xlab = "Number of hippos", ylab = "Frequency", )
@@ -644,11 +644,42 @@ Zero-inflated (mixture) models treat the zeros as coming from 2 sources
 2) ecological (function of environment)
 
 
-## Zero-inflated models {.smaller data-background=hippo_zi.png data-background-size=75%}
+## Zero-inflated models {.smaller data-background=hippo_zi.png data-background-size=60%}
 
 <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
 Image from Zuur et al (2009)
+
+
+## ZA versus ZI models for counts
+
+```{r za_zi_compare, fig.height=5, fig.width=8, fig.align='center'}
+## ZAP
+set.seed(514)
+junk <- rpois(300, 3)
+junk1 <- rep(0, 50)
+all <- c(junk1, junk)
+ind <- ifelse(all > 0, 0, 1)
+all_zap <- table(all, ind)
+
+## ZIP
+set.seed(514)
+junk <- rpois(300,3)
+junk1 <- rep(0,50)
+ind <- c(rep(1,50),rep(0,300))
+all <- c(junk1, junk)
+all_zip <- table(all,ind)
+
+## set plot area
+par(mfrow = c(1, 2),
+    mai = c(0.9, 0.9, 0.6, 0.1),
+    omi = c(0, 0, 0, 0), bg = NA,
+    cex.main = 1.3, cex.lab = 1.3)
+barplot(t(all_zap), las = 1, col=c("dodgerblue","indianred"),
+        xlab = "Count", main = "Zero altered (hurdle)")
+barplot(t(all_zip), las = 1, col=c("dodgerblue","indianred"),
+        xlab = "Count", main = "Zero inflated (mixture)")
+```
 
 
 ## Mixture models
@@ -722,7 +753,7 @@ We'll assume the following
 
 ## Counts of deer
 
-```{r deer_data, fig.height=4.5, fig.width=6, fig.align='center'}
+```{r deer_data, fig.height=5, fig.width=6.5, fig.align='center'}
 set.seed(514)
 ## sample size
 nn <- 200
@@ -747,7 +778,7 @@ y <- (1 - z) * pos_count
 
 par(mai = c(0.9, 0.9, 0.1, 0.1),
     omi = c(0, 0, 0, 0), bg = NA,
-    cex.main = 1.2, cex.lab = 1.2)
+    cex.main = 1.4, cex.lab = 1.4)
 ## histogram of counts
 hist(y, breaks = seq(0, max(y)), las = 1, col = "brown", border = "gray",
      main = "", xlab = "Number of deer", ylab = "Frequency", )
@@ -871,36 +902,6 @@ $\mu$ is the mean of *all counts* (including zeros)
 
 $r$ is the scale of the counts
 
-
-## ZA versus ZI models for counts
-
-```{r za_zi_compare, fig.height=4.5, fig.width=7.5, fig.align='center'}
-## ZAP
-set.seed(514)
-junk <- rpois(300, 3)
-junk1 <- rep(0, 50)
-all <- c(junk1, junk)
-ind <- ifelse(all > 0, 0, 1)
-all_zap <- table(all, ind)
-
-## ZIP
-set.seed(514)
-junk <- rpois(300,3)
-junk1 <- rep(0,50)
-ind <- c(rep(1,50),rep(0,300))
-all <- c(junk1, junk)
-all_zip <- table(all,ind)
-
-## set plot area
-par(mfrow = c(1, 2),
-    mai = c(0.9, 0.9, 0.6, 0.1),
-    omi = c(0, 0, 0, 0), bg = NA,
-    cex.main = 1.2, cex.lab = 1.2)
-barplot(t(all_zap), las = 1, col=c("dodgerblue","indianred"),
-        xlab = "Count", main = "Zero altered (hurdle)")
-barplot(t(all_zip), las = 1, col=c("dodgerblue","indianred"),
-        xlab = "Count", main = "Zero inflated (mixture)")
-```
 
 ## Steps for modeling counts
 
