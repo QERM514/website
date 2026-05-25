@@ -118,7 +118,7 @@ syl_txt <- data.frame(
   data_links = data_links_html,
   key_links = key_links_html
 )
-colnames(syl_txt) <- c("Assigned", "Due", "Topic(s)", "Assignment", "Template", "Data", "Answer key")
+colnames(syl_txt) <- c("Assigned", "Due", "Topic", "Assignment", "Template", "Data", "Answer key")
 rownames(syl_txt) <- NULL
 
 ## generate table
