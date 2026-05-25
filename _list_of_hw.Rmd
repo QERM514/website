@@ -82,7 +82,7 @@ mixed_models <- list(
   rmd = "homework/hw_3/hw_03_mixed_models.Rmd",
   html = "",
   data = "homework/hw_3/ps_chinook.csv",
-  key = "" # "homework/hw_3/hw_06_mixed_models_key.pdf"
+  key = "homework/hw_3/hw_03_mixed_models_key.pdf"
 )
 
 ## 7 logistic regr
