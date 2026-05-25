@@ -60,6 +60,8 @@ y_t &= \alpha - \beta S_t + \epsilon_t
 \end{aligned}
 $$
 
+\
+
 where $y_t =\log (R_t / S_t)$, $\alpha = \log a$, and $\beta = b$.
 
 ## Data
@@ -78,11 +80,7 @@ The data for this assignment come from 21 populations of Chinook salmon (*Oncorh
 
 # Problems
 
-As you work through the following problems, be sure to show all of the code necessary to produce your answers. (Hint: You will need to define a new response variable before you can do any model fitting.)
-
-***
-
-a) List 3 hypotheses concerning the possible random effect of population on the intrinsic growth rate and/or the intrinsic growth rate scaled by the carrying capacity. (3 pts)
+### a) List 3 hypotheses concerning the possible random effect of population on the intrinsic growth rate and/or the intrinsic growth rate scaled by the carrying capacity. (3 pts)
 
 There are many answers to this question but I'm looking for something along these lines:
 
@@ -90,11 +88,11 @@ There are many answers to this question but I'm looking for something along thes
 
 2) The intrinsic growth rate scaled by carrying capacity for each stock $i$ $(\beta_i)$ is correlated among stocks and can be modeled as a random effect.
 
-3) Both the intrinsic growth rate for each stock $i$ $(\alpha)$ and the intrinsic growth rate scaled by carrying capacity for each stock $i$ $(\beta_i)$ are correlated among stocks and can be modeled as random effects.
+3) Both the intrinsic growth rate for each stock $i$ $(\alpha_i)$ and the intrinsic growth rate scaled by carrying capacity for each stock $i$ $(\beta_i)$ are correlated among stocks and can be modeled as random effects.
 
 ***
 
-b) Plot the number of recruits by population $(y)$ against the number of spawners by population $(x)$, and add a line indicating the replacement level where recruits = spawners. Describe what you see. (4 pts)
+### b) Plot the number of recruits by population $(y)$ against the number of spawners by population $(x)$, and add a line indicating the replacement level where recruits = spawners. Describe what you see. (4 pts)
 
 Here is a plot using base **R**:
 
@@ -107,9 +105,6 @@ n_pops <- length(unique(psc$pop))
 
 ## number of years
 n_yrs <- length(unique(psc$year))
-
-## new response variable: log(R/S)
-psc$logRS <- log(psc$recruits / psc$spawners)
 
 ## set colors
 clrs <- viridis::plasma(n_pops, alpha = 0.7, begin = 0.2, end = 0.8)
@@ -134,7 +129,7 @@ There appears to be a generally positive relationship between the number of spaw
 
 ***
 
-c) How would you describe the following model with respect to "pooling"? Fit the model and report your estimates for $\alpha$ and $\beta$. Also report your estimate of $\sigma_\epsilon^2$. Based on the $R^2$ value, does this seem like a promising model? (5 pts)
+### c) How would you describe the following model with respect to "pooling"? Fit the model and report your estimates for $\alpha$ and $\beta$. Also report your estimate of $\sigma_\epsilon^2$. Based on the $R^2$ value, does this seem like a promising model? (5 pts)
 
 \begin{equation}
 \begin{gathered} \nonumber 
@@ -150,8 +145,13 @@ This model assumes *all* populations have the same intrinsic growth rate $(\alph
 Here is the model fit to the data:
 
 ```{r c_fit_base_model, echo = TRUE}
-## base model with global parameters
+## calculate new response variable: log(R/S)
+psc$logRS <- log(psc$recruits / psc$spawners)
+
+## fit base model with global parameters
 mod_base <- lm(logRS ~ spawners, data = psc)
+
+## model summary
 summary(mod_base)
 ```
 
@@ -161,7 +161,7 @@ The estimate of $\alpha$ is `r round(coef(mod_base)[1], 2)` and $\beta$ is `r ro
 
 ***
 
-d) Modify the model in (c) to include a random effect of population $(\delta_i)$ on the intrinsic growth rate. Write out the specific form for the model, including any error terms, and then fit it. Report your estimates for $\alpha$, each of the random effects $\delta_i$, and $\beta$. Also report your estimate of $\sigma_\epsilon^2$ and $\sigma_\delta^2$. Based on the $R^2$ value, how does this model compare to that from part (c)? (5 pts)
+### d) Modify the model in (c) to include a random effect of population $(\delta_i)$ on the intrinsic growth rate. Write out the specific form for the model, including any error terms, and then fit it. Report your estimates for $\alpha$, each of the random effects $\delta_i$, and $\beta$. Also report your estimate of $\sigma_\epsilon^2$ and $\sigma_\delta^2$. Based on the $R^2$ value, how does this model compare to that from part (c)? (5 pts)
 
 Here is a modified model that includes a random effect of population $(\delta_i)$ on the intrinsic growth rate.
 
@@ -178,9 +178,13 @@ Here is a modified model that includes a random effect of population $(\delta_i)
 Here's an example of how to fit the RE model:
 
 ```{r d_fit_RE_popn_alpha, echo = TRUE, message = FALSE}
+## load {lme4} library
 library(lme4)
-## RE for alpha
+
+## fit RE model for alpha
 mod_re_popn_alpha <- lmer(logRS ~ 1 + spawners + (1 | pop_n), data = psc)
+
+## model summary
 summary(mod_re_popn_alpha)
 ```
 
@@ -204,7 +208,7 @@ sigma2_epsilon <- var_re_site$vcov[2]
 The estimate of $\sigma_\epsilon^2$ is `r round(sigma2_epsilon, 2)` and the estimate of $\sigma_\delta^2$ is `r round(sigma2_delta, 2)`.
 
 ```{r}
-## R^2
+## calculate R^2
 SSE <- sum(residuals(mod_re_popn_alpha)^2)
 SSTO <- sum((psc$logRS - mean(psc$logRS))^2)
 (R2 <- 1 - SSE / SSTO)
@@ -214,7 +218,7 @@ The $R^2$ value for this model is only ~`r round(R2, 3)`, which is much better t
 
 ***
 
-e) Modify the model in (c) to include a random effect of population $(\eta_i)$ on the intrinsic growth rate scaled by the carrying capacity. Write out the specific form for the model, including any error terms, and then fit it. Report your estimates for $\alpha$, each of the $\eta_i$, and $\beta$. Also report your estimate of $\sigma_\epsilon^2$ and $\sigma_\eta^2$. Based on the $R^2$ value, how does this model compare to those from parts (c) and (d)? (5 pts)
+### e) Modify the model in (c) to include a random effect of population $(\eta_i)$ on the intrinsic growth rate scaled by the carrying capacity. Write out the specific form for the model, including any error terms, and then fit it. Report your estimates for $\alpha$, each of the $\eta_i$, and $\beta$. Also report your estimate of $\sigma_\epsilon^2$ and $\sigma_\eta^2$. Based on the $R^2$ value, how does this model compare to those from parts (c) and (d)? (5 pts)
 
 \begin{equation}
 \begin{gathered} \nonumber 
@@ -233,8 +237,10 @@ The trick here is to recognize that you only want a random effect for the slope 
 Here is the RE model fit to the data:
 
 ```{r e_fit_RE_popn_beta, echo = TRUE, message = FALSE}
-## RE for beta
+## fit RE model for beta
 mod_re_popn_beta <- lmer(logRS ~ 1 + spawners + (-1 + spawners | pop_n), data = psc)
+
+## model summary
 summary(mod_re_popn_beta)
 ```
 
@@ -258,7 +264,7 @@ sigma2_epsilon <- var_re_site$vcov[2]
 The estimate of $\sigma_\epsilon^2$ is `r round(sigma2_epsilon, 2)` and the estimate of $\sigma_\eta^2$ is `r round(sigma2_eta, 2)`.
 
 ```{r}
-## R^2
+## calculate R^2
 SSE <- sum(residuals(mod_re_popn_beta)^2)
 (R2 <- 1 - SSE / SSTO)
 ```
@@ -267,7 +273,7 @@ The $R^2$ value for this model is ~`r round(R2, 3)`, which is much better than t
 
 ***
 
-f) Modify the model in (c) to include random effects of population on both the intrinsic growth rate and intrinsic growth rate scaled by the carrying capacity. Write out the specific form for the model, including any error terms, and then fit it. Report your estimates for $\alpha$, each of the $\delta_i$, $\beta$, and each of the $\eta_i$. Also report your estimate of $\sigma_\epsilon^2$, $\sigma_\delta^2$, and $\sigma_\eta^2$. Based on the $R^2$ value, how does this model compare to those from parts (c), (d), and (e)? (5 pts)
+### f) Modify the model in (c) to include random effects of population on both the intrinsic growth rate and intrinsic growth rate scaled by the carrying capacity. Write out the specific form for the model, including any error terms, and then fit it. Report your estimates for $\alpha$, each of the $\delta_i$, $\beta$, and each of the $\eta_i$. Also report your estimate of $\sigma_\epsilon^2$, $\sigma_\delta^2$, and $\sigma_\eta^2$. Based on the $R^2$ value, how does this model compare to those from parts (c), (d), and (e)? (5 pts)
 
 \begin{equation}
 \begin{gathered} \nonumber 
@@ -287,8 +293,10 @@ Here you want *uncorrelated* random effects for both the intercept and slope, wh
 Here is this RE model fit to the data:
 
 ```{r f_mod_re_popn_both, echo = TRUE, message = FALSE}
-## RE for beta
+## fit RE for beta
 mod_re_popn_both <- lmer(logRS ~ 1 + spawners + (1 + spawners || pop_n), data = psc)
+
+## model summary
 summary(mod_re_popn_both)
 ```
 
@@ -297,6 +305,7 @@ summary(mod_re_popn_both)
 The estimate of $\alpha$ is `r round(summary(mod_re_popn_both)$coef[1,1], 2)` and $\beta$ is `r round(summary(mod_re_popn_both)$coef[2,1], 3)`. The estimates of both the $\delta_i$ and $\eta_i$ for each of the `r n_pops` populations are
 
 ```{r}
+## report RE's
 REs <- round(ranef(mod_re_popn_both)$pop_n, 3)
 colnames(REs) <- c("delta", "eta")
 REs
@@ -315,7 +324,7 @@ sigma2_epsilon <- var_re_site$vcov[3]
 The estimate of $\sigma_\epsilon^2$ is `r round(sigma2_epsilon, 2)`, the estimate of $\sigma_\delta^2$ is `r round(sigma2_delta, 2)`, and the estimate of $\sigma_\eta^2$ is `r round(sigma2_eta, 2)`
 
 ```{r}
-## R^2
+## calculate R^2
 SSE <- sum(residuals(mod_re_popn_both)^2)
 (R2 <- 1 - SSE / SSTO)
 ```
@@ -324,7 +333,7 @@ The $R^2$ value for this model is only ~`r round(R2, 3)`, which is slightly wors
 
 ***
 
-g) Based on the 3 models you fit in parts (d - f), test whether or not there is data support for including a random effect for population-level intrinsic growth rates. Also test whether or not there is data support for including a random effect for population-level intrinsic growth rates scaled by the carrying capacity. Make sure to specify your null hypothesis for both of the tests. (4 pts)
+### g) Based on the 3 models you fit in parts (d - f), test whether or not there is data support for including a random effect for population-level intrinsic growth rates. Also test whether or not there is data support for including a random effect for population-level intrinsic growth rates scaled by the carrying capacity. Make sure to specify your null hypothesis for both of the tests. (4 pts)
 
 To compare our models with a single random effect, we need to compare them against a full model with both random effects. To do so, we need 3 different models:
 
@@ -367,7 +376,7 @@ Here, too, we can reject $H_0 : \sigma_{\eta}^2 = 0$ and conclude that there is 
 
 ***
 
-h) Now fit the following model, which includes an additional random effect of year, and report your estimates for $\alpha$, each of the $\delta_i$, $\beta$, each of the $\eta_i$, and each of the $\gamma_t$. Also report your estimate of $\sigma_\epsilon^2$, $\sigma_\delta^2$, $\sigma_\gamma^2$, and $\sigma_\eta^2$. Based on the $R^2$ value, how does this model compare to all of the previous models? (5 pts)
+### h) Now fit the following model, which includes an additional random effect of year, and report your estimates for $\alpha$, each of the $\delta_i$, $\beta$, each of the $\eta_i$, and each of the $\gamma_t$. Also report your estimate of $\sigma_\epsilon^2$, $\sigma_\delta^2$, $\sigma_\gamma^2$, and $\sigma_\eta^2$. Based on the $R^2$ value, how does this model compare to all of the previous models? (5 pts)
 
 \begin{equation}
 \begin{gathered} \nonumber 
@@ -386,7 +395,7 @@ Here you want *uncorrelated* random effects for both the intercept and slope, pl
 Here is the model fit to the data:
 
 ```{r h_mod_re_popn_3, echo = TRUE, message = FALSE}
-## RE for beta
+## fit RE model for alpha, beta & year
 mod_re_popn_3 <- lmer(logRS ~ 1 + spawners + (1 + spawners || pop_n)  + (1 | year),
                       data = psc)
 summary(mod_re_popn_3)
@@ -399,7 +408,7 @@ The estimate of $\alpha$ is `r round(summary(mod_re_popn_both)$coef[1,1], 2)` an
 The estimates of the $\delta_i$ (`pop_n$(Intercept)`), $\eta_i$ (`pop_n$spawners`), and $\gamma_t$ (`year$(Intercept)`) are
 
 ```{r}
-# round(ranef(mod_re_popn_3), 3)
+## report RE's
 lapply(ranef(mod_re_popn_3), round, 3)
 ```
 
@@ -419,7 +428,7 @@ sigma2_epsilon <- var_re_site$vcov[4]
 The estimate of $\sigma_\epsilon^2$ is `r round(sigma2_epsilon, 2)`, the estimate of $\sigma_\delta^2$ is `r round(sigma2_delta, 2)`, the estimate of $\sigma_\eta^2$ is `r round(sigma2_eta, 3)`, and the estimate of $\sigma_\gamma^2$ is `r round(sigma2_gamma, 2)`.
 
 ```{r}
-## R^2
+## calculate R^2
 SSE <- sum(residuals(mod_re_popn_3)^2)
 (R2 <- 1 - SSE / SSTO)
 ```
@@ -428,7 +437,7 @@ The $R^2$ value for this model is ~`r round(R2, 3)`, which is our best yet.
 
 ***
 
-i) Conduct a diagnostic check of the model you fit in (h) to evaluate the adequacy of the model assumptions. Do you see any cause for concern? (4 pts)
+### i) Conduct a diagnostic check of the model you fit in (h) to evaluate the adequacy of the model assumptions. Do you see any cause for concern? (4 pts)
 
 We should be checking a $Q$-$Q$ plot, a plot of the residuals versus the fitted values, and the degree of autocorrelation in the residuals for each population.
 
