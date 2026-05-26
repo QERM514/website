@@ -1,0 +1,440 @@
+---
+title: "Generalized Additive Models, Part 2"
+author: "Sarah Converse"
+date: "4 June 2025"
+output:
+  ioslides_presentation
+subtitle: Analysis of Ecological and Environmental Data<br>QERM 514
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+
+library(mgcv)
+library(curl)
+library(ggplot2)
+library(gamair)
+library(gratia)
+library(here)
+
+
+```
+
+
+```{css, echo = FALSE}
+
+.title-slide hgroup h1 {
+  font-size: 40px;
+}
+.title-slide hgroup h2 {
+  font-size: 30px;
+}
+h2 {
+  font-size: 40px;
+}
+slides > slide {
+  font-size: 20px;
+}
+```
+
+## Acknowledgements 
+
+Gavin Simpson and colleagues have produced a lot of useful teaching material on GAMs that I've made use of here. For example: 
+
+* https://www.youtube.com/watch?v=sgw4cu8hrZM&t=598s
+
+* https://www.youtube.com/watch?v=Ukfvd8akfco&t=905s
+
+
+## Goals for today
+
+* Understand some diagnostics
+
+* Understand more about model selection techniques with GAMs
+
+* Become familiar with some of the flexibility of GAMs
+
+
+## Last time 
+
+A generalized additive model is a generalization of a GLM. It has a predictor that is a sum of smoothed (and possibly unsmoothed) terms: 
+
+$$
+y_i = \beta_0 + \Sigma_j s_j(x_{j,i}) + \epsilon_j
+$$
+
+And with splines, our smoothed terms are a sum of weighted basis functions: 
+
+$$
+s(x)=\Sigma_k \beta_k b_k(x)
+$$
+
+## Model choices 
+
+Based on understanding of your system: 
+
+* error distribution 
+
+* predictors 
+
+* type of smoother(s)  
+
+Check with diagnostics 
+
+* <b> $k$ - the number of knots </b> 
+
+
+## An example 
+
+Chicago pollution and death rate (Peng et al.; NMMAPSdata package)
+
+* deaths per day
+* median particles <2.5 mg per $m^3$
+* ozone ppb 
+* temperature (fahrenheit)
+
+```{r, echo = TRUE, library = TRUE}
+
+data(chicago)
+
+model1 <- mgcv::gam(death ~ s(pm25median) + 
+                      s(o3median) + 
+                      s(tmpd), 
+                    family = "poisson", 
+                    data=chicago, method = "REML")
+
+```
+
+
+## An example 
+
+Smoothed Terms 
+
+```{r, echo = FALSE, results = TRUE}
+
+summary(model1)$s.table 
+
+``` 
+
+
+## GAM interpretation  
+
+* Effective degrees of freedom (edf) - degree of non-linearity, but with upper bound set by $k$ 
+
+* Reference degrees of freedom (Ref.df) - used for calculating test statistic 
+
+* $p$-value - null hypothesis is a linear effect (this can include a flat linear effect, i.e., no effect) 
+
+  * Biased low because they don't account for need to estimate $\lambda$ 
+
+  * Works well in asymptopia 
+
+  * Doesn't work for unpenalized smooths (random effects)
+
+
+## Model checking 
+
+* Effect of $k$ on edf (for median particles <2.5 mg per $m^3$)
+
+```{r,echo = FALSE,results = TRUE}
+
+record <- matrix(NA,nrow=20,ncol=3)
+for(j in 1:20){
+  model1 <- mgcv::gam(death ~ s(pm25median, k = j+3) + 
+                      s(o3median) + 
+                      s(tmpd), 
+                    family = "poisson", 
+                    data=chicago, method = "REML")
+  
+record[j,1] <- j+3
+record[j,2] <- summary(model1)$s.table[1,1]
+}
+
+plot(record[,1],record[,2],xlab="k for pm2.5",ylab="effective degrees of freedom")
+
+```
+
+
+## Model checking 
+
+* Check whether $k$ is adequate - can set it very large to start, but this increases computation time 
+
+* Do some iterative checking with larger values of $k$ for multiple parameters, effective degrees of freedom should stabilize   
+
+```{r, echo = TRUE, results = 'hide', eval = FALSE}
+
+gam.check(model1) 
+
+``` 
+
+
+## Model checking 
+
+With $k$ set to default for each variable: check $p$-values 
+
+```{r, echo = FALSE, results = TRUE, fig.show='hide'}
+
+set.seed(1)
+model1 <- mgcv::gam(death ~ s(pm25median) + 
+                      s(o3median) + 
+                      s(tmpd), 
+                    family = "poisson", 
+                    data=chicago, method = "REML")
+
+gam.check(model1) 
+
+``` 
+
+
+## Model checking  
+
+With $k$ set to 20 for each variable 
+
+
+```{r}
+set.seed(1)
+``` 
+
+
+```{r, echo = TRUE, results = FALSE, fig.show='hide'}
+
+model1 <- mgcv::gam(death ~ s(pm25median, k=20) + 
+                      s(o3median, k=20) + 
+                      s(tmpd, k=20), 
+                    family = "poisson", 
+                    data=chicago, method = "REML")
+
+gam.check(model1) 
+
+```
+
+
+## Model checking  
+
+With $k$ set to 20 for each variable: $p$-value above $\alpha$, and edf is not close to $k$ 
+
+```{r, echo = FALSE, results = TRUE, fig.show='hide'}
+
+model1 <- mgcv::gam(death ~ s(pm25median, k=20) + 
+                      s(o3median, k=20) + 
+                      s(tmpd, k=20), 
+                    family = "poisson", 
+                    data=chicago, method = "REML")
+
+gam.check(model1, rep=500)
+
+```
+
+
+## Model checking  
+
+* We need to check the other assumptions of our model as well 
+
+* gam.check() also provides some basic diagnostic plots 
+
+```{r, echo = FALSE, results = TRUE, fig.show='show'}
+
+gam.check(model1) 
+
+``` 
+
+
+## Model selection 
+
+* When we select $\lambda$ we are only penalizing wiggliness, thus only penalizing functions of $X$ with a second derivative that is >0
+
+* Linear relationships can't be removed from the model this way  
+
+
+## Model selection 
+
+In gam(), we can use "select=TRUE" to apply penalties to the linear terms as well
+
+```{r, echo = TRUE, results = FALSE}
+
+model1 <- mgcv::gam(death ~ s(pm25median, k = 20) + 
+                      s(o3median, k = 20) + 
+                      s(tmpd, k = 20), 
+                    family = "poisson", select = TRUE,  
+                    data=chicago, method = "REML")
+                    
+```
+
+
+## Model selection 
+
+Look to see if edf is less than 1 
+
+```{r, echo = FALSE, results = TRUE}
+
+summary(model1)$s.table
+
+```
+
+
+## Model selection
+
+```{r, echo = FALSE, results = TRUE}
+
+gratia::draw(model1, scales = "fixed")
+
+```
+
+
+## Flexibility of GAMs 
+
+* We have lots of options when fitting GAMs 
+
+* This flexibility means we have to give very careful thought to what we're trying to achieve 
+
+* Just because we can fit a GAM doesn't mean it will be interpretable or useful  
+
+
+## Example  
+
+Atmospheric carbon dioxide data (measured at the South Pole) since 1957 to ~1999 
+
+```{r, echo = FALSE, results = TRUE}
+
+data(co2s)
+
+ggplot(co2s, aes(x = c.month, y = co2)) + geom_line()
+
+```
+
+## Example  
+
+Using the cubic regression basis - better when we have a lot of wiggliness 
+
+Make $k$ large (lots of potential wiggliness)
+
+
+```{r, echo = TRUE, results = FALSE}
+
+b <- gam(co2 ~ s(c.month, k=300, bs="cr"), data = co2s, method = 'REML')
+
+``` 
+
+
+## Example  
+
+```{r, echo = FALSE, results = TRUE}
+
+summary(b)
+
+```
+
+
+## Example  
+
+Now try to predict from the model 
+
+```{r, echo = FALSE, results = TRUE}
+
+pd <- with(co2s, data.frame(c.month = 1:(nrow(co2s)+36)))
+pd <- cbind(pd, predict(b, pd, se = TRUE))
+pd <- transform(pd, upr = fit + (2*se.fit), lwr = fit - (2 * se.fit))
+
+
+ggplot(pd, aes(x = c.month, y = fit)) +
+    geom_ribbon(aes(ymin = lwr, ymax = upr), alpha = 0.2) +
+    geom_line(data = co2s, aes(c.month, co2), col = 'red') +
+    geom_line(alpha = 0.5)
+
+```
+
+## Example  
+
+We fit a model, but it isn't particularly interpretable or useful 
+
+Let's distinguish within-year variation from the long-term trend 
+
+* Fit a cyclic spline on month (1:12) and a cubic regression spline on cumulative month (1:507)
+
+```{r, echo = TRUE, results = TRUE}
+
+b2 <- gam(co2 ~ s(month, bs = "cc") + 
+            s(c.month, bs = "cr", k = 300), 
+            knots = list(month = c(0.5, 12.5)),
+            data = co2s, method = 'REML')
+```
+
+
+## Example  
+
+```{r, echo = FALSE, results = TRUE}
+
+summary(b2)
+
+```
+
+
+## Example  
+
+```{r, echo = FALSE, results = TRUE} 
+
+nr <- nrow(co2s)
+pd2 <- with(co2s, data.frame(c.month = 1:(nr+36),
+                             month = rep(1:12, length.out=nr+36)))
+pd2 <- cbind(pd2, predict(b2, pd2, se = TRUE))
+pd2 <- transform(pd2, upr = fit + (2*se.fit), lwr = fit - (2 * se.fit))
+
+ggplot(pd2, aes(x = c.month, y = fit)) +
+    geom_ribbon(aes(ymin = lwr, ymax = upr), alpha = 0.2) +
+    geom_line(data = co2s, aes(c.month, co2), col = 'red') +
+    geom_line(alpha = 0.5)
+``` 
+
+
+## Example  
+
+* The second model seems more interpretable (there is predictable annual variation, but also a long-term pattern) and is more useful for prediction 
+
+* Building GAMs is more complex than building GLMs because we have more choices 
+
+* Requires thinking hard about the system and the question 
+
+
+## Options for interactions 
+
+In addition to splines on individual predictors, we can fit interactions 
+
+* te(x1,x2) - main effects and interactions - separate smoothness parameter and separate marginal basis 
+
+* ti(x1,x2) - interactions only - for when you have the main effect elsewhere in the model (for example, if you have multiple two-way interactions, a*b + a*c + b*c)
+
+* s(x1,x2, bs = 'tp') - bivariate thin plate splines - single smoothness parameter, only use when units are the same (e.g., spatial smoother)
+
+* f + s(x1, by = f) - when we want to smooth by different levels of a factor (be sure you include the factor as a fixed effect)
+
+* s(x, f, bs = 'fs') - smooth function for each level of the factor, akin to random slopes 
+
+
+## Mixed Models 
+
+We can also fit random effects
+
+* mgcv:gam() with bs = "re"
+
+* mgcv:gamm() - nlme - with correlation structures 
+
+* gamm4:gamm4() - lmer() or glmer()
+
+Thus, these models are equivalent: 
+
+* lme(y ~ 1 + (1|f), method = "REML")
+
+* gam(y ~ s(f, bs = "re"), method = "REML")
+
+
+## Summary 
+
+* GAMs using splines offer tremendous flexibility 
+
+* There is likely some tradeoff between flexibility and ease of understanding 
+
+* Many of our relationships in ecology aren't linear 
+
+* What are some examples? 
+
+

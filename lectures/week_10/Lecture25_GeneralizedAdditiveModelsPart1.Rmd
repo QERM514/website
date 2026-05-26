@@ -1,0 +1,479 @@
+---
+title: "Generalized Additive Models, Part 1"
+author: "Sarah Converse"
+date: "2 June 2025"
+output:
+  ioslides_presentation
+subtitle: Analysis of Ecological and Environmental Data<br>QERM 514
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+
+library(mgcv)
+library(gamair)
+library(gratia)
+library(curl)
+library(here)
+library(tidyverse)
+library(here)
+
+```
+
+
+```{css, echo = FALSE}
+
+.title-slide hgroup h1 {
+  font-size: 40px;
+}
+.title-slide hgroup h2 {
+  font-size: 30px;
+}
+h2 {
+  font-size: 40px;
+}
+slides > slide {
+  font-size: 18px;
+}
+
+pre {
+  font-size: 20px
+}
+
+```
+
+## Acknowledgements 
+
+Gavin Simpson and colleagues have produced a lot of useful teaching material on GAMs that I've made use of here. For example: 
+
+* https://www.youtube.com/watch?v=sgw4cu8hrZM&t=598s
+
+* https://www.youtube.com/watch?v=Ukfvd8akfco&t=905s
+
+
+## Goals for today
+
+* Understand what a smoother is and understand the motivation for using a smoother in a model 
+
+* Learn how to fit some basic GAMs with splines  
+
+## Assumptions of linear models 
+
+* Linear relationship between predictor and response 
+
+* Observations $y_i$ are a random sample from the population    
+
+* The predictor(s) are known without measurement error  
+* The predictor(s) are independent of the response
+
+* If 2+ predictors, they are independent of each other
+
+* Errors are IID: $\epsilon_i \sim \text{N}(0, \sigma^2)$; $\text{Cov}(\epsilon_i, \epsilon_j) = 0$
+
+## Non-linear relationships  
+
+* We assume a linear relationship between predictor and response
+
+* Or in the case of non-Gaussian GLMs, we assume a linear relationship between predictor and link-scale response
+
+<br> 
+
+* But what if we don't think the relationship is linear? 
+
+## Non-linear relationships  
+
+Hadley Centre/Climatic Research Unit Temperature (HadCRUT) data: temperature anomalies 
+
+* This doesn't appear very linear. What can we do? 
+
+```{r echo = FALSE, results = TRUE}
+
+#temp data sourced from: 
+#"https://www.metoffice.gov.uk/hadobs/hadcrut4/data/current/time#_series/HadCRUT.4.6.0.0.annual_nh.txt"
+
+gtemp <- read.csv(here("Lectures/Lecture25_GeneralizedAdditiveModelsPart1","temps.csv"))
+
+plot(gtemp$Year,gtemp$Temperature,ylim = c(-0.7,1.2),xlab = "Year",ylab="Global Temperature Anomaly",pch=46,cex=3)
+lines(gtemp$Year,gtemp$Temperature,lwd=0.5)
+abline(h=0,lty="dashed")
+
+```
+
+## Non-linear relationships 
+
+We could fit a polynomial, but polynomials are unstable at the edges
+
+```{r, echo = FALSE, results = TRUE}
+
+model.poly <- lm(Temperature ~ poly(Year, degree = 20), data = gtemp)
+
+preds.poly <- predict(model.poly,se.fit=TRUE)
+
+plot(gtemp$Year,preds.poly$fit,ylim = c(-0.7,1.2),xlab = "Year",ylab="Global Temperature Anomaly",col = "red",type = "l",lwd=2)
+
+crit.t <- qt(0.025,length(gtemp$Year)-8,lower.tail = FALSE)
+
+lines(gtemp$Year,preds.poly$fit + preds.poly$se.fit*crit.t,col="red",lty="dashed")
+lines(gtemp$Year,preds.poly$fit - preds.poly$se.fit*crit.t,col="red",lty="dashed")
+
+points(gtemp$Year,gtemp$Temperature,pch=46,cex = 3)
+abline(h=0,lty="dashed")
+
+```
+
+
+## Generalized additive models 
+
+We want a model that allows for some smooth, but non-linear, relationship between year and temperature 
+
+* A generalized additive model is a generalization of a GLM. It has a predictor that is a sum of smoothed (and possibly unsmoothed) terms: 
+
+$$
+y_i = \beta_0 + \Sigma_j s_j(x_{j,i}) + \epsilon_j
+$$
+
+<br> 
+
+
+## Generalized additive models 
+
+There are multiple general types of GAMs: 
+
+* One type of GAM uses LOESS smoothers (LOcally Estimated Scatterplot Smoothers) 
+
+  * These fit many local (weighted) regressions with a moving window 
+  
+  * LOESS fitting is available in the gam() package
+
+* Pros: 
+ 
+  * Pretty simple and easy to understand 
+  
+* Cons: 
+
+  * How big you make the window (and hence the degree of smoothness) matters and there isn't much theory to help you choose: if we make the window big, we'll essentially get a linear regression, if we make it small, we will overfit (or "under-smooth")  
+  
+  * LOESS isn't very reliable near the ends of the data  
+
+
+## GAMs with splines 
+
+* Spline smoothing is a lot more flexible and adaptable than LOESS smoothing
+
+* Spline smoothing can be applied with lots of non-Gaussian error distributions and with random effects (e.g., GAMMs) 
+
+* If we use splines,the degree of smoothness can be estimated as part of model fitting using generalized cross validation, or using restricted maximum likelihood 
+
+
+## Fitting a GAM  
+
+Let's fit a GAM using splines to the global temperature data 
+
+
+```{r, echo = TRUE, results = TRUE}
+
+model1 <- mgcv::gam(Temperature ~ s(Year), data = gtemp, method = 'REML')
+
+```
+
+
+## Fitting a GAM  
+
+Linear terms 
+
+```{r, echo = FALSE, results = TRUE}
+
+summary(model1)$p.table
+```
+
+Smoothed terms 
+
+```{r}
+summary(model1)$s.table
+```
+
+Scale 
+
+```{r}
+summary(model1)$scale
+```
+
+Deviance explained
+
+```{r}
+summary(model1)$dev.expl   
+```
+
+
+## Fitting a GAM 
+
+```{r, echo = FALSE, results = TRUE}
+
+preds <- predict(model1,se.fit=TRUE)
+
+plot(gtemp$Year,preds$fit,ylim = c(-0.7,1.2),xlab = "Year",ylab="Global Temperature Anomaly",col = "red",type = "l",lwd=2)
+
+crit.t <- qt(0.025,length(gtemp$Year)-(1+summary(model1)$s.table[1]),lower.tail = FALSE)
+
+lines(gtemp$Year,preds$fit + preds$se.fit*crit.t,col="red",lty="dashed")
+lines(gtemp$Year,preds$fit - preds$se.fit*crit.t,col="red",lty="dashed")
+
+points(gtemp$Year,gtemp$Temperature,pch=46,cex = 3)
+abline(h=0,lty="dashed")
+
+``` 
+
+
+## What are splines? 
+
+Splines are basis expansions
+
+* A polynomial is one type of basis expansion: 
+
+$$ 
+x^0 = 1\\
+x^1 = x\\
+x^2 = x^2\\
+x^3 = x^3\\
+\dots
+$$
+
+In a basis expansion: 
+
+* We call each of the simpler functions a basis function 
+
+* The set of simpler functions, $b_k$, is called a *basis*
+
+When we model using splines, each of the $b_k$ basis functions has a coefficient $\beta_k$
+
+* The spline is the sum of these weighted functions (weighted by $\beta_k$ and evaluated at x): 
+
+$$
+s(x)=\Sigma_k \beta_k b_k(x)
+$$
+
+
+## What are splines? 
+
+There are many types of splines 
+
+One of the easiest to think about is a cubic regression spline
+
+* We divide $X$ into intervals (the number of intervals is defined by the number of "knots")
+
+* In each interval, we fit a cubic polynomial
+
+$$
+Y_i = \beta_0 + \beta_1 *X_i + \beta_2 * X_{i}^2 + \beta_3 * X_{i}^3
+$$ 
+
+* The fitted values per segment are glued together to form the smoothing curve
+
+* The points where the intervals connect are called knots. To obtain a smooth connection at the knots, certain conditions are imposed
+
+
+## What are splines? 
+
+![](animation.gif){ width=50% }
+    
+## How do we go from a basis to a model fit?  
+
+We want to allow for a function that is "wiggly", but not too wiggly
+
+* A function that is too wiggly would indicate that we are overfitting (or undersmoothing)
+
+* Once again, we are looking for a model that fits key processes generating the data while not overfitting the nuances of an individual dataset  
+
+<br> 
+
+* We need just the right level of wiggliness, but how do we measure wiggliness? 
+
+
+## Measuring wiggliness 
+
+First, consider the squared second derivative:
+
+$$
+\int_{\mathbb{R}}[f'']^2dx
+$$
+
+This is the rate of change in the slope - more wiggliness will result in a higher rate of change in the slope 
+
+<br> 
+
+We estimate this with:  
+
+$$
+\int_{\mathbb{R}}[f'']^2dx=\beta^TS\beta
+$$
+
+where $S$ is a penalty matrix, derived from our weighted basis functions 
+
+
+## Measuring wiggliness
+
+We now use this to penalize our likelihood function  
+
+$$
+log(\mathcal{L_p{|\beta}})=log(\mathcal{L{|\beta}}) - \lambda\beta^TS\beta
+$$
+
+where $\lambda$ is a smoothness parameter, indicating how much we penalize wiggliness 
+
+<br> 
+
+We will maximize this penalized likelihood
+
+## Measuring wiggliness
+
+```{r,echo = FALSE, results = TRUE, fig.width=2.5, fig.height=3, fig.fullwidth=TRUE}
+
+model1 <- 
+  gam(Temperature ~ s(Year), data = gtemp, sp = 0.0001)
+model2 <- 
+  gam(Temperature ~ s(Year), data = gtemp, sp = 0.01)
+model3 <- 
+  gam(Temperature ~ s(Year), data = gtemp, sp = 1)
+model4 <- 
+  gam(Temperature ~ s(Year), data = gtemp, sp = 100)
+
+plot.gam(model1,ylab="Temp",main = "lambda = 0.0001")
+plot.gam(model2,ylab="Temp",main = "lambda = 0.01")
+plot.gam(model3,ylab="Temp",main = "lambda = 1")
+plot.gam(model4,ylab="Temp",main = "lambda = 100")
+
+
+```
+
+
+## More on wiggliness 
+
+We can set the basis complexity - how many basis functions? 
+
+* We set $k$ as the maximum wiggliness (this determines the number of knots)
+
+But more important is to determine $\lambda$, the smoothness parameter 
+
+
+## More on wiggliness 
+
+How do we choose $\lambda$? 
+
+* When we use method = "REML" for selecting our $\lambda$, we are exploiting a relationship between random effects and smoothers - we can think of $\lambda_j$ as a prior on the spline coefficients 
+
+* We can also use generalized cross-validation (which is a type of cross-validation that is efficient with bigger datasets) 
+
+* There is reason to think that "REML" works best (Wood 2011) 
+
+<font size="2"> 
+Wood SN. 2011. Fast Stable Restricted Maximum Likelihood and Marginal Likelihood Estimation of Semiparametric Generalized Linear Models. J Royal Statistical Society 73:3-36. 
+</font>
+
+
+## What kind of splines? 
+
+* ~ s(X, bs = 'tp'): thin plate spline (have a knot for every unique value of X) - default in mgcv::gam
+
+* ~ s(X, bs = 'cr'): cubic regression splines - widely used, especially useful for big datasets 
+
+* ~ s(X, bs = 'cc'): cyclic splines (join up the ends of the spline)
+
+* ~ s(X, bs = 'sos'): splines on a sphere 
+
+* there are many others in mgcv::gam() for special situations 
+
+
+## Another example 
+
+Counts of White Terns on an atoll in French Polynesia as a function of habitat at each count site
+
+```{r, echo = FALSE, results = FALSE}
+
+seabirds <- data.frame(read.csv(here("Lectures/Lecture25_GeneralizedAdditiveModelsPart1","seabirds.csv")))
+
+```
+
+```{r, echo = TRUE, results = TRUE}
+
+model1 <- mgcv::gam(WHTE ~ s(palm,k=10) +
+                      s(nativetree,k=10) + 
+                      s(pandanus,k=10) + 
+                      s(open,k=10) + 
+                      s(distance,k=10) + 
+                      s(month,bs="cc"),  
+                    knots = list(month = c(1,12)), 
+                    data = seabirds, method="REML")
+
+``` 
+
+
+## Another example 
+
+Linear terms 
+
+```{r, echo = FALSE, results = TRUE}
+
+summary(model1)$p.table
+```
+
+Smoothed terms 
+
+```{r}
+summary(model1)$s.table
+```
+
+
+## Another example 
+
+Scale 
+
+```{r}
+summary(model1)$scale
+```
+
+Deviance explained
+
+```{r}
+
+summary(model1)$dev.expl   
+
+```
+
+
+## Plotting results - month 
+
+```{r, echo = FALSE, results = TRUE}
+pd <- with(seabirds, data.frame(month = 1:12,palm = 0, nativetree = 0, pandanus = 0, open = 0, distance = 0))
+pd <- cbind(pd, predict(model1, pd, se = TRUE))
+pd <- transform(pd, upr = fit + (2*se.fit), lwr = fit - (2 * se.fit))
+
+ggplot(pd, aes(x = month, y = fit)) +
+  geom_ribbon(aes(ymin = lwr, ymax = upr), alpha = 0.2) +
+  geom_line(alpha = 0.5) + 
+  scale_x_continuous(limits = c(1,12),breaks = c(1:12))
+```
+
+## Plotting results - distance from shore  
+
+
+```{r, echo = FALSE, results = TRUE}
+
+pq <- with(seabirds, data.frame(month = 12, palm = 0, nativetree = 0, pandanus = 0, open = 0, distance = seq(-1,4,0.1)))
+pq <- cbind(pq, predict(model1, pq, se = TRUE))
+pq <- transform(pq, upr = fit + (2*se.fit), lwr = fit - (2 * se.fit))
+
+ggplot(pq, aes(x = distance, y = fit)) +
+  geom_ribbon(aes(ymin = lwr, ymax = upr), alpha = 0.2) +
+  geom_line(alpha = 0.5) + 
+  scale_x_continuous(limits = c(-1,4),breaks = seq(-1,4,1))
+
+``` 
+
+## Next time 
+
+* Model checking 
+
+* More on model selection 
+
+* The flexibility of GAMs   
