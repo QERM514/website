@@ -6,7 +6,7 @@ date: "27 May 2026"
 output:
   ioslides_presentation:
     wide: true
-    css: lecture_slides.css
+    css: ../lecture_slides.css
 ---
 
 ```{r setup, include=FALSE}
@@ -85,6 +85,26 @@ Just like GLMs, GLMMs have three components:
 3. Linear predictor $\eta$
 
 
+## Generalized linear mixed model
+
+Just like GLMs, we can assume a variety of data distributions
+
+* Gaussian: continuous real values
+
+* gamma: continuous positive values
+
+* Bernoulli: binary outcomes
+
+* binomial: discrete successes/trials 
+
+* Poisson: non-negative counts  
+
+* negative binomial:  non-negative counts with extra variation 
+
+* zero-inflated Poisson & negative binomial
+
+
+
 ## Linear predictor for a GLM
 
 We can write the linear predictor for GLMs as
@@ -95,7 +115,9 @@ $$
 \eta = \mathbf{X} \boldsymbol{\beta}
 $$
 
-where the $\beta_i$ are fixed effects of the covariates $x_i$
+<br>
+
+where the $\beta_i$ are fixed effects of factors or covariates $x_i$
 
 
 ## Linear predictor for a GLMM
@@ -108,18 +130,22 @@ $$
 \eta = \mathbf{X} \boldsymbol{\beta} + \mathbf{Z} \boldsymbol{\alpha}
 $$
 
-where the $\beta_i$ are fixed effects of the covariates $x_i$
+<br>
+
+where the $\beta_i$ are fixed effects of factors or covariates $x_i$
+
+and $\alpha_i$ are random effects of factors or covariates $z_i$
 
 
-## Generalized linear mixed model
+## Generalized linear mixed model | An example
 
-Survival of fish $s_{i,j}$ as a function of length $x_{i,j}$ in some location $j$
+Survival of fish $i$ in some location $j$ $(s_{i,j})$ as a function of its length at the time of tagging $(x_{i,j})$ and a random effect for location
 
 <br>
 
 $$
 \begin{aligned}
-\text{data distribution:} & ~~~ y_{i,j} \sim \text{Binomial}(N_{i,j}, s_{i,j}) \\
+\text{data distribution:} & ~~~ y_{i,j} \sim \text{Bernoulli}(s_{i,j}) \\
 \text{link function:} & ~~~ \text{logit}(s_{i,j}) = \text{log}\left(\frac{s_{i,j}}{1-s_{i,j}}\right) = \mu_{i,j} \\
 \text{linear model:} & ~~~ \mu_{i,j} = (\beta_0 + \alpha_j) + \beta_1x_{i,j} \\
 & ~~~ \alpha_j \sim \text{N}(0, \sigma_{\delta}^2)
@@ -129,16 +155,41 @@ $$
 
 ## Generalized linear mixed model
 
-Best practices suggest we try to keep things simple
+Note: fitting GLMMs is complex
 
 Why? Because GLMMs involve solving an integral with no analytical solution
 
 
-## Likelihood for GLMMs
+## Generalized linear mixed model
 
-Recall that we think of likelihoods in terms of the *observed data*
+Note: fitting GLMMs is complex
 
-But the random effects in our model are *unobserved* random variables, so we need to integrate them out of the likelihood
+Why? Because GLMMs involve solving an integral with no analytical solution
+
+<br>
+
+Recall that we think of *likelihoods* in terms of the *observed data*, but
+
+the *random effects* in our model are *unobserved* random variables
+
+
+## Generalized linear mixed model
+
+Note: fitting GLMMs is complex
+
+Why? Because GLMMs involve solving an integral with no analytical solution
+
+<br>
+
+Recall that we think of *likelihoods* in terms of the *observed data*, but
+
+the *random effects* in our model are *unobserved* random variables
+
+<br>
+
+So we need to integrate them out of the likelihood
+
+Best practices suggest we try to keep things simple - lots and lots of random effects become hard to handle 
 
 
 ## Likelihood for GLMMs
@@ -163,58 +214,7 @@ They all have pros and cons so it's not possible to pick the "best"
 
 ## Penalized quasi-likelihood
 
-Penalized quasi-likelihood (PQL) uses a Taylor series expansion to approximate the linear predictor as an LMM 
-
-$$
-\begin{align}
-g(\boldsymbol{\mu}) &= \boldsymbol{\eta} \\
-  &= \mathbf{X} \boldsymbol{\beta} + \mathbf{Z} \boldsymbol{\alpha} \\
-&\Downarrow \\
-g(\mathbf{y}) & \approx g(\boldsymbol{\mu}) + g'(\boldsymbol{\mu}) (\mathbf{y} - \boldsymbol{\mu}) \\
- & \approx \mathbf{X} \boldsymbol{\beta} + \mathbf{Z} \boldsymbol{\alpha} + g'(\boldsymbol{\mu}) \boldsymbol{\epsilon}
-\end{align}
-$$
-
-
-## Penalized quasi-likelihood
-
-The conditional variance of the data in a GLMM is then
-
-$$
-\begin{align}
-g(\mathbf{y}) &\approx \mathbf{X} \boldsymbol{\beta} + \mathbf{Z} \boldsymbol{\alpha} + g'(\boldsymbol{\mu}) \boldsymbol{\epsilon} \\
-&\Downarrow \\
-g(\mathbf{y}) - \mathbf{X} \boldsymbol{\beta} &\approx \mathbf{Z} \boldsymbol{\alpha} + \boldsymbol{\epsilon} g'(\boldsymbol{\mu}) \\
-&\Downarrow \\
-\text{Var} \left( g(\mathbf{y}) - \mathbf{X} \boldsymbol{\beta} \right) &\approx \text{Var} \left( \mathbf{Z} \boldsymbol{\alpha} \right) + \text{Var} \left( \boldsymbol{\epsilon} g'(\boldsymbol{\mu}) \right) 
-\end{align}
-$$
-
-
-## Penalized quasi-likelihood
-
-The conditional variance of the data in a GLMM is then
-
-$$
-\begin{align}
-g(\mathbf{y}) &\approx \mathbf{X} \boldsymbol{\beta} + \mathbf{Z} \boldsymbol{\alpha} + g'(\boldsymbol{\mu}) \boldsymbol{\epsilon} \\
-&\Downarrow \\
-g(\mathbf{y}) - \mathbf{X} \boldsymbol{\beta} &\approx \mathbf{Z} \boldsymbol{\alpha} + \boldsymbol{\epsilon} g'(\boldsymbol{\mu}) \\
-&\Downarrow \\
-\text{Var} \left( g(\mathbf{y}) - \mathbf{X} \boldsymbol{\beta} \right) &\approx \text{Var} \left( \mathbf{Z} \boldsymbol{\alpha} \right) + \text{Var} \left( \boldsymbol{\epsilon} g'(\boldsymbol{\mu}) \right) 
-\end{align}
-$$
-
-<br>
-
-which is similar to that for an LMM
-
-$$
-\text{Var} \left( \mathbf{y} - \mathbf{X} \boldsymbol{\beta} \right) = \text{Var} \left( \mathbf{Z} \boldsymbol{\alpha} \right) + \text{Var} \left( \boldsymbol{\epsilon} \right)
-$$
-
-
-## Penalized quasi-likelihood
+Produces linearized version of the response & then uses LMM methods to fit it 
 
 <u>Pros</u>
 
@@ -222,29 +222,16 @@ $$
 
 <u>Cons</u>
 
+* not a true likelihood, making inference challenging 
+
 * only asymptotically correct
 
-* biased for Binomial and Poisson with small samples
-
-* inference confounded by approximate likelihood
+* biased for binomial and Poisson with small samples
 
 
 ## Laplace approximation
 
-Laplace approximation is a long standing (1774) method for computing integrals of the form
-
-$$
-\int f(x) e^{\lambda g(x)} dx
-$$
-
-<br>
-
-This integrand is quite similar to the likelihood of a GLMM based on exponential distributions
-
-Thus, we only need to find the maximum of $g(x)$ and its second derivative, and evaluate them at only one point
-
-
-## Laplace approximation
+Uses Laplace approximation for computing integrals of the form $\int e^{h(x)} d x$, which is a good approximation of the integral in a GLMM likelihood
 
 <u>Pros</u>
 
@@ -261,20 +248,7 @@ Thus, we only need to find the maximum of $g(x)$ and its second derivative, and 
 
 ## Gauss-Hermite quadrature
 
-Gauss-Hermite quadrature is an expansion of Laplace approximation where the integrand is evaluated at more than one point
-
-*Quadrature* is a method for numerically approximating an integral as a weighted sum
-
-$$
-\int f(u) e^{-u^2}du \approx \sum_i w_i f(u_i)
-$$
-
-<br>
-
-This method works by optimizing the placement and number of the $u_i$ and the choice of the $w_i$
-
-
-## Gauss-Hermite quadrature
+An expansion of Laplace approximation where the integrand is evaluated at more than one point
 
 <u>Pros</u>
 
@@ -287,25 +261,30 @@ This method works by optimizing the placement and number of the $u_i$ and the ch
 * Limited to a few random effects (one in practice)
 
 
+## Markov Chain Monte Carlo 
+
+Sampling from an estimated posterior distribution rather than computing the integral
+
+* This is what is done in Bayesian estimation 
+
+* MCMC has the ability to handle much more complex random effects
+
+
 ## Fitting GLMMs | Example
 
 Let's consider a long-term study of invasive brown tree snakes in Guam
 
-Introduced to the island shortly after WWII
+* Introduced to the island shortly after WWII
 
-Voracious predators on native birds and other vertebrates
+* Voracious predators on native birds and other vertebrates
 
 
 ## &nbsp; {.smaller data-background=brown_tree_snake.jpg data-background-size=100%}
 
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-
- <p style="color:white">Photo by Pavel Kirillov</p>
-
 
 ## Brown tree snakes
 
-Our data consist of counts of the number of eggs per female at 23 locations over 14 years
+Our data consist of counts of the number of eggs per female at 10 locations over 13 years
 
 We are interested in the fixed effect of body size and the random effects of location and year
 
@@ -314,20 +293,20 @@ We'll begin with only the effects of body size and location
 
 ## Brown tree snakes
 
-```{r tree_snakes, fig.height = 4.5, fig.width = 6, fig.align = 'center'}
+```{r tree_snakes, fig.height = 5, fig.width = 7, fig.align = 'center'}
 ## code adapted from Sarah Converse (2019)
 set.seed(514)
 ## sample and group sizes
 nn <- 234
-n_loc <- 23
-n_yrs <- 14
+n_loc <- 10
+n_yrs <- 13
 ## grand mean
 mu <- 1
 ## slope
 beta <- 0.5
 ## random effects
-re_loc <- rnorm(n_loc, 0, 0.4)
-re_year <- rnorm(n_yrs, 0, 0.4)
+re_loc <- rnorm(n_loc, 0, 0.5)
+re_year <- rnorm(n_yrs, 0, 0.25)
 ## covariates
 loc <- sample(seq(n_loc), nn, replace = TRUE)
 year <- sample(seq(n_yrs), nn, replace = TRUE)
@@ -336,105 +315,118 @@ size <- runif(nn, -1, 1)
 ## mean number of eggs 
 mean <- exp(mu + re_loc[loc] + re_year[year] + beta * size)
 ## number of eggs
-eggs <- rpois(nn,mean)
+eggs <- rpois(nn, mean)
 ## data frame
 df_eggs <- data.frame(cbind(eggs, size, loc, year))
 
 ## plot area
 par(mai = c(0.9, 0.9, 0.1, 0.1),
     omi = c(0, 0, 0, 0), bg = NA,
-    cex.main = 1.2, cex.lab = 1.2)
+    cex.main = 1.3, cex.lab = 1.3)
 ## histogram of eggs
 hist(eggs, breaks = seq(0, max(eggs)), las = 1, col = "brown", border = "gray",
      main = "", xlab = "Number of eggs")
 ```
 
 
-## Brown tree snakes | Penalized quasi-likelihood
+## Size versus fecundity by location 
 
-We fit PQL models with `MASS::glmPQL()`
+```{r plot_snakes_locs, fig.height = 5, fig.width = 7, fig.align = 'center'}
+clrs <- viridis::viridis(n = n_loc, alpha = 0.7, 
+                         begin = 0.1, end = 0.9)
 
-```{r snakes_pql, echo = TRUE}
-## load MASS
-library(MASS)
-## fit model
-snakes_pql <- glmmPQL(eggs ~ size, random = ~1 | loc, data = df_eggs,
-                      family = poisson)
-```
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0), bg = NA,
+    cex.main = 1.3, cex.lab = 1.3)
 
-```{r, echo = TRUE, eval = FALSE}
-summary(snakes_pql)
-```
-
-## Brown tree snakes {.smaller}
-
-```{r snakes_pql_smry}
-summary(snakes_pql)
+plot(size, eggs, data = df_eggs,
+     las = 1, pch = 16, col = clrs[loc],
+     xlab = "Size (z-score)",
+     ylab = "Number of eggs")
 ```
 
 
-## Brown tree snakes | Laplace
+## Size versus fecundity by year 
 
-We can fit Laplace models with `lme4::glmer()`
+```{r plot_snakes_years, fig.height = 5, fig.width = 7, fig.align = 'center'}
+clrs <- viridis::viridis(n = n_yrs, alpha = 0.7, 
+                         begin = 0.1, end = 0.9)
 
-```{r snakes_lap, echo = TRUE}
-## load lme4
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0), bg = NA,
+    cex.main = 1.3, cex.lab = 1.3)
+
+plot(size, eggs, data = df_eggs,
+     las = 1, pch = 16, col = clrs[year],
+     xlab = "Size (z-score)",
+     ylab = "Number of eggs")
+```
+
+
+## Let's fit some models | Using penalized quasi-likelihood 
+
+```{r, echo = TRUE, results = TRUE}
+## fit model via penalized quasi-likelihood
+fit_pql <- MASS::glmmPQL(eggs ~ size, random = ~ 1|loc,  
+                         family = poisson,
+                         data = df_eggs)
+```
+
+
+## Let's fit some models | Using Laplace approximation
+
+```{r, echo = TRUE, results = TRUE}
+## load {lme4}
 library(lme4)
-## fit model
-snakes_lap <- glmer(eggs ~ size + (1 | loc), data = df_eggs,
-                    family = poisson)
-```
 
-```{r, echo = TRUE, eval = FALSE}
-summary(snakes_lap)
-```
+## set control parameters for model fitting
+cntrl <- glmerControl(optimizer = "bobyqa", tol = 1e-4, optCtrl = list(maxfun = 100000))
 
-
-## Brown tree snakes {.smaller}
-
-```{r snakes_lap_smry}
-summary(snakes_lap)
+## fit model via Laplace approximation
+fit_lap <- glmer(eggs ~ size + (1|loc), 
+                 family = poisson,
+                 data = df_eggs,
+                 control = cntrl)
 ```
 
 
-## Brown tree snakes | Gauss-Hermite quadrature
+## Let's fit some models | Using Gauss-Hermite quadrature
 
-We can fit GHQ models with `lme4::glmer(..., nAGQ = pts)`
-
-```{r snakes_ghq, echo = TRUE}
-## fit model
-snakes_ghq <- glmer(eggs ~ size + (1 | loc), data = df_eggs,
-                    family = poisson, nAGQ = 20)
-```
-
-```{r, echo = TRUE, eval = FALSE}
-summary(snakes_ghq)
-```
-
-**Note**: this method only works with one random effect
+```{r, echo = TRUE, results = TRUE}
+## fit model via Gauss-Hermite quadrature
+fit_ghq <- glmer(eggs ~ size + (1|loc),
+                 family = poisson, 
+                 data = df_eggs, 
+                 nAGQ = 40,
+                 control = cntrl)
+``` 
 
 
-## Brown tree snakes {.smaller}
+## Brown treesnakes
 
-```{r snakes_ghq_smry}
-summary(snakes_ghq)
-```
+Summary of the results from the 3 methods
 
+```{r, echo = FALSE, results = TRUE}
+tbl_smry <- rbind(cbind(summary(fit_pql)$tTable[, 1:2],
+                  summary(fit_lap)$coef[, 1:2],
+                  summary(fit_ghq)$coef[, 1:2]),
+                  c(
+                      c(sqrt(as.numeric(VarCorr(fit_pql)[1,2])), NA),
+                      c(sqrt(VarCorr(fit_lap)$loc[1,1]), NA),
+                      c(sqrt(VarCorr(fit_ghq)$loc[1,1]), NA)
+                      )
+                  )
 
-## Brown tree snakes
-
-Here is a summary of the results from the 3 methods
-
-```{r summary_tbl}
-tbl_smry <- cbind(summary(snakes_pql)$tTable[, 1:2],
-                  summary(snakes_lap)$coefficients[, 1:2],
-                  summary(snakes_ghq)$coefficients[, 1:2])
-tbl_smry <- rbind(tbl_smry,
-                  "location SD" = c(c(sqrt(insight::get_variance_random(snakes_pql)), NA),
-                                    c(sqrt(insight::get_variance_random(snakes_lap)), NA),
-                                    c(sqrt(insight::get_variance_random(snakes_ghq)), NA)))
-colnames(tbl_smry) <- c("    PQL ", "SE ", "   Laplace", "SE ", "     GHQ ", "SE ")
+rownames(tbl_smry) <- c("intercept", "body size", "sigma_loc")
+colnames(tbl_smry) <- c("PQL", "SE", "Laplace", "SE", "GHQ", "SE")
 round(tbl_smry, 3)
+```
+
+```{r, eval = FALSE, echo = TRUE}
+## true values
+intercept = 1 
+body size = 0.5  
+sigma_loc = 0.5
 ```
 
 
@@ -443,195 +435,55 @@ round(tbl_smry, 3)
 
 What if we also want to include the random effect of year?
 
-`glmmPQL` only allows for nested random effects
+* `glmmPQL` only allows for nested random effects
 
-`glmer(..., nAGQ = pts)` only allows for one random effect
+* `glmer(..., nAGQ = pts)` only allows for one random effect
 
-We can use the Laplace approximation via `glmer`
+* we can use Laplace approximation via `glmer`
 
 
-## Brown tree snakes | Laplace
+## Fit model via Laplace approximation
 
-```{r snakes_lap_2, echo = TRUE}
-## fit model
-snakes_lap_2 <- glmer(eggs ~ size + (1 | loc) + (1 | year),
-                      data = df_eggs, family = poisson)
+```{r, echo = TRUE, results = TRUE}
+## fit GLMM with location & year
+fit_2_lap <- glmer(eggs ~ size + (1|loc) + (1|year),
+                   family = poisson,
+                   data = df_eggs)
 ```
 
-```{r, echo = TRUE, eval = FALSE}
-summary(snakes_lap_2)
+## Brown tree snakes | Laplace only
+
+```{r, echo = FALSE, results = TRUE}
+tbl_smry <- 
+
+tbl_smry <- rbind(summary(fit_2_lap)$coefficients[, 1:2],
+                  "location SD" = c(sqrt(VarCorr(fit_2_lap)$loc[1,1]), NA),
+                  "year SD" = c(sqrt(VarCorr(fit_2_lap)$year[1,1]), NA))
+
+rownames(tbl_smry) <- c("intercept", "body size", "sigma_loc", "sigma_year")
+colnames(tbl_smry) <- c("Laplace", "SE")
+
+round(tbl_smry, 3)
 ```
 
-
-## Brown tree snakes {.smaller}
-
-```{r snakes_lap_smry_2}
-summary(snakes_lap_2)
-```
-
-
-## Diagnostics
-
-Diagnostics for GLMMs are similar to those for GLMs, but we are limited in our choices
-
-
-## Goodness of fit
-
-Recall our goodness of fit test based on the Pearson's $\chi^2$
-
-$$
-X^2 = \sum_{i = 1}^n \frac{(O_i - E_i)^2}{E_i} \sim \chi^2_{(n - 1)}
-$$
-
-<br>
-
-where $O_i$ is the observed count and $E_i$ is the expected count
-
-
-## Pearson's $\chi^2$ statistic
-
-For a binomial distribution
-
-$$
-X^2 = \sum_{i = 1}^n \frac{(y_i - n_i \hat{p}_i)^2}{n_i \hat{p}_i}
-$$
-
-For a Poisson distribution
-
-$$
-X^2 = \sum_{i = 1}^n \frac{(y_i - \lambda_i)^2}{\lambda_i}
-$$
-
-
-## Goodness of fit
-
-$H_0$: Our model is correctly specified
-
-```{r ted_gof, echo = TRUE}
-## Pearson's X^2 statistic
-X2 <- sum((eggs - fitted(snakes_lap_2))^2 / fitted(snakes_lap_2))
-## likelihood ratio test
-pchisq(X2, df = nn - length(coef(snakes_lap_2)),
-       lower.tail = FALSE)
-```
-
-The $p$-value is large so we cannot reject $H_0$
-
-
-## Model diagnostics
-
-```{r re_diagnostics, fig.width=8, fig.height=3.5, fig.align='center'}
-## set plot area
-par(mai = c(0.9, 0.9, 0.4, 0.1),
-    omi = c(0, 0, 0, 0),
-    mfrow = c(1,3), cex.lab = 1.5)
-
-## qq resids
-qqnorm(residuals(snakes_lap_2), main = "QQ plot (residuals)", pch = 16)
-qqline(residuals(snakes_lap_2))
-## qq RE's
-qqnorm(unlist(ranef(snakes_lap_2)), main = "QQ plot (RE's)", pch = 16)
-qqline(unlist(ranef(snakes_lap_2)))
-## resids vs fitted
-plot(fitted(snakes_lap_2), residuals(snakes_lap_2), pch = 16,
-     xlab = "Fitted", ylab = "Residuals",
-     main = "Residuals vs fitted")
-abline(h=0, lty = "dashed")
+```{r, eval = FALSE, echo = TRUE}
+## true values
+intercept = 1 
+body size = 0.5  
+sigma_loc = 0.5
+sigma_year = 0.25
 ```
 
 
-## Leverage
+## Summary of GLMM methods
 
-For other models, we can calculate the leverages to evaluate potentially extreme values in predictor space
+* Simpler models will work better 
 
-For GLMMs, however, the leverages depend on the estimated variance-covariance matrices of the random effects
+> * Gauss-Hermite quadrature likely to work best with only one random effect
 
+> * Laplace approximation likely to work best with multiple random effects 
 
-## Cook's Distance
-
-For other models, we can calculate Cook's distances to identify potentially influential data points
-
-For GLMMs, however, the Cook's distances involve derivatives of the likelihood with respect to the random effects (this is an active area of research)
-
-
-## Inference for fixed effects {.smaller}
-
-<p style="font-size:24px">We can test the significance of the fixed effects via a $\chi^2$ test by comparing models with and without the effect(s)</p>
-
-```{r chi2_fixed, echo = TRUE}
-## fit reduced model
-snakes_lap_null <- glmer(eggs ~ (1 | loc) + (1 | year),
-                         data = df_eggs, family = poisson)
-anova(snakes_lap_2, snakes_lap_null)
-```
-
-
-## Inference for random effects {.smaller}
-
-<p style="font-size:24px">We can test the significance of the random effects via a $\chi^2$ test by comparing models with and without the effect(s)</p>
-
-```{r chi2_rdm, echo = TRUE}
-## fit reduced model with only fixed effects
-snakes_lap_null <- glm(eggs ~ size, data = df_eggs,
-                       family = poisson(link = "log"))
-## compare m0 and m1
-anova(snakes_lap_2, snakes_lap_null)
-```
-
-
-## Overdispersion
-
-As with GLMs, we can check GLMMs for evidence of overdispersion, which we estimate as
-
-$$
-\hat{c} = \frac{X^2}{n - k}
-$$
-
-<br>
-
-Let's do so for our snake model applied to another data set
-
-```{r overdispersion, echo = FALSE}
-## generate nb data
-eggs_nb <- rnbinom(nn, mu = mean, size = 1/2)
-df_eggs$eggs_nb <- eggs_nb 
-## non-dispersed model
-snakes_lap <- glmer(eggs_nb ~ size + (1 | loc) + (1 | year), family = poisson, data = df_eggs)
-```
-
-
-## Overdispersion
-
-```{r ted_over, echo = TRUE}
-## Pearson's X^2 statistic
-X2 <- sum((eggs - fitted(snakes_lap))^2 / fitted(snakes_lap))
-## number of parameters
-k <- length(coef(snakes_lap)) + length(ranef(snakes_lap))
-## overdispersion parameter
-(c_hat <- X2 / (nn - k))
-pchisq(deviance(snakes_lap), k, lower.tail = FALSE)
-```
-
-## Brown tree snakes | Negative binomial
-
-We can fit neg binomial models using Laplace approximation with `lme4::glmer.nb()`
-
-```{r snakes_lap_nb, echo = TRUE}
-## fit model
-snakes_lap_nb <- glmer.nb(eggs ~ size + (1 | loc) + (1 | year),
-                          data = df_eggs)
-```
-
-```{r, echo = TRUE, eval = FALSE}
-summary(snakes_lap_nb)
-```
-
-
-## Brown tree snakes {.smaller}
-
-```{r snakes_lap_smry_nb}
-summary(snakes_lap_nb)
-```
+> * With complex models, some things may not be possible in ML framework 
 
 
 ## Summary of GLMM methods
@@ -639,10 +491,16 @@ summary(snakes_lap_nb)
 | Method | Advantages | Disadvantages | R functions |
 |:-------|:-----------|:--------------|:-----------:|
 | Penalized quasi-likelihood | Flexible, widely implemented | inference may be inappropriate; potentially biased | `MASS::glmmPQL` |
-| Laplace approximation | More accurate than PQL | Slower and less flexible than PQL | `lme4::glmer` `glmmsr::glmm` `glmmML::glmmML` | 
-| Gauss-Hermite quadrature | More accurate than Laplace | Slower than Laplace; limited random effects | `lme4::glmer` `glmmsr::glmm` `glmmML::glmmML` |
+| Laplace approximation | More accurate than PQL | Slower and less flexible than PQL | `glmer` <br> `glmmsr::glmm` <br> `glmmML::glmmML` | 
+| Gauss-Hermite quadrature | More accurate than Laplace | Slower than Laplace; limited random effects | `glmer` <br> `glmmsr::glmm` <br> `glmmML::glmmML` |
 
 <br>
 
 <p style="font-size:20px">Adapted from Bolker et al (2009)</p>
+
+
+## Additional Resources  
+
+https://bbolker.github.io/mixedmodels-misc/glmmFAQ.html
+
 
