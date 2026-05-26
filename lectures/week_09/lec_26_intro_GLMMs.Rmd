@@ -6,7 +6,7 @@ date: "27 May 2026"
 output:
   ioslides_presentation:
     wide: true
-    css: lecture_slides.css
+    css: ../lecture_slides.css
 ---
 
 ```{r setup, include=FALSE}
@@ -95,7 +95,9 @@ $$
 \eta = \mathbf{X} \boldsymbol{\beta}
 $$
 
-where the $\beta_i$ are fixed effects of the covariates $x_i$
+<br>
+
+where the $\beta_i$ are fixed effects of factors or covariates $x_i$
 
 
 ## Linear predictor for a GLMM
@@ -108,18 +110,22 @@ $$
 \eta = \mathbf{X} \boldsymbol{\beta} + \mathbf{Z} \boldsymbol{\alpha}
 $$
 
-where the $\beta_i$ are fixed effects of the covariates $x_i$
+<br>
+
+where the $\beta_i$ are fixed effects of factors or covariates $x_i$
+
+and $\alpha_i$ are random effects of factors or covariates $z_i$
 
 
-## Generalized linear mixed model
+## Generalized linear mixed model | An example
 
-Survival of fish $s_{i,j}$ as a function of length $x_{i,j}$ in some location $j$
+Survival of fish $i$ in some location $j$ $(s_{i,j})$ as a function of its length at the time of tagging $(x_{i,j})$ and a random effect for location
 
 <br>
 
 $$
 \begin{aligned}
-\text{data distribution:} & ~~~ y_{i,j} \sim \text{Binomial}(N_{i,j}, s_{i,j}) \\
+\text{data distribution:} & ~~~ y_{i,j} \sim \text{Bernoulli}(s_{i,j}) \\
 \text{link function:} & ~~~ \text{logit}(s_{i,j}) = \text{log}\left(\frac{s_{i,j}}{1-s_{i,j}}\right) = \mu_{i,j} \\
 \text{linear model:} & ~~~ \mu_{i,j} = (\beta_0 + \alpha_j) + \beta_1x_{i,j} \\
 & ~~~ \alpha_j \sim \text{N}(0, \sigma_{\delta}^2)
@@ -639,8 +645,8 @@ summary(snakes_lap_nb)
 | Method | Advantages | Disadvantages | R functions |
 |:-------|:-----------|:--------------|:-----------:|
 | Penalized quasi-likelihood | Flexible, widely implemented | inference may be inappropriate; potentially biased | `MASS::glmmPQL` |
-| Laplace approximation | More accurate than PQL | Slower and less flexible than PQL | `lme4::glmer` `glmmsr::glmm` `glmmML::glmmML` | 
-| Gauss-Hermite quadrature | More accurate than Laplace | Slower than Laplace; limited random effects | `lme4::glmer` `glmmsr::glmm` `glmmML::glmmML` |
+| Laplace approximation | More accurate than PQL | Slower and less flexible than PQL | `lme4::glmer` <br> `glmmsr::glmm` <br> `glmmML::glmmML` | 
+| Gauss-Hermite quadrature | More accurate than Laplace | Slower than Laplace; limited random effects | `lme4::glmer` <br> `glmmsr::glmm` <br> `glmmML::glmmML` |
 
 <br>
 
