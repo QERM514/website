@@ -24,9 +24,11 @@ knitr::opts_chunk$set(message = FALSE)
 ## for figure captions
 library(captioner)
 ## set default caption options
-fig_cap <- captioner(suffix = ".", style = "b", style_prefix = TRUE)
-tbl_cap <- captioner(prefix = "Table", suffix = ".",
-                     style = "b", style_prefix = TRUE)
+# fig_cap <- captioner(suffix = ".", style = "b", style_prefix = TRUE)
+# tbl_cap <- captioner(prefix = "Table", suffix = ".",
+#                      style = "b", style_prefix = TRUE)
+fig_cap <- captioner(type = "n")
+tbl_cap <- captioner(prefix = "Table", type = "n")
 
 ## for nice tables
 library(kableExtra)

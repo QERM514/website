@@ -228,20 +228,24 @@ Sometimes we would like to know at which level of the predictor variable do we e
 $$
 p_i = \frac{1}{1 + \exp(\text{-} \mathbf{X}_i \boldsymbol{\beta})} \\
 \Downarrow \\
-0.5 = \frac{1}{1 + \exp(14 - 0.17 L_{0.5})} \\
+0.5 = \frac{1}{1 + \exp(\text{-}[14 - 0.17 L_{0.5}])} \\
 \Downarrow \\
 L_{0.5} \approx 82 ~ \text{mm}
 $$
 
 #### Computing the odds
 
-We have seen that we can express the results from a logistic regression in terms of the *odds*. The odds $o$ are an unbounded alternative to probability $p$, such that if we represent the $k$-to-1 odds against something as $1 / k$, then the following holds
+We have seen that we can express the results from a logistic regression in terms of the *odds*. The odds $o$ are an unbounded alternative to probability $p$, such that if the odds are $k$-to-1 against something, which we can write as $o = 1/k$, then
 
 $$
-o = \frac{p}{1 - p} ~ \Rightarrow ~ p = \frac{o}{1 + o}
+p = \frac{1}{1 + k} ~ \Rightarrow ~ k = \frac{1 - p}{p}
 $$
 
-So, for example, if $p$ = 0.8, then $o = \frac{0.8}{1 - 0.8} = 4$. In a logistic regression model, the logit function gives us the log odds, such that 
+<br>
+
+For example, if $k$ = 4, then $p = \frac{1}{1 + 4} = 0.2$. If $p$ = 0.8, then $k = \frac{1 - 0.8}{0.8} = \frac{1}{4}$.
+
+In a logistic regression model, the logit function gives us the log odds, such that 
 
 $$
 \text{logit}(p) = \mathbf{X} \boldsymbol{\beta} \\
