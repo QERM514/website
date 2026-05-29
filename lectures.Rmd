@@ -59,11 +59,11 @@ week_lecs$L23 <- overdispersed_count
 week_lecs$L24 <- zero_models
 ## week 9
 week_lecs$L25 <- holiday
-week_lecs$L26 <- intro_GLMM_1
-week_lecs$L27 <- intro_GLMM_2
+week_lecs$L26 <- intro_GLMM
+week_lecs$L27 <- more_GLMM
 ## week 10
-week_lecs$L28 <- intro_GAM_1
-week_lecs$L29 <- intro_GAM_2
+week_lecs$L28 <- intro_GAM
+week_lecs$L29 <- more_GAM
 week_lecs$L30 <- synthesis
 ```
 

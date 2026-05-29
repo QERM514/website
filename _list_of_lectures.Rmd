@@ -267,7 +267,7 @@ holiday <- list(
   zoom = ""
 )
 
-intro_GLMM_1 <- list(
+intro_GLMM <- list(
   title = "Working with GLMMs",
   topics = c("<b>Working with GLMMs</b>", "Computing likelihoods"),
   rmd = c("lectures/week_09/lec_26_intro_GLMMs.Rmd"),
@@ -278,11 +278,11 @@ intro_GLMM_1 <- list(
   zoom = ""
 )
 
-intro_GLMM_2 <- list(
+more_GLMM <- list(
   title = "Working with GLMMs",
   topics = c("<b>Working with GLMMs</b>", "Diagnostics", "Goodness-of-fit"),
-  rmd = c("lectures/week_09/lec_27_intro_GLMMs.Rmd"),
-  html = c("lectures/week_09/lec_27_intro_GLMMs.html"),
+  rmd = c("lectures/week_09/lec_27_more_GLMMs.Rmd"),
+  html = c("lectures/week_09/lec_27_more_GLMMs.html"),
   background = c("[Faraway (2016) Chap 13](references/Faraway_2016_Extending_the_Linear_Models_with_R.pdf)",
                  "[Zuur et al (2009) Chap 13](references/Zuur_2009_mixed_effects_models_in_R.pdf)",
                  "[Bolker et al (2009)](Bolker_2009_glmm_guide.pdf)"),
@@ -290,7 +290,7 @@ intro_GLMM_2 <- list(
 )
 
 
-intro_GAM_1 <- list(
+intro_GAM <- list(
   title = "Intro to GAMs",
   topics = c("<b>Intro to GAMs</b>", "Smooths"),
   rmd = c("lectures/week_10/lec_28_intro_GAMs.Rmd"),
@@ -300,11 +300,11 @@ intro_GAM_1 <- list(
   zoom = ""
 )
 
-intro_GAM_2 <- list(
+more_GAM <- list(
   title = "Working with GLMMs",
   topics = c("<b>Working with GAMs</b>", "Fitting models"),
-  rmd = c("lectures/week_10/lec_29_intro_GAMs.Rmd"),
-  html = c("lectures/week_10/lec_29_intro_GAMs.html"),
+  rmd = c("lectures/week_10/lec_29_more_GAMs.Rmd"),
+  html = c("lectures/week_10/lec_29_more_GAMs.html"),
   background = c("[Zuur et al (2009) Chap 3](references/Zuur_2009_mixed_effects_models_in_R.pdf)",
                  "[Pedersen et al (2019)](references/Pedersen_2019_hierarchical_gam.pdf)"),
   zoom = ""
