@@ -1,5 +1,5 @@
 ---
-title: "More on Generalized Linear Mixed Models"
+title: "Generalized Linear Mixed Models (cont'd)"
 subtitle: "Analysis of Ecological and Environmental Data<br>QERM 514"
 author: "Mark Scheuerell"
 date: "29 May 2026"
@@ -86,16 +86,16 @@ library(lme4)
 cntrl <- glmerControl(optimizer = "bobyqa", tol = 1e-4, optCtrl = list(maxfun = 100000))
 
 ## fixed effect of size plus random effect of location
-fit_1_lap <- glmer(eggs ~ size + (1|loc),
-                   family = poisson,
-                   data = df_eggs,
-                   control = cntrl)
+fit_1 <- glmer(eggs ~ size + (1|loc),
+               family = poisson,
+               data = df_eggs,
+               control = cntrl)
 
 ## fixed effect of size plus random effects of location & year
-fit_2_lap <- glmer(eggs ~ size + (1|loc) + (1|year),
-                   family = poisson,
-                   data = df_eggs, 
-                   control = cntrl)
+fit_2 <- glmer(eggs ~ size + (1|loc) + (1|year),
+               family = poisson,
+               data = df_eggs, 
+               control = cntrl)
 ```
 
 
@@ -133,10 +133,10 @@ $H_0$: Our model is correctly specified
 
 ```{r ted_gof, echo = TRUE}
 ## Pearson's X^2 statistic
-X2 <- sum((eggs - fitted(fit_2_lap))^2 / fitted(fit_2_lap))
+X2 <- sum((eggs - fitted(fit_2))^2 / fitted(fit_2))
 
 ## likelihood ratio test
-pchisq(X2, df = nn - length(coef(fit_2_lap)),
+pchisq(X2, df = nn - length(coef(fit_2)),
        lower.tail = FALSE)
 ```
 
@@ -147,8 +147,9 @@ The $p$-value is large so we cannot reject $H_0$
 
 Check for heteroscedasticity
 
-```{r echo = FALSE, results = FALSE, fig.width = 5, fig.height = 5, fig.align = "center"}
-plot(fit_2_lap, sqrt(abs(resid(.))) ~ fitted(.), 
+```{r heteroscas, echo = FALSE, results = FALSE, fig.width = 5, fig.height = 5, fig.align = "center"}
+## plot residuals
+plot(fit_2, sqrt(abs(resid(.))) ~ fitted(.), 
      pch = 16, type = c("p", "smooth"),
      ylab = "Residual",
      xlab = "Fitted value") 
@@ -157,15 +158,17 @@ plot(fit_2_lap, sqrt(abs(resid(.))) ~ fitted(.),
 
 ## Diagnostics 
 
-Use `DHARMa::simulateResiduals` to further visualize residuals 
+Use [`DHARMa::simulateResiduals`](https://cran.r-project.org/web/packages/DHARMa/vignettes/DHARMa.html#calculating-scaled-residuals) to scale the residuals 
 
-```{r echo = FALSE, results = FALSE, fig.width = 8, fig.height = 4.5, fig.align = "center"}
+```{r diagnostics, echo = FALSE, results = FALSE, fig.width = 8, fig.height = 4.5, fig.align = "center"}
+## MC residuals
+sim_output <- DHARMa::simulateResiduals(fit_2, n = 1000)
+
 ## set plot area
-par(mai = c(0.9, 0.9, 0.4, 0.1),
+par(mai = c(0.9, 0.9, 0.3, 0.1),
     omi = c(0, 0, 0, 0))
 
-sim_output <- DHARMa::simulateResiduals(fit_2_lap, n = 1000)
-
+## residual plots
 plot(sim_output)
 ``` 
 
@@ -179,15 +182,17 @@ par(mfrow = c(1,3),
     cex.main = 1.5, cex.lab = 1.5, cex.axis = 1.4)
 
 ## qq resids
-qqnorm(residuals(fit_2_lap), main = "QQ plot (residuals)", pch = 16)
-qqline(residuals(fit_2_lap))
+qqnorm(residuals(fit_2),
+       main = "QQ plot (residuals)", pch = 16)
+qqline(residuals(fit_2))
 
 ## qq RE's
-qqnorm(unlist(ranef(fit_2_lap)), main = "QQ plot (RE's)", pch = 16)
-qqline(unlist(ranef(fit_2_lap)))
+qqnorm(unlist(ranef(fit_2)),
+       main = "QQ plot (RE's)", pch = 16)
+qqline(unlist(ranef(fit_2)))
 
 ## resids vs fitted
-plot(fitted(fit_2_lap), residuals(fit_2_lap), pch = 16,
+plot(fitted(fit_2), residuals(fit_2), pch = 16,
      xlab = "Fitted", ylab = "Residuals",
      main = "Residuals vs fitted")
 abline(h=0, lty = "dashed")
@@ -205,7 +210,8 @@ For GLMMs, however, the leverages depend on the estimated variance-covariance ma
 
 We can fit a GLM and evaluate leverage of the fixed effects 
 
-```{r, echo = FALSE, results = FALSE, fig.width = 5.5, fig.height = 4.5,  fig.align = "center"} 
+```{r leverage, echo = FALSE, results = FALSE, fig.width = 5.5, fig.height = 4.5,  fig.align = "center"} 
+## fit fixed effects only
 fit_fixed <- glm(eggs ~ size, data = df_eggs, family = poisson)
 
 ## set plot area
@@ -227,12 +233,16 @@ For GLMMs, however, the Cook's distances involve derivatives of the likelihood w
 
 Again, we can fit a GLM and look at the Cook's distances for the fixed effects  
 
-```{r, echo = FALSE, results = FALSE, fig.width = 5.5, fig.height = 4.5,  fig.align = "center"} 
+```{r cooks, echo = FALSE, results = FALSE, fig.width = 5.5, fig.height = 4.5,  fig.align = "center"} 
 ## set plot area
 par(mai = c(0.9, 0.9, 0.1, 0.1),
     omi = c(0, 0, 0, 0),
     cex.axis = 1.3, cex.lab = 1.5)
+
+## calculate Cook's D
 cooks_d <- cooks.distance(fit_fixed)
+
+## plot Cook's D
 faraway::halfnorm(cooks_d)
 ```
 
@@ -241,9 +251,10 @@ faraway::halfnorm(cooks_d)
 
 Large snakes with lots of eggs 
 
-```{r echo = TRUE, results = TRUE}
+```{r which_cooks, echo = TRUE, results = TRUE}
 ## large Cook's D
 cooks_big <- sort(cooks_d, decreasing = TRUE)[1:2]       
+
 ## details about them
 df_eggs[as.numeric(names(cooks_big)),]
 ```
@@ -251,27 +262,29 @@ df_eggs[as.numeric(names(cooks_big)),]
 
 ## Inference for fixed effects {.smaller}
 
-We can test the significance of the fixed effects via a $\chi^2$ test by comparing models with and without the effect(s)
+We can test the significance of the fixed effects via a $\chi^2$ test <br> by comparing models with and without the effect(s)
 
 ```{r chi2_fixed, echo = TRUE}
 ## fit reduced model with only random effects
-fit_0_lap <- glmer(eggs ~ (1 | loc) + (1 | year),
-                   data = df_eggs, family = poisson)
+fit_0 <- glmer(eggs ~ (1 | loc) + (1 | year),
+               data = df_eggs, family = poisson)
+
 ## compare null and full models
-anova(fit_2_lap, fit_0_lap)
+anova(fit_2, fit_0)
 ```
 
 
 ## Inference for random effects {.smaller}
 
-We can test the significance of the random effects via a $\chi^2$ test by comparing models with and without the effect(s)
+We can test the significance of the random effects via a $\chi^2$ test <br> by comparing models with and without the effect(s)
 
 ```{r chi2_rdm, echo = TRUE}
 ## fit reduced model with only fixed effects
-fit_0_lap <- glm(eggs ~ size, data = df_eggs,
+fit_0 <- glm(eggs ~ size, data = df_eggs,
                  family = poisson(link = "log"))
+
 ## compare null and full models
-anova(fit_2_lap, fit_0_lap)
+anova(fit_2, fit_0)
 ```
 
 
@@ -279,14 +292,14 @@ anova(fit_2_lap, fit_0_lap)
 
 We can evaluate our fixed effects with AIC - as long as we keep the random effects unchanged  
 
-```{r echo = TRUE, results = TRUE}
-
-fit_0_lap <- glmer(eggs ~ (1 | loc) + (1 | year),
+```{r aic, echo = TRUE, results = TRUE}
+## fit null model with only RE's
+fit_0 <- glmer(eggs ~ (1 | loc) + (1 | year),
                    family = poisson,
                    data = df_eggs)
 
-AIC(fit_0_lap, fit_2_lap)
-
+## compare AIC
+AIC(fit_0, fit_2)
 ```
 
 
@@ -296,18 +309,18 @@ We can test the significance of the random effects using a bootstrap LRT
 
 A significant p-value leads us to reject the null hypothesis that the simpler model is adequate 
 
-```{r echo = TRUE, results = TRUE}
-## fit_1_lap and fit_2_lap fit on slide 7
+```{r boot_LRT, echo = TRUE, results = TRUE}
+## fit_1 and fit_2 fit on slide 7
 
 ## threshold deviance
-lrt <- 2 * (logLik(fit_2_lap) - logLik(fit_1_lap)) 
+lrt <- 2 * (logLik(fit_2) - logLik(fit_1)) 
 
 ## bootstrapped estimates
 b_boot <- rep(NA, 100)
 for(i in 1:100) {
-  y <- unlist(simulate(fit_1_lap))
-  b_null <- update(fit_1_lap, y ~ ., control = cntrl)
-  b_alt <- update(fit_2_lap, y ~ ., control = cntrl)
+  y <- unlist(simulate(fit_1))
+  b_null <- update(fit_1, y ~ ., control = cntrl)
+  b_alt <- update(fit_2, y ~ ., control = cntrl)
   b_boot[i] <- as.numeric(2 * (logLik(b_alt) - logLik(b_null)))
 }
 
@@ -340,7 +353,7 @@ eggs_nb <- rnbinom(nn, mu = mean, size = 1/2)
 df_eggs$eggs_nb <- eggs_nb 
 
 ## non-dispersed model
-snakes_lap <- glmer(eggs_nb ~ size + (1 | loc) + (1 | year),
+snakes <- glmer(eggs_nb ~ size + (1 | loc) + (1 | year),
                     family = poisson,
                     data = df_eggs)
 ```
@@ -350,32 +363,33 @@ snakes_lap <- glmer(eggs_nb ~ size + (1 | loc) + (1 | year),
 
 ```{r ted_over, echo = TRUE}
 ## Pearson's X^2 statistic
-X2 <- sum((eggs - fitted(snakes_lap))^2 / fitted(snakes_lap))
+X2 <- sum((eggs - fitted(snakes))^2 / fitted(snakes))
 
 ## number of parameters
-k <- length(coef(snakes_lap)) + length(ranef(snakes_lap))
+k <- length(coef(snakes)) + length(ranef(snakes))
 
 ## overdispersion parameter
 (c_hat <- X2 / (nn - k))
 
 ## test for overdispersion
-pchisq(deviance(snakes_lap), k, lower.tail = FALSE)
+pchisq(deviance(snakes), k, lower.tail = FALSE)
 ```
 
 
 ## Brown tree snakes | Negative binomial
 
-```{r, echo = TRUE, results = FALSE}
+```{r fit_nb, echo = TRUE, results = FALSE}
 ## neg binomial model for overdispersion
-fit_nb_lap <- glmer.nb(eggs_nb ~ size + (1 | loc) + (1|year), 
-                       data = df_eggs,
-                       control = cntrl)
+fit_nb <- glmer.nb(eggs_nb ~ size + (1 | loc) + (1 | year), 
+                   data = df_eggs,
+                   control = cntrl)
 ```
 
 ## Brown tree snakes {.smaller}
 
 ```{r, echo = FALSE, results = TRUE}
-summary(fit_nb_lap)
+## model summary
+summary(fit_nb)
 ```
 
 
