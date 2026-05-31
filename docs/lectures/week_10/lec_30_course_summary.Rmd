@@ -980,22 +980,71 @@ $$
 | Gauss-Hermite quadrature | More accurate than Laplace | Slower than Laplace; limited random effects | `lme4::glmer` `glmmsr::glmm` `glmmML::glmmML` |
 
 
-# THE FUTURE
+# Some parting advice 
 
 
-## Some things we didn't cover
+## Lesson number 1 
 
-Generalized additive models (QERM 514 in a different year)
+A good analysis begins with a good question
 
-Occupancy models (SEFS 590)
 
-Capture-Mark-Recapture models (SEFS 590)
+## Lesson number 2 
 
-Multivariate response models (FISH 560)
+A good analysis doesn’t have to be complicated
 
-Time series models (FISH 507)
+> * A clean and reproducible analysis is always best
 
-Spatio-temporal models (FISH 556)
+> * Keep the explanation clean and elegant too
 
-Bayesian methods (FISH 558, FISH 559)
+
+## Lesson number 3 
+
+Stay as close to the data as possible
+
+> * Try to work with the raw data
+
+> * Beware of "stats on stats" 
+
+
+## Lesson number 4
+
+Know thy model
+
+
+## Lesson number 4
+
+Know thy model
+
+Everyone should be clear on (at least) three things: 
+
+1) What is your model (set)?
+
+2) Why is it your model (set)?
+
+3) How will inference from your model (set) answer your question?
+
+
+## Lesson number 5 
+
+Assumptions matter 
+
+> * Inference is conditional on the degree to which we meet our assumptions
+
+> * Be very clear, and allow our reader to be very clear, on our assumptions
+
+
+## Lesson number 6 
+
+Be your own (best) critic
+
+> * Look for the holes & confess them
+
+> * If you can’t fix them, there is still value in the analysis
+
+> * Maybe someone in the future (you?) will fix/solve them  
+
+
+## Lesson number 7
+
+Learning is a lifelong process
 

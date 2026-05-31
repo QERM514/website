@@ -18,13 +18,15 @@ library(gratia)
 ```
 
 
-## Acknowledgements 
+## Acknowledgments 
 
 Gavin Simpson and colleagues have produced a lot of useful teaching material on GAMs that I've made use of here. For example: 
 
-* https://www.youtube.com/watch?v=sgw4cu8hrZM&t=598s
+[Gavin's blog](https://fromthebottomoftheheap.net)
 
-* https://www.youtube.com/watch?v=Ukfvd8akfco&t=905s
+[Webinar 1](https://www.youtube.com/live/sgw4cu8hrZM?si=pDEYp2OdKB7guJ8T&t=285)
+
+[Webinar 2](https://youtu.be/Ukfvd8akfco?si=g17GQv2ExA1KA0oO&t=8)
 
 
 ## Goals for today
@@ -38,52 +40,60 @@ Gavin Simpson and colleagues have produced a lot of useful teaching material on 
 
 ## Last time 
 
-A generalized additive model is a generalization of a GLM. It has a predictor that is a sum of smoothed (and possibly unsmoothed) terms: 
+A generalized additive model is an extension of the GLM with a predictor that is a sum of smoothed (and possibly unsmoothed) terms: 
 
 $$
-y_i = \beta_0 + \Sigma_j s_j(x_{j,i}) + \epsilon_j
+y_i = \beta_0 + \sum_j s_j(x_{j,i}) + \sum_k \beta_k x_{k,i} + \epsilon_i
 $$
+
+<br>
 
 And with splines, our smoothed terms are a sum of weighted basis functions: 
 
 $$
-s(x)=\Sigma_k \beta_k b_k(x)
+s(x)=\sum_k \beta_k b_k(x)
 $$
 
-## Model choices 
 
-Based on understanding of your system: 
+## Choosing a model 
 
-* error distribution 
+Ask yourself:
 
-* predictors 
+* data/error distribution? 
 
-* type of smoother(s)  
+* predictors? 
 
-Check with diagnostics 
+* type of smoother(s)?
 
-* <b> $k$ - the number of knots </b> 
+<br>
+
+Check candidate models via diagnostics 
+
+* Effect of choice of $k$ (number of knots)?
 
 
 ## An example 
 
-Chicago pollution and death rate (Peng et al.; NMMAPSdata package)
+Chicago air quality and death rate ([Peng and Welty (2004)](https://journal.r-project.org/articles/RN-2004-011/RN-2004-011.pdf); `{NMMAPSdata}`)
 
-* deaths per day
-* median particles <2.5 mg per $m^3$
-* ozone ppb 
-* temperature (fahrenheit)
+`death`: total deaths per day
 
-```{r, echo = TRUE, library = TRUE}
+`pm25median`: median particles < 2.5 mg per cubic m
 
+`o3median`: ozone in parts per billion
+
+`tmpd`: temperature in Fahrenheit
+
+```{r chicago_air, echo = TRUE}
+## get data
 data(chicago, package = "gamair")
 
-model1 <- mgcv::gam(death ~ s(pm25median) + 
-                      s(o3median) + 
-                      s(tmpd), 
-                    family = "poisson", 
-                    data=chicago, method = "REML")
-
+## fit gam
+fit_gam_air <- mgcv::gam(death ~ s(pm25median) + 
+                           s(o3median) + 
+                           s(tmpd), 
+                         family = "poisson", 
+                         data = chicago, method = "REML")
 ```
 
 
@@ -91,48 +101,51 @@ model1 <- mgcv::gam(death ~ s(pm25median) +
 
 Smoothed Terms 
 
-```{r, echo = FALSE, results = TRUE}
-
-summary(model1)$s.table 
-
+```{r summary_chicago_air, echo = FALSE}
+summary(fit_gam_air)$s.table 
 ``` 
 
 
 ## GAM interpretation  
 
-* Effective degrees of freedom (edf) - degree of non-linearity, but with upper bound set by $k$ 
+* Effective degrees of freedom (`edf`) - degree of non-linearity, but with upper bound set by $k$ 
 
-* Reference degrees of freedom (Ref.df) - used for calculating test statistic 
+* Reference degrees of freedom (`Ref.df`) - used for calculating test statistic 
 
-* $p$-value - null hypothesis is a linear effect (this can include a flat linear effect, i.e., no effect) 
+* `p-value` - null hypothesis is a linear effect (this can include a flat linear effect, i.e., no effect) 
 
   * Biased low because they don't account for need to estimate $\lambda$ 
 
-  * Works well in asymptopia 
+  * Works well asymptotically 
 
   * Doesn't work for unpenalized smooths (random effects)
 
 
-## Model checking 
+## Model checking | Effect of $k$ on edf (for median particles <2.5 mg per $m^3$)
 
-* Effect of $k$ on edf (for median particles <2.5 mg per $m^3$)
+```{r plot_k_edf, echo = FALSE, fig.align = "center", fig.width = 8, fig.height = 4.5}
+## empty matrix for results
+record <- matrix(NA, nrow = 20, ncol = 3)
 
-```{r,echo = FALSE,results = TRUE}
-
-record <- matrix(NA,nrow=20,ncol=3)
-for(j in 1:20){
-  model1 <- mgcv::gam(death ~ s(pm25median, k = j+3) + 
-                      s(o3median) + 
-                      s(tmpd), 
-                    family = "poisson", 
-                    data=chicago, method = "REML")
+## lop over values of k
+for(k in 1:20){
+  fit_gam_air <- mgcv::gam(death ~ s(pm25median, k = k + 3) + 
+                             s(o3median) + 
+                             s(tmpd), 
+                           family = "poisson", 
+                           data = chicago, method = "REML")
   
-record[j,1] <- j+3
-record[j,2] <- summary(model1)$s.table[1,1]
+record[k,1] <- k + 3
+record[k,2] <- summary(fit_gam_air)$s.table[1, 1]
 }
 
-plot(record[,1],record[,2],xlab="k for pm2.5",ylab="effective degrees of freedom")
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0),
+    cex.lab = 1.4, cex.axis = 1.2)
 
+plot(record[,1], record[,2],
+     las = 1, pch = 16, col = "dodgerblue", cex = 1.5,
+     xlab = "k for pm2.5", ylab = "Effective degrees of freedom")
 ```
 
 
@@ -142,279 +155,343 @@ plot(record[,1],record[,2],xlab="k for pm2.5",ylab="effective degrees of freedom
 
 * Do some iterative checking with larger values of $k$ for multiple parameters, effective degrees of freedom should stabilize   
 
-```{r, echo = TRUE, results = 'hide', eval = FALSE}
-
-gam.check(model1) 
-
+```{r ex_gam_check, echo = TRUE, eval = FALSE}
+## check model fit
+gam.check(fit_gam_air) 
 ``` 
 
 
-## Model checking 
+## Model checking | $k$ set to default for each variable {.smaller} 
 
-With $k$ set to default for each variable: check $p$-values 
-
-```{r, echo = FALSE, results = TRUE, fig.show='hide'}
-
-set.seed(1)
-model1 <- mgcv::gam(death ~ s(pm25median) + 
+```{r check_default_k, echo = FALSE, results = TRUE, fig.show = "hide"}
+## fit with default k's
+fit_gam_air <- mgcv::gam(death ~ s(pm25median) + 
                       s(o3median) + 
                       s(tmpd), 
                     family = "poisson", 
-                    data=chicago, method = "REML")
+                    data = chicago, method = "REML")
 
-gam.check(model1) 
-
+## check p-values
+gam.check(fit_gam_air) 
 ``` 
 
 
-## Model checking  
+## Model checking | Again but with $k = 20$ for all $x$
 
-With $k$ set to 20 for each variable 
+```{r check_k_20, echo = TRUE, results = FALSE, fig.show = "hide"}
+## fit with k = 20 for all
+fit_gam_air <- mgcv::gam(death ~ s(pm25median, k = 20) + 
+                           s(o3median, k = 20) + 
+                           s(tmpd, k = 20), 
+                         family = "poisson", 
+                         data = chicago, method = "REML")
 
-
-```{r}
-set.seed(1)
-``` 
-
-
-```{r, echo = TRUE, results = FALSE, fig.show='hide'}
-
-model1 <- mgcv::gam(death ~ s(pm25median, k=20) + 
-                      s(o3median, k=20) + 
-                      s(tmpd, k=20), 
-                    family = "poisson", 
-                    data=chicago, method = "REML")
-
-gam.check(model1) 
-
+## check p-values
+gam.check(fit_gam_air) 
 ```
 
 
-## Model checking  
+## Model checking | $p$-value above $\alpha$ and edf is not close to $k$ {.smaller} 
 
-With $k$ set to 20 for each variable: $p$-value above $\alpha$, and edf is not close to $k$ 
-
-```{r, echo = FALSE, results = TRUE, fig.show='hide'}
-
-model1 <- mgcv::gam(death ~ s(pm25median, k=20) + 
-                      s(o3median, k=20) + 
-                      s(tmpd, k=20), 
-                    family = "poisson", 
-                    data=chicago, method = "REML")
-
-gam.check(model1, rep=500)
-
-```
-
-
-## Model checking  
-
-* We need to check the other assumptions of our model as well 
-
-* gam.check() also provides some basic diagnostic plots 
-
-```{r, echo = FALSE, results = TRUE, fig.show='show'}
-
-gam.check(model1) 
-
-``` 
-
-
-## Model selection 
-
-* When we select $\lambda$ we are only penalizing wiggliness, thus only penalizing functions of $X$ with a second derivative that is >0
-
-* Linear relationships can't be removed from the model this way  
-
-
-## Model selection 
-
-In gam(), we can use "select=TRUE" to apply penalties to the linear terms as well
-
-```{r, echo = TRUE, results = FALSE}
-
-model1 <- mgcv::gam(death ~ s(pm25median, k = 20) + 
+```{r, echo = FALSE, results = TRUE, fig.show = "hide"}
+## fit with k = 20 for all
+fit_gam_air <- mgcv::gam(death ~ s(pm25median, k = 20) + 
                       s(o3median, k = 20) + 
                       s(tmpd, k = 20), 
-                    family = "poisson", select = TRUE,  
-                    data=chicago, method = "REML")
-                    
+                    family = "poisson", 
+                    data = chicago, method = "REML")
+
+## check p-values
+gam.check(fit_gam_air, rep=500)
+
+```
+
+
+## Other model diagnostics | `gam.check()` provides some basic diagnostic plots 
+
+```{r plot_diagnostics, echo = FALSE, results = TRUE, fig.show = "show", fig.align = "center", fig.width = 8, fig.height = 4.5}
+par(omi = c(0, 0, 0, 0))
+
+## diagnostic plots
+gam.check(fit_gam_air) 
+``` 
+
+
+## Model selection 
+
+* When we select $\lambda$ we are only penalizing wiggliness
+
+> * However, this only penalizes functions of $X$ with a second derivative > 0
+
+> * Thus, linear relationships can't be removed from the model this way  
+
+
+## Model selection 
+
+Use `select = TRUE` to apply penalties to the linear terms as well
+
+```{r ex_select_TRUE, echo = TRUE, eval = FALSE}
+## apply penalties to linear terms 
+fit_gam_air <- mgcv::gam(death ~ s(pm25median, k = 20) + 
+                           s(o3median, k = 20) + 
+                           s(tmpd, k = 20), 
+                         ### <b>
+                         select = TRUE,
+                         ### </b>  
+                         family = "poisson",
+                         data = chicago, method = "REML")
 ```
 
 
 ## Model selection 
 
-Look to see if edf is less than 1 
+Check to see if edf < 1 
 
-```{r, echo = FALSE, results = TRUE}
-
-summary(model1)$s.table
-
+```{r check_edf, echo = TRUE}
+## check edf values
+summary(fit_gam_air)$s.table
 ```
 
 
-## Model selection
+## Model selection | Use `gratia::draw()` to create partial effect plots for the smooths
 
-```{r, echo = FALSE, results = TRUE}
-
-gratia::draw(model1, scales = "fixed")
-
+```{r plot_partial_effects, echo = FALSE, fig.align = "center", fig.width = 8, fig.height = 4.5}
+## partial effect plots
+gratia::draw(fit_gam_air, scales = "fixed")
 ```
 
 
 ## Flexibility of GAMs 
 
-* We have lots of options when fitting GAMs 
+We have _lots_ of options when fitting GAMs 
 
-* This flexibility means we have to give very careful thought to what we're trying to achieve 
-
-* Just because we can fit a GAM doesn't mean it will be interpretable or useful  
+so we have to give very careful thought to our goal(s) 
 
 
-## Example  
+## Flexibility of GAMs 
 
-Atmospheric carbon dioxide data (measured at the South Pole) since 1957 to ~1999 
+We have _lots_ of options when fitting GAMs 
 
-```{r, echo = FALSE, results = TRUE}
+so we have to give very careful thought to our goal(s) 
 
+<br>
+
+Just because we _can_ fit a GAM doesn't mean it will be interpretable or useful!
+
+
+## Another example | Atmospheric CO<sub>2</sub> concentrations at the South Pole (1957 to 1999)
+
+```{r ex_data_CO2, echo = FALSE, fig.align = "center", fig.width = 8, fig.height = 4.5}
+## get CO2 data
 data(co2s, package ="gamair")
 
-ggplot(co2s, aes(x = c.month, y = co2)) + geom_line()
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0),
+    cex.lab = 1.4, cex.axis = 1.2)
 
+plot(co2s$c.month, co2s$co2,
+     type = "l", lwd = 3, col = "dodgerblue",
+     ylab = "CO2 concentration", xlab = "Time")
 ```
 
-## Example  
 
-Using the cubic regression basis - better when we have a lot of wiggliness 
+## Candidate model 
 
-Make $k$ large (lots of potential wiggliness)
+Cubic regression basis because have a lot of wiggliness in the data
 
+Let's make $k$ ***really*** large then
 
-```{r, echo = TRUE, results = FALSE}
-
-b <- gam(co2 ~ s(c.month, k=300, bs="cr"), data = co2s, method = 'REML')
-
+```{r fit_co2_cubic, echo = TRUE, results = FALSE}
+## fit GAM with cubic regression basis
+fit_co2_cubic <- gam(co2 ~ s(c.month, k = 300, bs = "cr"),
+                     method = 'REML',
+                     data = co2s)
 ``` 
 
 
-## Example  
+## Model summary {.smaller}  
 
-```{r, echo = FALSE, results = TRUE}
-
-summary(b)
-
+```{r summary_co2_cubic}
+summary(fit_co2_cubic)
 ```
 
 
-## Example  
+## Predicting the future | Not a great model
 
-Now try to predict from the model 
-
-```{r, echo = FALSE, results = TRUE}
+```{r plot_prediction, fig.align = "center", fig.width = 8, fig.height = 4.5}
 
 pd <- with(co2s, data.frame(c.month = 1:(nrow(co2s)+36)))
-pd <- cbind(pd, predict(b, pd, se = TRUE))
+pd <- cbind(pd, predict(fit_co2_cubic, pd, se = TRUE))
 pd <- transform(pd, upr = fit + (2*se.fit), lwr = fit - (2 * se.fit))
 
+par(cex.lab = 1.4, cex.axis = 1.2)
 
-ggplot(pd, aes(x = c.month, y = fit)) +
-    geom_ribbon(aes(ymin = lwr, ymax = upr), alpha = 0.2) +
-    geom_line(data = co2s, aes(c.month, co2), col = 'red') +
-    geom_line(alpha = 0.5)
-
+p1 <- ggplot(pd, aes(x = c.month, y = fit)) +
+  geom_ribbon(aes(ymin = lwr, ymax = upr), alpha = 0.2) +
+  geom_line(data = co2s, aes(c.month, co2),
+            linewidth = 1.5, col = 'dodgerblue') +
+  geom_line(alpha = 0.5) +
+  labs(x = "\nTime", y = "CO2 concentration\n")
+p1 + theme_classic(base_size = 18)
 ```
 
-## Example  
+## Another candidate model  
 
-We fit a model, but it isn't particularly interpretable or useful 
+Let's now distinguish within-year variation from the long-term trend 
 
-Let's distinguish within-year variation from the long-term trend 
+* cyclic spline on `month` (1:12) 
 
-* Fit a cyclic spline on month (1:12) and a cubic regression spline on cumulative month (1:507)
+* cubic regression spline on `c.month` (1:507)
 
-```{r, echo = TRUE, results = TRUE}
-
+```{r fit_cyclic_cubic, echo = TRUE, results = TRUE}
+## fit GAM with 
 b2 <- gam(co2 ~ s(month, bs = "cc") + 
             s(c.month, bs = "cr", k = 300), 
-            knots = list(month = c(0.5, 12.5)),
-            data = co2s, method = 'REML')
+          ### <b>
+          knots = list(month = c(0.5, 12.5)),
+          ### </b>
+          method = 'REML',
+          data = co2s)
 ```
 
 
-## Example  
+## Cyclic & cubic splines {.smaller}  
 
-```{r, echo = FALSE, results = TRUE}
-
+```{r co2_summary}
 summary(b2)
-
 ```
 
 
-## Example  
+## Cyclic & cubic splines | Much more reasonable predictions
 
-```{r, echo = FALSE, results = TRUE} 
+```{r plot_both_splines, fig.align = "center", fig.width = 8, fig.height = 4.5} 
 
 nr <- nrow(co2s)
 pd2 <- with(co2s, data.frame(c.month = 1:(nr+36),
-                             month = rep(1:12, length.out=nr+36)))
+                             month = rep(1:12, length.out = nr + 36)))
 pd2 <- cbind(pd2, predict(b2, pd2, se = TRUE))
 pd2 <- transform(pd2, upr = fit + (2*se.fit), lwr = fit - (2 * se.fit))
 
-ggplot(pd2, aes(x = c.month, y = fit)) +
+par(cex.lab = 1.4, cex.axis = 1.2)
+
+p1 <- ggplot(pd2, aes(x = c.month, y = fit)) +
     geom_ribbon(aes(ymin = lwr, ymax = upr), alpha = 0.2) +
-    geom_line(data = co2s, aes(c.month, co2), col = 'red') +
-    geom_line(alpha = 0.5)
+    geom_line(data = co2s, aes(c.month, co2),
+              linewidth = 1.5, col = 'dodgerblue') +
+    geom_line(alpha = 0.5) +
+  labs(x = "\nTime", y = "CO2 concentration\n")
+p1 + theme_classic(base_size = 18)
 ``` 
 
 
-## Example  
+## A cautionary note  
 
-* The second model seems more interpretable (there is predictable annual variation, but also a long-term pattern) and is more useful for prediction 
+Building GAMs requires more choices than building GLMs
 
-* Building GAMs is more complex than building GLMs because we have more choices 
+<br>
 
-* Requires thinking hard about the system and the question 
+It requires thinking hard about the system and the question 
 
 
 ## Options for interactions 
 
-In addition to splines on individual predictors, we can fit interactions 
+**main effects & interactions** `te(x1, x2)`
 
-* te(x1,x2) - main effects and interactions - separate smoothness parameter and separate marginal basis 
-
-* ti(x1,x2) - interactions only - for when you have the main effect elsewhere in the model (for example, if you have multiple two-way interactions, a*b + a*c + b*c)
-
-* s(x1,x2, bs = 'tp') - bivariate thin plate splines - single smoothness parameter, only use when units are the same (e.g., spatial smoother)
-
-* f + s(x1, by = f) - when we want to smooth by different levels of a factor (be sure you include the factor as a fixed effect)
-
-* s(x, f, bs = 'fs') - smooth function for each level of the factor, akin to random slopes 
+* separate smoothness parameter and separate marginal basis
 
 
-## Mixed Models 
+## Options for interactions 
+
+**main effects & interactions** `te(x1, x2)`
+
+* separate smoothness parameter and separate marginal basis
+
+**interactions only** `ti(x1, x2)`  
+
+* when the main effect are specified elsewhere 
+
+
+## Options for interactions 
+
+**main effects & interactions** `te(x1, x2)`
+
+* separate smoothness parameter and separate marginal basis
+
+**interactions only** `ti(x1, x2)`  
+
+* when the main effect are specified elsewhere 
+
+**bivariate thin plate splines** `s(x1, x2, bs = 'tp')`
+
+* single smoothness parameter, only use when units are the same (eg, over space)
+
+
+## Options for interactions 
+
+**main effects & interactions** `te(x1, x2)`
+
+* separate smoothness parameter and separate marginal basis
+
+**interactions only** `ti(x1, x2)`  
+
+* when the main effect are specified elsewhere 
+
+**bivariate thin plate splines** `s(x1, x2, bs = 'tp')`
+
+* single smoothness parameter, only use when units are the same (eg, over space)
+
+**smooth by different levels of a factor** `f + s(x1, by = f)`
+
+* be sure to include the factor as a fixed effect
+
+
+## Options for interactions 
+
+**main effects & interactions** `te(x1, x2)`
+
+* separate smoothness parameter and separate marginal basis
+
+**interactions only** `ti(x1, x2)`  
+
+* when the main effect are specified elsewhere 
+
+**bivariate thin plate splines** `s(x1, x2, bs = 'tp')`
+
+* single smoothness parameter, only use when units are the same (eg, over space)
+
+**smooth by different levels of a factor** `f + s(x1, by = f)`
+
+* be sure to include the factor as a fixed effect
+
+**smooth for each level of a factor** `f + s(x1, by = f)`
+
+* akin to random regression slopes
+
+
+## Mixed models | GAMMs
 
 We can also fit random effects
 
-* mgcv:gam() with bs = "re"
+* `mgcv::gam(..., `bs = "re")`
 
-* mgcv:gamm() - nlme - with correlation structures 
+* `mgcv::gamm()` 
 
-* gamm4:gamm4() - lmer() or glmer()
+* `gamm4::gamm4()`
 
 Thus, these models are equivalent: 
 
-* lme(y ~ 1 + (1|f), method = "REML")
+* `lme(y ~ 1 + (1|f), method = "REML")`
 
-* gam(y ~ s(f, bs = "re"), method = "REML")
+* `gam(y ~ s(f, bs = "re"), method = "REML")`
 
 
 ## Summary 
 
 * GAMs using splines offer tremendous flexibility 
 
-* There is likely some tradeoff between flexibility and ease of understanding 
+> * There is some tradeoff between flexibility and ease of understanding 
 
-* Many of our relationships in ecology aren't linear 
+> * Many of our relationships in ecology aren't linear 
 
-* What are some examples? 
+> * What are some examples? 
 

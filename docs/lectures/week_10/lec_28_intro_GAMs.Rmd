@@ -16,22 +16,15 @@ library(mgcv)
 ```
 
 
-## Goals for today
-
-* Understand the structural components of generalized additive models
-
-> * Understand the options for fitting GLMMs and their pros and cons
-
-> * Understand some of the diagnostics available for evaluating GLMM fits
-
-
-## Acknowledgements 
+## Acknowledgments 
 
 Gavin Simpson and colleagues have produced a lot of useful teaching material on GAMs that I've made use of here. For example: 
 
-* https://www.youtube.com/watch?v=sgw4cu8hrZM&t=598s
+[Gavin's blog](https://fromthebottomoftheheap.net)
 
-* https://www.youtube.com/watch?v=Ukfvd8akfco&t=905s
+[Webinar 1](https://www.youtube.com/live/sgw4cu8hrZM?si=pDEYp2OdKB7guJ8T&t=285)
+
+[Webinar 2](https://youtu.be/Ukfvd8akfco?si=g17GQv2ExA1KA0oO&t=8)
 
 
 ## Goals for today
@@ -45,27 +38,27 @@ Gavin Simpson and colleagues have produced a lot of useful teaching material on 
 
 * Linear relationship between predictor and response 
 
-* Observations $y_i$ are a random sample from the population    
+> * Observations are a random sample from the population    
 
-* The predictor(s) are known without measurement error  
-* The predictor(s) are independent of the response
+> * The predictor(s) are known without measurement error  
 
-* If 2+ predictors, they are independent of each other
+> * If 2+ predictors, they are independent of each other
 
-* Errors are IID: $\epsilon_i \sim \text{N}(0, \sigma^2)$; $\text{Cov}(\epsilon_i, \epsilon_j) = 0$
+> * Errors are IID: $\epsilon_i \sim \text{N} (0, \sigma); ~ \text{Cov}(\epsilon_i, \epsilon_{j \neq i}) = 0$
 
 
-## Non-linear relationships  
+## Non-linear relationships?
 
-* We assume a linear relationship between predictor and response
+* For Gaussian LMs we assume a linear relationship between predictor and response
 
-* Or in the case of non-Gaussian GLMs, we assume a linear relationship between predictor and link-scale response
+> * For non-Gaussian GLMs, we assume a linear relationship between link(predictor) and response
 
 <br> 
 
-* But what if we don't think the relationship is linear? 
+> * What if we think the relationship is _non-linear_? 
 
-## Non-linear relationships | Sea surface temperature anomalies from Hadley Centre (UK Met Office)
+
+## Non-linear data | Sea surface temperature anomalies from Hadley Centre (UK Met Office)
 
 ```{r sst_data, fig.align = "center", fig.width = 8, fig.height = 4.5}
 
@@ -82,199 +75,168 @@ anom <- apply(sst[,-1], 1, mean)
 
 sst <- data.frame(year = sst$year, temp = anom)
   
-par(mai = c(0.9, 0.9, 0.1, 0.1),
-    omi = c(0, 0, 0, 0),
-    cex.lab = 1.4, cex.axis = 1.2)
-plot(sst$year, sst$temp,
-     type = "l", lwd = 2, col = "dodgerblue",
-     ylab = "Temperature anomaly", xlab = "Year")
-abline(h=0,lty="dashed")
+## fit polynomial
+model_poly <- lm(temp ~ poly(year, degree = 10), data = sst)
 
-```
-
-
-## Non-linear relationships 
-
-We could fit a polynomial (degree = 20) but polynomials are unstable at the edges
-
-```{r fit_lm, fig.align = "center", fig.width = 8, fig.height = 4.5}
-
-model_poly <- lm(temp ~ poly(year, degree = 20), data = sst)
-
-preds_poly <- predict(model_poly,se.fit=TRUE)
+preds_poly <- predict(model_poly, se.fit=TRUE)
 
 t_value <- qt(0.025, length(sst$year) - 8, lower.tail = FALSE)
 
+## compute CI's
 up_95 <- preds_poly$fit + t_value * preds_poly$se.fit
 lo_95 <- preds_poly$fit - t_value * preds_poly$se.fit
 
+## plot the data
 par(mai = c(0.9, 0.9, 0.1, 0.1),
     omi = c(0, 0, 0, 0),
     cex.lab = 1.4, cex.axis = 1.2)
 plot(sst$year, sst$temp,
-     ylim = range(up_95, lo_95),
-     type = "l", lwd = 2, col = "dodgerblue",
+     ylim = range(up_95, sst$temp, lo_95),
+     type = "l", lwd = 3, col = "dodgerblue",
      ylab = "Temperature anomaly", xlab = "Year")
-lines(sst$year, preds_poly$fit)
-lines(sst$year, up_95, lty = "dashed")
-lines(sst$year, lo_95, lty = "dashed")
+abline(h=0, lty = "dashed")
+```
+
+
+## Non-linear relationships | A degree-10 (decic) polynomial fit to the data
+
+```{r plot_poly, fig.align = "center", fig.width = 8, fig.height = 4.5}
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0),
+    cex.lab = 1.4, cex.axis = 1.2)
+
+plot(sst$year, sst$temp,
+     ylim = range(up_95, sst$temp, lo_95),
+     type = "l", lwd = 3, col = "dodgerblue",
+     ylab = "Temperature anomaly", xlab = "Year")
+abline(h=0, lty = "dashed")
+lines(sst$year, preds_poly$fit, lwd = 2)
+lines(sst$year, up_95, lty = "dashed", lwd = 2)
+lines(sst$year, lo_95, lty = "dashed", lwd = 2)
 ```
 
 
 ## Generalized additive models 
 
-We want a model that allows for some smooth, but non-linear, relationship between year and temperature 
-
-* A generalized additive model is a generalization of a GLM. It has a predictor that is a sum of smoothed (and possibly unsmoothed) terms: 
-
-$$
-y_i = \beta_0 + \Sigma_j s_j(x_{j,i}) + \epsilon_j
-$$
-
-<br> 
+We seek a model that allows for some smooth **and** non-linear relationship between year and temperature 
 
 
 ## Generalized additive models 
 
-There are multiple general types of GAMs: 
+We seek a model that allows for some smooth **and** non-linear relationship between year and temperature 
 
-* One type of GAM uses LOESS smoothers (LOcally Estimated Scatterplot Smoothers) 
+<br>
 
-  * These fit many local (weighted) regressions with a moving window 
+A generalized additive model is an extension of the GLM with a predictor that is a sum of smoothed (and possibly unsmoothed) terms: 
+
+$$
+y_i = \beta_0 + \sum_j s_j(x_{j,i}) + \sum_k \beta_k x_{k,i} + \epsilon_i
+$$
+
+
+## Type of GAMs | LOESS (<u>LO</u>cally <u>E</u>stimated <u>S</u>catterplot <u>S</u>moothers) 
+
+Fit many local (weighted) regressions within a sliding window 
   
-  * LOESS fitting is available in the gam() package
+LOESS fitting is available in the `mgsv::gam()` function
 
-* Pros: 
+
+## Type of GAMs | LOESS (LOcally Estimated Scatterplot Smoothers) 
+
+<u>Pros</u> 
  
-  * Pretty simple and easy to understand 
+* Pretty simple and easy to understand 
   
-* Cons: 
 
-  * How big you make the window (and hence the degree of smoothness) matters and there isn't much theory to help you choose: if we make the window big, we'll essentially get a linear regression, if we make it small, we will overfit (or "under-smooth")  
+## Type of GAMs | LOESS (LOcally Estimated Scatterplot Smoothers) 
+
+<u>Pros</u> 
+ 
+* Pretty simple and easy to understand 
   
-  * LOESS isn't very reliable near the ends of the data  
+<u>Cons</u> 
+
+* Size of the window (and hence the degree of smoothness) matters, but there isn't much theory to help you choose
+  
+> * If we make the window big, we'll essentially get a linear regression, if we make it small, we will overfit (or "under-smooth")  
+  
+> * LOESS isn't very reliable near the ends of the data  
 
 
-## GAMs with splines 
+## Type of GAMs | Splines
 
-* Spline smoothing is a lot more flexible and adaptable than LOESS smoothing
+* Much more flexible and adaptable than LOESS smoothing
 
-* Spline smoothing can be applied with lots of non-Gaussian error distributions and with random effects (e.g., GAMMs) 
+> * Can be applied to lots of non-Gaussian error distributions & with random effects 
 
-* If we use splines,the degree of smoothness can be estimated as part of model fitting using generalized cross validation, or using restricted maximum likelihood 
-
-
-## Fitting a GAM  
-
-Let's fit a GAM using splines to the global temperature data 
-
-
-```{r, echo = TRUE, results = TRUE}
-
-model1 <- mgcv::gam(temp ~ s(year), data = sst, method = 'REML')
-
-```
-
-
-## Fitting a GAM  
-
-Linear terms 
-
-```{r, echo = FALSE, results = TRUE}
-
-summary(model1)$p.table
-```
-
-Smoothed terms 
-
-```{r}
-summary(model1)$s.table
-```
-
-Scale 
-
-```{r}
-summary(model1)$scale
-```
-
-Deviance explained
-
-```{r}
-summary(model1)$dev.expl   
-```
-
-
-## Fitting a GAM 
-
-```{r, echo = FALSE, results = TRUE}
-
-preds <- predict(model1,se.fit=TRUE)
-
-plot(sst$year,preds$fit,ylim = c(-0.7,1.2),xlab = "Year",ylab="Global Temperature Anomaly",col = "red",type = "l",lwd=2)
-
-crit.t <- qt(0.025,length(sst$year)-(1+summary(model1)$s.table[1]),lower.tail = FALSE)
-
-lines(sst$year,preds$fit + preds$se.fit*crit.t,col="red",lty="dashed")
-lines(sst$year,preds$fit - preds$se.fit*crit.t,col="red",lty="dashed")
-
-points(sst$year,sst$temp,pch=46,cex = 3)
-abline(h=0,lty="dashed")
-
-``` 
+> * The degree of smoothness can be estimated as part of model fitting via restricted maximum likelihood or generalized cross validation
 
 
 ## What are splines? 
 
-Splines are basis expansions
+Splines are _basis expansions_
 
-* A polynomial is one type of basis expansion: 
+For example, a polynomial is one type of basis expansion: 
 
 $$ 
-x^0 = 1\\
-x^1 = x\\
-x^2 = x^2\\
-x^3 = x^3\\
-\dots
-$$
-
-In a basis expansion: 
-
-* We call each of the simpler functions a basis function 
-
-* The set of simpler functions, $b_k$, is called a *basis*
-
-When we model using splines, each of the $b_k$ basis functions has a coefficient $\beta_k$
-
-* The spline is the sum of these weighted functions (weighted by $\beta_k$ and evaluated at x): 
-
-$$
-s(x)=\Sigma_k \beta_k b_k(x)
+\begin{aligned}
+x^0 &= 1\\
+x^1 &= x\\
+x^2 &= x^2\\
+x^3 &= x^3\\
+&~~\vdots
+\end{aligned}
 $$
 
 
 ## What are splines? 
 
-There are many types of splines 
+In a basis expansion
+
+* We call each of the simpler functions a _basis function_
+
+* The set of simpler functions, $b_k$, is called a _basis_
+
+
+## What are splines?
+
+When we model using splines, each of the $b_k$ has a coefficient $\beta_k$
+
+<br>
+
+The spline is the sum of these functions (weighted by $\beta_k$ and evaluated at $x$): 
+
+$$
+s(x)=\sum_k \beta_k b_k(x)
+$$
+
+
+## Types of splines
 
 One of the easiest to think about is a cubic regression spline
 
-* We divide $X$ into intervals (the number of intervals is defined by the number of "knots")
+* $X$ is divided into intervals (defined by the number of "knots")
+
+
+## Types of splines
+
+One of the easiest to think about is a cubic regression spline
+
+* $X$ is divided into intervals (defined by the number of "knots")
 
 * In each interval, we fit a cubic polynomial
 
 $$
-Y_i = \beta_0 + \beta_1 *X_i + \beta_2 * X_{i}^2 + \beta_3 * X_{i}^3
+y_i = \beta_0 + \beta_1 x_i + \beta_2 x_{i}^2 + \beta_3 x_{i}^3
 $$ 
 
-* The fitted values per segment are glued together to form the smoothing curve
+> * The fitted values per interval are stuck together to form the curve
 
-* The points where the intervals connect are called knots. To obtain a smooth connection at the knots, certain conditions are imposed
+> * The intervals connect at the knots
+
+> * To obtain a smooth connection at the knots, certain conditions are imposed
 
 
-## What are splines? 
-
-![](animation.gif){ width=50% }
-    
 ## How do we go from a basis to a model fit?  
 
 We want to allow for a function that is "wiggly", but not too wiggly
@@ -323,146 +285,271 @@ where $\lambda$ is a smoothness parameter, indicating how much we penalize wiggl
 
 We will maximize this penalized likelihood
 
-## Measuring wiggliness
 
-```{r,echo = FALSE, results = TRUE, fig.width=2.5, fig.height=3, fig.fullwidth=TRUE}
+## Penalty on lambda affects wiggliness 
 
-model1 <- 
-  gam(temp ~ s(year), data = sst, sp = 0.0001)
-model2 <- 
-  gam(temp ~ s(year), data = sst, sp = 0.01)
-model3 <- 
-  gam(temp ~ s(year), data = sst, sp = 1)
-model4 <- 
-  gam(temp ~ s(year), data = sst, sp = 100)
+```{r ex_spline, fig.align = "center", cache = TRUE}
+library(animation)
 
-plot.gam(model1,ylab="Temp",main = "lambda = 0.0001")
-plot.gam(model2,ylab="Temp",main = "lambda = 0.01")
-plot.gam(model3,ylab="Temp",main = "lambda = 1")
-plot.gam(model4,ylab="Temp",main = "lambda = 100")
+## Generate sample data
+set.seed(514)
+x <- runif(100, 0, 10)
+y <- sin(x) + rnorm(100, sd = 0.5)
+dat <- data.frame(x, y)
 
+library(animation)
 
+invisible(capture.output({
+  ani.options(ani.dev = "png", ani.width = 800, ani.height = 600)
+  ## animate over different lambda's
+  saveGIF({
+    for (penalty_val in 10^seq(2, -5, -1)) {
+      ## fit GAM with varying smoothing parameter
+      b <- gam(y ~ s(x, sp = penalty_val))
+      
+      ## plot the fit
+      plot(dat$x, dat$y, 
+           main = paste("Lambda penalty:", round(penalty_val, 3)),
+           yaxt = "n", xaxt = "n",
+           ylab = "y", xlab = "x",
+           cex.main = 2, cex.lab = 2, cex.axis = 1.8,
+           pch = 19, col = "gray", cex = 2)
+      
+      ## predict and plot the spline curve
+      x_grid <- seq(0, 10, length.out = 100)
+      y_pred <- predict(b, newdata = data.frame(x = x_grid))
+      lines(x_grid, y_pred, col = "dodgerblue", lwd = 4)
+    }
+  }, interval = 0.5, movie.name = "gam_spline_fit.gif")
+}))
 ```
 
-
-## More on wiggliness 
-
-We can set the basis complexity - how many basis functions? 
-
-* We set $k$ as the maximum wiggliness (this determines the number of knots)
-
-But more important is to determine $\lambda$, the smoothness parameter 
+<p align="center">
+  ![](gam_spline_fit.gif){ width=70% }
+</p>
 
 
 ## More on wiggliness 
 
-How do we choose $\lambda$? 
+We set $k$ as the maximum wiggliness (this determines the number of knots)
 
-* When we use method = "REML" for selecting our $\lambda$, we are exploiting a relationship between random effects and smoothers - we can think of $\lambda_j$ as a prior on the spline coefficients 
+but what should we choose for the smoothness parameter $\lambda$?
 
-* We can also use generalized cross-validation (which is a type of cross-validation that is efficient with bigger datasets) 
 
-* There is reason to think that "REML" works best (Wood 2011) 
+## Choosing $\lambda$
 
-<font size="2"> 
-Wood SN. 2011. Fast Stable Restricted Maximum Likelihood and Marginal Likelihood Estimation of Semiparametric Generalized Linear Models. J Royal Statistical Society 73:3-36. 
-</font>
+* `method = "REML"` uses a relationship between random effects and smoothers -- we can think of $\lambda$ as a prior on the spline coefficients 
+
+> * We can also use generalized cross-validation 
+
+> * There is reason to think that "REML" works best ([Wood 2011](https://doi.org/10.1111/j.1467-9868.2010.00749.x)) 
 
 
 ## What kind of splines? 
 
-* ~ s(X, bs = 'tp'): thin plate spline (have a knot for every unique value of X) - default in mgcv::gam
+**thin plate spline** `s(X, bs = 'tp')` [default in `mgcv::gam()`]
 
-* ~ s(X, bs = 'cr'): cubic regression splines - widely used, especially useful for big datasets 
-
-* ~ s(X, bs = 'cc'): cyclic splines (join up the ends of the spline)
-
-* ~ s(X, bs = 'sos'): splines on a sphere 
-
-* there are many others in mgcv::gam() for special situations 
+* one knot for every unique value of $x$
 
 
-## Another example 
+## What kind of splines? 
 
-Counts of White Terns on an atoll in French Polynesia as a function of habitat at each count site
+**thin plate spline** `s(X, bs = 'tp')` [default in `mgcv::gam()`]
 
-```{r, eval = FALSE, echo = FALSE, results = FALSE}
-seabirds <- read.csv("seabirds.csv")
+* one knot for every unique value of $x$
+
+**cubic regression spline** `s(X, bs = 'cr')`  
+
+* widely used, especially useful for big datasets 
+
+
+## What kind of splines? 
+
+**thin plate spline** `s(X, bs = 'tp')` [default in `mgcv::gam()`]
+
+* one knot for every unique value of $x$
+
+**cubic regression spline** `s(X, bs = 'cr')`  
+
+* widely used, especially useful for big datasets 
+
+**cyclic spline** `s(X, bs = 'cc')`
+
+* join the ends of the spline
+
+
+
+## What kind of splines? 
+
+**thin plate spline** `s(X, bs = 'tp')` [default in `mgcv::gam()`]
+
+* one knot for every unique value of $x$
+
+**cubic regression spline** `s(X, bs = 'cr')`  
+
+* widely used, especially useful for big datasets 
+
+**cyclic spline** `s(X, bs = 'cc')`
+
+* join the ends of the spline
+
+**splines on a sphere** `s(X, bs = 'sos')`
+
+_many_ others in `mgcv::gam()` for special situations 
+
+
+## Fitting a GAM  
+
+Let's fit a GAM using splines to the global temperature data 
+
+```{r ex_gam_fit, echo = TRUE, results = TRUE}
+ex_gam_fit <- mgcv::gam(temp ~ s(year), data = sst, method = 'REML')
 ```
 
-```{r, eval = FALSE, echo = TRUE, results = TRUE}
-model1 <- gam(WHTE ~ s(palm,k=10) +
-                s(nativetree,k=10) + 
-                s(pandanus,k=10) + 
-                s(open,k=10) + 
-                s(distance,k=10) + 
-                s(month,bs="cc"),  
-              knots = list(month = c(1,12)), 
-              data = seabirds, method="REML")
+
+## Summary of GAM fit {.smaller}
+
+```{r model_summary}
+summary(ex_gam_fit)
+```
+
+
+## GAM fit to the data 
+
+```{r plot_gam_fit, fig.align = "center", fig.width = 8, fig.height = 4.5}
+## model fits
+preds <- predict(ex_gam_fit, se.fit = TRUE)
+
+## construct CI's
+t_crit <- qt(0.025, length(sst$year) - (1 + summary(ex_gam_fit)$s.table[1]),
+             lower.tail = FALSE)
+
+## plot the data & model fit
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0),
+    cex.lab = 1.4, cex.axis = 1.2)
+
+plot(sst$year, sst$temp,
+     ylim = range(up_95, sst$temp, lo_95),
+     type = "l", lwd = 3, col = "dodgerblue",
+     ylab = "Temperature anomaly", xlab = "Year")
+
+abline(h = 0, lty = "dashed")
+
+lines(sst$year, preds$fit, lwd = 2)
+
+lines(sst$year, preds$fit + preds$se.fit * t_crit,
+      lty = "dashed", lwd = 2)
+lines(sst$year, preds$fit - preds$se.fit * t_crit,
+      lty = "dashed", lwd = 2)
 ``` 
 
 
-## Another example 
+## Another example | Chinook salmon survival from homework #4
 
-Linear terms 
+```{r chinook_SAR, fig.align = "center", fig.width = 7, fig.height = 4.5}
+## read data
+chinook <- read.csv("srss_chin_sar.csv")
+  
+chinook <- chinook[order(chinook$temp),]
 
-```{r, eval = FALSE, echo = FALSE, results = TRUE}
+## calculate survival
+chinook$sar <- chinook$adults / chinook$smolts * 100
 
-summary(model1)$p.table
-```
-
-Smoothed terms 
-
-```{r, eval = FALSE}
-summary(model1)$s.table
-```
-
-
-## Another example 
-
-Scale 
-
-```{r, eval = FALSE}
-summary(model1)$scale
-```
-
-Deviance explained
-
-```{r, eval = FALSE}
-
-summary(model1)$dev.expl   
-
+## plot SAR vs day
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0),
+    cex.lab = 1.4, cex.axis = 1.2)
+plot(chinook$temp, chinook$sar,
+     ylim = c(1, 6),
+     las = 1, pch = 16, col = "dodgerblue",
+     ylab = "Smolt-to-adult survival (%)", xlab = "Temperature (C)")
 ```
 
 
-## Plotting results - month 
+## Fit a GAM
 
-```{r, eval = FALSE, echo = FALSE, results = TRUE}
-pd <- with(seabirds, data.frame(month = 1:12,palm = 0, nativetree = 0, pandanus = 0, open = 0, distance = 0))
-pd <- cbind(pd, predict(model1, pd, se = TRUE))
-pd <- transform(pd, upr = fit + (2*se.fit), lwr = fit - (2 * se.fit))
-
-ggplot(pd, aes(x = month, y = fit)) +
-  geom_ribbon(aes(ymin = lwr, ymax = upr), alpha = 0.2) +
-  geom_line(alpha = 0.5) + 
-  scale_x_continuous(limits = c(1,12),breaks = c(1:12))
+```{r fit_gam_sar, echo = TRUE}
+## fit GAM with spline for temp
+ex_gam_fit <- gam(sar ~ s(temp),  
+              data = chinook, method = "REML")
 ```
 
-## Plotting results - distance from shore  
+
+## Model fit and data {.smaller} 
+
+```{r gam_fit_summary}
+## model summary
+summary(ex_gam_fit)
+```
 
 
-```{r, eval = FALSE, echo = FALSE, results = TRUE}
+## Model fit and data
 
-pq <- with(seabirds, data.frame(month = 12, palm = 0, nativetree = 0, pandanus = 0, open = 0, distance = seq(-1,4,0.1)))
-pq <- cbind(pq, predict(model1, pq, se = TRUE))
-pq <- transform(pq, upr = fit + (2*se.fit), lwr = fit - (2 * se.fit))
+```{r plot_sar_gam,  fig.align = "center", fig.width = 7, fig.height = 4.5}
+## model fits
+preds <- predict(ex_gam_fit, se.fit = TRUE)
 
-ggplot(pq, aes(x = distance, y = fit)) +
-  geom_ribbon(aes(ymin = lwr, ymax = upr), alpha = 0.2) +
-  geom_line(alpha = 0.5) + 
-  scale_x_continuous(limits = c(-1,4),breaks = seq(-1,4,1))
+## construct CI's
+t_crit <- qt(0.025, length(chinook$sar) - (1 + summary(ex_gam_fit)$s.table[1]),
+             lower.tail = FALSE)
 
-``` 
+## plot the data & model fit
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0),
+    cex.lab = 1.4, cex.axis = 1.2)
+
+plot(chinook$temp, chinook$sar,
+     ylim = c(1, 6),
+     type = "p", pch = 16, las = 1, col = "dodgerblue",
+     ylab = "Smolt-to-adult survival (%)", xlab = "Temperature (C)")
+## model fit
+lines(chinook$temp, preds$fit, lwd = 2)
+## 95% CI's
+lines(chinook$temp, preds$fit + preds$se.fit * t_crit,
+      lty = "dashed", lwd = 2)
+lines(chinook$temp, preds$fit - preds$se.fit * t_crit,
+      lty = "dashed", lwd = 2)
+```
+
+
+## GLM with quadratic term
+
+```{r sar_glm_fit, echo = TRUE}
+ex_glm_fit <- glm(cbind(adults, smolts - adults) ~ temp + I(temp^2),
+                  family = binomial(link = "logit"),
+                  data = chinook)
+```
+
+
+## Quadratic model fit and data
+
+```{r plot_sar_glm,  fig.align = "center", fig.width = 7, fig.height = 4.5}
+## model fits
+preds <- predict(ex_glm_fit, se.fit = TRUE, type = "response")
+
+## construct CI's
+t_crit <- qt(0.025, length(chinook$sar) - 3,
+             lower.tail = FALSE)
+
+## plot the data & model fit
+par(mai = c(0.9, 0.9, 0.1, 0.1),
+    omi = c(0, 0, 0, 0),
+    cex.lab = 1.4, cex.axis = 1.2)
+
+plot(chinook$temp, chinook$sar,
+     ylim = c(1, 6),
+     type = "p", pch = 16, las = 1, col = "dodgerblue",
+     ylab = "Smolt-to-adult survival (%)", xlab = "Temperature (C)")
+## model fit
+lines(chinook$temp, 100 * preds$fit, lwd = 2)
+## 95% CI's
+lines(chinook$temp, 100 * (preds$fit + preds$se.fit * t_crit),
+      lty = "dashed", lwd = 2)
+lines(chinook$temp, 100 * (preds$fit - preds$se.fit * t_crit),
+      lty = "dashed", lwd = 2)
+```
+
 
 ## Next time 
 
