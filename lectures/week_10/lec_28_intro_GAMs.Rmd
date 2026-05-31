@@ -16,7 +16,7 @@ library(mgcv)
 ```
 
 
-## Acknowledgements 
+## Acknowledgments 
 
 Gavin Simpson and colleagues have produced a lot of useful teaching material on GAMs that I've made use of here. For example: 
 
