@@ -138,7 +138,7 @@ $$
 
 Fit many local (weighted) regressions within a sliding window 
   
-LOESS fitting is available in the `mgsv::gam()` function
+LOESS fitting is available in the `mgcv::gam()` function
 
 
 ## Type of GAMs | LOESS (LOcally Estimated Scatterplot Smoothers) 
@@ -243,11 +243,11 @@ We want to allow for a function that is "wiggly", but not too wiggly
 
 * A function that is too wiggly would indicate that we are overfitting (or undersmoothing)
 
-* Once again, we are looking for a model that fits key processes generating the data while not overfitting the nuances of an individual dataset  
+> * We seek a model that explains the general underlying process while not overfitting the nuances of an individual dataset  
 
 <br> 
 
-* We need just the right level of wiggliness, but how do we measure wiggliness? 
+> * We need just the right level of wiggliness, but how do we measure wiggliness? 
 
 
 ## Measuring wiggliness 
@@ -309,7 +309,7 @@ invisible(capture.output({
       
       ## plot the fit
       plot(dat$x, dat$y, 
-           main = paste("Lambda penalty:", round(penalty_val, 3)),
+           main = paste("Lambda penalty:", round(penalty_val, 4)),
            yaxt = "n", xaxt = "n",
            ylab = "y", xlab = "x",
            cex.main = 2, cex.lab = 2, cex.axis = 1.8,
@@ -400,7 +400,7 @@ _many_ others in `mgcv::gam()` for special situations
 
 ## Fitting a GAM  
 
-Let's fit a GAM using splines to the global temperature data 
+Let's fit a GAM to the global temperature data using splines
 
 ```{r ex_gam_fit, echo = TRUE, results = TRUE}
 ex_gam_fit <- mgcv::gam(temp ~ s(year), data = sst, method = 'REML')
