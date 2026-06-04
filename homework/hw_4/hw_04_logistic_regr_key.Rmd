@@ -261,35 +261,30 @@ i) Create a table showing the $\Delta$AIC values and Akaike weights for each of 
 library(kableExtra)
 
 ## table of aic values
-tbl_aic <- data.frame(Model = rep(NA, 4), k = rep(NA, 4), AICc = rep(NA, 4),
-                      deltaAICc = rep(NA, 4), "AIC weight" = rep(NA, 4), ER = rep(NA, 4),
+tbl_aic <- data.frame(Model = rep(NA, 4),
+                      AIC = rep(NA, 4),
+                      deltaAIC = rep(NA, 4),
+                      "AIC weight" = rep(NA, 4),
                       check.names = FALSE)
-colnames(tbl_aic)[c(2,4)] <- c("$k$", "$\\Delta$AICc")
+colnames(tbl_aic)[3] <- "$\\Delta$AICc"
 ## model names
 tbl_aic[,1] <- c("intercept only", "day + day$^2$",
                  "temp + temp$^2$", "day-temp residuals")
-## number of params & AIC values
-tbl_aic[,2:3] <- AIC(model_d, model_e, model_f, model_h)
-## convert AIC to AICc
-tbl_aic[,3] <- tbl_aic[,3] + (2 * tbl_aic[,2] * (tbl_aic[,2] + 1)) /
-  (nn - tbl_aic[,2] - 1)
+## AIC values
+tbl_aic[,2] <- AIC(model_d, model_e, model_f, model_h)[,2]
 ## delta-AIC values
-tbl_aic[,4] <- tbl_aic[,3] - min(tbl_aic[,3])
+tbl_aic[,3] <- tbl_aic[,2] - min(tbl_aic[,2])
 ## Akaike weights
-tbl_aic[,5] <- exp(-0.5 * tbl_aic[,4]) / sum(exp(-0.5 * tbl_aic[,4]))
-## evidence ratios
-tbl_aic[,6] <- exp(0.5 * tbl_aic[,4])
+tbl_aic[,4] <- exp(-0.5 * tbl_aic[,3]) / sum(exp(-0.5 * tbl_aic[,3]))
 ## print table
-kbl(tbl_aic[order(tbl_aic[,"AICc"]),-3], align = "lcccc",
-      digits = c(NA, 1, 1, 3, 1), row.names = FALSE,
+kbl(tbl_aic[order(tbl_aic[,"AIC"]),c(1,3,4)], align = "lcc",
+      digits = c(NA, 1, 3), row.names = FALSE,
       escape = FALSE, linesep = "", booktabs = TRUE,
-      caption = "Model selection results based upon AICc;
-      $k$ is the number of parameters in the model
-      and ER is the evidence ratio.\\\\") |>
+      caption = "Model selection results based upon AICc.\\\\") |>
   kable_styling(position = "center", latex_options = "hold_position")
 ```
 
-These model selection results indicate that the model with the `day`-`temp` residuals as a predictor is the best of the set, but there is uncertainty among all of the models, as all of the $\Delta$AICc values are within 3.2 units of one another. The evidence ratios (ER) are all relatively small, with the lowest ranked model (`temp` + `temp`$^2$) being about 5 times less likely to have produced the data than the top-ranked model.
+These model selection results indicate that the model with the `day`-`temp` residuals as a predictor is the best of the set, but there is uncertainty among all of the models, as all of the $\Delta$AICc values are within `r max(tbl_aic[,3])` units of one another.
 
 ***
 
