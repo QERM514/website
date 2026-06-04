@@ -444,27 +444,6 @@ It requires thinking hard about the system and the question
 
 * be sure to include the factor as a fixed effect
 
-
-## Options for interactions 
-
-**main effects & interactions** `te(x1, x2)`
-
-* separate smoothness parameter and separate marginal basis
-
-**interactions only** `ti(x1, x2)`  
-
-* when the main effect are specified elsewhere 
-
-**bivariate thin plate splines** `s(x1, x2, bs = 'tp')`
-
-* single smoothness parameter, only use when units are the same (eg, over space)
-
-**smooth by different levels of a factor** `f + s(x1, by = f)`
-
-* be sure to include the factor as a fixed effect
-
-**smooth for each level of a factor** `f + s(x1, by = f)`
-
 * akin to random regression slopes
 
 

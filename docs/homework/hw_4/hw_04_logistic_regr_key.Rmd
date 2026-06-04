@@ -238,7 +238,7 @@ D0 <- model_h$null.deviance
 R2_h <- (1 - exp((DM - D0) / nn)) / (1 - exp(-D0 / nn))
 ```
 
-The estimated $R^2$ value for this model is $`r round(R2_h, 2)`$, which is better than the model with `temp` and `temp^2`, but not as good as the model with `day` and `day^2`.
+The estimated $R^2$ value for this model is $`r round(R2_h, 2)`$, which is better than the model with `temp` and `temp^2`, but not as good as the model with `day` and `day^2`. The p-value for the effect of the day~temp residuals on survival is only ~`r summary(model_h)$coefficients[2,4] |> round(3)`, however, which is a bit surprising given the above plot.
 
 ```{r h_plot_resids, out.height="3.5in", out.width="5in"}
 ## plot model 1 residuals vs day
@@ -262,7 +262,8 @@ library(kableExtra)
 
 ## table of aic values
 tbl_aic <- data.frame(Model = rep(NA, 4), k = rep(NA, 4), AICc = rep(NA, 4),
-                      deltaAICc = rep(NA, 4), Weight = rep(NA, 4), ER = rep(NA, 4))
+                      deltaAICc = rep(NA, 4), "AIC weight" = rep(NA, 4), ER = rep(NA, 4),
+                      check.names = FALSE)
 colnames(tbl_aic)[c(2,4)] <- c("$k$", "$\\Delta$AICc")
 ## model names
 tbl_aic[,1] <- c("intercept only", "day + day$^2$",
@@ -279,8 +280,8 @@ tbl_aic[,5] <- exp(-0.5 * tbl_aic[,4]) / sum(exp(-0.5 * tbl_aic[,4]))
 ## evidence ratios
 tbl_aic[,6] <- exp(0.5 * tbl_aic[,4])
 ## print table
-kbl(tbl_aic[order(tbl_aic[,"AICc"]),], align = "lccccc",
-      digits = c(NA, 1, 1, 1, 3, 1), row.names = FALSE,
+kbl(tbl_aic[order(tbl_aic[,"AICc"]),-3], align = "lcccc",
+      digits = c(NA, 1, 1, 3, 1), row.names = FALSE,
       escape = FALSE, linesep = "", booktabs = TRUE,
       caption = "Model selection results based upon AICc;
       $k$ is the number of parameters in the model
@@ -303,7 +304,7 @@ fits[,1] <- fitted(model_d)
 fits[,2] <- fitted(model_e)
 fits[,3] <- fitted(model_f)
 fits[,4] <- fitted(model_h)
-ma_fits <- fits %*% matrix(tbl_aic[,"Weight"], 4, 1)
+ma_fits <- fits %*% matrix(tbl_aic[,"AIC weight"], 4, 1)
 
 ## plot model 1 residuals vs day
 par(mai = c(0.9, 0.9, 0.6, 0.1),
@@ -316,7 +317,7 @@ points(dat$day, ma_fits, pch = 16,
 
 \vspace{0.25in}
 
-The model fits look pretty good, but we should check some model diagnostics, too. Below are a plot of the residuals against the fitted, a $Q$-$Q$ plot, and an ACF plot. Perhaps there is a bit of a pattern to the residuals, but the other plots look good.
+The model fits look pretty good, but the model seems to be overpredicting survival early in the month. We should check some model diagnostics, too. Below are a plot of the residuals against the fitted, a $Q$-$Q$ plot, and an ACF plot. Perhaps there is a bit of a pattern to the residuals, but the other plots look good.
 
 ```{r j_plot_diag, out.height="4in", out.width="4.5in"}
 ## residuals
