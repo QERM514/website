@@ -702,7 +702,7 @@ $$
 ## Options for overdispersed proportions
 
 | Model             | Pros | Cons |
-|:------------------|:-----|:-----|
+|:------------------|:------------------|:------------------|
 | binomial          | Easy | Underestimates variance |
 | binomial with VIF | Easy; estimate of variance | Ad hoc |
 | quasi-binomial    | Easy; estimate of variance | No distribution for inference |
