@@ -146,7 +146,7 @@ fitting_glmms <- list(
 ## preparations for project presentation
 last_week <- list(
   title = "Project help (no lab session)",
-  topics = c("Troubleshooting project analyses", "Final preparation for presentations"),
+  topics = c("Troubleshooting project analyses"),
   pdf = "",
   rmd = "",
   html = "",
