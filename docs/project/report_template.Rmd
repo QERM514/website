@@ -3,7 +3,7 @@ title: \Large{A relatively brief description of what I did for my independent pr
 output:
   pdf_document:
     includes:
-      before_body: report_title_page_template.tex
+      before_body: title_page_template.tex
     highlight: haddock
     toc: true
     number_sections: true
@@ -20,15 +20,6 @@ header-includes:
 ```{r set_options, echo = FALSE, message = FALSE, warning=FALSE}
 options(width = 100)
 knitr::opts_chunk$set(message = FALSE)
-
-## for figure captions
-library(captioner)
-## set default caption options
-# fig_cap <- captioner(suffix = ".", style = "b", style_prefix = TRUE)
-# tbl_cap <- captioner(prefix = "Table", suffix = ".",
-#                      style = "b", style_prefix = TRUE)
-fig_cap <- captioner(type = "n")
-tbl_cap <- captioner(prefix = "Table", type = "n")
 
 ## for nice tables
 library(kableExtra)
@@ -181,35 +172,20 @@ $$
 
 ## Tables
 
-Here is a table with a caption above it as implemented with `tbl_cap()` defined using **captioner** in the `set_options` chunk at the beginning of the document. The syntax is `tbl_cap(your_tbl_number, caption = "Your caption.", display = "full")`.
+Below is a table with a caption above it. The table itself consists of a `data.frame`, which is formatted for nicer output with `kable()` and `kable_styling`. You specify the caption with the `caption` argument to `kable()` as seen in the example code block below
 
-The table itself consists of a `data.frame`, which is formatted for nicer output with `kable()` and `kable_styling`. You can find lots of different options for formatting your tables here:
+You can find lots of different options for formatting your tables here:
 
 https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html. 
 
-The commands below increase the margins for the caption and set the text size a bit smaller before restoring them again. You can increase or decrease the indentation by changing the arguments.
-
-\vspace{0.25in}
-
-\setlength{\leftskip}{0.5in}
-\setlength{\rightskip}{0.5in}
-
-\small
-
-`r tbl_cap(1, caption = "This is an example table caption as implemented with tbl_cap(). It can include LaTeX math codes to get $(p_e)$. If you want to use a LaTeX command that is preceeded by a backslash, you need to \"escape it\" with a second backslash like $\\Delta$AIC.", display = "full")` 
-
-\normalsize
-
-\setlength{\leftskip}{0in}
-\setlength{\rightskip}{0in}
-
-```{r tbl_example, echo = FALSE}
-## load LOOIC info
+```{r tbl_example, echo = TRUE}
+## create some fake data
 tbl_ex <- data.frame(model = seq(10),
                      k = sample(seq(3), 10, replace = TRUE),
                      deltaAIC = c(0, round(runif(9, 1, 10), 1)))
 ## print table
 knitr::kable(tbl_ex,
+             caption = "This is a basic table caption.",
              format = "latex",
              booktabs = TRUE,
              col.names = c("Model ID",
@@ -221,35 +197,28 @@ knitr::kable(tbl_ex,
   kable_styling(position = "center", font_size = 10)
 ```
 
+
 ## Figures
 
-You can add a figure caption below a figure using `tbl_cap()` as defined using **captioner** in the `set_options` chunk at the beginning of the document. Just as with tables, the syntax is `fig_cap(your_fig_number, caption = "Your caption.", display = "full")`. For example,
+You can add a figure caption below a figure using the `fig.cap` argument at the top of an R code block. For example,
 
-\vspace{0.25in}
-
-```{r fig_ex, fig.height=3, fig.width=5, fig.align='center', echo = FALSE}
+````
+`r ''````{r fig_ex, fig.height=3, fig.width=5, fig.align='center', echo = TRUE, fig.cap = "An example of a not very nice figure."}
 ## an ugly plot
 par(mai = c(1, 1, 0, 0))
 matplot(matrix(rpois(60, 10), 15, 4), las = 1, type = "l",
         xlab = expression(paste("Something here (",hat(italic(y)),")")),
         ylab = expression(paste("Another thing (",italic(e),")")))
 ```
+````
 
-\vspace{0.2in}
-
-\setlength{\leftskip}{0.5in}
-\setlength{\rightskip}{0.5in}
-
-\small
-
-`r fig_cap(1, caption = "This is an example figure caption as implemented with \'fig_cap()\'. It can include LaTeX math codes like \'$(p_e)$\' to get $(p_e)$. If you want to use a LaTeX command that is preceeded by a backslash, you need to \"escape it\" with a second backslash like \'$\\Delta$AIC\' to get $\\Delta$AIC$.", display = "full")` 
-
-
-\normalsize
-
-\setlength{\leftskip}{0in}
-\setlength{\rightskip}{0in}
-
+```{r fig_ex, fig.height=3, fig.width=5, fig.align='center', echo = TRUE, fig.cap = "An example of a not very nice figure."}
+## an ugly plot
+par(mai = c(1, 1, 0, 0))
+matplot(matrix(rpois(60, 10), 15, 4), las = 1, type = "l",
+        xlab = expression(paste("Something here (",hat(italic(y)),")")),
+        ylab = expression(paste("Another thing (",italic(e),")")))
+```
 
 # Discussion
 
