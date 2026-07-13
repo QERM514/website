@@ -33,15 +33,17 @@ Things to consider:
 * Might there be random effects?  
 * How will you go about developing one or more models, analyzing them, and making inference?
 
+Email your project plan as a `.pdf` document to Mark.
+
 ## 2. Report
 
 #### Reports are due by 11:59 PM on June 10 and constitute 25% of your final grade.
 
-Please use the [R Markdown report template files](https://github.com/QERM514/website/tree/master/project) for your final report, which will facilitate proper formatting of text, equations, code, figures, references, etc. At a minimum, you will need these two files:
+Please use the R Markdown report template files for your final report, which will facilitate proper formatting of text, equations, code, figures, references, etc. At a minimum, you will need these two files:
 
 1) [`report_template.Rmd`](project/report_template.Rmd)
 
-2) [`report_title_page_template.tex`](project/report_title_page_template.tex)
+2) [`title_page_template.tex`](project/title_page_template.tex)
 
 If you also want to use BibTeX as reference manager for your report, you will need these two files:
 
@@ -52,4 +54,6 @@ If you also want to use BibTeX as reference manager for your report, you will ne
 All of these files will need to be located in the same folder or directory. See the report template for instructions.
 
 Please bear in mind that your report should detail a fully reproducible workflow of your analysis. As such, please provide a copy of any necessary data file(s). However, I’ll only consult this as a last resort if there seems to be an error or I can’t seem to work out what you did. Otherwise, all of the relevant information should be contained within your written report. Your report is restricted to 2000 words (exclusive of code chunks and figure/table captions) plus no more than 2 tables and 2 figures, although you should not feel obligated to hit that limit.
+
+Email your project report as a `.pdf` document to Mark along with any files used to generate it, and any supporting data files as well.
 
