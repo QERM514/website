@@ -93,7 +93,7 @@ logistic_regr <- list(
   rmd = "homework/hw_4/hw_04_logistic_regr.Rmd",
   html = "",
   data = "homework/hw_4/srss_chin_sar.csv",
-  key = "" # "homework/hw_4/hw_07_logistic_regr_key.pdf"
+  key = "homework/hw_4/hw_04_logistic_regr_key.pdf"
 )
 
 ## 8 count models
