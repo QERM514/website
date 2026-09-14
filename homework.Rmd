@@ -52,56 +52,40 @@ names(topics_html) <- NULL
 ```{r assignment_links, include = FALSE}
 assignment_links <- lapply(week_hw, function(x) { if(is.list(x)) {c(x$pdf)} else {""} })
 assignment_links_html <- sapply(lapply(assignment_links, function(x) {
-  if(length(x)>1) {
-    tmp1 <- paste0("[pdf (", 1:length(x), ")](")
-    } else {
-      tmp1 <- paste0("[pdf](")
-      }
+  tmp1 <- paste0("[pdf](")
   tmp2 <- ")"
   tmp <- paste0(tmp1, x, tmp2)
-  tmp[x==""] <- ""
+  tmp[x == ""] <- ""
   tmp <- paste(tmp, collapse="<br>"); tmp}), c)
 ```
 
 ```{r template_links, include = FALSE}
 template_links <- lapply(week_hw, function(x) { if(is.list(x)) {c(x$rmd)} else {""} })
 template_links_html <- sapply(lapply(template_links, function(x) {
-  if(length(x)>1) {
-    tmp1 <- paste0("[Rmd (", 1:length(x), ")](")
-    } else {
-      tmp1 <- paste0("[Rmd](")
-      }
+  tmp1 <- paste0("[Rmd](")
   tmp2 <- ")"
   tmp <- paste0(tmp1, x, tmp2)
-  tmp[x==""] <- ""
+  tmp[x == ""] <- ""
   tmp <- paste(tmp, collapse="<br>"); tmp}), c)
 ```
 
 ```{r data_links, include = FALSE}
 data_links <- lapply(week_hw, function(x) { if(is.list(x)) {x$data} else {""} })
 data_links_html <- sapply(lapply(data_links, function(x) {
-  if(length(x)>1) {
-    tmp1 <- paste0("[csv (", 1:length(x), ")](")
-    } else {
-      tmp1 <- paste0("[csv](")
-      }
+  tmp1 <- paste0("[csv](")
   tmp2 <- ")"
   tmp <- paste0(tmp1, x, tmp2)
-  tmp[x==""] <- ""
+  tmp[x == ""] <- ""
   tmp <- paste(tmp, collapse="<br>"); tmp}), c)
 ```
 
 ```{r key_links, include = FALSE}
 key_links <- lapply(week_hw, function(x) { if(is.list(x)) {c(x$key)} else {""} })
 key_links_html <- sapply(lapply(key_links, function(x) {
-  if(length(x)>1) {
-    tmp1 <- paste0("[key (", 1:length(x), ")](")
-    } else {
-      tmp1 <- paste0("[key](")
-      }
+  tmp1 <- paste0("[key](")
   tmp2 <- ")"
   tmp <- paste(tmp1, x, tmp2)
-  tmp[x==""] <- ""
+  tmp[x == ""] <- ""
   tmp <- paste(tmp, collapse = " ")
   tmp}), c)
 names(key_links_html) <- NULL
